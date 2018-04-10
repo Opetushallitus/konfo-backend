@@ -1,7 +1,11 @@
 (ns konfo-backend.core-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.core :refer :all]))
+            [konfo-backend.core :refer :all]
+            [ring.mock.request :as mock]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(intern 'clj-log.access-log 'service "konfo-backend")
+
+(deftest healthcheck-test
+  (testing "Healthcheck API test"
+    (let [response (app (mock/request :get "/konfo-backend/healthcheck"))]
+      (is (= 200 (:status response))))))

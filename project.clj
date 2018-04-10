@@ -33,5 +33,6 @@
   :plugins [[lein-ring "0.12.4"]
             [lein-environ "1.1.0"]]
   :profiles {:dev {:resource-paths ["dev-configuration"]}
+             :test {:dependencies [[ring/ring-mock "0.3.2"]]}
              :uberjar {:aot :all}}
   :aliases {"run" ["ring" "server" "3006"]})
