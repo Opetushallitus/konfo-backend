@@ -6,3 +6,5 @@ target/
 *.jar
 *.class
 /.lein-*
+
+dev-properties/*.edn

@@ -1,6 +1,7 @@
 (ns konfo-backend.core
   (:require
     [konfo-backend.koulutus :as koulutus]
+    [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
@@ -9,7 +10,9 @@
     [environ.core :refer [env]]))
 
 (defn init []
-  (intern 'clj-elasticsearch.elastic-utils 'elastic-host "http://127.0.0.1:9200")
+  (if-let [elastic-url (:elastic-url config)]
+    (intern 'clj-elasticsearch.elastic-utils 'elastic-host elastic-url)
+    (throw (IllegalStateException. "Could not read elastic-url from configuration!")))
   (intern 'clj-log.access-log 'service "konfo-backend")
   (intern 'clj-log.error-log 'test false))
 
