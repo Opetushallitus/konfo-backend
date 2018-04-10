@@ -28,12 +28,11 @@
          ;:destroy konfo-backend.core/destroy
          :browser-uri "konfo-backend"}
   :env {:name "konfo-backend"}
-  :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties"]
+  :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
   :plugins [[lein-ring "0.12.4"]
             [lein-environ "1.1.0"]]
-  :profiles {:dev {:resource-paths ["dev-configuration"]}
-             :test {:dependencies [[ring/ring-mock "0.3.2"]]}
+  :profiles {:test {:dependencies [[ring/ring-mock "0.3.2"]]}
              :uberjar {:ring {:port 8080}}}
   :aliases {"run" ["ring" "server" "3006"]
             "uberjar" ["do" "clean" ["ring" "uberjar"]]})
