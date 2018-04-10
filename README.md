@@ -1,36 +1,23 @@
-# konfo-backend
+# Konfo-backend
 
-FIXME: description
+Uuden koulutusinformaation (Konfo-UI) backend-sovellus.
 
-## Installation
+## Vaatimukset
 
-Download from http://example.com/FIXME.
+Lokaalia ajoa varten tarvitaan lokaali Elasticsearch, josta löytyy indeksoitua dataa.
 
-## Usage
+## Lokaali ajo
 
-FIXME: explanation
+Lokaalia ajoa varten kopioi konfiguraatiotiedoston template `dev-configuration/konfo-backend.end.template`
+tiedostoksi `dev-configuration/konfo-backend.edn` ja lisää tiedostoon oikeat arvot:
 
-    $ java -jar konfo-backend-0.1.0-standalone.jar [args]
+```
+{
+    :elastic-url "http://127.0.0.1:9200"
+    :elastic-timeout 120000
+}
+```
 
-## Options
+Sovelluksen voi käynnistää komennolla:
 
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2018 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+`lein run`
