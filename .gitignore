@@ -8,3 +8,5 @@ target/
 /.lein-*
 
 dev-properties/*.edn
+resources/*.edn
+oph-configuration/*.edn

@@ -34,5 +34,6 @@
             [lein-environ "1.1.0"]]
   :profiles {:dev {:resource-paths ["dev-configuration"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]]}
-             :uberjar {:aot :all}}
-  :aliases {"run" ["ring" "server" "3006"]})
+             :uberjar {:ring {:port 8080}}}
+  :aliases {"run" ["ring" "server" "3006"]
+            "uberjar" ["do" "clean" ["ring" "uberjar"]]})
