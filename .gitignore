@@ -7,6 +7,6 @@ target/
 *.class
 /.lein-*
 
-dev-properties/*.edn
+dev-configuration/*.edn
 resources/*.edn
 oph-configuration/*.edn
