@@ -31,8 +31,10 @@
 
       (GET "/search" [:as request]
         :summary "Search API"
-        :query-params [query :- String]
-        (with-access-logging request (ok {:result (koulutus/text-search query)})))
+        :query-params [query :- String,
+                       {page :- Integer 1}
+                       {size :- Integer 10}]
+        (with-access-logging request (ok (koulutus/text-search query page size))))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"

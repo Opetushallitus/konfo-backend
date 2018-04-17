@@ -52,7 +52,16 @@
     {:score score
      :oid (:oid koulutus)
      :nimi (get-in koulutus [:koulutuskoodi :nimi])
-     :tarjoaja (get-in koulutus [:organisaatio :nimi])}))
+     :tarjoaja (get-in koulutus [:organisaatio :nimi])
+     :avoin (:isAvoimenYliopistonKoulutus koulutus)
+     :tyyppi (:moduulityyppi koulutus)
+     :opintoala (get-in koulutus [:opintoala :nimi])}))
+
+(defn- create-hakutulokset [hakutulos]
+  (let [result (:hits hakutulos)
+        count (:total hakutulos)]
+    { :count count
+      :result (map create-hakutulos result)}))
 
 (def boost-values
   ["*fi"
@@ -67,16 +76,17 @@
    "aihees.nimi*^30"])
 
 (defn text-search
-  [query]
+  [query page size]
   (with-error-logging
     (let [start (System/currentTimeMillis)
           res (->> (search
                      (index-name "koulutus")
                      (index-name "koulutus")
+                     :from (if (pos? page) (- page 1) 0)
+                     :size (if (pos? size) (if (< size 200) size 200) 0)
                      :query {:multi_match {:query query :fields boost-values}})
                    :hits
-                   :hits
-                   (map create-hakutulos))]
+                   (create-hakutulokset))]
       (insert-query-perf query (- (System/currentTimeMillis) start) start (count res))
       res)))
 
