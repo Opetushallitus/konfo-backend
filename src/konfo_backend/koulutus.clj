@@ -84,7 +84,19 @@
                      (index-name "koulutus")
                      :from (if (pos? page) (- page 1) 0)
                      :size (if (pos? size) (if (< size 200) size 200) 0)
-                     :query {:multi_match {:query query :fields boost-values}})
+                     :query {
+                       :bool {
+                         :must {
+                            :multi_match {
+                              :query query
+                              :fields boost-values  }
+                         }
+                         :filter {
+                           :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                         }
+                       }
+                     }
+                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala"])
                    :hits
                    (create-hakutulokset))]
       (insert-query-perf query (- (System/currentTimeMillis) start) start (count res))
