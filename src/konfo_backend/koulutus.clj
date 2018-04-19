@@ -55,7 +55,9 @@
      :tarjoaja (get-in koulutus [:organisaatio :nimi])
      :avoin (:isAvoimenYliopistonKoulutus koulutus)
      :tyyppi (:moduulityyppi koulutus)
-     :opintoala (get-in koulutus [:opintoala :nimi])}))
+     :opintoala (get-in koulutus [:opintoala :nimi])
+     :hakukohteet (get-in koulutus [:searchData :hakukohteet])
+     :aiheet (:aihees koulutus)}))
 
 (defn- create-hakutulokset [hakutulos]
   (let [result (:hits hakutulos)
@@ -96,7 +98,7 @@
                          }
                        }
                      }
-                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala"])
+                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala", "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi"])
                    :hits
                    (create-hakutulokset))]
       (insert-query-perf query (- (System/currentTimeMillis) start) start (count res))
