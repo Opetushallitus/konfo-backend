@@ -46,6 +46,11 @@
       (insert-query-perf (str "koulutus: " koulutus-oid) (- (System/currentTimeMillis) start) start (count res))
       res)))
 
+(defn- haettavissa [hakuaika-array]
+  (let [hakuajat (:hakuaikas (first hakuaika-array))
+        hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (:loppuPvm h)))]
+    (not (empty? (filter #(hakuaika-nyt %) hakuajat)))))
+
 (defn- create-hakutulos [koulutushakutulos]
   (let [koulutus (:_source koulutushakutulos)
         score (:_score koulutushakutulos)]
@@ -57,7 +62,8 @@
      :tyyppi (:moduulityyppi koulutus)
      :opintoala (get-in koulutus [:opintoala :nimi])
      :hakukohteet (get-in koulutus [:searchData :hakukohteet])
-     :aiheet (:aihees koulutus)}))
+     :aiheet (:aihees koulutus)
+     :haettavissa (haettavissa (get-in koulutus [:searchData :haut]))}))
 
 (defn- create-hakutulokset [hakutulos]
   (let [result (:hits hakutulos)
@@ -98,7 +104,8 @@
                          }
                        }
                      }
-                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala", "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi"])
+                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala",
+                               "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi", "searchData.haut.hakuaikas"])
                    :hits
                    (create-hakutulokset))]
       (insert-query-perf query (- (System/currentTimeMillis) start) start (count res))
