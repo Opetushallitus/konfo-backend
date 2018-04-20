@@ -114,7 +114,7 @@
       res)))
 
 (defn text-search
-  [query page size]
+  [keyword page size]
   (with-error-logging
     (let [start (System/currentTimeMillis)
           res (->> (search
@@ -126,7 +126,7 @@
                        :bool {
                          :must {
                             :multi_match {
-                              :query query
+                              :query keyword
                               :fields boost-values  }
                          }
                          :filter {
@@ -138,6 +138,6 @@
                                "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi", "searchData.haut.hakuaikas"])
                    :hits
                    (create-hakutulokset))]
-      (insert-query-perf query (- (System/currentTimeMillis) start) start (count res))
+      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
       res)))
 

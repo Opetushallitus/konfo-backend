@@ -30,22 +30,23 @@
         :summary "Healthcheck API"
         (with-access-logging request (ok "OK")))
 
-      (GET "/search/koulutukset" [:as request]
-        :summary "Koulutukset search API"
-        :query-params [keyword :- String,
-                       {page :- Integer 1}
-                       {size :- Integer 20}]
-        (with-access-logging request (ok (koulutus/text-search query page size))))
+      (context "/search" []
+        (GET "/koulutukset" [:as request]
+                 :summary "Koulutukset search API"
+                 :query-params [keyword :- String,
+                                {page :- Integer 1}
+                                {size :- Integer 20}]
+          (with-access-logging request (ok (koulutus/text-search keyword page size))))
 
-      (GET "/search/organisaatiot" [:as request]
-        :summary "Organisaatiot search API"
-        :query-params [keyword :- String,
-                       {page :- Integer 1}
-                       {size :- Integer 20}]
-        (with-access-logging
-          request
-          (let [oids (koulutus/oid-search keyword)]
-            (ok (organisaatio/text-search keyword oids page size)))))
+        (GET "/organisaatiot" [:as request]
+          :summary "Organisaatiot search API"
+          :query-params [keyword :- String,
+                         {page :- Integer 1}
+                         {size :- Integer 20}]
+          (with-access-logging
+            request
+            (let [oids (koulutus/oid-search keyword)]
+              (ok (organisaatio/text-search keyword oids page size))))))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
