@@ -1,5 +1,6 @@
 (ns konfo-backend.core-test
   (:require [clojure.test :refer :all]
+            [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.core :refer :all]
             [ring.mock.request :as mock]))
 

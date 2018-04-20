@@ -72,16 +72,46 @@
       :result (map create-hakutulos result)}))
 
 (def boost-values
-  ["*fi"
-   "*sv"
-   "*en"
-   "organisaatio.nimi^30"
+  ["organisaatio.nimi^30"
    "tutkintonimikes.nimi*^30"
    "koulutusohjelma.nimi*^30"
    "koulutusohjelmanNimiKannassa*^30"
    "koulutuskoodi.nimi^30"
    "ammattinimikkeet.nimi*^30"
    "aihees.nimi*^30"])
+
+(defn create-oid-list [hakutulokset]
+  (log/info hakutulokset)
+  (let [get-oid (fn [h] (let [koulutus (:_source h)] (get-in koulutus [:organisaatio :oid])))]
+    (map get-oid hakutulokset)))
+
+(defn oid-search
+  [keyword]
+  (with-error-logging
+    (let [start (System/currentTimeMillis)
+          res (->> (search
+                     (index-name "koulutus")
+                     (index-name "koulutus")
+                     :from 0
+                     :size 10000
+                     :query {
+                             :bool {
+                                    :must {
+                                           :multi_match {
+                                                         :query keyword
+                                                         :fields boost-values  }
+                                           }
+                                    :filter {
+                                             :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                                             }
+                                    }
+                             }
+                     :_source ["organisaatio.oid"])
+                   :hits
+                   :hits
+                   (create-oid-list))]
+      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
+      res)))
 
 (defn text-search
   [query page size]

@@ -1,6 +1,7 @@
 (ns konfo-backend.core
   (:require
     [konfo-backend.koulutus :as koulutus]
+    [konfo-backend.organisaatio :as organisaatio]
     [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
@@ -29,12 +30,22 @@
         :summary "Healthcheck API"
         (with-access-logging request (ok "OK")))
 
-      (GET "/search" [:as request]
-        :summary "Search API"
-        :query-params [query :- String,
+      (GET "/search/koulutukset" [:as request]
+        :summary "Koulutukset search API"
+        :query-params [keyword :- String,
                        {page :- Integer 1}
-                       {size :- Integer 10}]
+                       {size :- Integer 20}]
         (with-access-logging request (ok (koulutus/text-search query page size))))
+
+      (GET "/search/organisaatiot" [:as request]
+        :summary "Organisaatiot search API"
+        :query-params [keyword :- String,
+                       {page :- Integer 1}
+                       {size :- Integer 20}]
+        (with-access-logging
+          request
+          (let [oids (koulutus/oid-search keyword)]
+            (ok (organisaatio/text-search keyword oids page size)))))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
