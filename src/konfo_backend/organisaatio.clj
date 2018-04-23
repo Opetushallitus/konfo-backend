@@ -15,7 +15,7 @@
         score (:_score organisaatiohakutulos)]
     {:score score
      :oid (:oid organisaatio)
-     :nimi (get-in organisaatio [:nimi :fi])
+     :nimi (get-in organisaatio [:nimi])
      :kayntiosoite (get-in organisaatio [:kayntiosoite :osoite])
      :postitoimipaikka (get-in organisaatio [:kayntiosoite :postitoimipaikka])}))
 
