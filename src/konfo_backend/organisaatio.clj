@@ -9,6 +9,10 @@
 
 (defn index-name [name] name)
 
+(defn get-by-id
+  [id]
+  (-> (get-document (index-name "organisaatio") (index-name "organisaatio") id)
+      (:_source)))
 
 (defn- create-hakutulos [organisaatiohakutulos]
   (let [organisaatio (:_source organisaatiohakutulos)

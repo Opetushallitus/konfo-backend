@@ -48,6 +48,14 @@
             (let [oids (koulutus/oid-search keyword)]
               (ok (organisaatio/text-search keyword oids page size))))))
 
+      (GET "/organisaatio/:oid" [:as request]
+        :summary "Organisaatio API"
+        :path-params [oid :- String]
+        (with-access-logging
+          request
+          (ok {:result (organisaatio/get-by-id oid)})
+          ))
+
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
         :path-params [oid :- String]
