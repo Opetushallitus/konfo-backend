@@ -53,7 +53,7 @@
         :path-params [oid :- String]
         (with-access-logging
           request
-          (ok {:result (organisaatio/get-by-id oid)})
+          (ok {:result (organisaatio/get-data-for-ui oid)})
           ))
 
       (GET "/koulutus/:oid" [:as request]

@@ -14,6 +14,20 @@
   (-> (get-document (index-name "organisaatio") (index-name "organisaatio") id)
       (:_source)))
 
+(defn get-data-for-ui
+  [id]
+  (let [raw-result (get-by-id id)
+        ]
+    {:kayntiosoite (:kayntiosoite raw-result)
+     :postiosoite (:postiosoite raw-result)
+     :nimi (:nimi raw-result)
+     :yleiskuvaus (get-in raw-result [:metadata :data :yleiskuvaus])
+     :yhteystiedot (:yhteystiedot raw-result)
+     :metadata (:metadata raw-result)
+     :xxxfordebug raw-result
+     })
+  )
+
 (defn- create-hakutulos [organisaatiohakutulos]
   (let [organisaatio (:_source organisaatiohakutulos)
         score (:_score organisaatiohakutulos)]
