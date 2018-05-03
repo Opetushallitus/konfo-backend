@@ -21,7 +21,7 @@
     {:kayntiosoite (:kayntiosoite raw-result)
      :postiosoite (:postiosoite raw-result)
      :nimi (:nimi raw-result)
-     :yleiskuvaus (get-in raw-result [:metadata :data :yleiskuvaus])
+     :yleiskuvaus (get-in raw-result [:metadata :data :YLEISKUVAUS])
      :yhteystiedot (:yhteystiedot raw-result)
      :metadata (:metadata raw-result)
      :xxxfordebug raw-result
