@@ -34,15 +34,15 @@
         (GET "/koulutukset" [:as request]
                  :summary "Koulutukset search API"
                  :query-params [keyword :- String,
-                                {page :- Integer 1}
-                                {size :- Integer 20}]
+                                {page :- Long 1}
+                                {size :- Long 20}]
           (with-access-logging request (ok (koulutus/text-search keyword page size))))
 
         (GET "/organisaatiot" [:as request]
           :summary "Organisaatiot search API"
           :query-params [keyword :- String,
-                         {page :- Integer 1}
-                         {size :- Integer 20}]
+                         {page :- Long 1}
+                         {size :- Long 20}]
           (with-access-logging
             request
             (let [oids (koulutus/oid-search keyword)]
