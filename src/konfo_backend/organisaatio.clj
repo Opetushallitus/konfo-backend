@@ -69,6 +69,7 @@
                                                  :multi_match {
                                                                 :query keyword,
                                                                 :fields boost-values
+                                                                :operator "and"
                                                                }
                                                  },
                                                 {

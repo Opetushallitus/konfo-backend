@@ -47,8 +47,9 @@
       res)))
 
 (defn- haettavissa [hakuaika-array]
+  (log/info hakuaika-array)
   (let [hakuajat (:hakuaikas (first hakuaika-array))
-        hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (:loppuPvm h)))]
+        hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (if (:loppuPvm h) (:loppuPvm h) (+ (System/currentTimeMillis) 100000))))]
     (not (empty? (filter #(hakuaika-nyt %) hakuajat)))))
 
 (defn- create-hakutulos [koulutushakutulos]
@@ -72,13 +73,14 @@
       :result (map create-hakutulos result)}))
 
 (def boost-values
-  ["organisaatio.nimi^30"
+  ["organisaatio.nimi^50"
    "tutkintonimikes.nimi*^30"
    "koulutusohjelma.nimi*^30"
    "koulutusohjelmanNimiKannassa*^30"
-   "koulutuskoodi.nimi^30"
+   "koulutuskoodi.nimi^1000"
    "ammattinimikkeet.nimi*^30"
-   "aihees.nimi*^30"])
+   "aihees.nimi*^10",
+   "oppiaineet.oppiaine*^30"])
 
 (defn create-oid-list [hakutulokset]
   (log/info hakutulokset)
@@ -96,14 +98,18 @@
                      :size 10000
                      :query {
                              :bool {
-                                    :must {
-                                           :multi_match {
-                                                         :query keyword
-                                                         :fields boost-values  }
-                                           }
-                                    :filter {
-                                             :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
-                                             }
+                                    :must [
+                                           {
+                                            :multi_match {
+                                                          :query keyword,
+                                                          :fields boost-values
+                                                          :operator "and"
+                                                          }
+                                            }
+                                           ],
+                                    :must_not {
+                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                                               }
                                     }
                              }
                      :_source ["organisaatio.oid"])
@@ -123,17 +129,25 @@
                      :from (if (pos? page) (- page 1) 0)
                      :size (if (pos? size) (if (< size 200) size 200) 0)
                      :query {
-                       :bool {
-                         :must {
-                            :multi_match {
-                              :query keyword
-                              :fields boost-values  }
-                         }
-                         :filter {
-                           :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
-                         }
-                       }
-                     }
+                             :bool {
+                                    :must [
+                                             {
+                                              :multi_match {
+                                                            :query keyword,
+                                                            :fields boost-values
+                                                            :operator "and"
+                                                            }
+                                              }
+                                             ],
+                                    :must_not {
+                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                                               }
+                                    }
+                             }
+                     :sort [
+                       { :johtaaTutkintoon :asc },
+                       :_score
+                     ]
                      :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala",
                                "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi", "searchData.haut.hakuaikas"])
                    :hits
