@@ -108,7 +108,7 @@
                                             }
                                            ],
                                     :must_not {
-                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
                                                }
                                     }
                              }
@@ -140,7 +140,7 @@
                                               }
                                              ],
                                     :must_not {
-                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :gt "now"}}
+                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
                                                }
                                     }
                              }
@@ -154,4 +154,3 @@
                    (create-hakutulokset))]
       (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
       res)))
-
