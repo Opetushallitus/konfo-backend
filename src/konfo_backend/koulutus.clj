@@ -57,7 +57,7 @@
         score (:_score koulutushakutulos)]
     {:score score
      :oid (:oid koulutus)
-     :nimi (get-in koulutus [:koulutuskoodi :nimi])
+     :nimi (get-in koulutus [:searchData :nimi])
      :tarjoaja (get-in koulutus [:organisaatio :nimi])
      :avoin (:isAvoimenYliopistonKoulutus koulutus)
      :tyyppi (:moduulityyppi koulutus)
@@ -108,7 +108,7 @@
                                             }
                                            ],
                                     :must_not {
-                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
+                                               :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
                                                }
                                     }
                              }
@@ -142,16 +142,18 @@
                                               }
                                              ],
                                     :must_not {
-                                               :range { :searchData.haut.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
+                                               :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
                                                }
                                     }
                              }
                      :sort [
                        { :johtaaTutkintoon :asc },
-                       :_score
+                       :_score,
+                       { :searchData.nimi.kieli_fi.keyword :asc},
+                       { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}
                      ]
                      :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala",
-                               "hakukohteet.", "aihees.nimi", "searchData.hakukohteet.nimi", "searchData.haut.hakuaikas"])
+                               "hakukohteet.", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"])
                    :hits
                    (create-hakutulokset))]
       (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
