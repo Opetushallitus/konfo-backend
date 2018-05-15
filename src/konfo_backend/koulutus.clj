@@ -47,7 +47,7 @@
       res)))
 
 (defn- haettavissa [hakuaika-array]
-  (log/info hakuaika-array)
+  ;(log/info hakuaika-array)
   (let [hakuajat (:hakuaikas (first hakuaika-array))
         hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (if (:loppuPvm h) (:loppuPvm h) (+ (System/currentTimeMillis) 100000))))]
     (not (empty? (filter #(hakuaika-nyt %) hakuajat)))))
@@ -83,7 +83,7 @@
    "oppiaineet.oppiaine*^30"])
 
 (defn create-oid-list [hakutulokset]
-  (log/info hakutulokset)
+  ;(log/info hakutulokset)
   (let [get-oid (fn [h] (let [koulutus (:_source h)] (get-in koulutus [:organisaatio :oid])))]
     (map get-oid hakutulokset)))
 
@@ -123,11 +123,13 @@
   [keyword page size]
   (with-error-logging
     (let [start (System/currentTimeMillis)
+          size (if (pos? size) (if (< size 200) size 200) 0)
+          from (if (pos? page) (* (- page 1) size) 0)
           res (->> (search
                      (index-name "koulutus")
                      (index-name "koulutus")
-                     :from (if (pos? page) (- page 1) 0)
-                     :size (if (pos? size) (if (< size 200) size 200) 0)
+                     :from from
+                     :size size
                      :query {
                              :bool {
                                     :must [
