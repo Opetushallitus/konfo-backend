@@ -47,7 +47,6 @@
       res)))
 
 (defn- haettavissa [hakuaika-array]
-  ;(log/info hakuaika-array)
   (let [hakuajat (:hakuaikas (first hakuaika-array))
         hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (if (:loppuPvm h) (:loppuPvm h) (+ (System/currentTimeMillis) 100000))))]
     (not (empty? (filter #(hakuaika-nyt %) hakuajat)))))
@@ -72,20 +71,44 @@
     { :count count
       :result (map create-hakutulos result)}))
 
-(def boost-values
-  ["organisaatio.nimi^50"
-   "tutkintonimikes.nimi*^30"
-   "koulutusohjelma.nimi*^30"
-   "koulutusohjelmanNimiKannassa*^30"
-   "koulutuskoodi.nimi^1000"
-   "ammattinimikkeet.nimi*^30"
-   "aihees.nimi*^10",
-   "oppiaineet.oppiaine*^30"])
-
 (defn create-oid-list [hakutulokset]
-  ;(log/info hakutulokset)
   (let [get-oid (fn [h] (let [koulutus (:_source h)] (get-in koulutus [:organisaatio :oid])))]
     (map get-oid hakutulokset)))
+
+(defn- koulutus-query-with-keyword [keyword]
+  { :bool {
+           :should [
+                   {
+                    :multi_match {
+                                  :query keyword,
+                                  :fields ["searchData.nimi.kieli_fi^10"],
+                                  :operator "and"
+                                  }
+                    },
+                   {
+                    :multi_match {
+                                  :query keyword,
+                                  :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
+                                  :operator "and"
+                                  }
+                    },
+                   {
+                    :multi_match {
+                                  :query keyword,
+                                  :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
+                                  :operator "and"
+                                  }
+                    },
+                   {
+                    :multi_match {
+                                  :query keyword,
+                                  :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
+                                  :operator "and"
+                                  }
+                    }
+                   ],
+           :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
+}})
 
 (defn oid-search
   [keyword]
@@ -96,22 +119,7 @@
                      (index-name "koulutus")
                      :from 0
                      :size 10000
-                     :query {
-                             :bool {
-                                    :must [
-                                           {
-                                            :multi_match {
-                                                          :query keyword,
-                                                          :fields boost-values
-                                                          :operator "and"
-                                                          }
-                                            }
-                                           ],
-                                    :must_not {
-                                               :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
-                                               }
-                                    }
-                             }
+                     :query (koulutus-query-with-keyword keyword)
                      :_source ["organisaatio.oid"])
                    :hits
                    :hits
@@ -123,41 +131,14 @@
    [keyword page size]
    (with-error-logging
      (let [start (System/currentTimeMillis)
+           size (if (pos? size) (if (< size 200) size 200) 0)
+           from (if (pos? page) (* (- page 1) size) 0)
            res (->> (search
                       (index-name "koulutus")
                       (index-name "koulutus")
-                      :from (if (pos? page) (- page 1) 0)
-                      :size (if (pos? size) (if (< size 200) size 200) 0)
-                      :query {
-                              :bool {
-                                     :should [
-                                              {
-                                                  :multi_match {
-                                                             :query keyword,
-                                                             :fields ["searchData.nimi.kieli_fi^10" "tutkintonimikes.nimi.kieli_fi^10" "koulutusala.nimi.kieli_fi^10" "tutkinto.nimi.kieli_fi^10"],
-                                                             :operator "and"
-                                                             }
-                                               },
-                                               {
-                                                   :multi_match {
-                                                                 :query keyword,
-                                                                 :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
-                                                                 :operator "and"
-                                                                 }
-                                                   },
-                                              {
-                                               :multi_match {
-                                                             :query keyword,
-                                                             :fields ["aihees.nimi.kieli_fi" "oppiaineet.oppiaine" "ammattinimikkeet.nimi.kieli_fi"],
-                                                             :operator "and"
-                                                             }
-                                               }
-                                              ],
-                                     :must_not {
-                                                :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
-                                                }
-                                     }
-                              }
+                      :from from
+                      :size size
+                      :query (koulutus-query-with-keyword keyword)
                       :sort [
                              { :johtaaTutkintoon :asc },
                              :_score,
@@ -170,43 +151,3 @@
                     (create-hakutulokset))]
        (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
        res)))
-
-(comment defn text-search
-  [keyword page size]
-  (with-error-logging
-    (let [start (System/currentTimeMillis)
-          size (if (pos? size) (if (< size 200) size 200) 0)
-          from (if (pos? page) (* (- page 1) size) 0)
-          res (->> (search
-                     (index-name "koulutus")
-                     (index-name "koulutus")
-                     :from from
-                     :size size
-                     :query {
-                             :bool {
-                                    :must [
-                                             {
-                                              :multi_match {
-                                                            :query keyword,
-                                                            :fields boost-values
-                                                            :operator "and"
-                                                            }
-                                              }
-                                             ],
-                                    :must_not {
-                                               :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}
-                                               }
-                                    }
-                             }
-                     :sort [
-                       { :johtaaTutkintoon :asc },
-                       :_score,
-                       { :searchData.nimi.kieli_fi.keyword :asc},
-                       { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}
-                     ]
-                     :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala",
-                               "hakukohteet.", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"])
-                   :hits
-                   (create-hakutulokset))]
-      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
-      res)))
