@@ -78,35 +78,48 @@
 (defn- koulutus-query-with-keyword [keyword]
   { :bool {
            :must { :dis_max { :queries [
-                   {
-                    :multi_match {
-                                  :query keyword,
-                                  :fields ["searchData.nimi.kieli_fi^10"],
-                                  :operator "and"
-                                  }
-                    },
-                   {
-                    :multi_match {
-                                  :query keyword,
-                                  :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
-                                  :operator "and"
-                                  }
-                    },
-                   {
-                    :multi_match {
-                                  :query keyword,
-                                  :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
-                                  :operator "and"
-                                  }
-                    },
-                   {
-                    :multi_match {
-                                  :query keyword,
-                                  :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
-                                  :operator "and"
-                                  }
-                    }
-                                        ]}},
+                   { :constant_score {
+                        :filter {
+                                 :multi_match {
+                                               :query keyword,
+                                               :fields ["searchData.nimi.kieli_fi"],
+                                               :operator "and"
+                                               }
+                                 },
+                        :boost 10
+                   }},
+
+                   { :constant_score {
+                         :filter {
+                                  :multi_match {
+                                                :query keyword,
+                                                :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
+                                                :operator "and"
+                                                }
+                                  },
+                         :boost 5
+                   }},
+                   { :constant_score {
+                         :filter {
+                                  :multi_match {
+                                                :query keyword,
+                                                :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
+                                                :operator "and"
+                                                }
+                                  },
+                         :boost 4
+                   }},
+                   { :constant_score {
+                         :filter {
+                                  :multi_match {
+                                                :query keyword,
+                                                :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
+                                                :operator "and"
+                                                }
+                                  },
+                         :boost 2
+                   }}
+           ]}},
            :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
 }})
 
