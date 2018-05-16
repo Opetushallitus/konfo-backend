@@ -77,7 +77,7 @@
 
 (defn- koulutus-query-with-keyword [keyword]
   { :bool {
-           :should [
+           :must { :dis_max { :queries [
                    {
                     :multi_match {
                                   :query keyword,
@@ -106,7 +106,7 @@
                                   :operator "and"
                                   }
                     }
-                   ],
+                                        ]}},
            :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
 }})
 
