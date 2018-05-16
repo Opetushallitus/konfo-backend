@@ -57,11 +57,13 @@
   [keyword oids page size]
   (with-error-logging
     (let [start (System/currentTimeMillis)
+          size (if (pos? size) (if (< size 200) size 200) 0)
+          from (if (pos? page) (* (- page 1) size) 0)
           res (->> (search
                      (index-name "organisaatio")
                      (index-name "organisaatio")
-                     :from (if (pos? page) (- page 1) 0)
-                     :size (if (pos? size) (if (< size 200) size 200) 0)
+                     :from from
+                     :size size
                      :query {
                               :bool {
                                       :should [
