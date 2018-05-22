@@ -59,9 +59,8 @@
      :nimi (get-in koulutus [:searchData :nimi])
      :tarjoaja (get-in koulutus [:organisaatio :nimi])
      :avoin (:isAvoimenYliopistonKoulutus koulutus)
-     :tyyppi (:moduulityyppi koulutus)
-     :opintoala (get-in koulutus [:opintoala :nimi])
-     :hakukohteet (get-in koulutus [:searchData :hakukohteet])
+     :koulutustyyppi (:uri (:koulutustyyppi koulutus))
+     :johtaaTutkintoon (:johtaaTutkintoon koulutus)
      :aiheet (:aihees koulutus)
      :haettavissa (haettavissa (get-in koulutus [:searchData :haut]))}))
 
@@ -77,7 +76,7 @@
 
 (defn- koulutus-query-with-keyword [keyword]
   { :bool {
-           :must [ { :dis_max { :queries [
+           :must { :dis_max { :queries [
                      { :constant_score {
                           :filter { :multi_match {:query keyword,
                                                   :fields ["searchData.nimi.kieli_fi"],
@@ -98,9 +97,9 @@
                                                     :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
                                                     :operator "and" }},
                            :boost 2 }}]}},
-                  {:match { :tila "JULKAISTU" }},
-                   {:match { :searchData.haut.tila "JULKAISTU"}}
-           ],
+           :filter [
+                    {:match { :tila "JULKAISTU" }},
+                    {:match { :searchData.haut.tila "JULKAISTU"}}],
            :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
 }})
 
@@ -139,8 +138,8 @@
                              { :searchData.nimi.kieli_fi.keyword :asc},
                              { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}
                              ]
-                      :_source ["oid", "koulutuskoodi", "organisaatio", "isAvoimenYliopistonKoulutus", "moduulityyppi", "opintoala",
-                                "hakukohteet.", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"])
+                      :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus",
+                                "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"])
                     :hits
                     (create-hakutulokset))]
        (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
