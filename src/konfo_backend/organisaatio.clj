@@ -34,6 +34,7 @@
     {:score score
      :oid (:oid organisaatio)
      :nimi (get-in organisaatio [:nimi])
+     :oppilaitostyyppi (:oppilaitostyyppi (:searchData organisaatio))
      :kayntiosoite (get-in organisaatio [:kayntiosoite :osoite])
      :postitoimipaikka (get-in organisaatio [:kayntiosoite :postitoimipaikka])}))
 
@@ -132,7 +133,7 @@
                      :size size
                      :query (oppilaitos-query-with-keyword-and-oids keyword oids)
                      :sort [:_score, { :nimi.fi.keyword :asc} ]
-                     :_source ["oid", "nimi", "kayntiosoite.osoite", "kayntiosoite.postitoimipaikka"])
+                     :_source ["oid", "nimi", "kayntiosoite.osoite", "kayntiosoite.postitoimipaikka", "searchData.oppilaitostyyppi"])
                    :hits
                    (create-hakutulokset))]
       (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
