@@ -13,7 +13,7 @@
       (:_source)))
 
 (defmacro get-koulutus [oid]
-  `(dissoc (get-by-id "koulutus" "koulutus" ~oid) :searchData))
+  `(update-in (get-by-id "koulutus" "koulutus" ~oid) [:searchData] dissoc :haut :organisaatio :hakukohteet))
 
 (defn parse-search-result [res] (map :_source (get-in res [:hits :hits])))
 
@@ -77,49 +77,30 @@
 
 (defn- koulutus-query-with-keyword [keyword]
   { :bool {
-           :must { :dis_max { :queries [
-                   { :constant_score {
-                        :filter {
-                                 :multi_match {
-                                               :query keyword,
-                                               :fields ["searchData.nimi.kieli_fi"],
-                                               :operator "and"
-                                               }
-                                 },
-                        :boost 10
-                   }},
-
-                   { :constant_score {
-                         :filter {
-                                  :multi_match {
-                                                :query keyword,
-                                                :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
-                                                :operator "and"
-                                                }
-                                  },
-                         :boost 5
-                   }},
-                   { :constant_score {
-                         :filter {
-                                  :multi_match {
-                                                :query keyword,
-                                                :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
-                                                :operator "and"
-                                                }
-                                  },
-                         :boost 4
-                   }},
-                   { :constant_score {
-                         :filter {
-                                  :multi_match {
-                                                :query keyword,
-                                                :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
-                                                :operator "and"
-                                                }
-                                  },
-                         :boost 2
-                   }}
-           ]}},
+           :must [ { :dis_max { :queries [
+                     { :constant_score {
+                          :filter { :multi_match {:query keyword,
+                                                  :fields ["searchData.nimi.kieli_fi"],
+                                                  :operator "and" }},
+                          :boost 10 }},
+                     { :constant_score {
+                           :filter { :multi_match {:query keyword,
+                                                   :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
+                                                   :operator "and" }},
+                           :boost 5 }},
+                     { :constant_score {
+                           :filter { :multi_match {:query keyword,
+                                                   :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
+                                                   :operator "and" }},
+                           :boost 4 }},
+                     { :constant_score {
+                           :filter { :multi_match { :query keyword,
+                                                    :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
+                                                    :operator "and" }},
+                           :boost 2 }}]}},
+                  {:match { :tila "JULKAISTU" }},
+                   {:match { :searchData.haut.tila "JULKAISTU"}}
+           ],
            :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
 }})
 
