@@ -48,77 +48,40 @@
   { :bool {
            :must [
                   { :dis_max { :queries [
-                                         { :constant_score {
-                                                            :filter {
-                                                                     :multi_match {
-                                                                             :query keyword
-                                                                             :fields ["searchData.oppilaitostyyppi.nimi.fi"]
-                                                                             :operator "and"
-                                                                             }
-                                                                     },
-                                                            :boost 1000
-                                                            }},
-                                        { :constant_score {
-                                                           :filter {
-                                                                    :multi_match {
-                                                                                  :query keyword,
-                                                                                  :fields ["nimi.fi"],
-                                                                                  :operator "and"
-                                                                                  }
-                                                                    },
-                                                           :boost 300
-                                                           }},
-                                        { :constant_score {
-                                                           :filter {
-                                                                    :multi_match {
-                                                                                  :query keyword,
-                                                                                  :fields ["postiosoite.postitoimipaikka" "kayntiosoite.postitoimipaikka" "yhteystiedot.postitoimipaikka"],
-                                                                                  :operator "and"
-                                                                                  }
-                                                                    },
-                                                           :boost 5
-                                                           }}
-                                        { :constant_score {
-                                                           :filter {
-                                                                    :multi_match {
-                                                                                  :query keyword,
-                                                                                  :fields ["postiosoite.osoite" "kayntiosoite.osoite" "yhteystiedot.osoite"],
-                                                                                  :operator "and"
-                                                                                  }
-                                                                    },
-                                                           :boost 4
-                                                           }},
-                                        { :constant_score {
-                                                           :filter {
-                                                                     :terms {
-                                                                             :oid (vec oids)
-                                                                             }
-                                                                    },
-                                                           :boost 2
-                                                           }}
-                                        ]}},
+                        { :constant_score {
+                            :filter { :multi_match { :query keyword
+                                                     :fields ["searchData.oppilaitostyyppi.nimi.fi"]
+                                                     :operator "and" }},
+                            :boost 1000 }},
+                        { :constant_score {
+                             :filter { :multi_match { :query keyword,
+                                                      :fields ["nimi.fi"],
+                                                      :operator "and" }},
+                             :boost 300 }},
+                        { :constant_score {
+                             :filter { :multi_match { :query keyword,
+                                                      :fields ["postiosoite.postitoimipaikka" "kayntiosoite.postitoimipaikka" "yhteystiedot.postitoimipaikka"],
+                                                      :operator "and" }},
+                             :boost 5 }},
+                        { :constant_score {
+                             :filter { :multi_match { :query keyword,
+                                                      :fields ["postiosoite.osoite" "kayntiosoite.osoite" "yhteystiedot.osoite"],
+                                                      :operator "and" }},
+                             :boost 4 }},
+                        { :constant_score {
+                              :filter { :terms { :oid (vec oids) }},
+                              :boost 2 }}]}},
                   { :dis_max { :queries [
-                                         { :constant_score {
-                                                            :filter {
-                                                                     :match { :tyypit { :query "Koulutustoimija"} }
-                                                                     },
-                                                            :boost 200
-                                                            }},
-                                         { :constant_score {
-                                                            :filter {
-                                                                     :match { :tyypit { :query "Oppilaitos"} }
-                                                                     },
-                                                            :boost 200
-                                                            }},
-                                         { :constant_score {
-                                                            :filter {
-                                                                     :match { :tyypit { :query "Toimipiste"} }
-                                                                     },
-                                                            :boost 100
-                                                            }}
-                                         ]}}],
-           :must_not { :range { :lakkautusPvm { :format "yyyy-MM-dd" :lt "now"}} }
-           }})
+                        { :constant_score {
+                              :filter { :match { :tyypit { :query "Koulutustoimija" }}},
+                              :boost 200 }},
+                        { :constant_score {
+                              :filter { :match { :tyypit { :query "Oppilaitos" }}},
+                              :boost 200 }},
+                        { :constant_score {
+                              :filter { :match { :tyypit { :query "Toimipiste" }}},
+                              :boost 100 }}]}}],
+           :must_not { :range { :lakkautusPvm { :format "yyyy-MM-dd" :lt "now"}} }}})
 
 (defn text-search
   [keyword oids page size]
