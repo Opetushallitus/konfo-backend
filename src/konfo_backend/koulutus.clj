@@ -2,8 +2,7 @@
   (:require
     [clj-elasticsearch.elastic-connect :refer [search get-document]]
     [clj-log.error-log :refer [with-error-logging]]
-    [konfo-backend.performance :refer [insert-query-perf]]
-    [clojure.tools.logging :as log]))
+    [konfo-backend.performance :refer [insert-query-perf]]))
 
 (defn index-name [name] name)
 
@@ -46,10 +45,15 @@
       (insert-query-perf (str "koulutus: " koulutus-oid) (- (System/currentTimeMillis) start) start (count res))
       res)))
 
-(defn- haettavissa [hakuaika-array]
-  (let [hakuajat (:hakuaikas (first hakuaika-array))
-        hakuaika-nyt (fn [h] (<= (:alkuPvm h) (System/currentTimeMillis) (if (:loppuPvm h) (:loppuPvm h) (+ (System/currentTimeMillis) 100000))))]
-    (not (empty? (filter #(hakuaika-nyt %) hakuajat)))))
+(defn- hakuaika-nyt [hakuaika]
+  (let [alkuPvm (:alkuPvm hakuaika)
+        loppuPvm (if (:loppuPvm hakuaika) (:loppuPvm hakuaika) (+ (System/currentTimeMillis) 100000))]
+    (<= alkuPvm (System/currentTimeMillis) loppuPvm)))
+
+(defn haettavissa [searchData]
+  (if (some true? (map #(contains? % :hakuaika) (:hakukohteet searchData)))
+    (some true? (map #(hakuaika-nyt (:hakuaika %)) (:hakukohteet searchData)))
+    (some true? (map #(hakuaika-nyt %) (flatten (map #(:hakuaikas %) (:haut searchData)))))))
 
 (defn- create-hakutulos [koulutushakutulos]
   (let [koulutus (:_source koulutushakutulos)
@@ -62,7 +66,7 @@
      :koulutustyyppi (:uri (:koulutustyyppi koulutus))
      :johtaaTutkintoon (:johtaaTutkintoon koulutus)
      :aiheet (:aihees koulutus)
-     :haettavissa (haettavissa (get-in koulutus [:searchData :haut]))}))
+     :haettavissa (haettavissa (:searchData koulutus))}))
 
 (defn- create-hakutulokset [hakutulos]
   (let [result (:hits hakutulos)
