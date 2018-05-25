@@ -1,4 +1,4 @@
-(ns konfo-backend.performance
+(ns konfo-backend.elastic-tools
   (:require
     [clj-elasticsearch.elastic-connect :refer :all]
     [clojure.tools.logging :as log]))

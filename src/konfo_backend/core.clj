@@ -1,13 +1,13 @@
 (ns konfo-backend.core
   (:require
     [konfo-backend.koulutus :as koulutus]
-    [konfo-backend.organisaatio :as organisaatio]
+    [konfo-backend.oppilaitos :as organisaatio]
+    [konfo-backend.search.search :as search]
     [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.util.http-response :refer :all]
-    [clojure.tools.logging :as log]
     [environ.core :refer [env]]))
 
 (defn init []
@@ -36,32 +36,24 @@
                  :query-params [keyword :- String,
                                 {page :- Long 1}
                                 {size :- Long 20}]
-          (with-access-logging request (ok (koulutus/text-search keyword page size))))
+          (with-access-logging request (ok (search/search-koulutus keyword page size))))
 
-        (GET "/organisaatiot" [:as request]
-          :summary "Organisaatiot search API"
+        (GET "/oppilaitokset" [:as request]
+          :summary "Oppilaitokset search API"
           :query-params [keyword :- String,
                          {page :- Long 1}
                          {size :- Long 20}]
-          (with-access-logging
-            request
-            (let [oids (koulutus/oid-search keyword)]
-              (ok (organisaatio/text-search keyword oids page size))))))
+          (with-access-logging request (ok (search/search-oppilaitos keyword page size)))))
 
-      (GET "/organisaatio/:oid" [:as request]
-        :summary "Organisaatio API"
+      (GET "/oppilaitos/:oid" [:as request]
+        :summary "Oppilaitos API"
         :path-params [oid :- String]
-        (with-access-logging
-          request
-          (ok {:result (organisaatio/get-data-for-ui oid)})
-          ))
+        (with-access-logging request (ok {:result (organisaatio/get-oppilaitos oid)})))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
         :path-params [oid :- String]
-        (with-access-logging
-          request
-          (ok {:result (koulutus/get-koulutus-tulos oid)}))))))
+        (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)}))))))
 
 (def app
   (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get]))
