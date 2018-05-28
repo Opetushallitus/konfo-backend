@@ -1,8 +1,8 @@
 (ns konfo-backend.search.koulutus
   (:require
-    [clj-elasticsearch.elastic-connect :refer [search]]
-    [clj-log.error-log :refer [with-error-logging]]
-    [konfo-backend.elastic-tools :refer [insert-query-perf index-name]]))
+    [konfo-backend.elastic-tools :refer :all]))
+
+(def koulutukset (partial search "koulutus"))
 
 (defn- hakuaika-nyt [hakuaika]
   (let [alkuPvm (:alkuPvm hakuaika)
@@ -30,80 +30,43 @@
 (defn- create-hakutulokset [hakutulos]
   (let [result (:hits hakutulos)
         count (:total hakutulos)]
-    { :count count
+    {:count count
      :result (map create-hakutulos result)}))
 
-(defn create-oid-list [hakutulokset]
-  (let [get-oid (fn [h] (let [koulutus (:_source h)] (get-in koulutus [:organisaatio :oid])))]
-    (map get-oid hakutulokset)))
-
-(defn- koulutus-query-with-keyword [keyword]
-  { :bool {
-           :must { :dis_max { :queries [
-                    { :constant_score {
-                             :filter { :multi_match {:query keyword,
-                                                     :fields ["searchData.nimi.kieli_fi"],
-                                                     :operator "and" }},
-                             :boost 10 }},
-                    { :constant_score {
-                             :filter { :multi_match {:query keyword,
-                                                     :fields ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"],
-                                                     :operator "and" }},
-                             :boost 5 }},
-                    { :constant_score {
-                             :filter { :multi_match {:query keyword,
-                                                     :fields ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"],
-                                                     :operator "and" }},
-                             :boost 4 }},
-                    { :constant_score {
-                             :filter { :multi_match { :query keyword,
-                                                     :fields ["searchData.organisaatio.nimi.kieli_fi^5"],
-                                                     :operator "and" }},
-                             :boost 2 }}]}},
-           :filter [
-                    {:match { :tila "JULKAISTU" }},
+(defn koulutus-query
+  ([keyword oids constraints]
+    { :bool {
+           :must { :dis_max { :queries [(constant_score_query_multi_match keyword ["searchData.nimi.kieli_fi"] 10)
+                                        (constant_score_query_multi_match keyword ["tutkintonimikes.nimi.kieli_fi^2" "koulutusala.nimi.kieli_fi^2" "tutkinto.nimi.kieli_fi^2"] 5)
+                                        (constant_score_query_multi_match keyword ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"] 4)
+                                        (constant_score_query_multi_match keyword ["searchData.organisaatio.nimi.kieli_fi^5"] 2)]}},
+           :filter [(if (not-empty oids) { :terms { :searchData.organisaatio.oid (vec oids) }})
+                    {:match { :tila "JULKAISTU" }}
                     {:match { :searchData.haut.tila "JULKAISTU"}}],
            :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
            }})
+  ([keyword]
+    (koulutus-query keyword nil nil)))
 
 (defn oid-search
   [keyword]
-  (with-error-logging
-    (let [start (System/currentTimeMillis)
-          res (->> (search
-                     (index-name "koulutus")
-                     (index-name "koulutus")
-                     :from 0
-                     :size 10000
-                     :query (koulutus-query-with-keyword keyword)
-                     :_source ["organisaatio.oid"])
-                   :hits
-                   :hits
-                   (create-oid-list))]
-      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
-      res)))
+  (koulutukset keyword
+               0
+               10000
+               (fn [x] (map #(get-in % [:_source :organisaatio :oid]) (:hits x)))
+               :query (koulutus-query keyword)
+               :_source ["organisaatio.oid"]))
 
 (defn text-search
-  [keyword page size]
-  (with-error-logging
-    (let [start (System/currentTimeMillis)
-          size (if (pos? size) (if (< size 200) size 200) 0)
-          from (if (pos? page) (* (- page 1) size) 0)
-          res (->> (search
-                     (index-name "koulutus")
-                     (index-name "koulutus")
-                     :from from
-                     :size size
-                     :query (koulutus-query-with-keyword keyword)
-                     :sort [
-                            { :johtaaTutkintoon :asc },
-                            :_score,
-                            { :searchData.nimi.kieli_fi.keyword :asc},
-                            { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}
-                            ]
-                     :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus",
-                               "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"])
-                   :hits
-                   (create-hakutulokset))]
-      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
-      res)))
+  [keyword page size oids constraints]
+  (koulutukset keyword
+               page
+               size
+               create-hakutulokset
+               :query (koulutus-query keyword oids constraints)
+               :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus",
+                         "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"]
+               :sort [{ :johtaaTutkintoon :asc },
+                      :_score,
+                      { :searchData.nimi.kieli_fi.keyword :asc},
+                      { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}]))

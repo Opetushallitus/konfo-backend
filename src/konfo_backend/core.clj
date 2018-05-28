@@ -33,17 +33,21 @@
       (context "/search" []
         (GET "/koulutukset" [:as request]
                  :summary "Koulutukset search API"
-                 :query-params [keyword :- String,
+                 :query-params [keyword :- String
                                 {page :- Long 1}
-                                {size :- Long 20}]
-          (with-access-logging request (ok (search/search-koulutus keyword page size))))
+                                {size :- Long 20}
+                                {oppilaitostyyppi :- String nil}
+                                {paikkakunta :- String nil}]
+          (with-access-logging request (ok (search/search-koulutus keyword page size (search/constraints :oppilaitostyyppi oppilaitostyyppi :paikkakunta paikkakunta)))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
-          :query-params [keyword :- String,
+          :query-params [keyword :- String
                          {page :- Long 1}
-                         {size :- Long 20}]
-          (with-access-logging request (ok (search/search-oppilaitos keyword page size)))))
+                         {size :- Long 20}
+                         {oppilaitostyyppi :- String nil}
+                         {paikkakunta :- String nil}]
+          (with-access-logging request (ok (search/search-oppilaitos keyword page size (search/constraints :oppilaitostyyppi oppilaitostyyppi :paikkakunta paikkakunta))))))
 
       (GET "/oppilaitos/:oid" [:as request]
         :summary "Oppilaitos API"
