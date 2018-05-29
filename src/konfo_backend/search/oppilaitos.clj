@@ -11,6 +11,7 @@
      :oid (:oid organisaatio)
      :nimi (get-in organisaatio [:nimi])
      :oppilaitostyyppi (get-in organisaatio [:searchData :oppilaitostyyppi])
+     :tyyppi (get-in organisaatio [:searchData :tyyppi])
      :kayntiosoite (get-in organisaatio [:kayntiosoite :osoite])
      :postitoimipaikka (get-in organisaatio [:kayntiosoite :postitoimipaikka])}))
 
@@ -40,7 +41,7 @@
                  size
                  create-hakutulokset
                  :query (oppilaitos-query keyword oids constraints)
-                 :_source ["oid", "nimi", "kayntiosoite.osoite", "kayntiosoite.postitoimipaikka", "searchData.oppilaitostyyppi"]
+                 :_source ["oid", "nimi", "kayntiosoite.osoite", "kayntiosoite.postitoimipaikka", "searchData.oppilaitostyyppi", "searchData.tyyppi"]
                  :sort [:_score, { :nimi.fi.keyword :asc} ]))
 
 (defn- oids-by-paikkakunta-query [paikkakunta]

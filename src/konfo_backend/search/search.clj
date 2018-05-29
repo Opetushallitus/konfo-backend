@@ -4,9 +4,9 @@
     [konfo-backend.search.oppilaitos :as oppilaitos]
     [clojure.tools.logging :as log]))
 
-(defn constraints [& { :keys [oppilaitostyyppi paikkakunta]}]
+(defn constraints [& { :keys [koulutustyyppi paikkakunta]}]
   (-> {}
-      (cond-> oppilaitostyyppi (assoc :oppilaitostyyppi oppilaitostyyppi))
+      (cond-> koulutustyyppi (assoc :koulutustyyppi koulutustyyppi))
       (cond-> paikkakunta (assoc :paikkakunta paikkakunta))))
 
 (defn search-koulutus
@@ -16,5 +16,5 @@
 
 (defn search-oppilaitos
   [keyword page size constraints]
-  (let [oids (koulutus/oid-search keyword)]
+  (let [oids (koulutus/oid-search keyword constraints)]
     (oppilaitos/text-search keyword page size oids constraints)))
