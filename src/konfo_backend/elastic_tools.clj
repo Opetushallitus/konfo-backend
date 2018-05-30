@@ -1,7 +1,8 @@
 (ns konfo-backend.elastic-tools
   (:require
     [clj-elasticsearch.elastic-connect :as e]
-    [clj-log.error-log :refer [with-error-logging]]))
+    [clj-log.error-log :refer [with-error-logging]]
+    [clojure.tools.logging :as log]))
 
 (defn index-name [name] name)
 
@@ -17,6 +18,7 @@
 
 (defn search
   [index keyword page size mapper & query-parts]
+  (log/debug query-parts)
   (with-error-logging
     (let [start (System/currentTimeMillis)
           size (if (pos? size) (if (< size 200) size 200) 0)

@@ -4,10 +4,12 @@
     [konfo-backend.search.oppilaitos :as oppilaitos]
     [clojure.tools.logging :as log]))
 
+(defn- not-blank [s] (not (clojure.string/blank? s)))
+
 (defn constraints [& { :keys [koulutustyyppi paikkakunta]}]
   (-> {}
-      (cond-> koulutustyyppi (assoc :koulutustyyppi koulutustyyppi))
-      (cond-> paikkakunta (assoc :paikkakunta paikkakunta))))
+      (cond-> (not-blank koulutustyyppi) (assoc :koulutustyyppi koulutustyyppi))
+      (cond-> (not-blank paikkakunta) (assoc :paikkakunta paikkakunta))))
 
 (defn search-koulutus
   [keyword page size constraints]
