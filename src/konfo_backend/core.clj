@@ -33,7 +33,7 @@
       (context "/search" []
         (GET "/koulutukset" [:as request]
                  :summary "Koulutukset search API"
-                 :query-params [keyword :- String
+                 :query-params [{keyword :- String nil}
                                 {page :- Long 1}
                                 {size :- Long 20}
                                 {koulutustyyppi :- String nil}
@@ -42,7 +42,7 @@
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
-          :query-params [keyword :- String
+          :query-params [{keyword :- String nil}
                          {page :- Long 1}
                          {size :- Long 20}
                          {koulutustyyppi :- String nil}

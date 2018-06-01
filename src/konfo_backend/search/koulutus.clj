@@ -34,42 +34,59 @@
     {:count count
      :result (map create-hakutulos result)}))
 
+(defn- match-keyword [keyword]
+  { :dis_max { :queries [(constant_score_query_multi_match keyword ["searchData.nimi.kieli_fi"] 10)
+                         (constant_score_query_multi_match keyword ["tutkintonimikes.nimi.kieli_fi" "koulutusala.nimi.kieli_fi" "tutkinto.nimi.kieli_fi"] 5)
+                         (constant_score_query_multi_match keyword ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"] 4)
+                         (constant_score_query_multi_match keyword ["searchData.organisaatio.nimi.kieli_fi"] 2)]}})
+
+(defn- match-koulutustyyppi [koulutustyyppi]
+  (constant_score_query_terms :searchData.tyyppi (clojure.string/split koulutustyyppi #",") 10))
+
+(defn- match-oids [oids]
+  (constant_score_query_terms :searchData.organisaatio.oid (vec oids) 10))
+
 (defn koulutus-query
-  ([keyword oids constraints]
-    { :bool {
-           :must { :dis_max { :queries [(constant_score_query_multi_match keyword ["searchData.nimi.kieli_fi"] 10)
-                                        (constant_score_query_multi_match keyword ["tutkintonimikes.nimi.kieli_fi" "koulutusala.nimi.kieli_fi" "tutkinto.nimi.kieli_fi"] 5)
-                                        (constant_score_query_multi_match keyword ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"] 4)
-                                        (constant_score_query_multi_match keyword ["searchData.organisaatio.nimi.kieli_fi"] 2)]}},
-           :filter (remove nil?
-                           [(if (not-empty oids) { :terms { :searchData.organisaatio.oid (vec oids) }})
-                            (if-let [koulutustyyppi (:koulutustyyppi constraints)] { :terms { :searchData.tyyppi (clojure.string/split koulutustyyppi #",") }})
-                            {:match { :tila "JULKAISTU" }}
-                            {:match { :searchData.haut.tila "JULKAISTU"}}]),
-           :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}}
-           }})
-  ([keyword]
-    (koulutus-query keyword nil nil)))
+  [keyword oids constraints]
+  (let [koulutustyyppi (:koulutustyyppi constraints)
+        keyword-search? (not (clojure.string/blank? keyword))
+        koulutustyyppi-search? (and koulutustyyppi (not keyword-search?))
+        oids? (not-empty oids)
+        oids-search? (and oids? (not keyword-search?) (not koulutustyyppi-search?))]
+
+        { :bool (merge (if keyword-search? {:must (match-keyword keyword)} {})
+                       (if koulutustyyppi-search? {:must (match-koulutustyyppi koulutustyyppi)} {})
+                       (if oids-search? {:must (match-oids oids)} {})
+                       { :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}} }
+                       { :filter (remove nil?
+                                         [(if (and oids? (not oids-search?)) { :terms { :searchData.organisaatio.oid (vec oids) }})
+                                          (if (and koulutustyyppi (not koulutustyyppi-search?)) { :terms { :searchData.tyyppi (clojure.string/split koulutustyyppi #",") }})
+                                          {:match { :tila "JULKAISTU" }}
+                                          {:match { :searchData.haut.tila "JULKAISTU"}}])})}))
 
 (defn oid-search
   [keyword constraints]
-  (koulutukset keyword
-               0
-               10000
-               (fn [x] (map #(get-in % [:_source :organisaatio :oid]) (:hits x)))
-               :query (koulutus-query keyword [] constraints)
-               :_source ["organisaatio.oid"]))
+  (if (and (not keyword) (not (:koulutustyyppi constraints)))
+    []
+    (koulutukset (query-perf-string "koulutus" keyword constraints)
+                 0
+                 10000
+                 (fn [x] (map #(get-in % [:_source :organisaatio :oid]) (:hits x)))
+                 :query (koulutus-query keyword [] constraints)
+                 :_source ["organisaatio.oid"])))
 
 (defn text-search
   [keyword page size oids constraints]
-  (koulutukset keyword
-               page
-               size
-               create-hakutulokset
-               :query (koulutus-query keyword oids constraints)
-               :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi",
-                         "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"]
-               :sort [{ :johtaaTutkintoon :asc },
-                      :_score,
-                      { :searchData.nimi.kieli_fi.keyword :asc},
-                      { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}]))
+  (if (and (:paikkakunta constraints) (empty? oids))
+    {:count 0 :result []}
+    (koulutukset (query-perf-string "koulutus" keyword constraints)
+                 page
+                 size
+                 create-hakutulokset
+                 :query (koulutus-query keyword oids constraints)
+                 :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi",
+                           "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"]
+                 :sort [{ :johtaaTutkintoon :asc },
+                        :_score,
+                        { :searchData.nimi.kieli_fi.keyword :asc},
+                        { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}])))

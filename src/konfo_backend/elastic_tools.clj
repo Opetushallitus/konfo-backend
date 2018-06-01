@@ -16,8 +16,12 @@
      :query          query
      :response_size  res-size}))
 
+(defn query-perf-string [type keyword constraints]
+  (println [type keyword (:koulutustyyppi constraints) (:paikkakunta constraints)])
+  (clojure.string/join "/" (remove clojure.string/blank? [type keyword (:koulutustyyppi constraints) (:paikkakunta constraints)])))
+
 (defn search
-  [index keyword page size mapper & query-parts]
+  [index perf-log-msg page size mapper & query-parts]
   (log/debug query-parts)
   (with-error-logging
     (let [start (System/currentTimeMillis)
@@ -31,7 +35,7 @@
                      query-parts)
                    :hits
                    (mapper))]
-      (insert-query-perf keyword (- (System/currentTimeMillis) start) start (count res))
+      (insert-query-perf perf-log-msg (- (System/currentTimeMillis) start) start (count res))
       res)))
 
 (defn multi_match [keyword fields]
@@ -51,7 +55,7 @@
                      :filter { :match { :tyypit { :query keyword }}},
                      :boost boost }})
 
-(defn constant_score_query_oids [oids boost]
+(defn constant_score_query_terms [key values boost]         ;:oid (vec oids)
   { :constant_score {
-                     :filter { :terms { :oid (vec oids) }},
+                     :filter { :terms { key values }},
                      :boost boost }})
