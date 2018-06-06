@@ -37,8 +37,12 @@
                                 {page :- Long 1}
                                 {size :- Long 20}
                                 {koulutustyyppi :- String nil}
-                                {paikkakunta :- String nil}]
-          (with-access-logging request (ok (search/search-koulutus keyword page size (search/constraints :koulutustyyppi koulutustyyppi :paikkakunta paikkakunta)))))
+                                {paikkakunta :- String nil}
+                                {kieli :- String nil}]
+          (with-access-logging request (ok (search/search-koulutus keyword page size
+                                                                   (search/constraints :koulutustyyppi koulutustyyppi
+                                                                                       :paikkakunta paikkakunta
+                                                                                       :kieli kieli)))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
@@ -46,8 +50,12 @@
                          {page :- Long 1}
                          {size :- Long 20}
                          {koulutustyyppi :- String nil}
-                         {paikkakunta :- String nil}]
-          (with-access-logging request (ok (search/search-oppilaitos keyword page size (search/constraints :koulutustyyppi koulutustyyppi :paikkakunta paikkakunta))))))
+                         {paikkakunta :- String nil}
+                         {kieli :- String nil}]
+          (with-access-logging request (ok (search/search-oppilaitos keyword page size
+                                                                     (search/constraints :koulutustyyppi koulutustyyppi
+                                                                                         :paikkakunta paikkakunta
+                                                                                         :kieli kieli))))))
 
       (GET "/oppilaitos/:oid" [:as request]
         :summary "Oppilaitos API"

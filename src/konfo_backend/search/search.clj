@@ -6,10 +6,11 @@
 
 (defn- not-blank [s] (not (clojure.string/blank? s)))
 
-(defn constraints [& { :keys [koulutustyyppi paikkakunta]}]
+(defn constraints [& { :keys [koulutustyyppi paikkakunta kieli]}]
   (-> {}
       (cond-> (not-blank koulutustyyppi) (assoc :koulutustyyppi koulutustyyppi))
-      (cond-> (not-blank paikkakunta) (assoc :paikkakunta paikkakunta))))
+      (cond-> (not-blank paikkakunta) (assoc :paikkakunta paikkakunta))
+      (cond-> (not-blank kieli) (assoc :kieli kieli))))
 
 (defn search-koulutus
   [keyword page size constraints]

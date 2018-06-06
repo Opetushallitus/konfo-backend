@@ -43,30 +43,37 @@
 (defn- match-koulutustyyppi [koulutustyyppi]
   (constant_score_query_terms :searchData.tyyppi (clojure.string/split koulutustyyppi #",") 10))
 
+(defn- match-opetuskieli [kieli]
+  (constant_score_query_terms :opetuskielis.uri (clojure.string/split kieli #",") 10))
+
 (defn- match-oids [oids]
   (constant_score_query_terms :searchData.organisaatio.oid (vec oids) 10))
 
 (defn koulutus-query
   [keyword oids constraints]
   (let [koulutustyyppi (:koulutustyyppi constraints)
+        kieli (:kieli constraints)
         keyword-search? (not (clojure.string/blank? keyword))
         koulutustyyppi-search? (and koulutustyyppi (not keyword-search?))
+        kieli-search? (and kieli (not keyword-search?) (not koulutustyyppi-search?))
         oids? (not-empty oids)
-        oids-search? (and oids? (not keyword-search?) (not koulutustyyppi-search?))]
+        oids-search? (and oids? (not keyword-search?) (not koulutustyyppi-search?) (not kieli-search?))]
 
         { :bool (merge (if keyword-search? {:must (match-keyword keyword)} {})
                        (if koulutustyyppi-search? {:must (match-koulutustyyppi koulutustyyppi)} {})
+                       (if kieli-search? {:must (match-opetuskieli kieli)} {})
                        (if oids-search? {:must (match-oids oids)} {})
                        { :must_not { :range { :searchData.opintopolunNayttaminenLoppuu { :format "yyyy-MM-dd" :lt "now"}}} }
                        { :filter (remove nil?
                                          [(if (and oids? (not oids-search?)) { :terms { :searchData.organisaatio.oid (vec oids) }})
+                                          (if (and kieli (not kieli-search?)) { :terms { :opetuskielis.uri (clojure.string/split kieli #",") }})
                                           (if (and koulutustyyppi (not koulutustyyppi-search?)) { :terms { :searchData.tyyppi (clojure.string/split koulutustyyppi #",") }})
                                           {:match { :tila "JULKAISTU" }}
                                           {:match { :searchData.haut.tila "JULKAISTU"}}])})}))
 
 (defn oid-search
   [keyword constraints]
-  (if (and (not keyword) (not (:koulutustyyppi constraints)))
+  (if (and (not keyword) (not (:koulutustyyppi constraints)) (not (:kieli constraints)))
     []
     (koulutukset (query-perf-string "koulutus" keyword constraints)
                  0

@@ -44,7 +44,7 @@
 
 (defn text-search
   [keyword page size oids constraints]
-  (if (and (:koulutustyyppi constraints) (empty? oids))
+  (if (and (or (:kieli constraints) (:koulutustyyppi constraints)) (empty? oids))
     {:count 0 :result []}
     (oppilaitokset (query-perf-string "organisaatio" keyword constraints)
                    page
