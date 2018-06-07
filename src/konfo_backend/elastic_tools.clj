@@ -59,3 +59,9 @@
   { :constant_score {
                      :filter { :terms { key values }},
                      :boost boost }})
+
+(defn insert [index data]
+  (e/create
+    (index-name index)
+    (index-name index)
+    (assoc data :created (System/currentTimeMillis))))

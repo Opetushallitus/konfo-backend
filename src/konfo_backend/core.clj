@@ -3,6 +3,7 @@
     [konfo-backend.koulutus :as koulutus]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.search.search :as search]
+    [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
@@ -65,7 +66,20 @@
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)}))))))
+        (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)})))
+
+      (GET "/palaute" [:as request]
+        :summary "GET palautteet"
+        :query-params [{after :- Long 0}]
+        (with-access-logging request (ok (palaute/get-palautteet after))))
+
+      (POST "/palaute" [:as request]
+        :summary "POST palaute"
+        :form-params [{arvosana :- Long nil}
+                      {palaute :- String ""}]
+        (with-access-logging request (if (and arvosana (<= 1 arvosana 5))
+                                       (ok {:result (palaute/post-palaute arvosana palaute)})
+                                       (bad-request "Bad request")))))))
 
 (def app
-  (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get]))
+  (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
