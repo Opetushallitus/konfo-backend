@@ -39,8 +39,9 @@
                                 {size :- Long 20}
                                 {koulutustyyppi :- String nil}
                                 {paikkakunta :- String nil}
-                                {kieli :- String nil}]
-          (with-access-logging request (ok (search/search-koulutus keyword page size
+                                {kieli :- String nil}
+                                {lng :- String "fi"}]
+          (with-access-logging request (ok (search/search-koulutus keyword lng page size
                                                                    (search/constraints :koulutustyyppi koulutustyyppi
                                                                                        :paikkakunta paikkakunta
                                                                                        :kieli kieli)))))
@@ -52,8 +53,9 @@
                          {size :- Long 20}
                          {koulutustyyppi :- String nil}
                          {paikkakunta :- String nil}
-                         {kieli :- String nil}]
-          (with-access-logging request (ok (search/search-oppilaitos keyword page size
+                         {kieli :- String nil}
+                         {lng :- String "fi"}]
+          (with-access-logging request (ok (search/search-oppilaitos keyword lng page size
                                                                      (search/constraints :koulutustyyppi koulutustyyppi
                                                                                          :paikkakunta paikkakunta
                                                                                          :kieli kieli))))))

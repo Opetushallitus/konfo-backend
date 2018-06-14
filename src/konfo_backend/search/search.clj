@@ -13,11 +13,11 @@
       (cond-> (not-blank kieli) (assoc :kieli kieli))))
 
 (defn search-koulutus
-  [keyword page size constraints]
-  (let [oids (oppilaitos/filter-organisaatio-oids constraints)]
-    (koulutus/text-search keyword page size oids constraints)))
+  [keyword lng page size constraints]
+  (let [oids (oppilaitos/filter-organisaatio-oids lng constraints)]
+    (koulutus/text-search keyword lng page size oids constraints)))
 
 (defn search-oppilaitos
-  [keyword page size constraints]
-  (let [oids (koulutus/oid-search keyword constraints)]
-    (oppilaitos/text-search keyword page size oids constraints)))
+  [keyword lng page size constraints]
+  (let [oids (koulutus/oid-search keyword lng constraints)]
+    (oppilaitos/text-search keyword lng page size oids constraints)))

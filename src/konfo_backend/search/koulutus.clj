@@ -34,11 +34,11 @@
     {:count count
      :result (map create-hakutulos result)}))
 
-(defn- match-keyword [keyword]
-  { :dis_max { :queries [(constant_score_query_multi_match keyword ["searchData.nimi.kieli_fi"] 10)
-                         (constant_score_query_multi_match keyword ["tutkintonimikes.nimi.kieli_fi" "koulutusala.nimi.kieli_fi" "tutkinto.nimi.kieli_fi"] 5)
-                         (constant_score_query_multi_match keyword ["aihees.nimi.kieli_fi" "searchData.oppiaineet.kieli_fi" "ammattinimikkeet.nimi.kieli_fi"] 4)
-                         (constant_score_query_multi_match keyword ["searchData.organisaatio.nimi.kieli_fi"] 2)]}})
+(defn- match-keyword [keyword lng]
+  { :dis_max { :queries [(constant_score_query_multi_match keyword [(str "searchData.nimi.kieli_" lng) ] 10)
+                         (constant_score_query_multi_match keyword [(str "tutkintonimikes.nimi.kieli_" lng) (str "koulutusala.nimi.kieli_" lng) (str "tutkinto.nimi.kieli_" lng)] 5)
+                         (constant_score_query_multi_match keyword [(str "aihees.nimi.kieli_" lng) (str "searchData.oppiaineet.kieli_" lng) (str "ammattinimikkeet.nimi.kieli_" lng)] 4)
+                         (constant_score_query_multi_match keyword [(str "searchData.organisaatio.nimi.kieli_" lng)] 2)]}})
 
 (defn- match-koulutustyyppi [koulutustyyppi]
   (constant_score_query_terms :searchData.tyyppi (clojure.string/split koulutustyyppi #",") 10))
@@ -50,7 +50,7 @@
   (constant_score_query_terms :searchData.organisaatio.oid (vec oids) 10))
 
 (defn koulutus-query
-  [keyword oids constraints]
+  [keyword lng oids constraints]
   (let [koulutustyyppi (:koulutustyyppi constraints)
         kieli (:kieli constraints)
         keyword-search? (not (clojure.string/blank? keyword))
@@ -59,7 +59,7 @@
         oids? (not-empty oids)
         oids-search? (and oids? (not keyword-search?) (not koulutustyyppi-search?) (not kieli-search?))]
 
-        { :bool (merge (if keyword-search? {:must (match-keyword keyword)} {})
+        { :bool (merge (if keyword-search? {:must (match-keyword keyword lng)} {})
                        (if koulutustyyppi-search? {:must (match-koulutustyyppi koulutustyyppi)} {})
                        (if kieli-search? {:must (match-opetuskieli kieli)} {})
                        (if oids-search? {:must (match-oids oids)} {})
@@ -72,28 +72,28 @@
                                           {:match { :searchData.haut.tila "JULKAISTU"}}])})}))
 
 (defn oid-search
-  [keyword constraints]
+  [keyword lng constraints]
   (if (and (not keyword) (not (:koulutustyyppi constraints)) (not (:kieli constraints)))
     []
     (koulutukset (query-perf-string "koulutus" keyword constraints)
                  0
                  10000
                  (fn [x] (map #(get-in % [:_source :organisaatio :oid]) (:hits x)))
-                 :query (koulutus-query keyword [] constraints)
+                 :query (koulutus-query keyword lng [] constraints)
                  :_source ["organisaatio.oid"])))
 
 (defn text-search
-  [keyword page size oids constraints]
+  [keyword lng page size oids constraints]
   (if (and (:paikkakunta constraints) (empty? oids))
     {:count 0 :result []}
     (koulutukset (query-perf-string "koulutus" keyword constraints)
                  page
                  size
                  create-hakutulokset
-                 :query (koulutus-query keyword oids constraints)
+                 :query (koulutus-query keyword lng oids constraints)
                  :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi",
                            "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"]
                  :sort [{ :johtaaTutkintoon :asc },
                         :_score,
-                        { :searchData.nimi.kieli_fi.keyword :asc},
-                        { :searchData.organisaatio.nimi.kieli_fi.keyword :asc}])))
+                        { (clojure.core/keyword (str "searchData.nimi.kieli_" lng ".keyword")) :asc},
+                        { (clojure.core/keyword (str "searchData.organisaatio.nimi.kieli_" lng ".keyword")) :asc}])))
