@@ -55,10 +55,12 @@
                          {paikkakunta :- String nil}
                          {kieli :- String nil}
                          {lng :- String "fi"}]
-          (with-access-logging request (ok (search/search-oppilaitos keyword lng page size
-                                                                     (search/constraints :koulutustyyppi koulutustyyppi
-                                                                                         :paikkakunta paikkakunta
-                                                                                         :kieli kieli))))))
+          (with-access-logging request (if (some #{lng} ["fi" "sv" "en"])
+                                         (ok (search/search-oppilaitos keyword lng page size
+                                                                       (search/constraints :koulutustyyppi koulutustyyppi
+                                                                                           :paikkakunta paikkakunta
+                                                                                           :kieli kieli)))
+                                         (bad-request "Invalid lng")))))
 
       (GET "/oppilaitos/:oid" [:as request]
         :summary "Oppilaitos API"
@@ -81,7 +83,7 @@
                       {palaute :- String ""}]
         (with-access-logging request (if (and arvosana (<= 1 arvosana 5))
                                        (ok {:result (palaute/post-palaute arvosana palaute)})
-                                       (bad-request "Bad request")))))))
+                                       (bad-request "Invalid arvosana")))))))
 
 (def app
   (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
