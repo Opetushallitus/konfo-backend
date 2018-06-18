@@ -2,7 +2,8 @@
   (:require
     [clj-elasticsearch.elastic-connect :refer [search get-document]]
     [clj-log.error-log :refer [with-error-logging]]
-    [konfo-backend.elastic-tools :refer [insert-query-perf index-name]]))
+    [konfo-backend.elastic-tools :refer [insert-query-perf index-name]]
+    [clojure.tools.logging :as log]))
 
 (defn get-by-id
   [index type id]
@@ -25,16 +26,35 @@
 (defn get-organisaatios-by-oids [oids]
   (parse-search-result (search (index-name "organisaatio") (index-name "organisaatio") :query (oid-query oids))))
 
+(defn add-haun-nimi-to-hakuaikas [haku]
+    (map #(assoc % :haku-nimi (:nimi haku)) (:hakuaikas haku)))
+
+(defn parse-hakuajat [haut]
+  (let [now (System/currentTimeMillis)
+        hakuajat (flatten (map #(add-haun-nimi-to-hakuaikas %) haut))
+        aktiiviset (filter #(and (> (:loppuPvm %) now) (< (:alkuPvm %) now )) hakuajat)
+        paattyneet (filter #(< (:loppuPvm %) now) hakuajat)
+        tulevat (filter #(> (:alkuPvm %) now) hakuajat)]
+    (log/info "kaikki:" hakuajat)
+    (log/info "akt:" aktiiviset)
+    (log/info "paat:" paattyneet)
+    (log/info "tuleva:" tulevat)
+    {:aktiiviset aktiiviset
+     :tulevat tulevat
+     :paattyneet paattyneet
+     :kaikki hakuajat}))
+
 (defn get-koulutus-tulos [oid]
   (with-error-logging
     (let [start (System/currentTimeMillis)
-          koulutus (#(assoc {} (:oid %) %) (get-koulutus oid))
+          koulutus-raw (get-koulutus oid)
           hakukohteet-list (get-hakukohteet-by-koulutus oid)
           hakukohteet (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec hakukohteet-list))
           haut-list (get-haut-by-oids (map :hakuOid (vals hakukohteet)))
           haut (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec haut-list))
-          organisaatiot-list (#(assoc {} (:oid %) %) (get-organisaatios-by-oids [(get-in koulutus [:organisaatio :oid])]))
+          organisaatiot-list (#(assoc {} (:oid %) %) (get-organisaatios-by-oids [(get-in koulutus-raw [:organisaatio :oid])]))
           organisaatiot (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec organisaatiot-list))
+          koulutus (#(assoc {} (:oid %) %) (assoc koulutus-raw :hakuajat-backend (parse-hakuajat haut-list)))
           res {:koulutus koulutus
                :haut haut
                :hakukohteet hakukohteet
