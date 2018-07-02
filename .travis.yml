@@ -1,5 +1,4 @@
 language: clojure
 
 script:
-  - lein test
   - lein uberjar
