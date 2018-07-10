@@ -9,10 +9,17 @@
   (-> (get-document (index-name "koulutusmoduuli") (index-name "koulutusmoduuli") oid)
       (:_source)))
 
+(defn parse-search-result [res] (map :_source (get-in res [:hits :hits])))
+
+(defn get-koulutukset-by-koulutusmoduuli-oid [koulutusmoduuli-oid]
+  (parse-search-result (search (index-name "koulutus") (index-name "koulutus") :query {:match {:komoOid koulutusmoduuli-oid}})))
+
 (defn get-koulutusmoduuli-tulos [oid]
   (with-error-logging
     (let [start (System/currentTimeMillis)
           koulutusmoduuli (#(assoc {} (:oid %) %) (get-by-id oid))
-          res {:koulutusmoduuli koulutusmoduuli}]
+          koulutukset (get-koulutukset-by-koulutusmoduuli-oid oid)
+          res {:koulutusmoduuli koulutusmoduuli
+               :koulutukset koulutukset}]
       (insert-query-perf (str "koulutusmoduuli: " oid) (- (System/currentTimeMillis) start) start (count res))
       res)))
