@@ -1,6 +1,7 @@
 (ns konfo-backend.core
   (:require
     [konfo-backend.koulutus :as koulutus]
+    [konfo-backend.koulutusmoduuli :as koulutusmoduuli]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.search.search :as search]
     [konfo-backend.palaute.palaute :as palaute]
@@ -9,7 +10,8 @@
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.util.http-response :refer :all]
-    [environ.core :refer [env]]))
+    [environ.core :refer [env]]
+    [clojure.tools.logging :as log]))
 
 (defn init []
   (if-let [elastic-url (:elastic-url config)]
@@ -33,15 +35,30 @@
 
       (context "/search" []
         (GET "/koulutukset" [:as request]
-                 :summary "Koulutukset search API"
-                 :query-params [{keyword :- String nil}
-                                {page :- Long 1}
-                                {size :- Long 20}
-                                {koulutustyyppi :- String nil}
-                                {paikkakunta :- String nil}
-                                {kieli :- String nil}
-                                {lng :- String "fi"}]
+          :summary "Koulutukset search API"
+          :query-params [{keyword :- String nil}
+                        {page :- Long 1}
+                        {size :- Long 20}
+                        {koulutustyyppi :- String nil}
+                        {paikkakunta :- String nil}
+                        {kieli :- String nil}
+                        {lng :- String "fi"}]
           (with-access-logging request (ok (search/search-koulutus keyword lng page size
+                                                                   (search/constraints :koulutustyyppi koulutustyyppi
+                                                                                       :paikkakunta paikkakunta
+                                                                                       :kieli kieli)))))
+
+        (GET "/koulutusmoduulit" [:as request]
+          :summary "Koulutusmoduulit search API"
+          :query-params [{keyword :- String nil}
+                         {page :- Long 1}
+                         {size :- Long 20}
+                         {koulutustyyppi :- String nil}
+                         {paikkakunta :- String nil}
+                         {kieli :- String nil}
+                         {lng :- String "fi"}]
+          (log/info "Koulutusmoduulit, params: " keyword page size koulutustyyppi paikkakunta kieli lng)
+          (with-access-logging request (ok (search/search-koulutusmoduuli keyword lng page size
                                                                    (search/constraints :koulutustyyppi koulutustyyppi
                                                                                        :paikkakunta paikkakunta
                                                                                        :kieli kieli)))))
@@ -71,6 +88,11 @@
         :summary "Koulutus API"
         :path-params [oid :- String]
         (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)})))
+
+      (GET "/koulutusmoduuli/:oid" [:as request]
+        :summary "Koulutusmoduuli API"
+        :path-params [oid :- String]
+        (with-access-logging request (ok {:result (koulutusmoduuli/get-koulutusmoduuli-tulos oid)})))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"

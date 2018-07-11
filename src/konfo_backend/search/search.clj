@@ -2,6 +2,7 @@
   (:require
     [konfo-backend.search.koulutus :as koulutus]
     [konfo-backend.search.oppilaitos :as oppilaitos]
+    [konfo-backend.search.koulutusmoduuli :as koulutusmoduuli]
     [clojure.tools.logging :as log]))
 
 (defn- not-blank [s] (not (clojure.string/blank? s)))
@@ -21,3 +22,8 @@
   [keyword lng page size constraints]
   (let [oids (koulutus/oid-search keyword lng constraints)]
     (oppilaitos/text-search keyword lng page size oids constraints)))
+
+(defn search-koulutusmoduuli
+  [keyword lng page size constraints]
+  (let [oids (koulutusmoduuli/oid-search keyword lng constraints)]
+    (koulutusmoduuli/text-search keyword lng page size oids constraints)))
