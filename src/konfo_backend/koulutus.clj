@@ -27,7 +27,7 @@
   (parse-search-result (search (index-name "organisaatio") (index-name "organisaatio") :query (oid-query oids))))
 
 (defn add-haun-nimi-to-hakuaikas [haku]
-    (map #(assoc % :haku-nimi (:nimi haku)) (:hakuaikas haku)))
+    (map #(assoc % :hakuNimi (:nimi haku)) (:hakuaikas haku)))
 
 (defn parse-hakuajat [haut]
   (let [now (System/currentTimeMillis)
@@ -35,10 +35,6 @@
         aktiiviset (filter #(and (> (:loppuPvm %) now) (< (:alkuPvm %) now )) hakuajat)
         paattyneet (filter #(< (:loppuPvm %) now) hakuajat)
         tulevat (filter #(> (:alkuPvm %) now) hakuajat)]
-    (log/info "kaikki:" hakuajat)
-    (log/info "akt:" aktiiviset)
-    (log/info "paat:" paattyneet)
-    (log/info "tuleva:" tulevat)
     {:aktiiviset aktiiviset
      :tulevat tulevat
      :paattyneet paattyneet
@@ -54,7 +50,7 @@
           haut (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec haut-list))
           organisaatiot-list (#(assoc {} (:oid %) %) (get-organisaatios-by-oids [(get-in koulutus-raw [:organisaatio :oid])]))
           organisaatiot (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec organisaatiot-list))
-          koulutus (#(assoc {} (:oid %) %) (assoc koulutus-raw :hakuajat-backend (parse-hakuajat haut-list)))
+          koulutus (#(assoc {} (:oid %) %) (assoc koulutus-raw :hakuajatFromBackend (parse-hakuajat haut-list)))
           res {:koulutus koulutus
                :haut haut
                :hakukohteet hakukohteet
