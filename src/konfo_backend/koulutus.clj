@@ -26,12 +26,12 @@
 (defn get-organisaatios-by-oids [oids]
   (parse-search-result (search (index-name "organisaatio") (index-name "organisaatio") :query (oid-query oids))))
 
-(defn add-haun-nimi-to-hakuaikas [haku]
-    (map #(assoc % :hakuNimi (:nimi haku)) (:hakuaikas haku)))
+(defn add-haun-nimi-and-oid-to-hakuaikas [haku]
+    (map #(assoc % :hakuNimi (:nimi haku) :hakuOid (:oid haku)) (:hakuaikas haku)))
 
 (defn parse-hakuajat [haut]
   (let [now (System/currentTimeMillis)
-        hakuajat (flatten (map #(add-haun-nimi-to-hakuaikas %) haut))
+        hakuajat (flatten (map #(add-haun-nimi-and-oid-to-hakuaikas %) haut))
         aktiiviset (filter #(and (> (:loppuPvm %) now) (< (:alkuPvm %) now )) hakuajat)
         paattyneet (filter #(< (:loppuPvm %) now) hakuajat)
         tulevat (filter #(> (:alkuPvm %) now) hakuajat)]
