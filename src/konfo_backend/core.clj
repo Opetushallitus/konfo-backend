@@ -86,7 +86,11 @@
       (GET "/toteutus/:oid" [:as request]
         :summary "Koulutuksen toteutus API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (toteutus/get-toteutus oid)})))
+        (with-access-logging request (if (not (nil? oid))
+                                       (if-let [res (toteutus/get-toteutus oid)]
+                                         (ok {:result res})
+                                         (not-found "Not found"))
+                                       (bad-request "OID missing"))))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
