@@ -22,4 +22,5 @@
           res {:koulutusmoduuli koulutusmoduuli
                :koulutukset koulutukset}]
       (insert-query-perf (str "koulutusmoduuli: " oid) (- (System/currentTimeMillis) start) start (count res))
-      res)))
+      (if (contains? (:koulutusmoduuli res) oid)
+        res))))

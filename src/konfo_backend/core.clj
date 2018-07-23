@@ -82,21 +82,23 @@
       (GET "/oppilaitos/:oid" [:as request]
         :summary "Oppilaitos API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (organisaatio/get-oppilaitos oid)})))
+        (with-access-logging request (if-let [res (organisaatio/get-oppilaitos oid)]
+                                       (ok {:result res})
+                                       (not-found "Not found"))))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
         :path-params [oid :- String]
-        (with-access-logging request (if (not (nil? oid))
-                                       (if-let [res (koulutus/get-koulutus-tulos oid)]
-                                         (ok {:result res})
-                                         (not-found "Not found"))
-                                       (bad-request "OID missing"))))
+        (with-access-logging request (if-let [res (koulutus/get-koulutus-tulos oid)]
+                                       (ok {:result res})
+                                       (not-found "Not found"))))
 
       (GET "/koulutusmoduuli/:oid" [:as request]
         :summary "Koulutusmoduuli API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (koulutusmoduuli/get-koulutusmoduuli-tulos oid)})))
+        (with-access-logging request (if-let [res (koulutusmoduuli/get-koulutusmoduuli-tulos oid)]
+                                       (ok {:result res})
+                                       (not-found "Not found"))))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"
