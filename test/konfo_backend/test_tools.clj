@@ -7,7 +7,7 @@
   (reset! embedded-elastic (-> (EmbeddedElastic/builder)
                                (.withElasticVersion "6.0.0")
                                (.withSetting PopularProperties/TRANSPORT_TCP_PORT 6666)
-                               (.withSetting PopularProperties/HTTP_PORT 9200)
+                               (.withSetting PopularProperties/HTTP_PORT 9900)
                                (.withSetting PopularProperties/CLUSTER_NAME "my_cluster")
                                (.build)))
   (.start @embedded-elastic))
@@ -22,5 +22,5 @@
 
 (defn init-elastic-test []
   (init-test-logging)
-  (intern 'clj-elasticsearch.elastic-utils 'elastic-host "http://localhost:9200")
+  (intern 'clj-elasticsearch.elastic-utils 'elastic-host "http://localhost:9900")
   (start-embedded-elasticsearch))
