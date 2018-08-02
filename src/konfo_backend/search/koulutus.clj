@@ -71,7 +71,7 @@
                                           {:match { :tila "JULKAISTU" }}
                                           {:match { :searchData.haut.tila "JULKAISTU"}}])})}))
 
-(defn oid-search
+(defn filter-organisaatio-oids
   [keyword lng constraints]
   (if (and (not keyword) (not (:koulutustyyppi constraints)) (not (:kieli constraints)))
     []
@@ -81,6 +81,17 @@
                  (fn [x] (map #(get-in % [:_source :organisaatio :oid]) (:hits x)))
                  :query (koulutus-query keyword lng [] constraints)
                  :_source ["organisaatio.oid"])))
+
+(defn filter-komo-oids
+  [keyword lng oids constraints]
+  (if (and (not keyword) (not (:koulutustyyppi constraints)) (not (:kieli constraints)))
+    []
+    (koulutukset (query-perf-string "koulutus" keyword constraints)
+                 0
+                 10000
+                 (fn [x] (map :_source (:hits x)))
+                 :query (koulutus-query keyword lng oids constraints)
+                 :_source ["searchData.haut.hakuaikas", "searchData.hakukohteet.hakuaika" "searchData.tyyppi", "komoOid", "searchData.nimi", "organisaatio", "aihees", "oid"])))
 
 (defn text-search
   [keyword lng page size oids constraints]
@@ -92,7 +103,7 @@
                  create-hakutulokset
                  :query (koulutus-query keyword lng oids constraints)
                  :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi",
-                           "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas"]
+                           "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas", "searchData.hakukohteet.hakuaika"]
                  :sort [{ :johtaaTutkintoon :asc },
                         :_score,
                         { (clojure.core/keyword (str "searchData.nimi.kieli_" lng ".keyword")) :asc},
