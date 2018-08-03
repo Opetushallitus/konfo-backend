@@ -34,8 +34,8 @@
         (with-access-logging request (ok "OK")))
 
       (context "/search" []
-        (GET "/koulutukset" [:as request]
-          :summary "Koulutukset search API"
+        (GET "/totetukset" [:as request]
+          :summary "Koulutusten toteutukset search API"
           :query-params [{keyword :- String nil}
                         {page :- Long 1}
                         {size :- Long 20}
@@ -43,13 +43,13 @@
                         {paikkakunta :- String nil}
                         {kieli :- String nil}
                         {lng :- String "fi"}]
-          (with-access-logging request (ok (search/search-koulutus keyword lng page size
+          (with-access-logging request (ok (search/search-toteutus keyword lng page size
                                                                    (search/constraints :koulutustyyppi koulutustyyppi
                                                                                        :paikkakunta paikkakunta
                                                                                        :kieli kieli)))))
 
-        (GET "/koulutusmoduulit" [:as request]
-          :summary "Koulutusmoduulit search API"
+        (GET "/koulutukset" [:as request]
+          :summary "Koulutus search API"
           :query-params [{keyword :- String nil}
                          {page :- Long 1}
                          {size :- Long 20}
@@ -57,8 +57,7 @@
                          {paikkakunta :- String nil}
                          {kieli :- String nil}
                          {lng :- String "fi"}]
-          (log/info "Koulutusmoduulit, params: " keyword page size koulutustyyppi paikkakunta kieli lng)
-          (with-access-logging request (ok (search/search-koulutusmoduuli keyword lng page size
+          (with-access-logging request (ok (search/search-koulutus keyword lng page size
                                                                    (search/constraints :koulutustyyppi koulutustyyppi
                                                                                        :paikkakunta paikkakunta
                                                                                        :kieli kieli)))))
@@ -84,13 +83,13 @@
         :path-params [oid :- String]
         (with-access-logging request (ok {:result (organisaatio/get-oppilaitos oid)})))
 
-      (GET "/koulutus/:oid" [:as request]
-        :summary "Koulutus API"
+      (GET "/toteutus/:oid" [:as request]
+        :summary "Koulutuksen toteutus API"
         :path-params [oid :- String]
         (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)})))
 
-      (GET "/koulutusmoduuli/:oid" [:as request]
-        :summary "Koulutusmoduuli API"
+      (GET "/koulutus/:oid" [:as request]
+        :summary "Koulutus API"
         :path-params [oid :- String]
         (with-access-logging request (ok {:result (koulutusmoduuli/get-koulutusmoduuli-tulos oid)})))
 
