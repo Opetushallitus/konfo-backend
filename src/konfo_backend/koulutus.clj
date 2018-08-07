@@ -31,9 +31,10 @@
 
 (defn parse-hakuajat [haut]
   (let [now (System/currentTimeMillis)
+        unknown-time 4102437600000 ;Year 2100, will use this for comparisons when hakuaika has no loppuPvm
         hakuajat (flatten (map #(add-haun-nimi-and-oid-to-hakuaikas %) haut))
-        aktiiviset (filter #(and (> (:loppuPvm %) now) (< (:alkuPvm %) now )) hakuajat)
-        paattyneet (filter #(< (:loppuPvm %) now) hakuajat)
+        aktiiviset (filter #(and (> (get % :loppuPvm unknown-time) now) (< (:alkuPvm %) now )) hakuajat)
+        paattyneet (filter #(< (get % :loppuPvm unknown-time) now) hakuajat)
         tulevat (filter #(> (:alkuPvm %) now) hakuajat)]
     {:aktiiviset aktiiviset
      :tulevat tulevat
