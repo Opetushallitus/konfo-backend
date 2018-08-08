@@ -1,7 +1,7 @@
 (ns konfo-backend.core
   (:require
+    [konfo-backend.toteutus :as toteutus]
     [konfo-backend.koulutus :as koulutus]
-    [konfo-backend.koulutusmoduuli :as koulutusmoduuli]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.search.search :as search]
     [konfo-backend.palaute.palaute :as palaute]
@@ -86,12 +86,12 @@
       (GET "/toteutus/:oid" [:as request]
         :summary "Koulutuksen toteutus API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (koulutus/get-koulutus-tulos oid)})))
+        (with-access-logging request (ok {:result (toteutus/get-toteutus oid)})))
 
       (GET "/koulutus/:oid" [:as request]
         :summary "Koulutus API"
         :path-params [oid :- String]
-        (with-access-logging request (ok {:result (koulutusmoduuli/get-koulutusmoduuli-tulos oid)})))
+        (with-access-logging request (ok {:result (koulutus/get-koulutus oid)})))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"

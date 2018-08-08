@@ -91,7 +91,7 @@
                  10000
                  (fn [x] (map :_source (:hits x)))
                  :query (koulutus-query keyword lng oids constraints)
-                 :_source ["searchData.haut.hakuaikas", "searchData.hakukohteet.hakuaika" "searchData.tyyppi", "komoOid", "searchData.nimi", "organisaatio", "aihees", "oid"])))
+                 :_source ["searchData.haut.hakuaikas", "searchData.hakukohteet.hakuaika", "searchData.tyyppi", "komoOid", "searchData.nimi", "organisaatio", "aihees", "oid"])))
 
 (defn text-search
   [keyword lng page size oids constraints]

@@ -25,6 +25,12 @@
           (assoc :haettavissa koulutus-haettavissa)
           (assoc :toteutusOid (:oid (first toteutukset))))))) ;TODO: Mitä oikeasti halutaan vertailuun?
 
+(defn- transform-meta [meta]
+  (-> {}
+      (assoc :kieli_fi (get-in meta [:kieli_fi :nimi]))
+      (assoc :kieli_sv (get-in meta [:kieli_sv :nimi]))
+      (assoc :kieli_en (get-in meta [:kieli_en :nimi]))))
+
 (defn- create-hakutulos [toteutukset-by-oid komohakutulos]
   (let [komo (:_source komohakutulos)
         score (:_score komohakutulos)
@@ -32,10 +38,15 @@
     (complete-koulutus (get toteutukset-by-oid oid)
                        {:score      score
                         :oid        oid
-                        :nimi       (get-in komo [:searchData :nimi])
+                        :nimi       (if (= "lk" (get-in komo [:searchData :tyyppi])) (transform-meta (get-in komo [:lukiolinja :meta])) (get-in komo [:searchData :nimi]))
                         :tila        (:tila komo)
                         :komotyyppi (:koulutusmoduuliTyyppi komo)
+                        :koulutusohjelma (get-in komo [:koulutusohjelma :nimi])
+                        :osaamisala (transform-meta (get-in komo [:osaamisala :meta]))
                         :tyyppi     (get-in komo [:searchData :tyyppi])})))
+
+
+
 
 (defn- create-hakutulokset [toteutukset-by-oid hakutulos]
   (let [create-result (partial create-hakutulos toteutukset-by-oid)
@@ -55,6 +66,6 @@
                         size
                         (partial create-hakutulokset toteutukset-by-oid)
                         :query { :bool { :must (match-oids oids) }}
-                        :_source ["searchData.nimi", "oid", "koulutusmoduuliTyyppi", "searchData.tyyppi", "tila"]
+                        :_source ["searchData.nimi", "oid", "koulutusmoduuliTyyppi", "searchData.tyyppi", "tila", "osaamisala", "koulutusohjelma", "lukiolinja"]
                         :sort [:_score,
                                { (clojure.core/keyword (str "searchData.nimi.kieli_" lng ".keyword")) :asc}]))))
