@@ -91,7 +91,6 @@
                         {:match {:searchData.haut.tila "JULKAISTU"}}] }})
 
   (fact "Koulutus query with constraints"
-    (println (koulutus-query "hakusana" "fi" ["1.2.246.562.29.70576649506"] {:koulutustyyppi "ako" :kieli "fi" :paikkakunta "tampere"}))
     (koulutus-query "hakusana" "fi" ["1.2.246.562.29.70576649506"] {:koulutustyyppi "ako" :kieli "fi" :paikkakunta "tampere"})
         => {:bool {:must {:dis_max {:queries
                                     [{:constant_score
