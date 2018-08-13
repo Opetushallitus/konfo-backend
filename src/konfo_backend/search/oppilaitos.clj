@@ -27,7 +27,7 @@
                         (constant_score_query_multi_match keyword ["postiosoite.osoite" "kayntiosoite.osoite" "yhteystiedot.osoite"] 4)
                         (if (not-empty oids) (constant_score_query_terms :oid (vec oids) 2))])}})
 
-(defn- oppilaitos-query [keyword lng oids constraints]
+(defn oppilaitos-query [keyword lng oids constraints]
   (let [paikkakunta (:paikkakunta constraints)
         keyword-search? (not (clojure.string/blank? keyword))
         oids? (not-empty oids)
@@ -54,7 +54,7 @@
                    :_source ["oid", "nimi", "kayntiosoite.osoite", "kayntiosoite.postitoimipaikka", "searchData.oppilaitostyyppi", "searchData.tyyppi"]
                    :sort [:_score, { (clojure.core/keyword (str "nimi." lng ".keyword")) :asc} ])))
 
-(defn- oids-by-paikkakunta-query [paikkakunta]
+(defn oids-by-paikkakunta-query [paikkakunta]
   {:bool { :must (multi_match paikkakunta ["postiosoite.postitoimipaikka" "kayntiosoite.postitoimipaikka" "yhteystiedot.postitoimipaikka"])
            :must_not {:range {:lakkautusPvm {:format "yyyy-MM-dd" :lt "now"}}}}})
 

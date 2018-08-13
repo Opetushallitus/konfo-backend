@@ -1,4 +1,6 @@
 (ns konfo-backend.test-tools
+  (:require
+    [clj-elasticsearch.elastic-connect :as e])
   (:import (pl.allegro.tech.embeddedelasticsearch EmbeddedElastic PopularProperties)))
 
 (def embedded-elastic (atom nil))
@@ -24,3 +26,8 @@
   (init-test-logging)
   (intern 'clj-elasticsearch.elastic-utils 'elastic-host "http://localhost:9900")
   (start-embedded-elasticsearch))
+
+(defn refresh-and-wait
+  [indexname timeout]
+  (e/refresh-index indexname)
+  (Thread/sleep timeout))
