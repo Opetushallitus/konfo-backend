@@ -49,7 +49,7 @@
           hakukohteet (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec hakukohteet-list))
           haut-list (get-haut-by-oids (map :hakuOid (vals hakukohteet)))
           haut (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec haut-list))
-          organisaatiot-list (#(assoc {} (:oid %) %) (get-organisaatios-by-oids [(get-in koulutus-raw [:organisaatio :oid])]))
+          organisaatiot-list (get-organisaatios-by-oids [(get-in koulutus-raw [:organisaatio :oid])])
           organisaatiot (reduce-kv (fn [m k v] (assoc m (:oid v) v)) {} (vec organisaatiot-list))
           koulutus (#(assoc {} (:oid %) %) (assoc koulutus-raw :hakuajatFromBackend (parse-hakuajat haut-list)))
           res {:koulutus koulutus
