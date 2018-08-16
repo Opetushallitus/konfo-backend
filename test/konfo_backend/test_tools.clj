@@ -9,7 +9,6 @@
 (defn start-embedded-elasticsearch [port]
   (reset! embedded-elastic (-> (EmbeddedElastic/builder)
                                (.withElasticVersion "6.0.0")
-                               (.withSetting PopularProperties/TRANSPORT_TCP_PORT 6666)
                                (.withSetting PopularProperties/HTTP_PORT port)
                                (.withSetting PopularProperties/CLUSTER_NAME "my_cluster")
                                (.build)))
