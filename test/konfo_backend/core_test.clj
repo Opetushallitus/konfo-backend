@@ -24,7 +24,7 @@
             (let [response (app (mock/request :get "/konfo-backend/oppilaitos/123123"))]
               (:status response)
               => 404))
-      (fact "Koulutusmoduuli 404 search test"
-            (let [response (app (mock/request :get "/konfo-backend/koulutusmoduuli/12352"))]
+      (fact "Toteutus 404 search test"
+            (let [response (app (mock/request :get "/konfo-backend/toteutus/12352"))]
               (:status response)
               => 404)))

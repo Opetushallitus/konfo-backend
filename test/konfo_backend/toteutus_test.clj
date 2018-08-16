@@ -1,14 +1,13 @@
-(ns konfo-backend.koulutus-test
+(ns konfo-backend.toteutus-test
   (:require [clojure.test :refer :all]
             [konfo-backend.search.toteutus :refer :all]
             [midje.sweet :refer :all]
-            [konfo-backend.search.koulutus :refer :all]
-            [konfo-backend.koulutus :refer :all]
+            [konfo-backend.toteutus :refer :all]
             [clj-log.access-log]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(facts "Koulutus"
+(facts "Toteutus"
   (fact "haettavissa (hakukohde)"
     (haettavissa {:hakukohteet [{:hakuaika {:alkuPvm 1512220000000 :loppuPvm 1512220000001}}]})
         => nil?
