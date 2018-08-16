@@ -1,6 +1,6 @@
 (ns konfo-backend.koulutus-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.koulutus :refer :all]))
+            [konfo-backend.search.toteutus :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
