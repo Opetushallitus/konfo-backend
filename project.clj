@@ -32,7 +32,13 @@
   :target-path "target/%s"
   :plugins [[lein-ring "0.12.4"]
             [lein-environ "1.1.0"]]
-  :profiles {:test {:dependencies [[ring/ring-mock "0.3.2"]]}
+  :profiles {:dev {:dependencies [[midje "1.8.3"]]
+                   :plugins [[lein-midje "3.2"]
+                             [lein-cloverage "1.0.11" :exclusions [org.clojure/clojure]]]}
+             :test {:dependencies [[ring/ring-mock "0.3.2"]
+                                   [pl.allegro.tech/embedded-elasticsearch "2.4.2"]]}
              :uberjar {:ring {:port 8080}}}
   :aliases {"run" ["ring" "server" "3006"]
-            "uberjar" ["do" "clean" ["ring" "uberjar"]]})
+            "uberjar" ["do" "clean" ["ring" "uberjar"]]
+            "test" ["with-profile" "+test" "midje"]
+            "cloverage" ["with-profile" "+test" "cloverage" "--runner" ":midje"]})

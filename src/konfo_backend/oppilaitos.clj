@@ -19,4 +19,5 @@
               :metadata (:metadata raw-result)
               :xxxfordebug raw-result }]
     (insert-query-perf (str "organisaatio: " oid) (- (System/currentTimeMillis) start) start (count res))
-    res))
+    (if (not (nil? raw-result))
+      res)))

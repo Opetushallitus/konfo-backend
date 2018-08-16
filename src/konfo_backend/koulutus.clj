@@ -57,4 +57,5 @@
                :hakukohteet hakukohteet
                :organisaatiot organisaatiot}]
       (insert-query-perf (str "koulutus: " oid) (- (System/currentTimeMillis) start) start (count res))
-      res)))
+      (if (contains? (:koulutus res) oid)
+        res))))
