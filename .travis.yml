@@ -18,12 +18,10 @@ install:
 
 script:
   - lein uberjar
-  - ls -la
-  - find .
 
-  #- mv target/konfo-ui-*.jar $DOCKER_BUILD_DIR/artifact/konfo-ui.jar
-  #- cp -vr src/main/resources/* $DOCKER_BUILD_DIR/config/
+  - mv target/uberjar/konfo-backend-*.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
+  - cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
 
-  #- export BASE_IMAGE="base-legacy:0.1"
-  #- ./ci-tools/common/pull-image.sh
-  #- ./ci-tools/build/build-fatjar.sh konfo-ui
+  - export BASE_IMAGE="base-legacy:0.1"
+  - ./ci-tools/common/pull-image.sh
+  - ./ci-tools/build/build-fatjar.sh konfo-backend
