@@ -19,7 +19,7 @@ install:
 script:
   - lein uberjar
 
-  - mv target/uberjar/konfo-backend-*.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
+  - mv target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
   - cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
 
   - export BASE_IMAGE="base-legacy:0.1"
