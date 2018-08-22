@@ -3,7 +3,7 @@
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.core :refer :all]
             [ring.mock.request :as mock]
-            [konfo-backend.test-tools :as tools]))
+            [clj-test-utils.elasticsearch-mock-utils :as utils]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -14,8 +14,8 @@
           (:status response)
              => 200))
 (against-background
-      [(before :contents (tools/init-elastic-test))
-       (after :contents (tools/stop-elastic-test))]
+      [(before :contents (utils/init-elastic-test))
+       (after :contents (utils/stop-elastic-test))]
       (fact "Koulutus 404 search test"
         (let [response (app (mock/request :get "/konfo-backend/koulutus/12323"))]
           (:status response)

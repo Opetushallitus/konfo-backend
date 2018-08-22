@@ -3,10 +3,11 @@
             [midje.sweet :refer :all]
             [konfo-backend.palaute.palaute :refer :all]
             [clj-log.access-log]
-            [konfo-backend.test-tools :as tools]))
+            [konfo-backend.test-tools :as tools]
+            [clj-test-utils.elasticsearch-mock-utils :as utils]))
 
-(against-background [(before :contents (tools/init-elastic-test))
-                     (after :contents (tools/stop-elastic-test))]
+(against-background [(before :contents (utils/init-elastic-test))
+                     (after :contents (utils/stop-elastic-test))]
   (facts "Palaute"
          (fact "post-palaute ja get-palautteet"
                (post-palaute 1 "testi palaute1")
