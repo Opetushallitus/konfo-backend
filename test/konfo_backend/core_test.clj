@@ -2,11 +2,26 @@
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.core :refer :all]
-            [ring.mock.request :as mock]))
+            [ring.mock.request :as mock]
+            [clj-test-utils.elasticsearch-mock-utils :as utils]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(deftest healthcheck-test
+(use-fixtures :once utils/mock-embedded-elasticsearch-fixture)
+
+(deftest core-test
   (testing "Healthcheck API test"
     (let [response (app (mock/request :get "/konfo-backend/healthcheck"))]
-      (is (= 200 (:status response))))))
+      (is (= (:status response) 200))))
+
+  (testing "Koulutus 404 search test"
+    (let [response (app (mock/request :get "/konfo-backend/koulutus/12323"))]
+      (is (= (:status response) 404))))
+
+  (testing "Oppilaitos 404 search test"
+    (let [response (app (mock/request :get "/konfo-backend/oppilaitos/123123"))]
+      (is (= (:status response) 404))))
+
+  (testing "Toteutus 404 search test"
+    (let [response (app (mock/request :get "/konfo-backend/toteutus/12352"))]
+      (is (= (:status response) 404)))))

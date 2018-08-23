@@ -12,6 +12,7 @@
                  [ring-cors "0.1.11"]
                  ; Logging
                  [oph/clj-log "0.1.0-SNAPSHOT"]
+                 [oph/clj-test-utils "0.1.0-SNAPSHOT"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.apache.logging.log4j/log4j-api "2.9.0"]
                  [org.apache.logging.log4j/log4j-core "2.9.0"]
@@ -32,7 +33,10 @@
   :target-path "target/%s"
   :plugins [[lein-ring "0.12.4"]
             [lein-environ "1.1.0"]]
-  :profiles {:test {:dependencies [[ring/ring-mock "0.3.2"]]}
+  :profiles {:dev {:plugins [[lein-cloverage "1.0.11" :exclusions [org.clojure/clojure]]]}
+             :test {:dependencies [[ring/ring-mock "0.3.2"]]}
              :uberjar {:ring {:port 8080}}}
   :aliases {"run" ["ring" "server" "3006"]
-            "uberjar" ["do" "clean" ["ring" "uberjar"]]})
+            "uberjar" ["do" "clean" ["ring" "uberjar"]]
+            "test" ["with-profile" "+test" "test"]
+            "cloverage" ["with-profile" "+test" "cloverage"]})
