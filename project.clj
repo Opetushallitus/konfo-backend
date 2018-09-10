@@ -35,8 +35,10 @@
             [lein-environ "1.1.0"]]
   :profiles {:dev {:plugins [[lein-cloverage "1.0.11" :exclusions [org.clojure/clojure]]]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]]}
+             :ci-test {:dependencies [[ring/ring-mock "0.3.2"]] :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:ring {:port 8080}}}
   :aliases {"run" ["ring" "server" "3006"]
             "uberjar" ["do" "clean" ["ring" "uberjar"]]
             "test" ["with-profile" "+test" "test"]
+            "ci-test" ["with-profile" "+ci-test" "test"]
             "cloverage" ["with-profile" "+test" "cloverage"]})

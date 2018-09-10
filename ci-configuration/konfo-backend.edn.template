@@ -1,0 +1,4 @@
+{
+    :elastic-url "{{konfo_backend_elastic_url}}"
+    :elastic-timeout 120000
+}

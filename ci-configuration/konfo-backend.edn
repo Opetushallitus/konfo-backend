@@ -1,0 +1,4 @@
+{
+    :elastic-url "http://foo.org:9200"
+    :elastic-timeout 120000
+}
