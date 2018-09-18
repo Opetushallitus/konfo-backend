@@ -30,3 +30,5 @@ script:
 deploy:
   provider: script
   script: ./ci-tools/build/upload-image.sh konfo-backend
+  on:
+    all_branches: true
