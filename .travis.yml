@@ -5,6 +5,10 @@ jdk:
 services:
   - docker
 
+cache:
+  directories:
+  - $HOME/.m2
+
 env:
   global:
     # AWS_ACCESS_KEY_ID
