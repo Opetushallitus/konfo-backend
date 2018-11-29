@@ -34,7 +34,7 @@
         (with-access-logging request (ok "OK")))
 
       (context "/search" []
-        (GET "/totetukset" [:as request]
+        (GET "/toteutukset" [:as request]
           :summary "Koulutusten toteutukset search API"
           :query-params [{keyword :- String nil}
                         {page :- Long 1}
