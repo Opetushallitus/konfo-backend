@@ -19,6 +19,7 @@
         score (:_score koulutushakutulos)]
     {:score score
      :oid (:oid koulutus)
+     :koulutusOid (:komoOid koulutus)
      :nimi (get-in koulutus [:searchData :nimi])
      :tarjoaja (get-in koulutus [:organisaatio :nimi])
      :avoin (:isAvoimenYliopistonKoulutus koulutus)
@@ -102,7 +103,7 @@
                  size
                  create-hakutulokset
                  :query (koulutus-query keyword lng oids constraints)
-                 :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi",
+                 :_source ["oid", "koulutustyyppi", "organisaatio", "isAvoimenYliopistonKoulutus", "searchData.tyyppi", "komoOid",
                            "johtaaTutkintoon", "aihees.nimi", "searchData.nimi", "searchData.haut.hakuaikas", "searchData.hakukohteet.hakuaika"]
                  :sort [{ :johtaaTutkintoon :asc },
                         :_score,
