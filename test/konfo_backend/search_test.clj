@@ -1,6 +1,6 @@
 (ns konfo-backend.search-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.search :refer :all]))
+            [konfo-backend.old-search.search :refer :all]))
 
 (deftest search-test
   (testing "Search tools"

@@ -6,6 +6,12 @@
 
 (defn index-name [name] name)
 
+(defn get-source
+  [index id]
+  (let [result (e/get-document (index-name index) (index-name index) id)]
+    (when (:found result)
+      (:_source result))))
+
 (defn insert-query-perf [query duration started res-size]
   (e/create
     (index-name "query_perf")
