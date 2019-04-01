@@ -1,3 +1,7 @@
+(require 'cemerick.pomegranate.aether)
+(cemerick.pomegranate.aether/register-wagon-factory!
+  "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
+
 (defproject konfo-backend "0.1.0-SNAPSHOT"
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
