@@ -1,4 +1,4 @@
-(ns konfo-backend.search.toteutus
+(ns konfo-backend.old-search.toteutus
   (:require
     [konfo-backend.elastic-tools :refer :all]))
 

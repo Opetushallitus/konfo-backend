@@ -1,7 +1,7 @@
-(ns konfo-backend.search.koulutus
+(ns konfo-backend.old-search.koulutus
   (:require
     [konfo-backend.elastic-tools :refer :all]
-    [konfo-backend.search.toteutus :refer [haettavissa]]
+    [konfo-backend.old-search.toteutus :refer [haettavissa]]
     [clojure.tools.logging :as log]))
 
 (def koulutusmoduulit (partial search "koulutusmoduuli"))

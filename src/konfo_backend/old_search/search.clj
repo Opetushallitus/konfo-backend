@@ -1,8 +1,8 @@
-(ns konfo-backend.search.search
+(ns konfo-backend.old-search.search
   (:require
-    [konfo-backend.search.toteutus :as toteutus]
-    [konfo-backend.search.oppilaitos :as oppilaitos]
-    [konfo-backend.search.koulutus :as koulutus]
+    [konfo-backend.old-search.toteutus :as toteutus]
+    [konfo-backend.old-search.oppilaitos :as oppilaitos]
+    [konfo-backend.old-search.koulutus :as koulutus]
     [clojure.tools.logging :as log]))
 
 (defn- not-blank [s] (not (clojure.string/blank? s)))

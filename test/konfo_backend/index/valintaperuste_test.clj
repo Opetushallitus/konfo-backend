@@ -1,0 +1,35 @@
+(ns konfo-backend.index.valintaperuste-test
+  (:require [clojure.test :refer :all]
+            [clj-test-utils.elasticsearch-mock-utils :as utils]
+            [konfo-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
+            [konfo-indeksoija-service.fixture.external-services :as mocks]
+            [konfo-backend.test-tools :refer :all]
+            [clj-log.access-log]))
+
+(intern 'clj-log.access-log 'service "konfo-backend")
+
+(use-fixtures :each utils/mock-embedded-elasticsearch-fixture fixture/mock-indexing-fixture)
+
+(defn valintaperuste-url
+  [id]
+  (str "/konfo-backend/valintaperuste/" id))
+
+(deftest valintaperuste-test
+
+  (let [valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
+        valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"
+        valintaperusteId3 "45d2ae02-9a5f-42ef-8148-47d077379299"]
+
+    (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
+    (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
+
+    (fixture/index-oids-without-related-indices {:valintaperusteet [valintaperusteId1 valintaperusteId2]})
+
+    (testing "Get valintaperuste"
+      (testing "ok"
+        (let [response (get-ok (valintaperuste-url valintaperusteId1))]
+          (is (= valintaperusteId1 (:id response)))))
+      (testing "not found"
+        (get-not-found (valintaperuste-url valintaperusteId3)))
+      (testing "not julkaistu"
+        (get-not-found (valintaperuste-url valintaperusteId2))))))

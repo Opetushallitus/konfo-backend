@@ -1,9 +1,12 @@
 (ns konfo-backend.core
   (:require
-    [konfo-backend.toteutus :as toteutus]
-    [konfo-backend.koulutus :as koulutus]
+    [konfo-backend.index.toteutus :as toteutus]
+    [konfo-backend.index.koulutus :as koulutus]
+    [konfo-backend.index.haku :as haku]
+    [konfo-backend.index.hakukohde :as hakukohde]
+    [konfo-backend.index.valintaperuste :as valintaperuste]
     [konfo-backend.oppilaitos :as organisaatio]
-    [konfo-backend.search.search :as search]
+    [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
@@ -25,29 +28,69 @@
     {:swagger {:ui   "/konfo-backend"
                :spec "/konfo-backend/swagger.json"
                :data {:info {:title       "Konfo-backend"
-                             :description "Backend for Konfo koulutusinformaatio UI."}}}
-     ;;:exceptions {:handlers {:compojure.api.exception/default logging/error-handler*}}
-     }
-    (context "/konfo-backend" []
+                             :description "Backend for Konfo koulutusinformaatio UI."}}}}
+    (context "/konfo-backend"
+      []
+
       (GET "/healthcheck" [:as request]
         :summary "Healthcheck API"
         (with-access-logging request (ok "OK")))
 
-      (context "/search" []
-        (GET "/toteutukset" [:as request]
-          :summary "Koulutusten toteutukset search API"
-          :query-params [{keyword :- String nil}
-                        {page :- Long 1}
-                        {size :- Long 20}
-                        {koulutustyyppi :- String nil}
-                        {paikkakunta :- String nil}
-                        {kieli :- String nil}
-                        {lng :- String "fi"}]
-          (with-access-logging request (ok (search/search-toteutus keyword lng page size
-                                                                   (search/constraints :koulutustyyppi koulutustyyppi
-                                                                                       :paikkakunta paikkakunta
-                                                                                       :kieli kieli)))))
+      (context "/koulutus"
+        []
+        (GET "/:oid" [:as request]
+          :summary "Hae koulutus oidilla"
+          :path-params [oid :- String]
+          (with-access-logging request (if-let [result (koulutus/get oid)]
+                                         (ok result)
+                                         (not-found "Not found")))))
 
+      (context "/toteutus"
+        []
+        (GET "/:oid" [:as request]
+          :summary "Hae toteutus oidilla"
+          :path-params [oid :- String]
+          (with-access-logging request (if-let [result (toteutus/get oid)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/haku"
+        []
+        (GET "/:oid" [:as request]
+          :summary "Hae haku oidilla"
+          :path-params [oid :- String]
+          (with-access-logging request (if-let [result (haku/get oid)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/hakukohde"
+        []
+        (GET "/:oid" [:as request]
+          :summary "Hae hakukohde oidilla"
+          :path-params [oid :- String]
+          (with-access-logging request (if-let [result (hakukohde/get oid)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/valintaperuste"
+        []
+        (GET "/:id" [:as request]
+          :summary "Hae valintaperuste id:llä"
+          :path-params [id :- String]
+          (with-access-logging request (if-let [result (valintaperuste/get id)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/oppilaitos"
+        []
+        (GET "/:oid" [:as request]
+                 :summary "Oppilaitos API"
+                 :path-params [oid :- String]
+                 (with-access-logging request (if-let [res (organisaatio/get-oppilaitos oid)]
+                                                (ok {:result res})
+                                                (not-found "Not found")))))
+
+      (context "/search" []
         (GET "/koulutukset" [:as request]
           :summary "Koulutus search API"
           :query-params [{keyword :- String nil}
@@ -57,8 +100,8 @@
                          {paikkakunta :- String nil}
                          {kieli :- String nil}
                          {lng :- String "fi"}]
-          (with-access-logging request (ok (search/search-koulutus keyword lng page size
-                                                                   (search/constraints :koulutustyyppi koulutustyyppi
+          (with-access-logging request (ok (old-search/search-koulutus keyword lng page size
+                                                                   (old-search/constraints :koulutustyyppi koulutustyyppi
                                                                                        :paikkakunta paikkakunta
                                                                                        :kieli kieli)))))
 
@@ -72,34 +115,11 @@
                          {kieli :- String nil}
                          {lng :- String "fi"}]
           (with-access-logging request (if (some #{lng} ["fi" "sv" "en"])
-                                         (ok (search/search-oppilaitos keyword lng page size
-                                                                       (search/constraints :koulutustyyppi koulutustyyppi
+                                         (ok (old-search/search-oppilaitos keyword lng page size
+                                                                       (old-search/constraints :koulutustyyppi koulutustyyppi
                                                                                            :paikkakunta paikkakunta
                                                                                            :kieli kieli)))
                                          (bad-request "Invalid lng")))))
-
-      (GET "/oppilaitos/:oid" [:as request]
-        :summary "Oppilaitos API"
-        :path-params [oid :- String]
-        (with-access-logging request (if-let [res (organisaatio/get-oppilaitos oid)]
-                                       (ok {:result res})
-                                       (not-found "Not found"))))
-
-      (GET "/toteutus/:oid" [:as request]
-        :summary "Koulutuksen toteutus API"
-        :path-params [oid :- String]
-        (with-access-logging request (if (not (nil? oid))
-                                       (if-let [res (toteutus/get-toteutus oid)]
-                                         (ok {:result res})
-                                         (not-found "Not found"))
-                                       (bad-request "OID missing"))))
-
-      (GET "/koulutus/:oid" [:as request]
-        :summary "Koulutus API"
-        :path-params [oid :- String]
-        (with-access-logging request (if-let [res (koulutus/get-koulutus oid)]
-                                       (ok {:result res})
-                                       (not-found "Not found"))))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"

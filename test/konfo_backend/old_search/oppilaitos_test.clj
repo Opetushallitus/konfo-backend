@@ -1,6 +1,6 @@
-(ns konfo-backend.oppilaitos-test
+(ns konfo-backend.old-search.oppilaitos-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.oppilaitos :refer :all]
+            [konfo-backend.old-search.oppilaitos :refer :all]
             [clj-log.access-log]))
 
 (deftest oppilaitos-test

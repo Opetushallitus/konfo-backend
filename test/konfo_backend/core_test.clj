@@ -14,14 +14,6 @@
     (let [response (app (mock/request :get "/konfo-backend/healthcheck"))]
       (is (= (:status response) 200))))
 
-  (testing "Koulutus 404 search test"
-    (let [response (app (mock/request :get "/konfo-backend/koulutus/12323"))]
-      (is (= (:status response) 404))))
-
   (testing "Oppilaitos 404 search test"
     (let [response (app (mock/request :get "/konfo-backend/oppilaitos/123123"))]
-      (is (= (:status response) 404))))
-
-  (testing "Toteutus 404 search test"
-    (let [response (app (mock/request :get "/konfo-backend/toteutus/12352"))]
       (is (= (:status response) 404)))))

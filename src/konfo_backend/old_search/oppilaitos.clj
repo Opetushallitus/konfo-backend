@@ -1,4 +1,4 @@
-(ns konfo-backend.search.oppilaitos
+(ns konfo-backend.old-search.oppilaitos
   (:require
     [clj-log.error-log :refer [with-error-logging]]
     [konfo-backend.elastic-tools :refer :all]))
