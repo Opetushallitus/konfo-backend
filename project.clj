@@ -7,6 +7,7 @@
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
+                 [clj-time "0.15.0"]
                  ; Rest + server
                  [metosin/compojure-api "1.1.11"]
                  [compojure "1.6.1"]

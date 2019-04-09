@@ -26,6 +26,19 @@
   (println [type keyword (:koulutustyyppi constraints) (:paikkakunta constraints)])
   (clojure.string/join "/" (remove clojure.string/blank? [type keyword (:koulutustyyppi constraints) (:paikkakunta constraints)])))
 
+(defn kouta-search
+  [index page size mapper & query-parts]
+  (let [size (if (pos? size) (if (< size 200) size 200) 0)
+        from (if (pos? page) (* (- page 1) size) 0)]
+    (->> (apply e/search
+                (index-name index)
+                (index-name index)
+                :from from
+                :size size
+                query-parts)
+         :hits
+         (mapper))))
+
 (defn search
   [index perf-log-msg page size mapper & query-parts]
   (log/debug query-parts)
