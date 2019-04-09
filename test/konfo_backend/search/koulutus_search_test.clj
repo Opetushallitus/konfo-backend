@@ -20,7 +20,7 @@
   [& query-params]
   (map :oid (:koulutukset (get-ok (apply koulutus-search-url query-params)))))
 
-(comment deftest koulutus-search-test
+(deftest koulutus-search-test
 
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
