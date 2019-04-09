@@ -17,6 +17,12 @@
     (is (= (:status response) expected-status))
     response))
 
+(defn post-and-check-status
+  [url expected-status]
+  (let [response (app (mock/request :post url))]
+    (is (= (:status response) expected-status))
+    response))
+
 (defn get-ok
   [url]
   (->keywordized-response-body (get-and-check-status url 200)))
@@ -24,6 +30,10 @@
 (defn get-not-found
   [url]
   (get-and-check-status url 404))
+
+(defn get-bad-request
+  [url]
+  (get-and-check-status url 400))
 
 (defn debug-pretty
   [json]
@@ -33,3 +43,17 @@
   [indexname timeout]
   (e/refresh-index indexname)
   (Thread/sleep timeout))
+
+(defn post-ok
+  [url]
+  (->keywordized-response-body (post-and-check-status url 200)))
+
+(defn query-params->string
+  [& {:as query-params}]
+  (if (not (empty? query-params))
+    (str "?" (clojure.string/join "&" (map #(str (name (key %)) "=" (val %)) query-params)))
+    ""))
+
+(defn url-with-query-params
+  [url & query-params]
+  (str url (apply query-params->string query-params)))

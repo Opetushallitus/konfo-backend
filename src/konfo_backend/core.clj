@@ -5,6 +5,7 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
     [konfo-backend.index.valintaperuste :as valintaperuste]
+    [konfo-backend.search.koulutus-search :as koulutus-search]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
@@ -98,12 +99,21 @@
                          {size :- Long 20}
                          {koulutustyyppi :- String nil}
                          {paikkakunta :- String nil}
-                         {kieli :- String nil}
+                         {opetuskieli :- String nil}
+                         {vainHakuKaynnissa :- Boolean false}
                          {lng :- String "fi"}]
-          (with-access-logging request (ok (old-search/search-koulutus keyword lng page size
-                                                                   (old-search/constraints :koulutustyyppi koulutustyyppi
-                                                                                       :paikkakunta paikkakunta
-                                                                                       :kieli kieli)))))
+          (with-access-logging request
+            (if (and (nil? keyword) (nil? koulutustyyppi) (nil? paikkakunta) (nil? opetuskieli) (false? vainHakuKaynnissa))
+              (bad-request "Hakusana tai jokin rajain on pakollinen")
+              (ok (koulutus-search/search keyword
+                                          lng
+                                          page
+                                          size
+                                          :koulutustyyppi koulutustyyppi
+                                          :paikkakunta paikkakunta
+                                          :opetuskieli opetuskieli
+                                          :vainHakuKaynnissa vainHakuKaynnissa))
+              )))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
