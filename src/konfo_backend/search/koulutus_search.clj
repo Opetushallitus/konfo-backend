@@ -67,7 +67,7 @@
         haku-kaynnissa (match-vain-haku-kaynnissa (:vainHakuKaynnissa constraints) lng)
         koulutustyyppi (match-koulutustyyppi (:koulutustyyppi constraints) lng)
         opetuskieli    (match-opetuskieli (:opetuskieli constraints) lng)]
-    (remove nil? (conj [{:term {:toteutukset.kielivalinta (clojure.string/lower-case lng)}}] paikkakunta haku-kaynnissa koulutustyyppi opetuskieli))))
+    (vec (remove nil? (conj [{:term {:toteutukset.kielivalinta (clojure.string/lower-case lng)}}] paikkakunta haku-kaynnissa koulutustyyppi opetuskieli)))))
 
 (defn- ->keyword-and-constraints-query
   [keyword constraints lng]
@@ -104,7 +104,7 @@
   [constraints lng]
   (let [paikkakunta    (match-paikkakunta-koulutus (:paikkakunta constraints) lng)
         koulutustyyppi (match-koulutustyyppi-koulutus (:koulutustyyppi constraints) lng)]
-    (remove nil? (conj [{:term {:kielivalinta (clojure.string/lower-case lng)}}] paikkakunta koulutustyyppi))))
+    (vec (remove nil? (conj [{:term {:kielivalinta (clojure.string/lower-case lng)}}] paikkakunta koulutustyyppi)))))
 
 (defn- ->koulutus-bool-query
   [keyword constraints lng]
@@ -114,11 +114,11 @@
 
 (defn- wrap-with-koulutus-bool-query
   [query keyword constraints lng]
-  (if (or (not-blank? keyword) (not-blank? (:paikkakunta constraints)) (not-blank? (:koulutustyyppi constraints)))
+  (if (and (or (not-blank? keyword) (not-blank? (:paikkakunta constraints)) (not-blank? (:koulutustyyppi constraints))) (not (true? (:vainHakuKaynnissa constraints))))
     {:bool { :should [query, (constant-score-query (->koulutus-bool-query keyword constraints lng))]}}
     query))
 
-(defn- koulutus-query
+(defn koulutus-query
   [keyword lng constraints]
   (-> (->keyword-and-constraints-query keyword constraints lng)
       (wrap-with-function-score-query-weight-haku-kaynnissa lng)
