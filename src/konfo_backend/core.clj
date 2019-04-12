@@ -103,16 +103,18 @@
                          {vainHakuKaynnissa :- Boolean false}
                          {lng :- String "fi"}]
           (with-access-logging request
-            (if (and (nil? keyword) (nil? koulutustyyppi) (nil? paikkakunta) (nil? opetuskieli) (false? vainHakuKaynnissa))
-              (bad-request "Hakusana tai jokin rajain on pakollinen")
-              (ok (koulutus-search/search keyword
-                                          lng
-                                          page
-                                          size
-                                          :koulutustyyppi koulutustyyppi
-                                          :paikkakunta paikkakunta
-                                          :opetuskieli opetuskieli
-                                          :vainHakuKaynnissa vainHakuKaynnissa)))))
+            (cond
+              (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Invalid lng")
+              (and (nil? keyword) (nil? koulutustyyppi) (nil? paikkakunta) (nil? opetuskieli) (false? vainHakuKaynnissa)) (bad-request "Hakusana tai jokin rajain on pakollinen")
+              (and (not (nil? keyword)) (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
+              :else (ok (koulutus-search/search keyword
+                                                lng
+                                                page
+                                                size
+                                                :koulutustyyppi koulutustyyppi
+                                                :paikkakunta paikkakunta
+                                                :opetuskieli opetuskieli
+                                                :vainHakuKaynnissa vainHakuKaynnissa)))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"

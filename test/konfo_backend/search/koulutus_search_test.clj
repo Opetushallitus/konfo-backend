@@ -40,6 +40,12 @@
       (testing "with keyword and no constraints"
         (is (= [koulutusOid1 koulutusOid2] (search-and-get-oids :keyword "hauska"))))
 
+      (testing "with keyword of two letters"
+        (get-bad-request (koulutus-search-url :keyword "ha")))
+
+      (testing "with illegal language"
+        (get-bad-request (koulutus-search-url :keyword "hauska" :lng "de")))
+
       (testing "with constraints and no keywords"
         (is (= [koulutusOid3 koulutusOid2] (search-and-get-oids :koulutustyyppi "yo"))))
 
