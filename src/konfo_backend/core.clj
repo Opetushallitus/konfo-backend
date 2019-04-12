@@ -5,7 +5,7 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
     [konfo-backend.index.valintaperuste :as valintaperuste]
-    [konfo-backend.search.koulutus-search :as koulutus-search]
+    [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
@@ -112,8 +112,7 @@
                                           :koulutustyyppi koulutustyyppi
                                           :paikkakunta paikkakunta
                                           :opetuskieli opetuskieli
-                                          :vainHakuKaynnissa vainHakuKaynnissa))
-              )))
+                                          :vainHakuKaynnissa vainHakuKaynnissa)))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
