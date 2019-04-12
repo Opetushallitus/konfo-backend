@@ -1,8 +1,21 @@
 (ns konfo-backend.tools
   (:require
+    [cheshire.core :as cheshire]
+    [clojure.tools.logging :as log]
     [clj-time.format :as format]
     [clj-time.coerce :as coerce]
     [clj-time.core :as core]))
+
+(defonce debug-pretty true)
+
+(defn log-pretty
+  [json]
+  (when debug-pretty
+    (log/debug (cheshire/generate-string json {:pretty true}))))
+
+(defn not-blank?
+  [str]
+  (not (clojure.string/blank? str)))
 
 (defn julkaistu?
   [e]
@@ -12,23 +25,23 @@
   [coll]
   (filter julkaistu? coll))
 
-(def iso-local-date-time-formatter (format/formatter "yyyy-MM-dd'T'HH:mm"))
+(def kouta-date-time-formatter (format/formatter "yyyy-MM-dd'T'HH:mm"))
 
-(defn ->iso-local-date-time-string
+(defn ->kouta-date-time-string
   [date-time]
-  (format/unparse iso-local-date-time-formatter date-time))
+  (format/unparse kouta-date-time-formatter date-time))
 
-(defn iso-local-date-time-string->date-time
+(defn kouta-date-time-string->date-time
   [string]
-  (format/parse iso-local-date-time-formatter string))
+  (format/parse kouta-date-time-formatter string))
 
 (defn long->date-time
   [long]
   (coerce/from-long long))
 
-(defn current-time-as-iso-local-date-time-string
+(defn current-time-as-kouta-format
   []
-  (->iso-local-date-time-string (long->date-time (System/currentTimeMillis))))
+  (->kouta-date-time-string (long->date-time (System/currentTimeMillis))))
 
 (defn within?
   [gte time lt]
@@ -36,7 +49,7 @@
 
 (defn hakuaika-kaynnissa?
   [hakuaika]
-  (let [gte (iso-local-date-time-string->date-time (:gte hakuaika))
-        lt  (iso-local-date-time-string->date-time (:lt hakuaika))]
+  (let [gte (kouta-date-time-string->date-time (or (:gte hakuaika) (:alkaa hakuaika)))
+        lt  (kouta-date-time-string->date-time (or (:lt hakuaika) (:paattyy hakuaika)))]
     (within? gte (long->date-time (System/currentTimeMillis)) lt)))
 
