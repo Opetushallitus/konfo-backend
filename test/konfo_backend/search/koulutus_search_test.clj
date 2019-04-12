@@ -34,7 +34,7 @@
     (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid1 :tila "julkaistu")
     (fixture/add-toteutus-mock "1.2.246.562.17.000003" koulutusOid3 :tila "julkaistu")
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3]} 1500)
 
     (testing "Searching koulutukset with and without toteutukset"
       (testing "with keyword and no constraints"
@@ -70,7 +70,7 @@
     (fixture/add-haku-mock "1.2.246.562.20.00001" :hakuaikaAlkaa "2019-04-04T12:00" :hakuaikaPaattyy "2100-04-04T12:00")
     (fixture/add-hakukohde-mock "1.2.246.562.29.00001" "1.2.246.562.17.000002" "1.2.246.562.20.00001" :kaytetaanHaunAikataulua "true")
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4]} 1500)
 
     (testing "Searching koulutukset, filter with"
       (testing "paikkakunta constraint"
@@ -118,7 +118,7 @@
     (fixture/add-hakukohde-mock "1.2.246.562.29.00003" "1.2.246.562.17.000003" "1.2.246.562.20.00001" :kaytetaanHaunAikataulua "true")
     (fixture/add-hakukohde-mock "1.2.246.562.29.00005" "1.2.246.562.17.000005" "1.2.246.562.20.00001" :kaytetaanHaunAikataulua "true")
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]} 1500)
 
     (testing "Koulutus search ordering"
       (is (= [koulutusOid3 koulutusOid1 koulutusOid2 koulutusOid5 koulutusOid4 koulutusOid6] (search-and-get-oids :keyword "aakkosissa"))))
@@ -153,7 +153,7 @@
     (fixture/add-toteutus-mock "1.2.246.562.17.000004" koulutusOid4 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "automaatioinsinööri"}]}))
     (fixture/add-toteutus-mock "1.2.246.562.17.000005" koulutusOid5 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :asiasanat [{:kieli "fi" :arvo "musiikkioppilaitokset"}]}))
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]} 1500)
 
     (testing "Searching with keyword"
       (testing "lääketiede <-> lääketieteen"
@@ -206,7 +206,7 @@
     (fixture/add-haku-mock "1.2.246.562.20.00001" :hakuaikaAlkaa "2019-04-04T12:00" :hakuaikaPaattyy "2100-04-04T12:00")
     (fixture/add-hakukohde-mock "1.2.246.562.29.00001" "1.2.246.562.17.000001" "1.2.246.562.20.00001" :kaytetaanHaunAikataulua "true")
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2]} 1500)
 
     (testing "koulutus search result"
       (is (= (get-ok (koulutus-search-url :keyword "hauska"))
