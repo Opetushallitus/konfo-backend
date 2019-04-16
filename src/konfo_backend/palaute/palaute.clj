@@ -1,6 +1,6 @@
 (ns konfo-backend.palaute.palaute
   (:require
-    [konfo-backend.elastic-tools :refer :all]))
+    [konfo-backend.elastic-tools :refer [search]]))
 
 (defn post-palaute
   [arvosana palaute]
@@ -24,11 +24,8 @@
 
 (defn get-palautteet
   [after]
-  (konfo-backend.elastic-tools/search "palaute"
-                                      (query-perf-string "palaute" (str after) {})
-                                      0
-                                      100000
-                                      create-palautteet
-                                      :query {:bool {:must {:range {:created {:gt after}}}}}
-                                      :_source ["arvosana" "palaute" "created"]
-                                      :sort [{:created :desc}]))
+  (search "palaute"
+          create-palautteet
+          :query {:bool {:must {:range {:created {:gt after}}}}}
+          :_source ["arvosana" "palaute" "created"]
+          :sort [{:created :desc}]))
