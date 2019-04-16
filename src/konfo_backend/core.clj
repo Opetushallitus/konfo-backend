@@ -5,6 +5,7 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
     [konfo-backend.index.valintaperuste :as valintaperuste]
+    [konfo-backend.index.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.old-search.search :as old-search]
@@ -79,6 +80,24 @@
           :summary "Hae valintaperuste id:llä"
           :path-params [id :- String]
           (with-access-logging request (if-let [result (valintaperuste/get id)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/kuvaus"
+        []
+        (GET "/:koulutuskoodi" [:as request]
+          :summary "Hae koulutuksen kuvaus ePerusteista koulutuskoodin perusteella"
+          :path-params [koulutuskoodi :- String]
+          (with-access-logging request (if-let [result (eperuste/get-by-koulutuskoodi koulutuskoodi)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/eperuste"
+        []
+        (GET "/:id" [:as request]
+          :summary "Hae eperuste id:llä"
+          :path-params [id :- String]
+          (with-access-logging request (if-let [result (eperuste/get id)]
                                          (ok result)
                                          (not-found "Not found")))))
 

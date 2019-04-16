@@ -3,8 +3,7 @@
     [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]
-    [konfo-backend.elastic-tools :refer [kouta-search]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]))
 
 (defonce source-fields
   ["oid",

@@ -5,11 +5,11 @@
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.koulutus.query :refer [create-query source-fields sort]]
     [konfo-backend.search.koulutus.response :refer [parse-response]]
-    [konfo-backend.elastic-tools :refer [kouta-search]]))
+    [konfo-backend.elastic-tools :refer [search-with-pagination]]))
 
 (defonce index "koulutus-kouta-search")
 
-(def koulutus-kouta-search (partial kouta-search index))
+(def koulutus-kouta-search (partial search-with-pagination index))
 
 (defn do-search?
   [keyword constraints]

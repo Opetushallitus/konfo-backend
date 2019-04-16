@@ -2,8 +2,7 @@
   (:require
     [konfo-backend.tools :refer [not-blank?]]
     [clojure.core :refer [keyword] :rename {keyword kw}]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]
-    [konfo-backend.elastic-tools :refer [kouta-search]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]))
 
 (defn paikkakunta?
   [constraints]
