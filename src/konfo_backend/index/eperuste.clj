@@ -1,6 +1,6 @@
 (ns konfo-backend.index.eperuste
   (:require
-    [konfo-backend.tools :refer [julkaistut julkaistu?]]
+    [konfo-backend.tools :refer [koodi-uri-no-version]]
     [konfo-backend.elastic-tools :refer [get-source search]]))
 
 (defonce index "eperuste")
@@ -22,10 +22,34 @@
        :kuvaus           (:kuvaus source)
        :id               (:id source)})))
 
-(defn get-by-koulutuskoodi
+(defn- kuvaukset-result-mapper
+  [result]
+
+  (defn- koulutus-result-mapper
+    [source koulutus]
+    {:nimi             (:nimi koulutus)
+     :koulutuskoodiUri (:koulutuskoodiUri koulutus)
+     :kuvaus           (:kuvaus source)
+     :id               (:id source)})
+
+  (defn- source-result-mapper
+    [source]
+    (vec (map #(koulutus-result-mapper source %) (:koulutukset source))))
+
+  (vec (apply concat (map #(source-result-mapper (:_source %)) (:hits result)))))
+
+(defn get-kuvaus-by-koulutuskoodi
   [koulutuskoodi-uri]
-  (let [koulutuskoodi (first (clojure.string/split koulutuskoodi-uri #"#"))]
+  (let [koulutuskoodi (koodi-uri-no-version koulutuskoodi-uri)]
     (eperuste-search (partial kuvaus-result-mapper koulutuskoodi)
                      :_source [:koulutukset.nimi, :koulutukset.koulutuskoodiUri :id, :kuvaus.fi :kuvaus.en :kuvaus.sv]
                      :query {:bool {:must {:term {:koulutukset.koulutuskoodiUri koulutuskoodi}},
+                                    :filter {:term {:tila "valmis"}}}})))
+
+(defn get-kuvaukset-by-koulutuskoodit
+  [koulutuskoodi-uris]
+  (let [koulutuskoodit (vec (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
+    (eperuste-search kuvaukset-result-mapper
+                     :_source [:koulutukset.nimi, :koulutukset.koulutuskoodiUri :id, :kuvaus.fi :kuvaus.en :kuvaus.sv]
+                     :query {:bool {:must {:terms {:koulutukset.koulutuskoodiUri koulutuskoodit}},
                                     :filter {:term {:tila "valmis"}}}})))

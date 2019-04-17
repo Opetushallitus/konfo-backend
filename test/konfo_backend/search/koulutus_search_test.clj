@@ -192,12 +192,29 @@
       (testing "insinööri <-> automaatioinsinööri"
         (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri")))))))
 
+(defonce mocked-search-response
+         {:total 2,
+          :hits [{:_source {:koulutukset [{:nimi {:fi "Ammattisukeltajan ammattitutkinto", :sv "Yrkesexamen för yrkesdykare",
+                                                  :en "Further vocational qualification for Commercial Divers"},
+                                           :koulutuskoodiUri "koulutus_371101"}],
+                            :id 3536456,
+                            :kuvaus {:fi "Ammattisukeltajan ammattitutkinnnon kuvaus fi"
+                                     :sv "Ammattisukeltajan ammattitutkinnnon kuvaus sv"}}},
+                 {:_source {:koulutukset [{:nimi {:fi "Ammattikalastajan ammattitutkinto", :sv "Yrkesexamen för yrkesdykare",
+                                                  :en "Further vocational qualification for Commercial Divers"},
+                                           :koulutuskoodiUri "koulutus_371102"}],
+                            :id 3536457,
+                            :kuvaus {:fi "Ammattikalastajan ammattitutkinnnon kuvaus fi"
+                                     :sv "Ammattikalastajan ammattitutkinnnon kuvaus sv"}}}]})
+
 (deftest koulutus-search-result
   (let [koulutusOid1 "1.2.246.562.13.000001"
-        koulutusOid2 "1.2.246.562.13.000002"]
+        koulutusOid2 "1.2.246.562.13.000002"
+        koulutusOid3 "1.2.246.562.13.000003"]
 
     (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Hauska koulutus 1")
     (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hauska koulutus 2")
+    (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hauska koulutus 3" :koulutusKoodiUri "koulutus_371102#2")
 
     (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo"
                                                                                                                            :ammattinimikkeet [{:kieli "fi" :arvo "kokki"}]
@@ -212,31 +229,47 @@
     (fixture/add-haku-mock "1.2.246.562.20.00001" :hakuaikaAlkaa "2019-04-04T12:00" :hakuaikaPaattyy "2100-04-04T12:00")
     (fixture/add-hakukohde-mock "1.2.246.562.29.00001" "1.2.246.562.17.000001" "1.2.246.562.20.00001" :kaytetaanHaunAikataulua "true")
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2]} 1500)
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3]} 1500)
 
-    (testing "koulutus search result"
-      (is (= (get-ok (koulutus-search-url :keyword "hauska"))
-             {:total_count 2
-              :koulutukset [
-                {:oid koulutusOid1
-                 :koulutus {:koodiUri "koulutus_371101#1",
-                            :nimi { :fi "koulutus_371101#1 nimi fi", :sv "koulutus_371101#1 nimi sv" } }
-                 :johtaaTutkintoon true
-                 :koulutustyyppi "yo"
-                 :nimi {:fi "Hauska koulutus 1 fi" :sv "Hauska koulutus 1 sv"}
-                 :hakuOnKaynnissa true
-                 :asiasanat [{:fi "pihvi"}, {:fi "letku"}]
-                 :ammattinimikkeet [{:fi "kokki"}, {:fi "palomies"}, {:sv "palomies sv"}]
-                 :ylemmanKorkeakoulututkinnonOsaamisalat [{:fi "televisiokokkaus"}]
-                 :alemmanKorkeakoulututkinnonOsaamisalat [{:fi "ravintolakokkaus"}, {:fi "sammuttelu" :sv "sammuttelu sv"}]},
-                {:oid koulutusOid2
-                 :koulutustyyppi "amm"
-                 :koulutus {:koodiUri "koulutus_371101#1",
-                            :nimi { :fi "koulutus_371101#1 nimi fi", :sv "koulutus_371101#1 nimi sv" } }
-                 :nimi {:fi "Hauska koulutus 2 fi" :sv "Hauska koulutus 2 sv"}
-                 :hakuOnKaynnissa false
-                 :johtaaTutkintoon true
-                 :asiasanat []
-                 :ammattinimikkeet []
-                 :ylemmanKorkeakoulututkinnonOsaamisalat []
-                 :alemmanKorkeakoulututkinnonOsaamisalat []}]})))))
+    (with-redefs [konfo-backend.index.eperuste/eperuste-search (fn [f & y] (f mocked-search-response))]
+      (testing "koulutus search result"
+        (is (= (get-ok (koulutus-search-url :keyword "hauska"))
+               {:total_count 3
+                :koulutukset [{:oid koulutusOid1
+                               :koulutus {:koodiUri "koulutus_371101#1",
+                                          :nimi { :fi "koulutus_371101#1 nimi fi", :sv "koulutus_371101#1 nimi sv" } }
+                               :johtaaTutkintoon true
+                               :koulutustyyppi "yo"
+                               :nimi {:fi "Hauska koulutus 1 fi" :sv "Hauska koulutus 1 sv"}
+                               :hakuOnKaynnissa true
+                               :asiasanat [{:fi "pihvi"}, {:fi "letku"}]
+                               :ammattinimikkeet [{:fi "kokki"}, {:fi "palomies"}, {:sv "palomies sv"}]
+                               :ammatillisenKoulutuksenKuvaus {}
+                               :ylemmanKorkeakoulututkinnonOsaamisalat [{:fi "televisiokokkaus"}]
+                               :alemmanKorkeakoulututkinnonOsaamisalat [{:fi "ravintolakokkaus"}, {:fi "sammuttelu" :sv "sammuttelu sv"}]},
+                              {:oid koulutusOid2
+                               :koulutustyyppi "amm"
+                               :koulutus {:koodiUri "koulutus_371101#1",
+                                          :nimi { :fi "koulutus_371101#1 nimi fi", :sv "koulutus_371101#1 nimi sv" } }
+                               :nimi {:fi "Hauska koulutus 2 fi" :sv "Hauska koulutus 2 sv"}
+                               :hakuOnKaynnissa false
+                               :johtaaTutkintoon true
+                               :asiasanat []
+                               :ammattinimikkeet []
+                               :ammatillisenKoulutuksenKuvaus {:fi "Ammattisukeltajan ammattitutkinnnon kuvaus fi"
+                                                               :sv "Ammattisukeltajan ammattitutkinnnon kuvaus sv"}
+                               :ylemmanKorkeakoulututkinnonOsaamisalat []
+                               :alemmanKorkeakoulututkinnonOsaamisalat []},
+                              {:oid koulutusOid3
+                               :koulutustyyppi "amm"
+                               :koulutus {:koodiUri "koulutus_371102#2",
+                                          :nimi { :fi "koulutus_371102#2 nimi fi", :sv "koulutus_371102#2 nimi sv" } }
+                               :nimi {:fi "Hauska koulutus 3 fi" :sv "Hauska koulutus 3 sv"}
+                               :hakuOnKaynnissa false
+                               :johtaaTutkintoon true
+                               :asiasanat []
+                               :ammattinimikkeet []
+                               :ammatillisenKoulutuksenKuvaus {:fi "Ammattikalastajan ammattitutkinnnon kuvaus fi"
+                                                               :sv "Ammattikalastajan ammattitutkinnnon kuvaus sv"}
+                               :ylemmanKorkeakoulututkinnonOsaamisalat []
+                               :alemmanKorkeakoulututkinnonOsaamisalat []}]}))))))
