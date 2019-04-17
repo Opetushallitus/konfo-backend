@@ -88,7 +88,7 @@
         (GET "/:koulutuskoodi" [:as request]
           :summary "Hae koulutuksen kuvaus ePerusteista koulutuskoodin perusteella"
           :path-params [koulutuskoodi :- String]
-          (with-access-logging request (if-let [result (eperuste/get-by-koulutuskoodi koulutuskoodi)]
+          (with-access-logging request (if-let [result (eperuste/get-kuvaus-by-koulutuskoodi koulutuskoodi)]
                                          (ok result)
                                          (not-found "Not found")))))
 

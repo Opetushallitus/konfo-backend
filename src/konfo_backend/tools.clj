@@ -53,3 +53,10 @@
         lt  (kouta-date-time-string->date-time (or (:lt hakuaika) (:paattyy hakuaika)))]
     (within? gte (long->date-time (System/currentTimeMillis)) lt)))
 
+(defn koodi-uri-no-version
+  [koodi-uri]
+  (first (clojure.string/split koodi-uri #"#")))
+
+(defn ammatillinen?
+  [e]
+  (= "amm" (:koulutustyyppi e)))

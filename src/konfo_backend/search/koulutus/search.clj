@@ -1,11 +1,11 @@
 (ns konfo-backend.search.koulutus.search
   (:require
-    [konfo-backend.tools :refer [not-blank?]]
-    [konfo-backend.tools :refer [log-pretty]]
+    [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.koulutus.query :refer [create-query source-fields sort]]
     [konfo-backend.search.koulutus.response :refer [parse-response]]
-    [konfo-backend.elastic-tools :refer [search-with-pagination]]))
+    [konfo-backend.elastic-tools :refer [search-with-pagination]]
+    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -15,6 +15,19 @@
   [keyword constraints]
   (or (not-blank? keyword) (constraints? constraints)))
 
+(defn- with-kuvaukset
+  [result]
+  (let [koulutukset (:koulutukset result)
+        ammatilliset (filter ammatillinen? koulutukset)]
+    (let [get-koulutuskoodi-uri           #(get-in % [:koulutus :koodiUri])
+          kuvaukset                       (get-kuvaukset-by-koulutuskoodit (set (map get-koulutuskoodi-uri ammatilliset)))
+          kuvaus-by-koulutuskoodi-uri     (fn [uri] (first (filter #(= (:koulutuskoodiUri %) (koodi-uri-no-version uri)) kuvaukset)))
+          get-kuvaus                      #(if-let [kuvaus (kuvaus-by-koulutuskoodi-uri %)] (:kuvaus kuvaus) {})]
+
+      (assoc result :koulutukset (vec (map (fn [x] (-> x (assoc :ammatillisenKoulutuksenKuvaus (if (ammatillinen? x)
+                                                                                                 (get-kuvaus (get-koulutuskoodi-uri x))
+                                                                                                 {})))) koulutukset))))))
+
 (defn search
   [keyword lng page size & {:as constraints}]
   (when (do-search? keyword constraints)
@@ -23,7 +36,7 @@
       (koulutus-kouta-search
         page
         size
-        parse-response
+        #(-> % parse-response with-kuvaukset)
         :_source source-fields,
         :sort (sort lng),
         :query query))))
