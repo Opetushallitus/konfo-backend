@@ -3,6 +3,8 @@
     [konfo-backend.tools :refer [koodi-uri-no-version]]
     [konfo-backend.elastic-tools :refer [get-source search]]))
 
+;TODO tilan pitäisi olla "julkaistu" eikä "valmis"
+
 (defonce index "eperuste")
 
 (def eperuste-search (partial search index))
