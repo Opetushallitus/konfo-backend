@@ -70,7 +70,7 @@
     (fixture/add-koulutus-mock koulutusOid4 :koulutustyyppi "amk" :tila "julkaistu" :nimi "AMK-koulutus, jolla ei ole toteutuksia"          :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste1OfOppilaitos1)
 
     (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste1OfOppilaitos1
-                               :metadata (cheshire/generate-string {:tyyppi "amm" :opetus { :opetuskieliKoodiUrit ["kieli_sv#1"]}}))
+                               :metadata (cheshire/generate-string {:tyyppi "amm" :opetus { :opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_2#1"]}}))
     (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid3 :tila "julkaistu" :organisaatio mocks/Toimipiste2OfOppilaitos1 :tarjoajat mocks/Toimipiste2OfOppilaitos1)
 
     (fixture/add-haku-mock "1.2.246.562.20.00001" :hakuaikaAlkaa "2019-04-04T12:00" :hakuaikaPaattyy "2100-04-04T12:00")
@@ -83,10 +83,16 @@
         (is (= [koulutusOid3 koulutusOid2] (search-and-get-oids :paikkakunta "Kunta_297%20Nimi%20Fi"))))
 
       (testing "opetuskieli constraint"
-        (is (= [koulutusOid1] (search-and-get-oids :opetuskieli "sV"))))
+        (is (= [koulutusOid1] (search-and-get-oids :opetuskieli "oppilaitoksenopetuskieli_2"))))
+
+      (testing "opetuskieli constraint"
+        (is (= [] (search-and-get-oids :opetuskieli "oppilaitoksenopetuskieli_3"))))
 
       (testing "opetuskieli constraint with non-existing lng"
-        (is (= [] (search-and-get-oids :opetuskieli "sV" :lng "en"))))
+        (is (= [] (search-and-get-oids :opetuskieli "oppilaitoksenopetuskieli_2" :lng "en"))))
+
+      (testing "opestuskieli constraint with keyword"
+        (is (= [koulutusOid1] (search-and-get-oids :keyword "ammatillinen" :opetuskieli "oppilaitoksenopetuskieli_2"))))
 
       (testing "koulutustyyppi constraint"
         (is (= [koulutusOid3 koulutusOid4] (search-and-get-oids :koulutustyyppi "AMK"))))
@@ -98,7 +104,11 @@
         (is (= [koulutusOid3] (search-and-get-oids :vainHakuKaynnissa "true"))))
 
       (testing "vain haku käynnissä constraint  with non-existing lng"
-        (is (= [] (search-and-get-oids :vainHakuKaynnissa "true" :lng "en")))))))
+        (is (= [] (search-and-get-oids :vainHakuKaynnissa "true" :lng "en"))))
+
+      (testing "multiple constraints"
+        (is (= [koulutusOid1] (search-and-get-oids :koulutustyyppi "amm" :opetuskieli "oppilaitoksenopetuskieli_2"))))
+      )))
 
 (deftest koulutus-paging-and-sorting-test
   (let [koulutusOid1 "1.2.246.562.13.000001"

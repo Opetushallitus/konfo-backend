@@ -48,7 +48,7 @@
   (vec (remove nil? (conj []
                           (when (paikkakunta? constraints)         {:term {(->lng-keyword "toteutukset.tarjoajat.paikkakunta.nimi.%s.keyword" lng) (lower-case (:paikkakunta constraints))}})
                           (when (koulutustyyppi? constraints)      {:term {:toteutukset.koulutus.koulutustyyppi.keyword (lower-case (:koulutustyyppi constraints))}})
-                          (when (opetuskieli? constraints)         {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword (str "kieli_" (lower-case (:opetuskieli constraints)) "#*")}})
+                          (when (opetuskieli? constraints)         {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword (str (lower-case (:opetuskieli constraints)) "#*")}})
                           (when (vain-haku-kaynnissa? constraints) {:term {:toteutukset.hakuOnKaynnissa {:value (current-time-as-kouta-format)}}})))))
 
 (defn- create-koulutus-query
@@ -67,6 +67,7 @@
 (defn- query-koulutukset?
   [keyword constraints]
   (and (not (vain-haku-kaynnissa? constraints))
+       (not (opetuskieli? constraints))
        (or (not-blank? keyword) (paikkakunta? constraints) (koulutustyyppi? constraints))))
 
 (defn create-query
