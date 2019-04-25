@@ -1,14 +1,12 @@
 (ns konfo-backend.search.koulutus-query-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.koulutus.query :refer [create-query] :rename {create-query koulutus-query}]
-    ;[konfo-backend.search.koulutus-search :refer [koulutus-query]]
-            ))
+            [konfo-backend.search.koulutus.query :refer [create-query] :rename {create-query koulutus-query}]))
 
-(deftest koulutus-query-tes
+(deftest koulutus-query-test
   (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2019-04-11T10:45")]
     (testing "Elasticsearch query format"
-      (testing "is correct with all constraints if vainHakuKaynnissa=false"
-        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :opetuskieli "sv" :koulutustyyppi "yo" :vainHakuKaynnissa false})
+      (testing "is correct with all constraints expect opetuskieli if vainHakuKaynnissa=false"
+        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :koulutustyyppi "yo" :vainHakuKaynnissa false})
                {:bool {
                        :should [{:nested {
                                           :path "toteutukset",
@@ -33,8 +31,7 @@
                                                                                          },
                                                                                   :filter [{:term {:toteutukset.kielivalinta "en"}}
                                                                                            {:term {:toteutukset.tarjoajat.paikkakunta.nimi.en.keyword "kerava"}}
-                                                                                           {:term {:toteutukset.koulutus.koulutustyyppi.keyword "yo"}}
-                                                                                           {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "kieli_sv#*"}}]
+                                                                                           {:term {:toteutukset.koulutus.koulutustyyppi.keyword "yo"}}]
                                                                                   }
                                                                            },
                                                                    :boost_mode "replace",
@@ -51,7 +48,7 @@
                                                            }}}]}})))
 
       (testing "is correct with all constraints if vainHakuKaynnissa=true"
-        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :opetuskieli "sv" :koulutustyyppi "yo" :vainHakuKaynnissa true})
+        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :opetuskieli "oppilaitoksenopetuskieli_2" :koulutustyyppi "yo" :vainHakuKaynnissa true})
                {:nested {
                          :path "toteutukset",
                          :inner_hits {:_source ["toteutukset.metadata.ammattinimikkeet"
@@ -66,7 +63,7 @@
                                                           :bool {:filter [{:term {:toteutukset.kielivalinta "en"}}
                                                                           {:term {:toteutukset.tarjoajat.paikkakunta.nimi.en.keyword "kerava"}}
                                                                           {:term {:toteutukset.koulutus.koulutustyyppi.keyword "yo"}}
-                                                                          {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "kieli_sv#*"}}
+                                                                          {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "oppilaitoksenopetuskieli_2#*"}}
                                                                           {:term {:toteutukset.hakuOnKaynnissa {:value "2019-04-11T10:45"}}}]
                                                                  :must {
                                                                         :multi_match {
@@ -120,8 +117,8 @@
                                                                   }
                                                            }}}]}})))
 
-      (testing "is correct without keyword"
-        (is (= (koulutus-query nil "en" {:paikkakunta "kerava" :opetuskieli "sv" :koulutustyyppi "yo"})
+      (testing "is correct without keyword and opetuskieli"
+        (is (= (koulutus-query nil "en" {:paikkakunta "kerava" :koulutustyyppi "yo"})
                {:bool {
                        :should [{:nested {
                                           :path "toteutukset",
@@ -137,8 +134,7 @@
                                                                            :bool {
                                                                                   :filter [{:term {:toteutukset.kielivalinta "en"}}
                                                                                            {:term {:toteutukset.tarjoajat.paikkakunta.nimi.en.keyword "kerava"}}
-                                                                                           {:term {:toteutukset.koulutus.koulutustyyppi.keyword "yo"}}
-                                                                                           {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "kieli_sv#*"}}]
+                                                                                           {:term {:toteutukset.koulutus.koulutustyyppi.keyword "yo"}}]
                                                                                   }
                                                                            },
                                                                    :boost_mode "replace",
@@ -154,7 +150,7 @@
                                                            }}}]}})))
 
       (testing "is correct without keyword or filters in koulutus"
-        (is (= (koulutus-query nil "en" {:opetuskieli "sv"})
+        (is (= (koulutus-query nil "en" {:opetuskieli "oppilaitoksenopetuskieli_2"})
                {:nested {
                          :path "toteutukset",
                          :inner_hits {:_source ["toteutukset.metadata.ammattinimikkeet"
@@ -168,7 +164,7 @@
                                                   :query {
                                                           :bool {
                                                                  :filter [{:term {:toteutukset.kielivalinta "en"}}
-                                                                          {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "kieli_sv#*"}}]
+                                                                          {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword "oppilaitoksenopetuskieli_2#*"}}]
                                                                  }
                                                           },
                                                   :boost_mode "replace",
@@ -193,5 +189,4 @@
                                                                  }
                                                           },
                                                   :boost_mode "replace",
-                                                  :functions [{:filter {:term {:toteutukset.hakuOnKaynnissa {:value "2019-04-11T10:45"}}}, :weight 100}]}}}})))
-      )))
+                                                  :functions [{:filter {:term {:toteutukset.hakuOnKaynnissa {:value "2019-04-11T10:45"}}}, :weight 100}]}}}}))))))
