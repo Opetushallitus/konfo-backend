@@ -107,8 +107,32 @@
         (is (= [] (search-and-get-oids :vainHakuKaynnissa "true" :lng "en"))))
 
       (testing "multiple constraints"
-        (is (= [koulutusOid1] (search-and-get-oids :koulutustyyppi "amm" :opetuskieli "oppilaitoksenopetuskieli_2"))))
-      )))
+        (is (= [koulutusOid1] (search-and-get-oids :koulutustyyppi "amm" :opetuskieli "oppilaitoksenopetuskieli_2")))))))
+
+(deftest multiple-koulutus-constraints-test
+  (let [koulutusOid1 "1.2.246.562.13.000001"
+        koulutusOid2 "1.2.246.562.13.000002"
+        koulutusOid3 "1.2.246.562.13.000003"]
+
+    (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Kiva koulutus 1" :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste2OfOppilaitos1)
+    (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Kiva koulutus 2" :organisaatio mocks/Toimipiste2OfOppilaitos1 :tarjoajat mocks/Toimipiste2OfOppilaitos1)
+    (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Kiva koulutus 3" :organisaatio mocks/Toimipiste2OfOppilaitos1 :tarjoajat mocks/Toimipiste2OfOppilaitos1)
+
+    (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste1OfOppilaitos1
+                               :metadata (cheshire/generate-string {:tyyppi "amm" :opetus { :opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_2#1"]}}))
+    (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste1OfOppilaitos1
+                               :metadata (cheshire/generate-string {:tyyppi "amm" :opetus { :opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_2#1"]}}))
+    (fixture/add-toteutus-mock "1.2.246.562.17.000003" koulutusOid3 :tila "julkaistu" :organisaatio mocks/Toimipiste1OfOppilaitos1 :tarjoajat mocks/Toimipiste1OfOppilaitos1
+                               :metadata (cheshire/generate-string {:tyyppi "amm" :opetus { :opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_3#1"]}}))
+
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3]} 1500)
+
+      (testing "Searching koulutukset with toteutukset using"
+        (testing "one constraint"
+          (is (= [koulutusOid1 koulutusOid2 koulutusOid3] (search-and-get-oids :koulutustyyppi "amm"))))
+
+        (testing "multiple constraints"
+          (is (= [koulutusOid1 koulutusOid2] (search-and-get-oids :koulutustyyppi "amm" :opetuskieli "oppilaitoksenopetuskieli_2")))))))
 
 (deftest koulutus-paging-and-sorting-test
   (let [koulutusOid1 "1.2.246.562.13.000001"
