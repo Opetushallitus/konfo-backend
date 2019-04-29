@@ -1,14 +1,13 @@
 (ns konfo-backend.index.koulutus-test
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [clj-test-utils.elasticsearch-mock-utils :as utils]
             [konfo-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(use-fixtures :each utils/mock-embedded-elasticsearch-fixture fixture/mock-indexing-fixture)
+(use-fixtures :each fixture/mock-indexing-fixture)
 
 (defn koulutus-url
   [oid]

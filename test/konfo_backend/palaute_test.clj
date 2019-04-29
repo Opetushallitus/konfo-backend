@@ -2,10 +2,7 @@
   (:require [clojure.test :refer :all]
             [konfo-backend.palaute.palaute :refer :all]
             [clj-log.access-log]
-            [konfo-backend.test-tools :as tools]
-            [clj-test-utils.elasticsearch-mock-utils :as utils]))
-
-(use-fixtures :once utils/mock-embedded-elasticsearch-fixture)
+            [konfo-backend.test-tools :as tools]))
 
 (deftest Palaute
   (testing "Palaute"
