@@ -1,8 +1,5 @@
 (ns konfo-backend.index.eperuste-test
   (:require [clojure.test :refer :all]
-            [clj-test-utils.elasticsearch-mock-utils :as utils]
-            [konfo-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-            [konfo-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
             [clj-log.access-log]))
 
