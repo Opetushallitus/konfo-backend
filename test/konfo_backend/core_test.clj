@@ -2,12 +2,9 @@
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.core :refer :all]
-            [ring.mock.request :as mock]
-            [clj-test-utils.elasticsearch-mock-utils :as utils]))
+            [ring.mock.request :as mock]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
-
-(use-fixtures :once utils/mock-embedded-elasticsearch-fixture)
 
 (deftest core-test
   (testing "Healthcheck API test"
