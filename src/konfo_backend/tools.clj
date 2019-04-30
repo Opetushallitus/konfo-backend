@@ -2,6 +2,7 @@
   (:require
     [cheshire.core :as cheshire]
     [clojure.tools.logging :as log]
+    [clojure.string :refer [blank? split lower-case]]
     [clj-time.format :as format]
     [clj-time.coerce :as coerce]
     [clj-time.core :as core]))
@@ -15,7 +16,7 @@
 
 (defn not-blank?
   [str]
-  (not (clojure.string/blank? str)))
+  (not (blank? str)))
 
 (defn julkaistu?
   [e]
@@ -55,8 +56,20 @@
 
 (defn koodi-uri-no-version
   [koodi-uri]
-  (first (clojure.string/split koodi-uri #"#")))
+  (first (split koodi-uri #"#")))
 
 (defn ammatillinen?
   [e]
   (= "amm" (:koulutustyyppi e)))
+
+(defn comma-separated-string->vec
+  [s]
+  (vec (remove blank? (some-> s (split #",")))))
+
+(defn ->koodi-with-version-wildcard
+  [koodi]
+  (str koodi "#*"))
+
+(defn ->lower-case-vec
+  [coll]
+  (vec (map lower-case coll)))
