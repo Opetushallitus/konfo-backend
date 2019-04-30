@@ -27,7 +27,6 @@
       (assoc result :koulutukset (vec (map (fn [x] (-> x (assoc :ammatillisenKoulutuksenKuvaus (if (ammatillinen? x)
                                                                                                  (get-kuvaus (get-koulutuskoodi-uri x))
                                                                                                  {})))) koulutukset))))))
-
 (defn search
   [keyword lng page size & {:as constraints}]
   (when (do-search? keyword constraints)

@@ -15,7 +15,7 @@
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring-cors "0.1.13"]
                  ; Logging
-                 [oph/clj-log "0.2.0-SNAPSHOT"]
+                 [oph/clj-log "0.2.1-SNAPSHOT"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.apache.logging.log4j/log4j-api "2.11.1"]
                  [org.apache.logging.log4j/log4j-core "2.11.1"]

@@ -3,7 +3,7 @@
     [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
 
 (defonce source-fields
   ["oid",
@@ -47,8 +47,13 @@
   [constraints lng]
   (vec (remove nil? (conj []
                           (when (paikkakunta? constraints)         {:term {(->lng-keyword "toteutukset.tarjoajat.paikkakunta.nimi.%s.keyword" lng) (lower-case (:paikkakunta constraints))}})
-                          (when (koulutustyyppi? constraints)      {:term {:toteutukset.koulutus.koulutustyyppi.keyword (lower-case (:koulutustyyppi constraints))}})
-                          (when (opetuskieli? constraints)         {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword (str (lower-case (:opetuskieli constraints)) "#*")}})
+                          (when (koulutustyyppi? constraints)      (if (= 1 (count (:koulutustyyppi constraints)))
+                                                                     {:term {:toteutukset.koulutus.koulutustyyppi.keyword (lower-case (first (:koulutustyyppi constraints)))}}
+                                                                     {:terms {:toteutukset.koulutus.koulutustyyppi.keyword (->lower-case-vec (:koulutustyyppi constraints))}}))
+                          (when (opetuskieli? constraints)         (let [wildcards (map (fn [x] {:wildcard {:toteutukset.metadata.opetus.opetuskieli.koodiUri.keyword (->koodi-with-version-wildcard x)}}) (:opetuskieli constraints))]
+                                                                     (if (= 1 (count wildcards))
+                                                                       (first wildcards)
+                                                                       {:bool {:should (vec wildcards) :minimum_should_match 1}})))
                           (when (vain-haku-kaynnissa? constraints) {:term {:toteutukset.hakuOnKaynnissa {:value (current-time-as-kouta-format)}}})))))
 
 (defn- create-koulutus-query
@@ -62,7 +67,9 @@
   [constraints lng]
   (vec (remove nil? (conj []
                           (when (paikkakunta? constraints)    {:term {(->lng-keyword "tarjoajat.paikkakunta.nimi.%s.keyword" lng) (lower-case (:paikkakunta constraints))}})
-                          (when (koulutustyyppi? constraints) {:term {:koulutustyyppi.keyword (lower-case (:koulutustyyppi constraints))}})))))
+                          (when (koulutustyyppi? constraints) (if (= 1 (count (:koulutustyyppi constraints)))
+                                                                {:term {:koulutustyyppi.keyword (lower-case (first (:koulutustyyppi constraints)))}}
+                                                                {:terms {:koulutustyyppi.keyword (->lower-case-vec (:koulutustyyppi constraints))}}))))))
 
 (defn- query-koulutukset?
   [keyword constraints]

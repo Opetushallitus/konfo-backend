@@ -11,6 +11,7 @@
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
+    [konfo-backend.tools :refer [comma-separated-string->vec]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
@@ -123,18 +124,20 @@
                          {vainHakuKaynnissa :- Boolean false}
                          {lng :- String "fi"}]
           (with-access-logging request
-            (cond
-              (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Invalid lng")
-              (and (nil? keyword) (nil? koulutustyyppi) (nil? paikkakunta) (nil? opetuskieli) (false? vainHakuKaynnissa)) (bad-request "Hakusana tai jokin rajain on pakollinen")
-              (and (not (nil? keyword)) (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
-              :else (ok (koulutus-search/search keyword
-                                                lng
-                                                page
-                                                size
-                                                :koulutustyyppi koulutustyyppi
-                                                :paikkakunta paikkakunta
-                                                :opetuskieli opetuskieli
-                                                :vainHakuKaynnissa vainHakuKaynnissa)))))
+            (let [koulutustyypit (comma-separated-string->vec koulutustyyppi)
+                  opetuskielet   (comma-separated-string->vec opetuskieli)]
+              (cond
+                (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Invalid lng")
+                (and (nil? keyword) (empty? koulutustyypit) (nil? paikkakunta) (empty? opetuskielet) (false? vainHakuKaynnissa)) (bad-request "Hakusana tai jokin rajain on pakollinen")
+                (and (not (nil? keyword)) (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
+                :else (ok (koulutus-search/search keyword
+                                                  lng
+                                                  page
+                                                  size
+                                                  :koulutustyyppi koulutustyypit
+                                                  :paikkakunta paikkakunta
+                                                  :opetuskieli opetuskielet
+                                                  :vainHakuKaynnissa vainHakuKaynnissa))))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"

@@ -10,7 +10,7 @@
 
 (defn koulutustyyppi?
   [constraints]
-  (not-blank? (:koulutustyyppi constraints)))
+  (not (empty? (:koulutustyyppi constraints))))
 
 (defn vain-haku-kaynnissa?
   [constraints]
@@ -18,7 +18,7 @@
 
 (defn opetuskieli?
   [constraints]
-  (not-blank? (:opetuskieli constraints)))
+  (not (empty? (:opetuskieli constraints))))
 
 (defn constraints?
   [constraints]

@@ -6,7 +6,7 @@
   (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2019-04-11T10:45")]
     (testing "Elasticsearch query format"
       (testing "is correct with all constraints expect opetuskieli if vainHakuKaynnissa=false"
-        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :koulutustyyppi "yo" :vainHakuKaynnissa false})
+        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :koulutustyyppi ["yo"] :vainHakuKaynnissa false})
                {:bool {
                        :should [{:nested {
                                           :path "toteutukset",
@@ -48,7 +48,7 @@
                                                            }}}]}})))
 
       (testing "is correct with all constraints if vainHakuKaynnissa=true"
-        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :opetuskieli "oppilaitoksenopetuskieli_2" :koulutustyyppi "yo" :vainHakuKaynnissa true})
+        (is (= (koulutus-query "arkeologia" "en" {:paikkakunta "kerava" :opetuskieli ["oppilaitoksenopetuskieli_2"] :koulutustyyppi ["yo"] :vainHakuKaynnissa true})
                {:nested {
                          :path "toteutukset",
                          :inner_hits {:_source ["toteutukset.metadata.ammattinimikkeet"
@@ -118,7 +118,7 @@
                                                            }}}]}})))
 
       (testing "is correct without keyword and opetuskieli"
-        (is (= (koulutus-query nil "en" {:paikkakunta "kerava" :koulutustyyppi "yo"})
+        (is (= (koulutus-query nil "en" {:paikkakunta "kerava" :koulutustyyppi ["yo"]})
                {:bool {
                        :should [{:nested {
                                           :path "toteutukset",
@@ -150,7 +150,7 @@
                                                            }}}]}})))
 
       (testing "is correct without keyword or filters in koulutus"
-        (is (= (koulutus-query nil "en" {:opetuskieli "oppilaitoksenopetuskieli_2"})
+        (is (= (koulutus-query nil "en" {:opetuskieli ["oppilaitoksenopetuskieli_2"]})
                {:nested {
                          :path "toteutukset",
                          :inner_hits {:_source ["toteutukset.metadata.ammattinimikkeet"
