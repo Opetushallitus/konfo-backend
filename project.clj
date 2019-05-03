@@ -6,6 +6,8 @@
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
+  :managed-dependencies [[pl.allegro.tech/embedded-elasticsearch "2.10.0"]
+                         [org.flatland/ordered "1.5.7"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  ; Rest + server
                  [metosin/compojure-api "1.1.11"]
