@@ -24,8 +24,8 @@
 
 (defonce mocked-osaamisala-response
   {:hits {:total 2
-          :hits [{:_source {:id 123 :osaamisala {:nimi {:fi "Osaamisala 1 nimi fi" :sv "Osaamisala 1 nimi sv"} :uri "osaamisala_1"} :teksti {:fi "Osaamisala 1 teksti fi" :sv "Osaamisala 1 teksti sv"}}},
-                 {:_source {:id 124 :osaamisala {:nimi {:fi "Osaamisala 2 nimi fi" :sv "Osaamisala 2 nimi sv"} :uri "osaamisala_2"} :teksti {:fi "Osaamisala 2 teksti fi" :sv "Osaamisala 2 teksti sv"}}}]}})
+          :hits [{:_source {:id 123 :suoritustapa "reformi" :osaamisala {:nimi {:fi "Osaamisala 1 nimi fi" :sv "Osaamisala 1 nimi sv"} :uri "osaamisala_1"} :teksti {:fi "Osaamisala 1 teksti fi" :sv "Osaamisala 1 teksti sv"}}},
+                 {:_source {:id 124 :suoritustapa "ops" :osaamisala {:nimi {:fi "Osaamisala 2 nimi fi" :sv "Osaamisala 2 nimi sv"} :uri "osaamisala_2"} :teksti {:fi "Osaamisala 2 teksti fi" :sv "Osaamisala 2 teksti sv"}}}]}})
 
 (deftest eperuste-test
   (testing "Get eperuste-kuvaus"
@@ -52,10 +52,12 @@
                          :osaamisalat [{:nimi {:fi "Osaamisala 1 nimi fi" :sv "Osaamisala 1 nimi sv"}
                                         :osaamisalakoodiUri "osaamisala_1"
                                         :id 123
+                                        :suoritustapa "reformi"
                                         :kuvaus {:fi "Osaamisala 1 teksti fi" :sv "Osaamisala 1 teksti sv"}},
                                        {:nimi {:fi "Osaamisala 2 nimi fi" :sv "Osaamisala 2 nimi sv"}
                                         :osaamisalakoodiUri "osaamisala_2"
                                         :id 124
+                                        :suoritustapa "ops"
                                         :kuvaus {:fi "Osaamisala 2 teksti fi" :sv "Osaamisala 2 teksti sv"}}]})))))
 
   (testing "Get valmis eperuste"
