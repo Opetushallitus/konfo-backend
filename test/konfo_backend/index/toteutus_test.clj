@@ -15,7 +15,9 @@
 
 (deftest toteutus-test
 
-  (let [toteutusOid1  "1.2.246.562.17.000001"
+  (let [hakuOid1      "1.2.246.562.29.000001"
+        koulutusOid1  "1.2.246.562.13.000001"
+        toteutusOid1  "1.2.246.562.17.000001"
         toteutusOid2  "1.2.246.562.17.000002"
         toteutusOid3  "1.2.246.562.17.000003"
         hakukohdeOid1 "1.2.246.562.20.000001"
@@ -24,22 +26,31 @@
         valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
         valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
-    (fixture/add-toteutus-mock toteutusOid1 "1.2.246.562.13.000001" :tila "julkaistu"   :nimi "Hauska toteutus"                :organisaatio mocks/Oppilaitos1)
-    (fixture/add-toteutus-mock toteutusOid2 "1.2.246.562.13.000001" :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :organisaatio mocks/Oppilaitos2)
+    (fixture/add-haku-mock hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1)
 
-    (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid1 "1.2.246.562.29.000001" :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid1 "1.2.246.562.29.000001" :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
-    (fixture/add-hakukohde-mock hakukohdeOid3 toteutusOid1 "1.2.246.562.29.000001" :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
 
-    (fixture/index-oids-without-related-indices {:toteutukset [toteutusOid1 toteutusOid2]})
+    (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu"   :nimi "Hauska toteutus"                :organisaatio mocks/Oppilaitos1)
+    (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :organisaatio mocks/Oppilaitos2)
+
+    (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
+    (fixture/add-hakukohde-mock hakukohdeOid3 toteutusOid1 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1] :toteutukset [toteutusOid1 toteutusOid2]})
 
     (testing "Get toteutus"
-      (testing "ok"
-        (let [response (get-ok (toteutus-url toteutusOid1))]
-          (is (= toteutusOid1 (:oid response)))))
-      (testing "filter julkaisemattomat hakukohteet"
-        (let [response (get-ok (toteutus-url toteutusOid1))]
-          (is (= 2 (count (:hakukohteet response))))))
+      (let [response (get-ok (toteutus-url toteutusOid1))]
+        (testing "ok"
+          (is (= toteutusOid1 (:oid response))))
+        (testing "filter julkaisemattomat hakukohteet"
+          (is (= 2 (count (:hakukohteet response)))))
+        (testing "hakukohde contains hakutiedot"
+          (map #((is (not (nil?   (:aloituspaikat %))))
+                 (is (not (nil?   (:ensikertalaisenAloituspaikat %))))
+                 (is (not (nil?   (:hakulomaketyyppi %))))
+                 (is (not (empty? (:hakulomake %))))
+                 (is (not (empty? (:hakuajat %))))) (:hakukohteet response))))
       (testing "not found"
         (get-not-found (toteutus-url toteutusOid3)))
       (testing "not julkaistu"
