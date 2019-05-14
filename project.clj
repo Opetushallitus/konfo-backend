@@ -6,6 +6,7 @@
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
+  :managed-dependencies [[org.flatland/ordered "1.5.7"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  ; Rest + server
                  [metosin/compojure-api "1.1.11"]
@@ -14,7 +15,7 @@
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring-cors "0.1.13"]
                  ; Logging
-                 [oph/clj-log "0.2.0-SNAPSHOT"]
+                 [oph/clj-log "0.2.3-SNAPSHOT"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.apache.logging.log4j/log4j-api "2.11.1"]
                  [org.apache.logging.log4j/log4j-core "2.11.1"]
@@ -25,7 +26,7 @@
                  [environ "1.1.0"]
                  [cprop "0.1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.2.0-SNAPSHOT"]]
+                 [oph/clj-elasticsearch "0.2.2-SNAPSHOT"]]
   :ring {:handler konfo-backend.core/app
          :init konfo-backend.core/init
          ;:destroy konfo-backend.core/destroy

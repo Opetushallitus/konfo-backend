@@ -8,7 +8,7 @@ Lokaalia ajoa varten tarvitaan lokaali Elasticsearch, josta löytyy indeksoitua 
 
 ## Lokaali ajo
 
-Lokaalia ajoa varten kopioi konfiguraatiotiedoston template `dev-configuration/konfo-backend.end.template`
+Lokaalia ajoa varten kopioi konfiguraatiotiedoston template `dev-configuration/konfo-backend.edn.template`
 tiedostoksi `dev-configuration/konfo-backend.edn` ja lisää tiedostoon oikeat arvot:
 
 ```
