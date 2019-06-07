@@ -30,7 +30,7 @@
   :ring {:handler konfo-backend.core/app
          :init konfo-backend.core/init
          ;:destroy konfo-backend.core/destroy
-         :browser-uri "konfo-backend"}
+         :browser-uri "konfo-backend/swagger"}
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"

@@ -25,7 +25,7 @@
 
 (def konfo-api
   (api
-    {:swagger {:ui   "/konfo-backend"
+    {:swagger {:ui   "/konfo-backend/swagger"
                :spec "/konfo-backend/swagger.json"
                :data {:info {:title       "Konfo-backend"
                              :description "Backend for Konfo koulutusinformaatio UI."}}}}
