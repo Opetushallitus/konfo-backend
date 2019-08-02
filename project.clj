@@ -8,6 +8,7 @@
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
   :managed-dependencies [[org.flatland/ordered "1.5.7"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
+                 [clj-time "0.15.0"]
                  ; Rest + server
                  [metosin/compojure-api "1.1.11"]
                  [compojure "1.6.1"]
@@ -38,15 +39,19 @@
             [lein-environ "1.1.0"]]
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [konfo-indeksoija-service "0.1.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.1-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.1-SNAPSHOT" :classifier "tests"]
-                                   [oph/clj-test-utils "0.2.0-SNAPSHOT"]]}
+                                   [konfo-indeksoija-service "0.1.3-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.2-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.2-SNAPSHOT" :classifier "tests"]
+                                   [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
+                    :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
+                                 (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [konfo-indeksoija-service "0.1.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.1-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.1-SNAPSHOT" :classifier "tests"]
-                                      [oph/clj-test-utils "0.2.0-SNAPSHOT"]]
+                                      [konfo-indeksoija-service "0.1.3-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.2-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.2-SNAPSHOT" :classifier "tests"]
+                                      [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
+                       :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
+                                    (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:ring {:port 8080}}}
   :aliases {"run" ["ring" "server" "3006"]

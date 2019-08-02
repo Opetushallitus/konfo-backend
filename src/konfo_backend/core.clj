@@ -5,10 +5,13 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
     [konfo-backend.index.valintaperuste :as valintaperuste]
+    [konfo-backend.eperuste.eperuste :as eperuste]
+    [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
+    [konfo-backend.tools :refer [comma-separated-string->vec]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
@@ -81,6 +84,25 @@
                                          (ok result)
                                          (not-found "Not found")))))
 
+      (context "/kuvaus"
+        []
+        (GET "/:koulutuskoodi" [:as request]
+          :summary "Hae koulutuksen kuvaus ePerusteista koulutuskoodin perusteella"
+          :path-params  [koulutuskoodi :- String]
+          :query-params [{osaamisalakuvaukset :- Boolean false}]
+          (with-access-logging request (if-let [result (eperuste/get-kuvaus-by-koulutuskoodi-uri koulutuskoodi osaamisalakuvaukset)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/eperuste"
+        []
+        (GET "/:id" [:as request]
+          :summary "Hae eperuste id:llä"
+          :path-params [id :- String]
+          (with-access-logging request (if-let [result (eperuste/get-eperuste-by-id id)]
+                                         (ok result)
+                                         (not-found "Not found")))))
+
       (context "/oppilaitos"
         []
         (GET "/:oid" [:as request]
@@ -98,12 +120,24 @@
                          {size :- Long 20}
                          {koulutustyyppi :- String nil}
                          {paikkakunta :- String nil}
-                         {kieli :- String nil}
+                         {opetuskieli :- String nil}
+                         {vainHakuKaynnissa :- Boolean false}
                          {lng :- String "fi"}]
-          (with-access-logging request (ok (old-search/search-koulutus keyword lng page size
-                                                                   (old-search/constraints :koulutustyyppi koulutustyyppi
-                                                                                       :paikkakunta paikkakunta
-                                                                                       :kieli kieli)))))
+          (with-access-logging request
+            (let [koulutustyypit (comma-separated-string->vec koulutustyyppi)
+                  opetuskielet   (comma-separated-string->vec opetuskieli)]
+              (cond
+                (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Invalid lng")
+                (and (nil? keyword) (empty? koulutustyypit) (nil? paikkakunta) (empty? opetuskielet) (false? vainHakuKaynnissa)) (bad-request "Hakusana tai jokin rajain on pakollinen")
+                (and (not (nil? keyword)) (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
+                :else (ok (koulutus-search/search keyword
+                                                  lng
+                                                  page
+                                                  size
+                                                  :koulutustyyppi koulutustyypit
+                                                  :paikkakunta paikkakunta
+                                                  :opetuskieli opetuskielet
+                                                  :vainHakuKaynnissa vainHakuKaynnissa))))))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"

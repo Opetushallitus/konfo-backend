@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.elastic-tools :refer :all]))
 
-(def koulutukset (partial search "koulutus"))
+(def koulutukset (partial old-search "koulutus"))
 
 (defn- hakuaika-nyt [hakuaika]
   (let [alkuPvm (:alkuPvm hakuaika)

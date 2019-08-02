@@ -4,7 +4,7 @@
     [konfo-backend.old-search.toteutus :refer [haettavissa]]
     [clojure.tools.logging :as log]))
 
-(def koulutusmoduulit (partial search "koulutusmoduuli"))
+(def koulutusmoduulit (partial old-search "koulutusmoduuli"))
 
 (defn- match-oids [oids]
   (constant_score_query_terms :oid (vec oids) 10))

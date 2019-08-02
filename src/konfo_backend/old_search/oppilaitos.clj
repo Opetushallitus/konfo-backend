@@ -3,7 +3,7 @@
     [clj-log.error-log :refer [with-error-logging]]
     [konfo-backend.elastic-tools :refer :all]))
 
-(def oppilaitokset (partial search "organisaatio"))
+(def oppilaitokset (partial old-search "organisaatio"))
 
 (defn- create-hakutulos [hakutulos]
   (let [organisaatio (:_source hakutulos)]
