@@ -1,8 +1,8 @@
 (ns konfo-backend.index.koulutus-test
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [konfo-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-            [konfo-indeksoija-service.fixture.external-services :as mocks]
+            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
+            [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
