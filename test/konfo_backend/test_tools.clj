@@ -4,7 +4,7 @@
     [clj-elasticsearch.elastic-connect :as e]
     [ring.mock.request :as mock]
     [konfo-backend.core :refer :all]
-    [konfo-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
+    [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
     [cheshire.core :as cheshire]))
 
 (defn ->keywordized-response-body
