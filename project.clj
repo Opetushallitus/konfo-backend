@@ -39,16 +39,16 @@
             [lein-environ "1.1.0"]]
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "0.1.4-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.3-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.3-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "0.1.5-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT" :classifier "tests"]
                                    [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "0.1.4-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.3-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.3-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "0.1.5-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.4v-SNAPSHOT" :classifier "tests"]
                                       [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
