@@ -2,7 +2,7 @@
 (cemerick.pomegranate.aether/register-wagon-factory!
   "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
 
-(defproject konfo-backend "0.1.0-SNAPSHOT"
+(defproject konfo-backend "0.1.1-SNAPSHOT"
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
@@ -39,16 +39,16 @@
             [lein-environ "1.1.0"]]
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "0.1.5-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT" :classifier "tests"]
                                    [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "0.1.5-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.4-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.4v-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT" :classifier "tests"]
                                       [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
