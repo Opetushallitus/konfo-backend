@@ -5,9 +5,9 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
     [konfo-backend.index.valintaperuste :as valintaperuste]
+    [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
-    [konfo-backend.oppilaitos :as organisaatio]
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
@@ -108,8 +108,8 @@
         (GET "/:oid" [:as request]
                  :summary "Oppilaitos API"
                  :path-params [oid :- String]
-                 (with-access-logging request (if-let [res (organisaatio/get-oppilaitos oid)]
-                                                (ok {:result res})
+                 (with-access-logging request (if-let [result (oppilaitos/get oid)]
+                                                (ok result)
                                                 (not-found "Not found")))))
 
       (context "/search" []
