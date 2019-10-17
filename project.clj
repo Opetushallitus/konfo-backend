@@ -30,7 +30,7 @@
                  ; Elasticsearch
                  [oph/clj-elasticsearch "0.2.2-SNAPSHOT"]]
   :env {:name "konfo-backend"}
-  :jvm-opts ["-Dport=3006 -Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
+  :jvm-opts ["-Dport=3006" "-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
   :plugins [[lein-environ "1.1.0"]]
   :main konfo-backend.core
