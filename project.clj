@@ -30,11 +30,12 @@
                  ; Elasticsearch
                  [oph/clj-elasticsearch "0.2.2-SNAPSHOT"]]
   :env {:name "konfo-backend"}
-  :jvm-opts ["-Dport=3006" "-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
+  :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
   :plugins [[lein-environ "1.1.0"]]
   :main konfo-backend.core
-  :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
+  :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
+                   :jvm-opts ["-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT"]
@@ -53,7 +54,7 @@
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
                        :resource-paths ["oph-configuration" "resources"]}}
-  :aliases {"run" ["run"]
+  :aliases {"run" ["with-profile" "+dev" "run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
             "ci-test" ["with-profile" "+ci-test" "test"]
