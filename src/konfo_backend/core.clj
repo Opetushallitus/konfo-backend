@@ -176,4 +176,4 @@
 
 (defn -main [& args]
   (init)
-  (run-jetty (wrap-reload #'app) {:port (Integer/valueOf (or (System/getenv "port") "3006"))}))
+  (run-jetty (wrap-reload #'app) {:port (Integer/valueOf (or (System/getenv "port") "8080"))}))
