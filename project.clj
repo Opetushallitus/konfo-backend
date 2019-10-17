@@ -58,7 +58,7 @@
                                     (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:aot :all
-                       :main konfo-backend.core}}
+                       :resource-paths ["resources"]}}
   :aliases {"run" ["run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
