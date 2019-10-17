@@ -171,9 +171,9 @@
                                        (ok {:result (palaute/post-palaute arvosana palaute)})
                                        (bad-request "Invalid arvosana")))))))
 
-(def handler
+(def app
   (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
 
 (defn -main [& args]
   (init)
-  (run-jetty (wrap-reload #'handler) {:port (Integer/valueOf (or (System/getenv "port") "3006"))}))
+  (run-jetty (wrap-reload #'app) {:port (Integer/valueOf (or (System/getenv "port") "3006"))}))
