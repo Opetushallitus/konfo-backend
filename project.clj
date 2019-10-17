@@ -14,6 +14,7 @@
                  [compojure "1.6.1"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-jetty-adapter "1.7.1"]
+                 [ring/ring-devel "1.7.1"]
                  [ring-cors "0.1.13"]
                  ; Logging
                  [oph/clj-log "0.2.3-SNAPSHOT"]
@@ -28,16 +29,13 @@
                  [cprop "0.1.13"]
                  ; Elasticsearch
                  [oph/clj-elasticsearch "0.2.2-SNAPSHOT"]]
-  :ring {:handler konfo-backend.core/app
-         :init konfo-backend.core/init
-         ;:destroy konfo-backend.core/destroy
-         :browser-uri "konfo-backend/swagger"}
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
-  :plugins [[lein-ring "0.12.5"]
-            [lein-environ "1.1.0"]]
-  :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
+  :plugins [[lein-environ "1.1.0"]]
+  :main konfo-backend.core
+  :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
+                   :jvm-opts ["-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.6-SNAPSHOT"]
@@ -53,9 +51,11 @@
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
-             :uberjar {:ring {:port 8080}}}
-  :aliases {"run" ["ring" "server" "3006"]
-            "uberjar" ["do" "clean" ["ring" "uberjar"]]
+             :uberjar {:aot :all
+                       :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
+                       :resource-paths ["oph-configuration" "resources"]}}
+  :aliases {"run" ["with-profile" "+dev" "run"]
+            "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
             "ci-test" ["with-profile" "+ci-test" "test"]
             "cloverage" ["with-profile" "+test" "cloverage"]})
