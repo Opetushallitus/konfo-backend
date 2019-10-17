@@ -50,7 +50,8 @@
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
-             :uberjar {:aot :all}}
+             :uberjar {:aot :all
+                       :resource-paths ["oph-configuration"]}}
   :aliases {"run" ["run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
