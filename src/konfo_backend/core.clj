@@ -11,13 +11,16 @@
     [konfo-backend.old-search.search :as old-search]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
+    [ring.middleware.reload :refer [wrap-reload]]
+    [ring.adapter.jetty :refer [run-jetty]]
     [konfo-backend.tools :refer [comma-separated-string->vec]]
     [clj-log.access-log :refer [with-access-logging]]
     [compojure.api.sweet :refer :all]
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.util.http-response :refer :all]
     [environ.core :refer [env]]
-    [clojure.tools.logging :as log]))
+    [clojure.tools.logging :as log])
+  (:gen-class))
 
 (defn init []
   (if-let [elastic-url (:elastic-url config)]
@@ -168,5 +171,9 @@
                                        (ok {:result (palaute/post-palaute arvosana palaute)})
                                        (bad-request "Invalid arvosana")))))))
 
-(def app
+(def handler
   (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
+
+(defn -main [& args]
+  (init)
+  (run-jetty (wrap-reload #'handler) {:port (Integer/valueOf (or (System/getenv "port") "3006"))}))
