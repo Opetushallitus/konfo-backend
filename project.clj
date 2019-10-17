@@ -29,17 +29,10 @@
                  [cprop "0.1.13"]
                  ; Elasticsearch
                  [oph/clj-elasticsearch "0.2.2-SNAPSHOT"]]
-  :ring {:handler konfo-backend.core/app
-         :init konfo-backend.core/init
-         :auto-reload? true
-         :auto-refresh? true
-         ;:destroy konfo-backend.core/destroy
-         :browser-uri "konfo-backend/swagger"}
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
-  :plugins [[lein-ring "0.12.5"]
-            [lein-environ "1.1.0"]]
+  :plugins [[lein-environ "1.1.0"]]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
@@ -57,8 +50,7 @@
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
-             :uberjar {:aot :all
-                       :resource-paths ["resources"]}}
+             :uberjar {:aot :all}}
   :aliases {"run" ["run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
