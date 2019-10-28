@@ -35,7 +35,7 @@
       (koulutus-kouta-search
         page
         size
-        #(-> % parse-response with-kuvaukset)
+        #(-> % :hits parse-response with-kuvaukset)
         :_source source-fields,
         :sort (sort lng),
         :query query))))

@@ -5,10 +5,10 @@
 
 (defonce index "toteutus-kouta")
 
-(defn- get-hakutieto
+(comment defn- get-hakutieto
   [koulutus-oid toteutus-oid]
   (search "koulutus-kouta-search"
-          #(some-> % :hits first :inner_hits :toteutukset :hits :hits first :_source)
+          #(some-> % :hits :hits first :inner_hits :toteutukset :hits :hits first :_source)
           :_source [:oid]
           :query {:nested {:path       :toteutukset
                            :inner_hits {:_source [:toteutukset.oid, :toteutukset.haut]}
@@ -33,7 +33,8 @@
   [oid]
   (let [toteutus (get-source index oid)]
     (when (julkaistu? toteutus)
-      (if-let [julkaistut-hakukohteet (not-empty (-> toteutus :hakukohteet julkaistut))]
+      (comment if-let [julkaistut-hakukohteet (not-empty (-> toteutus :hakukohteet julkaistut))]
         (let [hakutiedot (:haut (get-hakutieto (:koulutusOid toteutus) oid))]
           (assoc toteutus :hakukohteet (vec (map #(merge-hakutiedot % hakutiedot) julkaistut-hakukohteet))))
-        (assoc toteutus :hakukohteet [])))))
+        (assoc toteutus :hakukohteet []))
+      (assoc toteutus :hakukohteet []))))

@@ -31,6 +31,8 @@
     (fixture/add-hakukohde-mock hakukohdeOid2 "1.2.246.562.17.000001" hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
     (fixture/add-hakukohde-mock hakukohdeOid3 "1.2.246.562.17.000001" hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
 
+    (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000001")
+
     (fixture/index-oids-without-related-indices {:haut [hakuOid1 hakuOid2]})
 
     (testing "Get haku"

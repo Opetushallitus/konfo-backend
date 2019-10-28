@@ -32,7 +32,6 @@
               (index-name index)
               (index-name index)
               query-parts)
-       :hits
        mapper))
 
 (defn search-with-pagination

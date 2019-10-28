@@ -25,7 +25,7 @@
 (defn get-palautteet
   [after]
   (search "palaute"
-          create-palautteet
+          #(-> % :hits create-palautteet)
           :query {:bool {:must {:range {:created {:gt after}}}}}
           :_source ["arvosana" "palaute" "created"]
           :sort [{:created :desc}]))

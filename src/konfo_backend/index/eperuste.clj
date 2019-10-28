@@ -17,7 +17,7 @@
 
 (defn- kuvaus-result-mapper
   [koulutuskoodi result]
-  (when-let [source (some-> result :hits first :_source)]
+  (when-let [source (some-> result :hits :hits first :_source)]
     (let [koulutus (first (filter #(= (:koulutuskoodiUri %) koulutuskoodi) (:koulutukset source)))]
       {:nimi             (:nimi koulutus)
        :koulutuskoodiUri (:koulutuskoodiUri koulutus)
@@ -38,7 +38,7 @@
     [source]
     (vec (map #(koulutus-result-mapper source %) (:koulutukset source))))
 
-  (vec (apply concat (map #(source-result-mapper (:_source %)) (:hits result)))))
+  (vec (apply concat (map #(source-result-mapper (:_source %)) (get-in result [:hits :hits])))))
 
 (defn get-kuvaus-by-koulutuskoodi
   [koulutuskoodi-uri]

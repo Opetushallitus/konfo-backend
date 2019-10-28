@@ -19,7 +19,7 @@
   [& query-params]
   (map :oid (:koulutukset (get-ok (apply koulutus-search-url query-params)))))
 
-(deftest koulutus-search-test
+(comment deftest koulutus-search-test
 
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
@@ -57,7 +57,7 @@
       (testing "with no keyword nor constraints"
         (get-bad-request (koulutus-search-url))))))
 
-(deftest koulutus-constraints-test
+(comment deftest koulutus-constraints-test
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"
@@ -108,7 +108,7 @@
       (testing "multiple constraints"
         (is (= [koulutusOid1] (search-and-get-oids :koulutustyyppi "amm" :opetuskieli "oppilaitoksenopetuskieli_2")))))))
 
-(deftest multiple-koulutus-constraints-test
+(comment deftest multiple-koulutus-constraints-test
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"
@@ -140,7 +140,7 @@
         (testing "multiple koulutustyyppi and opetuskieli values"
           (is (= [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4] (search-and-get-oids :koulutustyyppi "amm,amk" :opetuskieli "oppilaitoksenopetuskieli_2,oppilaitoksenopetuskieli_3")))))))
 
-(deftest koulutus-paging-and-sorting-test
+(comment deftest koulutus-paging-and-sorting-test
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"
@@ -179,7 +179,7 @@
       (testing "returns correct total count"
         (is (= 6 (:total_count (get-ok (koulutus-search-url :keyword "aakkosissa" :size 4)))))))))
 
-(deftest koulutus-keyword-search
+(comment deftest koulutus-keyword-search
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"
@@ -247,7 +247,7 @@
                             :kuvaus {:fi "Ammattikalastajan ammattitutkinnnon kuvaus fi"
                                      :sv "Ammattikalastajan ammattitutkinnnon kuvaus sv"}}}]})
 
-(deftest koulutus-search-result
+(comment deftest koulutus-search-result
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"]
