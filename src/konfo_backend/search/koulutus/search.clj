@@ -2,8 +2,8 @@
   (:require
     [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.koulutus.query :refer [create-query source-fields sort]]
-    [konfo-backend.search.koulutus.response :refer [parse-response]]
+    [konfo-backend.search.query :refer [query aggregations]]
+    [konfo-backend.search.response :refer [parse]]
     [konfo-backend.elastic-tools :refer [search-with-pagination]]
     [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit]]))
 
@@ -11,31 +11,34 @@
 
 (def koulutus-kouta-search (partial search-with-pagination index))
 
-(defn do-search?
-  [keyword constraints]
-  (or (not-blank? keyword) (constraints? constraints)))
-
 (defn- with-kuvaukset
   [result]
-  (let [koulutukset (:koulutukset result)
-        ammatilliset (filter ammatillinen? koulutukset)]
-    (let [get-koulutuskoodi-uri           #(get-in % [:koulutus :koodiUri])
-          kuvaukset                       (get-kuvaukset-by-koulutuskoodit (set (map get-koulutuskoodi-uri ammatilliset)))
-          kuvaus-by-koulutuskoodi-uri     (fn [uri] (first (filter #(= (:koulutuskoodiUri %) (koodi-uri-no-version uri)) kuvaukset)))
-          get-kuvaus                      #(if-let [kuvaus (kuvaus-by-koulutuskoodi-uri %)] (:kuvaus kuvaus) {})]
+  (let [hits         (:hits result)
+        kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map :koulutus (filter ammatillinen? hits))))]
 
-      (assoc result :koulutukset (vec (map (fn [x] (-> x (assoc :ammatillisenKoulutuksenKuvaus (if (ammatillinen? x)
-                                                                                                 (get-kuvaus (get-koulutuskoodi-uri x))
-                                                                                                 {})))) koulutukset))))))
+      (defn- assoc-kuvaus-to-ammatillinen
+        [hit]
+        (if (ammatillinen? hit)
+          (let [koulutusKoodiUri (koodi-uri-no-version (:koulutus hit))]
+            (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
+              (assoc hit :kuvaus kuvaus)
+              hit))
+          hit))
+
+      (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen %) hits)))))
+
 (defn search
   [keyword lng page size & {:as constraints}]
   (when (do-search? keyword constraints)
-    (let [query (create-query keyword lng constraints)]
+    (let [query (query keyword lng constraints)
+          aggs (aggregations)]
       (log-pretty query)
+      (log-pretty aggs)
       (koulutus-kouta-search
         page
         size
-        #(-> % :hits parse-response with-kuvaukset)
-        :_source source-fields,
-        :sort (sort lng),
-        :query query))))
+        #(-> % parse with-kuvaukset)
+        :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
+        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order "asc"}}]
+        :query query
+        :aggs aggs))))

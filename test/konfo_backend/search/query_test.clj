@@ -1,6 +1,6 @@
-(ns konfo-backend.search.oppilaitos-query-test
+(ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.oppilaitos.query :refer [query aggregations]]))
+            [konfo-backend.search.query :refer [query aggregations]]))
 
 (deftest oppilaitos-query-test
   (testing "Query with keyword"
@@ -25,4 +25,4 @@
              {:hits_aggregation {:nested {:path "hits"}
                                  :aggs {:sijainti {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
                                                                        :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
-                                                   :aggs {:oppilaitokset {:reverse_nested {}}}}}}})))))
+                                                   :aggs {:real_hits {:reverse_nested {}}}}}}})))))

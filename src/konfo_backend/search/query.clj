@@ -1,34 +1,10 @@
-(ns konfo-backend.search.oppilaitos.query
+(ns konfo-backend.search.query
   (:require
     [konfo-backend.koodisto.koodisto :refer [list]]
     [konfo-backend.tools :refer [not-blank?]]
-    [konfo-backend.search.tools :refer [->lng-keyword]]
+    [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
-
-(defn sijainti?
-  [constraints]
-  (not (empty? (:sijainti constraints))))
-
-(defn koulutustyyppi?
-  [constraints]
-  (not (empty? (:koulutustyyppi constraints))))
-
-(defn vain-haku-kaynnissa?
-  [constraints]
-  (true? (:vainHakuKaynnissa constraints)))
-
-(defn opetuskieli?
-  [constraints]
-  (not (empty? (:opetuskieli constraints))))
-
-(defn koulutusala?
-  [constraints]
-  (not (empty? (:koulutusala constraints))))
-
-(defn constraints?
-  [constraints]
-  (or (sijainti? constraints) (koulutustyyppi? constraints) (vain-haku-kaynnissa? constraints) (opetuskieli? constraints)))
 
 (defn- ->term-filter
   [term]
@@ -44,7 +20,7 @@
 
 (defn- aggs
   []
-  {:sijainti {:filters {:filters (maakunta-filters)} :aggs {:oppilaitokset {:reverse_nested {}}}}})
+  {:sijainti {:filters {:filters (maakunta-filters)} :aggs {:real_hits {:reverse_nested {}}}}})
 
 (defn aggregations
   []

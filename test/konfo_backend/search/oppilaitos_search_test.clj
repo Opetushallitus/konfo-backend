@@ -15,10 +15,6 @@
   [& query-params]
   (apply url-with-query-params "/konfo-backend/search/oppilaitokset" query-params))
 
-(defn search-and-get-oids
-  [& query-params]
-  (map :oid (:oppilaitokset (get-ok (apply oppilaitos-search-url query-params)))))
-
 (defn search
   [& query-params]
   (get-ok (apply oppilaitos-search-url query-params)))

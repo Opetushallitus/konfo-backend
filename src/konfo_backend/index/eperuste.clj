@@ -50,8 +50,8 @@
 
 (defn get-kuvaukset-by-koulutuskoodit
   [koulutuskoodi-uris]
-  (let [koulutuskoodit (vec (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
+  (when-let [koulutuskoodit (seq (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
     (eperuste-search kuvaukset-result-mapper
                      :_source [:koulutukset.nimi, :koulutukset.koulutuskoodiUri :id, :kuvaus.fi :kuvaus.en :kuvaus.sv]
-                     :query {:bool {:must {:terms {:koulutukset.koulutuskoodiUri koulutuskoodit}},
+                     :query {:bool {:must {:terms {:koulutukset.koulutuskoodiUri (vec koulutuskoodit)}},
                                     :filter {:term {:tila "valmis"}}}})))

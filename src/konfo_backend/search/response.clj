@@ -1,8 +1,7 @@
-(ns konfo-backend.search.oppilaitos.response
+(ns konfo-backend.search.response
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]))
-
 
 (defn- hits
   [response]
@@ -11,14 +10,14 @@
 (defn- ->doc_count
   [response filter]
   (let [buckets (get-in response [:aggregations :hits_aggregation filter :buckets])
-        mapper  (fn [key] {key (get-in (key buckets) [:oppilaitokset :doc_count])})]
+        mapper  (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
     (reduce merge {} (map mapper (keys buckets)))))
 
 (defn- filters
   [response]
   (reduce merge (map (fn [key] {key (->doc_count response key)}) [:sijainti])))
 
-(defn parse-response
+(defn parse
   [response]
   (log-pretty response)
   {:hits    (hits response)

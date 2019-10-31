@@ -1,25 +1,18 @@
 (ns konfo-backend.search.oppilaitos.search
   (:require
-    [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
+    [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.oppilaitos.query :refer [query aggregations]]
-    [konfo-backend.search.oppilaitos.response :refer [parse-response]]
-    [konfo-backend.elastic-tools :refer [search-with-pagination]]
-    [clj-elasticsearch.elastic-connect :as e]
-    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit]]))
+    [konfo-backend.search.query :refer [query aggregations]]
+    [konfo-backend.search.response :refer [parse]]
+    [konfo-backend.elastic-tools :refer [search-with-pagination]]))
 
 (defonce index "oppilaitos-kouta-search")
 
 (def oppilaitos-kouta-search (partial search-with-pagination index))
 
-(comment defn do-search?
-  [keyword constraints]
-  (or (not-blank? keyword) (constraints? constraints)))
-
 (defn search
   [keyword lng page size & {:as constraints}]
-  ; (when (do-search? keyword constraints)
-    (log-pretty (e/simple-search index "*" true))
+  (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
       (log-pretty query)
@@ -27,8 +20,8 @@
       (oppilaitos-kouta-search
         page
         size
-        parse-response
-        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus"]
-        :sort [{:nimi.fi.keyword {:order "asc"}}]
+        parse
+        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat"]
+        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order "asc"}}]
         :query query
-        :aggs aggs)))
+        :aggs aggs))))
