@@ -9,6 +9,7 @@
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
+    [konfo-backend.koodisto.koodisto :as koodisto]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
     [ring.middleware.reload :refer [wrap-reload]]
@@ -114,6 +115,15 @@
                  (with-access-logging request (if-let [result (oppilaitos/get oid)]
                                                 (ok result)
                                                 (not-found "Not found")))))
+
+      (context "/koodisto"
+               []
+        (GET "/:koodisto" [:as request]
+          :summary "Koodisto API"
+          :path-params [koodisto :- String]
+          (with-access-logging request (if-let [result (koodisto/get-koodisto koodisto)]
+                                         (ok result)
+                                         (not-found "Not found")))))
 
       (context "/search" []
         (GET "/koulutukset" [:as request]
