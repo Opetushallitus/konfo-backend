@@ -1,27 +1,18 @@
-(ns konfo-backend.koodisto.koodisto)
+(ns konfo-backend.koodisto.koodisto
+  (:require
+    [konfo-backend.tools :refer [koodi-uri-no-version]]
+    [konfo-backend.elastic-tools :refer [get-source search]]))
 
-(defn list
-  [koodi]
-  (if (= "maakunta" koodi)
-    ["maakunta_01",
-     "maakunta_02",
-     "maakunta_03",
-     "maakunta_04",
-     "maakunta_05",
-     "maakunta_06",
-     "maakunta_07",
-     "maakunta_08",
-     "maakunta_09",
-     "maakunta_10",
-     "maakunta_11",
-     "maakunta_12",
-     "maakunta_13",
-     "maakunta_14",
-     "maakunta_15",
-     "maakunta_16",
-     "maakunta_17",
-     "maakunta_18",
-     "maakunta_19",
-     "maakunta_20",
-     "maakunta_21",
-     "maakunta_99"]))
+(defonce index-name "koodisto")
+
+(defn get-koodisto
+  [koodisto]
+  (get-source index-name koodisto))
+
+(defn list-koodit
+  [koodisto]
+  (vec (:koodit (get-koodisto koodisto))))
+
+(defn list-koodi-urit
+  [koodisto]
+  (vec (map :koodiUri (list-koodit koodisto))))

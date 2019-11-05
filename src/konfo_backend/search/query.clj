@@ -1,26 +1,37 @@
 (ns konfo-backend.search.query
   (:require
-    [konfo-backend.koodisto.koodisto :refer [list]]
+    [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
     [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
 
 (defn- ->term-filter
-  [term]
-  {(keyword term) {:term {:hits.sijainti.keyword term}}})
+  [field term]
+  {(keyword term) {:term {field term}}})
 
 (defn- ->term-filters
-  [terms]
-  (reduce merge {} (map ->term-filter terms)))
+  [field terms]
+  (reduce merge {} (map #(->term-filter field %) terms)))
 
-(defn- maakunta-filters
-  []
-  (->term-filters (list "maakunta")))
+(defn- ->filters-aggregation
+  [field terms]
+  {:filters {:filters (->term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
+
+(defn- koodisto-filters
+  [field koodisto]
+  (->filters-aggregation field (list-koodi-urit koodisto)))
+
+(defn- koulutustyyppi-filters
+  [field]
+  (->filters-aggregation field '["amm"]))
 
 (defn- aggs
   []
-  {:sijainti {:filters {:filters (maakunta-filters)} :aggs {:real_hits {:reverse_nested {}}}}})
+  {:sijainti         (koodisto-filters :hits.sijainti.keyword "maakunta")
+   :opetuskieli      (koodisto-filters :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+   :koulutusalataso1 (koodisto-filters :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
+   :koulutustyyppi   (koulutustyyppi-filters :hits.koulutustyyppi.keyword)})
 
 (defn aggregations
   []

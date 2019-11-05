@@ -15,7 +15,7 @@
 
 (defn- filters
   [response]
-  (reduce merge (map (fn [key] {key (->doc_count response key)}) [:sijainti])))
+  (reduce merge (map (fn [key] {key (->doc_count response key)}) [:koulutustyyppi :opetuskieli :sijainti :koulutusalataso1])))
 
 (defn parse
   [response]

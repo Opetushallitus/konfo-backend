@@ -14,12 +14,12 @@
 (defn- with-kuvaukset
   [result]
   (let [hits         (:hits result)
-        kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map :koulutus (filter ammatillinen? hits))))]
+        kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map #(get-in % [:koulutus :koodiUri]) (filter ammatillinen? hits))))]
 
       (defn- assoc-kuvaus-to-ammatillinen
         [hit]
         (if (ammatillinen? hit)
-          (let [koulutusKoodiUri (koodi-uri-no-version (:koulutus hit))]
+          (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
             (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
               (assoc hit :kuvaus kuvaus)
               hit))

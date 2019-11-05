@@ -1,5 +1,6 @@
 (ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
+            [konfo-backend.test-tools :refer [debug-pretty]]
             [konfo-backend.search.query :refer [query aggregations]]))
 
 (deftest oppilaitos-query-test
@@ -20,9 +21,18 @@
 
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"
-    (with-redefs [konfo-backend.koodisto.koodisto/list (fn [x] [(str x "_01") (str x "_02")])]
+    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])]
+      (debug-pretty (aggregations))
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
-                                 :aggs {:sijainti {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
-                                                                       :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
-                                                   :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+                                 :aggs {:sijainti         {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
+                                                                               :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
+                                                           :aggs {:real_hits {:reverse_nested {}}}}
+                                        :opetuskieli      {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
+                                                                               :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
+                                                           :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutusalataso1 {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
+                                                                               :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
+                                                           :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutustyyppi   {:filters {:filters {:amm {:term {:hits.koulutustyyppi.keyword "amm"}}}}
+                                                           :aggs {:real_hits {:reverse_nested {}}}}}}})))))

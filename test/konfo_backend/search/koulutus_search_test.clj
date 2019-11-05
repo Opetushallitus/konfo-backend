@@ -4,6 +4,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
+            [konfo-backend.test-tools :refer [debug-pretty]]
             [konfo-backend.search.koulutus.search :refer [index]]
             [cheshire.core :as cheshire]))
 
@@ -24,7 +25,7 @@
   (cheshire/generate-string
     {:tyyppi "amm",
      :koulutusalaKoodiUrit[ "kansallinenkoulutusluokitus2016koulutusalataso1_054#1",
-                           "kansallinenkoulutusluokitus2016koulutusalataso1_055#1"]}))
+                            "kansallinenkoulutusluokitus2016koulutusalataso1_055#1"]}))
 
 (defn create-toteutus-metatieto
   []
@@ -32,6 +33,15 @@
     {:tyyppi "amm"
      :asiasanat [{:kieli "fi" :arvo "hevonen"}]
      :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]}))
+
+(defn mock-koodistot
+  [x]
+  (cond
+    (= "maakunta" x)                                        ["maakunta_01", "maakunta_02"]
+    (= "oppilaitoksenopetuskieli" x)                        ["oppilaitoksenopetuskieli_1", "oppilaitoksenopetuskieli_2"]
+    (= "kansallinenkoulutusluokitus2016koulutusalataso1" x) [ "kansallinenkoulutusluokitus2016koulutusalataso1_054#1",
+                                                             "kansallinenkoulutusluokitus2016koulutusalataso1_055#1"]
+    :else []))
 
 (deftest koulutus-search-test
   (let [punkaharjun-yliopisto "1.2.246.562.10.000002"
@@ -64,11 +74,12 @@
 
     (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001" "1.2.246.562.13.000002"] :oppilaitokset [punkaharjun-yliopisto]} punkaharju-org)
 
-    (testing "Search koulutukset, filter with..."
-      (testing "sijainti"
-        (let [r (search :sijainti "kunta_618")]
-          (is (= 1 (count (:hits r))))
-          (is (= 1 (get-in r [:filters :sijainti :maakunta_01]))))))))
+    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit mock-koodistot]
+      (testing "Search koulutukset, filter with..."
+        (testing "sijainti"
+          (let [r (search :sijainti "kunta_618")]
+            (is (= 1 (count (:hits r))))
+            (is (= 1 (get-in r [:filters :sijainti :maakunta_01])))))))))
 
 
 
