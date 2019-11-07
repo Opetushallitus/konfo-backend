@@ -22,7 +22,7 @@
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])]
-      (debug-pretty (aggregations))
+      ;(debug-pretty (aggregations))
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
                                  :aggs {:sijainti         {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
