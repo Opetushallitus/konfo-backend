@@ -38,15 +38,15 @@
                    :jvm-opts ["-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.8-KTO-257-v1-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.8-KTO-257-v1-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-backend "0.8-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.8-SNAPSHOT" :classifier "tests"]
                                    [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
                                       [kouta-indeksoija-service "0.1.6-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.8-KTO-257-v1-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.8-KTO-257-v1-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-backend "0.8-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.8-SNAPSHOT" :classifier "tests"]
                                       [oph/clj-test-utils "0.2.2-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
