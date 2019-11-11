@@ -11,7 +11,7 @@
 (def oppilaitos-kouta-search (partial search-with-pagination index))
 
 (defn search
-  [keyword lng page size & {:as constraints}]
+  [keyword lng page size sort & {:as constraints}]
   (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
@@ -22,6 +22,6 @@
         size
         parse
         :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat"]
-        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order "asc"}}]
+        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
         :query query
         :aggs aggs))))

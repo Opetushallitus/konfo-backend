@@ -28,7 +28,7 @@
       (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen %) hits)))))
 
 (defn search
-  [keyword lng page size & {:as constraints}]
+  [keyword lng page size sort & {:as constraints}]
   (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
@@ -39,6 +39,6 @@
         size
         #(-> % parse with-kuvaukset)
         :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
-        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order "asc"}}]
+        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
         :query query
         :aggs aggs))))
