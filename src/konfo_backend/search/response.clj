@@ -20,5 +20,6 @@
 (defn parse
   [response]
   (log-pretty response)
-  {:hits    (hits response)
+  {:total   (get-in response [:hits :total])
+   :hits    (hits response)
    :filters (filters response)})
