@@ -10,13 +10,13 @@
 
   (testing "Query with filters"
     (is (= (query nil "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
-           {:nested {:path "hits", :query {:bool {:filter [{:terms {:hits.koulutustyyppi.keyword ["amm", "kk"]}}
+           {:nested {:path "hits", :query {:bool {:filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}})))
 
   (testing "Query with keyword and filters"
     (is (= (query "Hauska" "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
            {:nested {:path "hits", :query {:bool {:must {:match {:hits.terms.fi "hauska"}}
-                                                  :filter [{:terms {:hits.koulutustyyppi.keyword ["amm", "kk"]}}
+                                                  :filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}}))))
 
 (deftest oppilaitos-aggregations-test
@@ -34,5 +34,5 @@
                                         :koulutusalataso1 {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
                                                                                :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
                                                            :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutustyyppi   {:filters {:filters {:amm {:term {:hits.koulutustyyppi.keyword "amm"}}}}
+                                        :koulutustyyppi   {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}}}}
                                                            :aggs {:real_hits {:reverse_nested {}}}}}}})))))

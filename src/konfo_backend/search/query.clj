@@ -31,7 +31,7 @@
   {:sijainti         (koodisto-filters :hits.sijainti.keyword "maakunta")
    :opetuskieli      (koodisto-filters :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
    :koulutusalataso1 (koodisto-filters :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
-   :koulutustyyppi   (koulutustyyppi-filters :hits.koulutustyyppi.keyword)})
+   :koulutustyyppi   (koulutustyyppi-filters :hits.koulutustyypit.keyword)})
 
 (defn aggregations
   []
@@ -46,12 +46,12 @@
 (defn- filters
   [constraints]
   (cond-> []
-          (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyyppi.keyword (:koulutustyyppi constraints)))
+          (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints)))
           (opetuskieli? constraints)     (conj (->terms-query :hits.opetuskielet.keyword   (:opetuskieli constraints)))
           (sijainti? constraints)        (conj (->terms-query :hits.sijainti.keyword       (:sijainti constraints)))
           (koulutusala? constraints)     (conj (->terms-query :hits.koulutusalat.keyword   (:koulutusala constraints)))))
 
-(defn- bool                                                 ;
+(defn- bool
   [keyword lng constraints]
   (cond-> {}
           (not-blank? keyword)       (assoc :must {:match {(->lng-keyword "hits.terms.%s" lng) (lower-case keyword)}})
