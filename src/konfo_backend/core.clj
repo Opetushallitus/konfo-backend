@@ -9,7 +9,7 @@
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
-    [konfo-backend.koodisto.koodisto :as koodisto]
+    [konfo-backend.search.filters :as filters]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
     [ring.middleware.reload :refer [wrap-reload]]
@@ -143,16 +143,14 @@
                                                 (ok result)
                                                 (not-found "Not found")))))
 
-      (context "/koodisto"
-               []
-        (GET "/:koodisto" [:as request]
-          :summary "Koodisto API"
-          :path-params [koodisto :- String]
-          (with-access-logging request (if-let [result (koodisto/get-koodisto koodisto)]
-                                         (ok result)
-                                         (not-found "Not found")))))
-
       (context "/search" []
+
+        (GET "/filters" [:as request]
+          :summary "Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet"
+          (with-access-logging request (if-let [result (filters/hierarkia)]
+                                         (ok result)
+                                         (not-found "Not found"))))
+
         (GET "/koulutukset" [:as request]
           :summary "Koulutus search API"
           :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
