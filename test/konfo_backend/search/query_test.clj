@@ -25,8 +25,11 @@
       ;(debug-pretty (aggregations))
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
-                                 :aggs {:sijainti              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
+                                 :aggs {:maakunta              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
                                                                                     :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :kunta                 {:filters {:filters {:kunta_01 {:term {:hits.sijainti.keyword "kunta_01"}}
+                                                                                    :kunta_02 {:term {:hits.sijainti.keyword "kunta_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :opetuskieli           {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
                                                                                     :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}

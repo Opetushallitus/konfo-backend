@@ -31,7 +31,8 @@
   ([aggs]
    (let [filters (partial koodisto->filters aggs)]
      {:opetuskieli    (filters "oppilaitoksenopetuskieli")
-      :sijainti       (filters "maakunta")
+      :maakunta       (filters "maakunta")
+      :kunta          (filters "kunta")
       :koulutustyyppi (beta-koulutustyyppi aggs) ;TODO! Koodisto
       :koulutusala    (filters "kansallinenkoulutusluokitus2016koulutusalataso1")}))
   ([]

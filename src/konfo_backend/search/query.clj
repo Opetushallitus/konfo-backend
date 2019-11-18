@@ -28,10 +28,11 @@
 
 (defn- aggs
   []
-  {:sijainti            (koodisto-filters :hits.sijainti.keyword "maakunta")
-   :opetuskieli         (koodisto-filters :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-   :koulutusala         (koodisto-filters :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
-   :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
+  {:maakunta            (koodisto-filters :hits.sijainti.keyword       "maakunta")
+   :kunta               (koodisto-filters :hits.sijainti.keyword       "kunta")
+   :opetuskieli         (koodisto-filters :hits.opetuskielet.keyword   "oppilaitoksenopetuskieli")
+   :koulutusala         (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso1")
+   :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
    :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
    :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")})
 
