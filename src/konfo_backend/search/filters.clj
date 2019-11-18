@@ -1,31 +1,38 @@
 (ns konfo-backend.search.filters
   (:require
-    [konfo-backend.koodisto.koodisto :as k]))
+    [konfo-backend.koodisto.koodisto :as k]
+    [konfo-backend.tools :refer [reduce-merge-map]]))
 
 (defn- koodi->filter
-  [koodi]
-  (if (contains? koodi :alakoodit)
-    (-> koodi
-        (assoc :alakoodit (vec (map koodi->filter (:alakoodit koodi))))
-        (dissoc :versio))
-    (dissoc koodi :versio)))
+  [aggs koodi]
+  (let [koodiUri  (keyword (:koodiUri koodi))
+        nimi      (get-in koodi [:nimi])
+        count     (koodiUri aggs)
+        alakoodit (when (contains? koodi :alakoodit)
+                    (reduce-merge-map #(koodi->filter aggs %) (:alakoodit koodi)))]
+
+    {koodiUri (cond->     {:nimi nimi}
+                count     (assoc :count count)
+                alakoodit (assoc :alakoodit alakoodit))}))
 
 (defn- koodisto->filters
-  [koodisto]
-  (map koodi->filter (-> (k/get-koodisto koodisto)
-                         (:koodit))))
+  [aggs koodisto]
+  (reduce-merge-map #(koodi->filter aggs %) (:koodit (k/get-koodisto koodisto))))
 
 ;TODO! Koodisto
 (defn- beta-koulutustyyppi
-  []
-  (let [ammatillinen-koulutustyyppi? (fn [k] (or (= k "koulutustyyppi_1") (= k "koulutustyyppi_11") (= k "koulutustyyppi_12")))]
-    [{:koodiUri "amm"
-      :nimi {:fi "Ammatillinen koulutus"}
-      :alakoodit (vec (filter #(-> % :koodiUri (ammatillinen-koulutustyyppi?)) (koodisto->filters "koulutustyyppi")))}]))
+  [aggs]
+  (let [count (:amm aggs)]
+    {:amm (cond-> {:nimi {:fi "Ammatillinen koulutus"}
+                   :alakoodit (select-keys (koodisto->filters aggs "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_11 :koulutustyyppi_12])}
+            count (assoc :count count))}))
 
 (defn hierarkia
-  []
-  {:opetuskieli    (koodisto->filters "oppilaitoksenopetuskieli")
-   :sijainti       (koodisto->filters "maakunta")
-   :koulutustyyppi (beta-koulutustyyppi) ;TODO! Koodisto
-   :koulutusala    (koodisto->filters "kansallinenkoulutusluokitus2016koulutusalataso1")})
+  ([aggs]
+   (let [filters (partial koodisto->filters aggs)]
+     {:opetuskieli    (filters "oppilaitoksenopetuskieli")
+      :sijainti       (filters "maakunta")
+      :koulutustyyppi (beta-koulutustyyppi aggs) ;TODO! Koodisto
+      :koulutusala    (filters "kansallinenkoulutusluokitus2016koulutusalataso1")}))
+  ([]
+   (hierarkia {})))

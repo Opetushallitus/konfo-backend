@@ -34,15 +34,41 @@
      :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]}}))
 
-(defn mock-list-koodi-urit
+(defn mock-get-koodisto
   [x]
   (cond
-    (= "maakunta" x)                                        ["maakunta_01",
-                                                             "maakunta_02"]
-    (= "oppilaitoksenopetuskieli" x)                        ["oppilaitoksenopetuskieli_01",
-                                                             "oppilaitoksenopetuskieli_02"]
-    (= "kansallinenkoulutusluokitus2016koulutusalataso1" x) ["kansallinenkoulutusluokitus2016koulutusalataso1_01",
-                                                             "kansallinenkoulutusluokitus2016koulutusalataso1_02"]
+    (= "maakunta" x)                                        {:id "maakunta"
+                                                             :koodisto "maakunta"
+                                                             :koodit [{:koodiUri "maakunta_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Kiva maakunta"}}
+                                                                      {:koodiUri "maakunta_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Toinen kiva maakunta"}}]}
+    (= "koulutustyyppi" x)                                  {:id "koulutustyyppi"
+                                                             :koodisto "koulutustyyppi"
+                                                             :koodit [{:koodiUri "koulutustyyppi_11"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Mahtava koulutustyyppi"}}]}
+    (= "oppilaitoksenopetuskieli" x)                        {:id "oppilaitoksenopetuskieli"
+                                                             :koodisto "oppilaitoksenopetuskieli"
+                                                             :koodit [{:koodiUri "oppilaitoksenopetuskieli_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Suomi"}}
+                                                                      {:koodiUri "oppilaitoksenopetuskieli_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Ruotsi"}}]}
+    (= "kansallinenkoulutusluokitus2016koulutusalataso1" x) {:id "kansallinenkoulutusluokitus2016koulutusalataso1"
+                                                             :koodisto "kansallinenkoulutusluokitus2016koulutusalataso1"
+                                                             :koodit [{:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso1_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Kiva koulutusala"}
+                                                                       :alakoodit [{:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_01"
+                                                                                    :versio 1
+                                                                                    :nimi {:fi "Kiva alakoulutusala"}}]}
+                                                                      {:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso1_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Toinen kiva koulutusala"}}]}
     :else []))
 
 (def punkaharjun-yliopisto    "1.2.246.562.10.000002")

@@ -25,14 +25,20 @@
       ;(debug-pretty (aggregations))
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
-                                 :aggs {:sijainti         {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
-                                                                               :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
-                                                           :aggs {:real_hits {:reverse_nested {}}}}
-                                        :opetuskieli      {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
-                                                                               :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
-                                                           :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutusalataso1 {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
-                                                                               :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
-                                                           :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutustyyppi   {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}}}}
-                                                           :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+                                 :aggs {:sijainti              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
+                                                                                    :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :opetuskieli           {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
+                                                                                    :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
+                                                                                    :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutusalataso2      {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
+                                                                                    :kansallinenkoulutusluokitus2016koulutusalataso2_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutustyyppi        {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :koulutustyyppitaso2   {:filters {:filters {:koulutustyyppi_01 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_01"}}
+                                                                                    :koulutustyyppi_02 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}}}})))))

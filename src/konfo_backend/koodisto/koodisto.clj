@@ -15,4 +15,6 @@
 
 (defn list-koodi-urit
   [koodisto]
-  (vec (map :koodiUri (list-koodit koodisto))))
+  (if (= "koulutustyyppi" koodisto)
+    (vector "koulutustyyppi_1", "koulutustyyppi_11", "koulutustyyppi_12") ;TODO: fixme
+    (vec (map :koodiUri (list-koodit koodisto)))))

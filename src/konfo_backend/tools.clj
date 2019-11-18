@@ -14,6 +14,10 @@
   (when debug-pretty
     (log/debug (cheshire/generate-string json {:pretty true}))))
 
+(defn reduce-merge-map
+  [f coll]
+  (reduce merge {} (map f coll)))
+
 (defn not-blank?
   [str]
   (not (blank? str)))
