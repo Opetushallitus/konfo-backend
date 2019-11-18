@@ -59,6 +59,10 @@
           (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi])))))
 
+      (testing "multiple sijainti"
+        (let [r (search :sijainti "%20kunta_618%20,%20kunta_220")]
+          (is (= 2 (count (:hits r))))))
+
       (testing "koulutustyyppi"
         (let [r (search :koulutustyyppi "amm")]
           (is (= 2 (count (:hits r))))
