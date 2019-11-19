@@ -21,7 +21,7 @@
         (if (ammatillinen? hit)
           (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
             (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
-              (assoc hit :kuvaus kuvaus)
+              (assoc hit :kuvaus (:kuvaus kuvaus))
               hit))
           hit))
 
