@@ -8,7 +8,8 @@
     [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
-    [konfo-backend.old-search.search :as old-search]
+    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
+    [konfo-backend.search.filters :as filters]
     [konfo-backend.palaute.palaute :as palaute]
     [konfo-backend.config :refer [config]]
     [ring.middleware.reload :refer [wrap-reload]]
@@ -28,6 +29,33 @@
     (throw (IllegalStateException. "Could not read elastic-url from configuration!")))
   (intern 'clj-log.access-log 'service "konfo-backend")
   (intern 'clj-log.error-log 'test false))
+
+(defn- ->search-with-validated-params
+  [f keyword lng page size sort koulutustyyppi sijainti opetuskieli koulutusala]
+  (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
+        sijainnit           (comma-separated-string->vec sijainti)
+        opetuskielet        (comma-separated-string->vec opetuskieli)
+        koulutusalat        (comma-separated-string->vec koulutusala)]
+
+    (cond
+      (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+      (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
+      (and (nil? keyword)
+           (empty? koulutustyypit)
+           (empty? sijainti)
+           (empty? opetuskielet)
+           (empty? koulutusalat))          (bad-request "Hakusana tai jokin rajain on pakollinen")
+      (and (not (nil? keyword))
+           (> 3 (count keyword)))          (bad-request "Hakusana on liian lyhyt")
+      :else                                (ok (f keyword
+                                                  lng
+                                                  page
+                                                  size
+                                                  sort
+                                                  :koulutustyyppi koulutustyypit
+                                                  :sijainti       sijainnit
+                                                  :opetuskieli    opetuskielet
+                                                  :koulutusala    koulutusalat)))))
 
 (def konfo-api
   (api
@@ -116,47 +144,56 @@
                                                 (not-found "Not found")))))
 
       (context "/search" []
+
+        (GET "/filters" [:as request]
+          :summary "Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet"
+          (with-access-logging request (if-let [result (filters/hierarkia)]
+                                         (ok result)
+                                         (not-found "Not found"))))
+
         (GET "/koulutukset" [:as request]
           :summary "Koulutus search API"
-          :query-params [{keyword :- String nil}
-                         {page :- Long 1}
-                         {size :- Long 20}
-                         {koulutustyyppi :- String nil}
-                         {paikkakunta :- String nil}
-                         {opetuskieli :- String nil}
-                         {vainHakuKaynnissa :- Boolean false}
-                         {lng :- String "fi"}]
-          (with-access-logging request
-            (let [koulutustyypit (comma-separated-string->vec koulutustyyppi)
-                  opetuskielet   (comma-separated-string->vec opetuskieli)]
-              (cond
-                (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Invalid lng")
-                (and (nil? keyword) (empty? koulutustyypit) (nil? paikkakunta) (empty? opetuskielet) (false? vainHakuKaynnissa)) (bad-request "Hakusana tai jokin rajain on pakollinen")
-                (and (not (nil? keyword)) (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
-                :else (ok (koulutus-search/search keyword
-                                                  lng
-                                                  page
-                                                  size
-                                                  :koulutustyyppi koulutustyypit
-                                                  :paikkakunta paikkakunta
-                                                  :opetuskieli opetuskielet
-                                                  :vainHakuKaynnissa vainHakuKaynnissa))))))
+          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
+                         {page           :- Long 1}
+                         {size           :- Long 20}
+                         {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
+                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}
+                         {koulutustyyppi :- (describe String "Pilkulla eroteltu lista koulutustyyppejä, esim. 'amm,kk,lk'") nil}
+                         {sijainti       :- (describe String "Pilkulla eroteltu kuntien ja maakuntien koodeja, esim. 'kunta_091,maakunta_01,maakunta_03'") nil}
+                         {opetuskieli    :- (describe String "Pilkulla eroteltu opetuskielten koodeja, esim. 'oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2'") nil}
+                         {koulutusala    :- (describe String "Pilkulla eroteltu koulutusalojen koodeja, esim. 'kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02'") nil}]
+          (with-access-logging request (->search-with-validated-params koulutus-search/search
+                                                                       keyword
+                                                                       lng
+                                                                       page
+                                                                       size
+                                                                       sort
+                                                                       koulutustyyppi
+                                                                       sijainti
+                                                                       opetuskieli
+                                                                       koulutusala)))
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
-          :query-params [{keyword :- String nil}
-                         {page :- Long 1}
-                         {size :- Long 20}
-                         {koulutustyyppi :- String nil}
-                         {paikkakunta :- String nil}
-                         {kieli :- String nil}
-                         {lng :- String "fi"}]
-          (with-access-logging request (if (some #{lng} ["fi" "sv" "en"])
-                                         (ok (old-search/search-oppilaitos keyword lng page size
-                                                                       (old-search/constraints :koulutustyyppi koulutustyyppi
-                                                                                           :paikkakunta paikkakunta
-                                                                                           :kieli kieli)))
-                                         (bad-request "Invalid lng")))))
+          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
+                         {page           :- Long 1}
+                         {size           :- Long 20}
+                         {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
+                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}
+                         {koulutustyyppi :- (describe String "Pilkulla eroteltu lista koulutustyyppejä, esim. 'amm,kk,lk'") nil}
+                         {sijainti       :- (describe String "Pilkulla eroteltu kuntien ja maakuntien koodeja, esim. 'kunta_091,maakunta_01,maakunta_03'") nil}
+                         {opetuskieli    :- (describe String "Pilkulla eroteltu opetuskielten koodeja, esim. 'oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2'") nil}
+                         {koulutusala    :- (describe String "Pilkulla eroteltu koulutusalojen koodeja, esim. 'kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02'") nil}]
+          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
+                                                                       keyword
+                                                                       lng
+                                                                       page
+                                                                       size
+                                                                       sort
+                                                                       koulutustyyppi
+                                                                       sijainti
+                                                                       opetuskieli
+                                                                       koulutusala))))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"

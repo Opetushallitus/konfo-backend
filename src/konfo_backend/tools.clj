@@ -2,7 +2,7 @@
   (:require
     [cheshire.core :as cheshire]
     [clojure.tools.logging :as log]
-    [clojure.string :refer [blank? split lower-case]]
+    [clojure.string :refer [blank? split lower-case trim]]
     [clj-time.format :as format]
     [clj-time.coerce :as coerce]
     [clj-time.core :as core]))
@@ -13,6 +13,10 @@
   [json]
   (when debug-pretty
     (log/debug (cheshire/generate-string json {:pretty true}))))
+
+(defn reduce-merge-map
+  [f coll]
+  (reduce merge {} (map f coll)))
 
 (defn not-blank?
   [str]
@@ -64,7 +68,10 @@
 
 (defn comma-separated-string->vec
   [s]
-  (vec (remove blank? (some-> s (split #",")))))
+  (->> (some-> s (split #","))
+       (remove blank?)
+       (map trim)
+       (vec)))
 
 (defn ->koodi-with-version-wildcard
   [koodi]

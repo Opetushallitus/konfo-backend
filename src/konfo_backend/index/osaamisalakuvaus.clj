@@ -22,7 +22,7 @@
                      :osaamisalakoodiUri (get-in source [:osaamisala :uri])
                      :id                 (:id source)
                      :suoritustapa       (:suoritustapa source)
-                     :kuvaus             (:teksti source)}) (map :_source (some-> result :hits))))
+                     :kuvaus             (:teksti source)}) (map :_source (some-> result :hits :hits))))
 
 (defn get-kuvaukset-by-eperuste-id
   [eperuste-id]

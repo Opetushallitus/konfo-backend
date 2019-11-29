@@ -17,7 +17,7 @@
 
 (defn- kuvaus-result-mapper
   [koulutuskoodi result]
-  (when-let [source (some-> result :hits first :_source)]
+  (when-let [source (some-> result :hits :hits first :_source)]
     (let [koulutus (first (filter #(= (:koulutuskoodiUri %) koulutuskoodi) (:koulutukset source)))]
       {:nimi             (:nimi koulutus)
        :koulutuskoodiUri (:koulutuskoodiUri koulutus)
@@ -38,7 +38,7 @@
     [source]
     (vec (map #(koulutus-result-mapper source %) (:koulutukset source))))
 
-  (vec (apply concat (map #(source-result-mapper (:_source %)) (:hits result)))))
+  (vec (apply concat (map #(source-result-mapper (:_source %)) (get-in result [:hits :hits])))))
 
 (defn get-kuvaus-by-koulutuskoodi
   [koulutuskoodi-uri]
@@ -50,8 +50,8 @@
 
 (defn get-kuvaukset-by-koulutuskoodit
   [koulutuskoodi-uris]
-  (let [koulutuskoodit (vec (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
+  (when-let [koulutuskoodit (seq (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
     (eperuste-search kuvaukset-result-mapper
                      :_source [:koulutukset.nimi, :koulutukset.koulutuskoodiUri :id, :kuvaus.fi :kuvaus.en :kuvaus.sv]
-                     :query {:bool {:must {:terms {:koulutukset.koulutuskoodiUri koulutuskoodit}},
+                     :query {:bool {:must {:terms {:koulutukset.koulutuskoodiUri (vec koulutuskoodit)}},
                                     :filter {:term {:tila "valmis"}}}})))
