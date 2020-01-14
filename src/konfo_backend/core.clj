@@ -173,6 +173,21 @@
                                                                        opetuskieli
                                                                        koulutusala)))
 
+        (GET "/koulutus/:oid/jarjestajat" [:as request]
+          :summary "Hae koulutuksen tarjoajatiedot oidilla"
+          :path-params [oid :- String]
+          :query-params [{tuleva         :- Boolean false}
+                         {page           :- Long 1}
+                         {size           :- Long 20}
+                         {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
+                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
+          (with-access-logging request (cond
+                                         (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+                                         (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
+                                         :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid lng page size sort tuleva)]
+                                                 (ok result)
+                                                 (not-found "Not found")))))
+
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
           :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
@@ -193,7 +208,22 @@
                                                                        koulutustyyppi
                                                                        sijainti
                                                                        opetuskieli
-                                                                       koulutusala))))
+                                                                       koulutusala)))
+
+        (GET "/oppilaitos/:oid/tarjonta" [:as request]
+          :summary "Hae oppilaitoksen koulutustarjonta oidilla"
+          :path-params [oid :- String]
+          :query-params [{tuleva         :- Boolean false}
+                         {page           :- Long 1}
+                         {size           :- Long 20}
+                         {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
+                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
+          (with-access-logging request (cond
+                                         (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+                                         (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
+                                         :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size sort tuleva)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))))
 
       (GET "/palaute" [:as request]
         :summary "GET palautteet"

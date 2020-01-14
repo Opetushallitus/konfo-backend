@@ -2,13 +2,13 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query aggregations]]
-    [konfo-backend.search.response :refer [parse]]
-    [konfo-backend.elastic-tools :refer [search-with-pagination]]))
+    [konfo-backend.search.query :refer [query aggregations inner-hits-query]]
+    [konfo-backend.search.response :refer [parse parse-inner-hits]]
+    [konfo-backend.elastic-tools :as e]))
 
 (defonce index "oppilaitos-kouta-search")
 
-(def oppilaitos-kouta-search (partial search-with-pagination index))
+(def oppilaitos-kouta-search (partial e/search-with-pagination index))
 
 (defn search
   [keyword lng page size sort & {:as constraints}]
@@ -25,3 +25,10 @@
         :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
         :query query
         :aggs aggs))))
+
+(defn search-oppilaitoksen-tarjonta
+  [oid lng page size sort tuleva?]
+  (e/search index
+            parse-inner-hits
+            :_source ["oid"]
+            :query (inner-hits-query oid lng page size sort tuleva?)))

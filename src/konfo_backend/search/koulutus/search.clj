@@ -2,14 +2,14 @@
   (:require
     [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query aggregations]]
-    [konfo-backend.search.response :refer [parse]]
-    [konfo-backend.elastic-tools :refer [search-with-pagination]]
+    [konfo-backend.search.query :refer [query aggregations inner-hits-query]]
+    [konfo-backend.search.response :refer [parse parse-inner-hits]]
+    [konfo-backend.elastic-tools :as e]
     [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit]]))
 
 (defonce index "koulutus-kouta-search")
 
-(def koulutus-kouta-search (partial search-with-pagination index))
+(def koulutus-kouta-search (partial e/search-with-pagination index))
 
 (defn- with-kuvaukset
   [result]
@@ -42,3 +42,10 @@
         :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
         :query query
         :aggs aggs))))
+
+(defn search-koulutuksen-jarjestajat
+  [oid lng page size sort tuleva?]
+  (e/search index
+            parse-inner-hits
+            :_source ["oid", "koulutus", "nimi"]
+            :query (inner-hits-query oid lng page size sort tuleva?)))
