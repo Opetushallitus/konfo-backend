@@ -38,17 +38,15 @@
         kuvaukset (get-kuvaukset (vec (distinct (remove nil? (map :toteutusOid hits)))))]
     (vec (for [hit hits
                :let [toteutusOid (:toteutusOid hit)]]
-           (do (println hit)
-               (-> hit
-                   (select-keys [:koulutusOid :oppilaitosOid :toteutusOid :nimi :koulutustyyppi])
-                   (merge (:metadata hit))
-                   (assoc :kuvaus (if (not (nil? toteutusOid))
-                                    (or ((keyword toteutusOid) kuvaukset) {})
-                                    {}))))))))
+           (-> hit
+               (select-keys [:koulutusOid :oppilaitosOid :toteutusOid :nimi :koulutustyyppi])
+               (merge (:metadata hit))
+               (assoc :kuvaus (if (not (nil? toteutusOid))
+                                (or ((keyword toteutusOid) kuvaukset) {})
+                                {})))))))
 
 (defn parse-inner-hits
   [response]
-  (log-pretty response)
-  (when-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
-    {:total (:total inner-hits)
-     :hits  (inner-hits-with-kuvaukset inner-hits)}))
+  (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
+    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits)}
+    {:total 0 :hits []}))
