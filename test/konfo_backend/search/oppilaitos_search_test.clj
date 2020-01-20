@@ -31,12 +31,6 @@
 
 (deftest oppilaitos-search-test
 
-  (defn orgs
-    [x & {:as params}]
-    (cond
-      (or (= x punkaharjun-yliopisto) (= x punkaharjun-toimipiste-1) (= x punkaharjun-toimipiste-2)) punkaharju-org
-      (or (= x helsingin-yliopisto) (= x helsingin-toimipiste)) helsinki-org))
-
   (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-koulutus-mock "1.2.246.562.13.000002" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000002" :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)

@@ -3,6 +3,7 @@
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.filters :refer [hierarkia]]
+    [konfo-backend.index.toteutus :refer [get-kuvaukset]]
     [konfo-backend.tools :refer [reduce-merge-map]]))
 
 (defn- hits
@@ -30,3 +31,22 @@
   {:total   (get-in response [:hits :total])
    :hits    (hits response)
    :filters (filters response)})
+
+(defn- inner-hits-with-kuvaukset
+  [inner-hits]
+  (let [hits      (vec (map :_source (:hits inner-hits)))
+        kuvaukset (get-kuvaukset (vec (distinct (remove nil? (map :toteutusOid hits)))))]
+    (vec (for [hit hits
+               :let [toteutusOid (:toteutusOid hit)]]
+           (-> hit
+               (select-keys [:koulutusOid :oppilaitosOid :toteutusOid :nimi :koulutustyyppi])
+               (merge (:metadata hit))
+               (assoc :kuvaus (if (not (nil? toteutusOid))
+                                (or ((keyword toteutusOid) kuvaukset) {})
+                                {})))))))
+
+(defn parse-inner-hits
+  [response]
+  (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
+    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits)}
+    {:total 0 :hits []}))

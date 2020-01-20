@@ -4,6 +4,7 @@
     [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
+    [konfo-backend.elastic-tools :refer [->size ->from]]
     [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
 
 (defn- ->term-filter
@@ -63,3 +64,15 @@
 (defn query
   [keyword lng constraints]
   {:nested {:path "hits", :query {:bool (bool keyword lng constraints)}}})
+
+(defn inner-hits-query
+  [oid lng page size sort tuleva?]
+  (let [size (->size size)
+        from (->from page size)]
+    {:bool {:must [{:term {:oid oid}}
+                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.oppilaitosOid", "hits.nimi", "hits.metadata"]
+                                          :from from
+                                          :size size
+                                          :sort {(str "hits.nimi." lng ".keyword") {:order sort}}}
+                             :path "hits"
+                             :query {:term {"hits.onkoTuleva" tuleva?}}}}]}}))

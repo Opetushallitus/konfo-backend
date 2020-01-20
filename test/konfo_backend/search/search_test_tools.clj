@@ -138,3 +138,9 @@
     (= x oppilaitosOid4) (named-oppilaitos x "Aakkosissa vasta neljäs")
     (= x oppilaitosOid5) (named-oppilaitos x "Aakkosissa viidentenä")
     (= x oppilaitosOid6) (named-oppilaitos x "Aakkosissa viimein kuudentena")))
+
+(defn orgs
+  [x & {:as params}]
+  (cond
+    (or (= x punkaharjun-yliopisto) (= x punkaharjun-toimipiste-1) (= x punkaharjun-toimipiste-2)) punkaharju-org
+    (or (= x helsingin-yliopisto) (= x helsingin-toimipiste)) helsinki-org))

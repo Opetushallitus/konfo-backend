@@ -34,10 +34,18 @@
               query-parts)
        mapper))
 
+(defn ->size
+  [size]
+  (if (pos? size) (if (< size 200) size 200) 0))
+
+(defn ->from
+  [page size]
+  (if (pos? page) (* (- page 1) size) 0))
+
 (defn search-with-pagination
   [index page size mapper & query-parts]
-  (let [size (if (pos? size) (if (< size 200) size 200) 0)
-        from (if (pos? page) (* (- page 1) size) 0)]
+  (let [size (->size size)
+        from (->from page size)]
     (apply search index mapper :from from :size size query-parts)))
 
 (defn old-search
@@ -45,16 +53,16 @@
   (log/debug query-parts)
   (with-error-logging
     (let [start (System/currentTimeMillis)
-          size (if (pos? size) (if (< size 200) size 200) 0)
-          from (if (pos? page) (* (- page 1) size) 0)
-          res (->> (apply e/search
-                     (index-name index)
-                     (index-name index)
-                     :from from
-                     :size size
-                     query-parts)
-                   :hits
-                   (mapper))]
+          size  (->size size)
+          from  (->from page size)
+            res (->> (apply e/search
+                       (index-name index)
+                       (index-name index)
+                       :from from
+                       :size size
+                       query-parts)
+                       :hits
+                       (mapper))]
       (insert-query-perf perf-log-msg (- (System/currentTimeMillis) start) start (count res))
       res)))
 
