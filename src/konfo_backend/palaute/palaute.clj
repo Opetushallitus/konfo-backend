@@ -1,31 +1,28 @@
 (ns konfo-backend.palaute.palaute
   (:require
-    [konfo-backend.elastic-tools :refer [search]]))
+   [cheshire.core :as cheshire]
+   [konfo-backend.config :refer [config]]
+   [clojure.tools.logging :as log]
+   [konfo-backend.palaute.sqs :as sqs]))
 
-(defn post-palaute
-  [arvosana palaute]
-    (konfo-backend.elastic-tools/insert "palaute"  {:arvosana arvosana :palaute palaute}))
 
-(defn- create-palaute
-  [hit]
-  (let [palaute (:_source hit)]
-    {:arvosana (:arvosana palaute)
-     :palaute (:palaute palaute)
-     :created (:created palaute)}))
+(defn build-palaute-request
+  [feedback]
+  {:stars      (:stars feedback)
+   :feedback   (:feedback feedback)
+   :user-agent (:user-agent feedback)
+   :created-at (.getTime (java.util.Date.))
+   :data       {}
+   :key        "konfo"})
 
-(defn- create-palautteet
-  [result]
-  (let [palautteet (map create-palaute (:hits result))]
-    {:count (:total result)
-     :avg (if (> (:total result) 0)
-            (/ (reduce + (map #(:arvosana %) palautteet)) (:total result))
-            0)
-     :result palautteet}))
-
-(defn get-palautteet
-  [after]
-  (search "palaute"
-          #(-> % :hits create-palautteet)
-          :query {:bool {:must {:range {:created {:gt after}}}}}
-          :_source ["arvosana" "palaute" "created"]
-          :sort [{:created :desc}]))
+(defn send-feedback
+  [amazon-sqs feedback]
+  (try
+    (log/info "Sending feedback to Palautepalvelu" feedback)
+    (sqs/send-message amazon-sqs
+      (-> config :s3 :feedback-queue)
+      (-> feedback
+        (build-palaute-request)
+        (cheshire/generate-string)))
+    (catch Exception e
+      (log/warn (str "Feedback didn't go through: " (str (type e)) (str e) (.getMessage e))))))

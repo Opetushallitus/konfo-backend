@@ -1,17 +1,21 @@
 (ns konfo-backend.core
   (:require
+    [konfo-backend.config :refer [config]]
     [konfo-backend.index.toteutus :as toteutus]
     [konfo-backend.index.koulutus :as koulutus]
+    [konfo-backend.contentful.contentful :as contentful]
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
+    [konfo-backend.contentful.updater-api :refer [updater-app]]
     [konfo-backend.index.valintaperuste :as valintaperuste]
     [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
+    [konfo-backend.old-search.search :as old-search]
+    [konfo-backend.palaute.sqs :as sqs]
     [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
     [konfo-backend.search.filters :as filters]
     [konfo-backend.palaute.palaute :as palaute]
-    [konfo-backend.config :refer [config]]
     [ring.middleware.reload :refer [wrap-reload]]
     [ring.adapter.jetty :refer [run-jetty]]
     [konfo-backend.tools :refer [comma-separated-string->vec]]
@@ -29,6 +33,8 @@
     (throw (IllegalStateException. "Could not read elastic-url from configuration!")))
   (intern 'clj-log.access-log 'service "konfo-backend")
   (intern 'clj-log.error-log 'test false))
+
+(defonce sqs-client (sqs/create-sqs-client))
 
 (defn- ->search-with-validated-params
   [f keyword lng page size sort koulutustyyppi sijainti opetuskieli koulutusala]
@@ -68,7 +74,7 @@
 
       (GET "/healthcheck" [:as request]
         :summary "Healthcheck API"
-        (with-access-logging request (ok "OK")))
+           (-> (ok "OK")))
 
       (context "/koulutus"
         []
@@ -77,6 +83,58 @@
           :path-params [oid :- String]
           (with-access-logging request (if-let [result (koulutus/get oid)]
                                          (ok result)
+                                         (not-found "Not found")))))
+
+      (context "/content"
+               []
+         (GET "/:locale" [:as request]
+              :summary     "Contentful-versio tiedosto"
+              :path-params [locale :- String]
+              (let [url (fn [content-type]
+                          (str (-> config :konfo-host) "/konfo-backend/content/" locale "/" content-type))]
+                (ok (->> ["sivu"
+                    "valikot"
+                    "info"
+                    "valikko"
+                    "uutiset"
+                    "kortit"
+                    "kortti"
+                    "footer"
+                    "ohjeetJaTuki"
+                    "uutinen"
+                    "palvelut"
+                    "palvelu"]
+                   (map (fn [asset] [asset (url asset)]))
+                   (into {})))))
+        (GET "/:locale/:content" [:as request]
+          :summary "Contentful-elementit"
+          :path-params [locale :- String
+                        content :- String]
+          :query-params [{preview :- Boolean false}]
+          (with-access-logging request (if-let [result (contentful/get-entries content locale preview)]
+                                         (-> (ok result)
+                                             (content-type "application/json"))
+                                         (not-found "Not found"))))
+        (GET "/:locale/:content/:id" [:as request]
+          :summary "Contentful-elementti"
+          :path-params [locale :- String
+                        content :- String
+                        id :- String]
+          :query-params [{preview :- Boolean false}]
+          (with-access-logging request (if-let [result (contentful/get-entry content id locale preview)]
+                                         (-> (ok result)
+                                             (content-type "application/json"))
+                                         (not-found "Not found")))))
+
+      (context "/assets"
+               []
+        (GET "/:locale" [:as request]
+          :summary "Contentful-elementit"
+          :path-params [locale :- String]
+          :query-params [{preview :- Boolean false}]
+          (with-access-logging request (if-let [result (contentful/get-assets locale preview)]
+                                         (-> (ok result)
+                                             (content-type "application/json"))
                                          (not-found "Not found")))))
 
       (context "/toteutus"
@@ -225,24 +283,33 @@
                                                  (ok result)
                                                  (not-found "Not found"))))))
 
-      (GET "/palaute" [:as request]
-        :summary "GET palautteet"
-        :query-params [{after :- Long 0}]
-        (with-access-logging request (ok (palaute/get-palautteet after))))
-
       (POST "/palaute" [:as request]
         :summary "POST palaute"
         :form-params [{arvosana :- Long nil}
                       {palaute :- String ""}]
-        (with-access-logging request (if (and arvosana (<= 1 arvosana 5))
-                                       (ok {:result (palaute/post-palaute arvosana palaute)})
-                                       (bad-request "Invalid arvosana")))))))
+        (let [feedback {:stars      arvosana
+                        :feedback   palaute
+                        :user-agent (get-in request [:headers "user-agent"])}]
+          (palaute/send-feedback sqs-client feedback)
+          (ok {}))))))
 
 (def app
   (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
 
 (defn -main [& args]
-  (init)
-  (run-jetty (wrap-reload #'app) {:port (Integer/valueOf (or (System/getenv "port")
-                                                             (System/getProperty "port")
-                                                             "8080"))}))
+  (if (= (System/getProperty "mode") "updater")
+    (do
+      (log/info "Starting Konfo-backend-updater!")
+      (run-jetty (wrap-reload #'updater-app)
+                 {:port (Integer/valueOf
+                          (or (System/getenv "port")
+                              (System/getProperty "port")
+                              "8080"))}))
+    (do
+      (log/info "Starting Konfo-backend!")
+      (init)
+      (run-jetty (wrap-reload #'app)
+        {:port (Integer/valueOf
+                 (or (System/getenv "port")
+                   (System/getProperty "port")
+                   "8080"))}))))

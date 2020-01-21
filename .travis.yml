@@ -24,15 +24,21 @@ script:
   - lein -U ci-test
   - lein uberjar
 
-  - mv target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
+  - cp target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
   - cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
 
   - export BASE_IMAGE="baseimage-fatjar:jdk11"
   - ./ci-tools/common/pull-image.sh
   - ./ci-tools/build/build-fatjar.sh konfo-backend
+  - ./ci-tools/common/clean-docker-build-dir.sh
+  - cp target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend-updater.jar
+  - cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
+  - ./ci-tools/build/build-fatjar.sh konfo-backend-updater
 
 deploy:
   provider: script
-  script: ./ci-tools/build/upload-image.sh konfo-backend
+  script: >-
+    ./ci-tools/build/upload-image.sh konfo-backend &&
+    ./ci-tools/build/upload-image.sh konfo-backend-updater
   on:
     all_branches: true

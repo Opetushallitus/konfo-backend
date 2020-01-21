@@ -1,4 +1,12 @@
 {
     :elastic-url "http://foo.org:9200"
     :elastic-timeout 120000
+
+
+    :contentful-space-id "space-id"
+    :contentful-access-token "access-token"
+    :contentful-preview-token "preview-token"
+
+    :dev true
+    :konfo-host "http://localhost"
 }
