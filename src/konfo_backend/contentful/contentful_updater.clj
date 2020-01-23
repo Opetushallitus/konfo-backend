@@ -22,6 +22,8 @@
 
 (defonce max-width 1280)
 (defonce max-height 1080)
+(defonce ttl-manifest 0)
+(defonce ttl-asset 1)
 
 (defn fetch->image [image-url]
   (let [image   (client/get (str "https:" image-url) {:as :byte-array})
@@ -62,108 +64,123 @@
         (log/info (str "processing image " final-transform " scaling = " scale? ", md5 = " md5))
         [final-transform md5]))))
 
+(defn get-content-type-with-field-types []
+  (->> (.items (contentful/get-content-types))
+       (map (fn [t]
+                [(.id t) (into {} (for [f (.fields t)]
+                                    {(.id f) (.type f)}))]))
+       (into {})))
+
+(defn create-gson-serializer [url-cache content-types]
+  (let [markdown-conv (fn [markdown]
+                          (let [r (reduce (fn [t [key value]]
+                                              (.replaceAll t key (first value)))
+                                          markdown
+                                          @url-cache)]
+                            r))]
+    (create-gson
+      (fn [entry field value]
+          (let [field-type (get-in content-types [(-> entry
+                                                      .contentType
+                                                      .id) field])]
+            (or (and (= field-type "Text")
+                     (markdown-conv value))
+                value)))
+      (fn [cda-asset]
+          (let [original (.url cda-asset)]
+            (or (get @url-cache original)
+                (let [[transformed-url md5] (transform-url-if-needed cda-asset)
+                      new-url (subs (str (assoc (uri (if transformed-url
+                                                       (str original ".jpg")
+                                                       original))
+                                                :scheme nil
+                                                :host nil)) 1)]
+                  (swap! url-cache assoc original [new-url original transformed-url md5])
+                  [new-url original transformed-url md5])))))))
+
+(defn store->s3 [s3-client ttl content-type key obj]
+  (log/info (str "Putting " key " with ttl " ttl " (hours)"))
+  (when s3-client
+        (s3/put-object ttl s3-client key obj content-type)
+        (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
+
+(defn asset-store-handler [s3-client gson url-cache _ locale base-url existing-url]
+  (let [existing     (some-> existing-url
+                             (s3/get-object s3-client))
+        latest-raw   (contentful/get-assets-raw locale false)
+        latest       (.toJson gson latest-raw)
+        existing-obj (some-> latest
+                             (cheshire/parse-string))
+        key          (str base-url "asset" ".json")]
+    (if (not= existing latest)
+      (do
+        (doseq [asset existing-obj]
+          (let [s3-url   (get asset "url")
+                original (get asset "original")
+                [_ _ transformed md5] (get @url-cache original)
+                old-md5  (s3/get-object-md5 s3-client s3-url)]
+            (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
+            (when-not (= old-md5 md5))
+            (let [[image content-type] (fetch->image (or transformed original))]
+              (store->s3 s3-client ttl-asset content-type s3-url image))))
+        (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest))
+        key)
+      existing-url)))
+
+(defn content-store-handler [s3-client gson _ content-type locale base-url existing-url]
+  (let [existing   (some-> existing-url
+                           (s3/get-object s3-client))
+        latest-raw (contentful/get-entries-raw content-type locale false)
+        latest     (.toJson gson latest-raw)
+        key        (str base-url content-type ".json")]
+    (if (not= existing latest)
+      (do
+        (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest))
+        key)
+      existing-url)))
+
 (defn contentful->s3 [started-timestamp & args]
-  (let [s3-client (s3/create-client)]
+  (let [s3-client     (s3/create-client)]
     (try
       (log/info (str "timestamp: " started-timestamp ", args=" args))
       (let [update-id        started-timestamp
-            content-types    (->> (.items (contentful/get-content-types))
-                                  (map (fn [t]
-                                           [(.id t) (into {} (for [f (.fields t)]
-                                                               {(.id f) (.type f)}))]))
-                                  (into {}))
-            url-conversion   (atom {})
-            markdown-conv    (fn [markdown]
-                                 (let [r (reduce (fn [t [key value]]
-                                                     (.replaceAll t key (first value)))
-                                         markdown
-                                         @url-conversion)]
-                                   r))
-            gson             (create-gson
-                               (fn [entry field value]
-                                   (let [field-type (get-in content-types [(-> entry
-                                                                               .contentType
-                                                                               .id) field])]
-                                     (or (and (= field-type "Text")
-                                              (markdown-conv value))
-                                         value)))
-                               (fn [cda-asset]
-                                   (let [original (.url cda-asset)]
-                                     (or (get @url-conversion original)
-                                         (let [[transformed-url md5] (transform-url-if-needed cda-asset)
-                                               new-url         (subs (str (assoc (uri (if transformed-url
-                                                                                        (str original ".jpg")
-                                                                                        original))
-                                                                                 :scheme nil
-                                                                                 :host nil)) 1)]
-                                           (swap! url-conversion assoc original [new-url original transformed-url md5])
-                                           [new-url original transformed-url md5])))))
-            ttl-manifest     0
-            ttl-asset        1
-            fetch-s3->str    (fn [file]
-                                 (when s3-client
-                                       (s3/get-object s3-client file)))
+            content-types    (get-content-type-with-field-types)
+            url-cache        (atom {})
+            gson             (create-gson-serializer url-cache content-types)
             store->s3        (fn [ttl content-type key obj]
                                  (log/info (str "Putting " key " with ttl " ttl " (hours)"))
                                  (when s3-client
                                        (s3/put-object ttl s3-client key obj content-type)
                                        (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
-            manifest-str     (fetch-s3->str "manifest.json")
+            manifest-str     (s3/get-object s3-client "manifest.json")
             manifest         (some-> manifest-str
                                      (cheshire/parse-string))
-
             locales          ["fi" "sv"]
-            asset-resource   (fn [locale base-url existing-url]
-                                 (let [existing     (some-> existing-url
-                                                            (fetch-s3->str))
-                                       latest-raw   (contentful/get-assets-raw locale false)
-                                       latest       (.toJson gson latest-raw)
-                                       existing-obj (some-> latest
-                                                            (cheshire/parse-string))
-                                       key          (str base-url "asset" ".json")]
-                                   (if (not= existing latest)
-                                     (do
-                                       (doseq [asset existing-obj]
-                                         (let [s3-url (get asset "url")
-                                               original (get asset "original")
-                                               [_ _ transformed md5] (get @url-conversion original)
-                                               old-md5 (s3/get-object-md5 s3-client s3-url)]
-                                           (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
-                                           (when-not (= old-md5 md5))
-                                             (let [[image content-type]  (fetch->image (or transformed original))]
-                                               (store->s3 ttl-asset content-type s3-url image))))
-                                       (store->s3 ttl-asset "application/json; charset=utf-8" key (.getBytes latest))
-                                       key)
-                                     existing-url)))
+
             resources        (concat
-                              [["asset" "fi" (fn [base-url existing-url]
-                                                 (asset-resource "fi" base-url existing-url))]
-                               ["asset" "sv" (fn [base-url existing-url]
-                                                 (asset-resource "sv" base-url existing-url))]]
+                              [["asset" "fi" asset-store-handler]
+                               ["asset" "sv" asset-store-handler]]
                               (for [[t _] content-types
-                                           l locales]
-                                       [t l (fn [base-url existing-url]
-                                                (let [existing   (some-> existing-url
-                                                                         (fetch-s3->str))
-                                                      latest-raw (contentful/get-entries-raw t l false)
-                                                      latest     (.toJson gson latest-raw)
-                                                      key        (str base-url t ".json")]
-                                                  (if (not= existing latest)
-                                                    (do
-                                                      (store->s3 ttl-asset "application/json; charset=utf-8" key (.getBytes latest))
-                                                      key)
-                                                    existing-url)))]))
+                                    l locales]
+                                [t l content-store-handler]))
             new-manifest     (reduce
-                              (fn [r [t l latest-fn]]
-                                  (let [existing-url (get-in manifest [t l] nil)
-                                        base-url     (str update-id "/" l "/")
-                                        latest-url   (latest-fn base-url existing-url)]
-                                    (assoc-in r [t l] (if (= existing-url latest-url)
-                                                        existing-url
-                                                        latest-url))))
+                              (fn [r [content-type locale store-latest-fn]]
+                                  (let [existing-url (get-in manifest [content-type locale] nil)
+                                        base-url     (str update-id "/" locale "/")
+                                        latest-url   (store-latest-fn
+                                                       s3-client
+                                                       gson
+                                                       url-cache
+                                                       content-type
+                                                       locale
+                                                       base-url
+                                                       existing-url)]
+                                    (assoc-in r [content-type locale]
+                                      (if (= existing-url latest-url)
+                                        existing-url
+                                        latest-url))))
                               {}
                               resources)
-
             new-manifest-str (cheshire/generate-string new-manifest)]
         (if (= manifest-str new-manifest-str)
           (log/info "No new updates found in manifest!")

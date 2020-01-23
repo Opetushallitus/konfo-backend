@@ -61,18 +61,13 @@
       (throw e))))
 
 (defn get-object [s3-client file-key]
-  (try
-    (-> (.getObject s3-client (-> config :s3 :bucket-name) file-key)
-        (.getObjectContent)
-        (slurp))
-    (catch Exception e
-      (log/error (str "Key not found " file-key "!" e)))))
-
-(defn get-object-metadata [s3-client file-key]
-  (try
-    (.getObjectMetadata s3-client (-> config :s3 :bucket-name) file-key)
-    (catch Exception e
-      (log/info (str "File doesn't exist " file-key "!")))))
+  (when s3-client
+        (try
+          (-> (.getObject s3-client (-> config :s3 :bucket-name) file-key)
+              (.getObjectContent)
+              (slurp))
+          (catch Exception e
+            (log/error (str "Key not found " file-key "!" e))))))
 
 (defn get-object-md5 [s3-client file-key]
   (try

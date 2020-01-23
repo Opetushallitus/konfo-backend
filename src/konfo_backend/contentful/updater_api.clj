@@ -49,7 +49,7 @@
 
        (POST "/update" [:as request]
          :summary "POST update call"
-         (log/info request)
+         (log/info "Contentful update requested!")
          (add-content-update-job)
          (ok "ok"))))))
 
