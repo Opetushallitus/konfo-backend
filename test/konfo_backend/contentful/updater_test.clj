@@ -10,6 +10,14 @@
     (let [response (updater-app (mock/request :get "/konfo-backend-updater/healthcheck"))]
       (is (= (:status response) 200))))
 
-  (testing "Start update"
+  (testing "Unauthorized access"
     (let [response (updater-app (mock/request :post "/konfo-backend-updater/update"))]
+      (is (= (:status response) 401))))
+
+  (testing "Start update"
+    (let [response (updater-app
+                     (mock/header
+                       (mock/request :post "/konfo-backend-updater/update")
+                       "Authorization"
+                       "Basic b3BoOm9waA=="))]
       (is (= (:status response) 200)))))
