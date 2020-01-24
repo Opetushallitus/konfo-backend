@@ -1,6 +1,5 @@
 (ns konfo-backend.contentful.updater-test
   (:require [clojure.test :refer :all]
-            [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.contentful.updater-api :refer :all]
             [ring.mock.request :as mock]))
 
