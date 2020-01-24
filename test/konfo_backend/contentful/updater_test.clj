@@ -4,7 +4,7 @@
             [konfo-backend.contentful.updater-api :refer :all]
             [ring.mock.request :as mock]))
 
-(intern 'clj-log.access-log 'service "konfo-backend")
+(intern 'clj-log.access-log 'service "konfo-backend-updater")
 
 (deftest updater-test
   (testing "Healthcheck API test"
