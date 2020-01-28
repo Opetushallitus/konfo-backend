@@ -3,9 +3,10 @@
     [konfo-backend.config :refer [config]]
     [konfo-backend.index.toteutus :as toteutus]
     [konfo-backend.index.koulutus :as koulutus]
+    [konfo-backend.contentful.contentful :as contentful]
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.hakukohde :as hakukohde]
-    [konfo-backend.contentful.updater-api :refer [updater-app]]
+    [konfo-backend.contentful.updater-api :refer [konfo-updater-api]]
     [konfo-backend.index.valintaperuste :as valintaperuste]
     [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
@@ -244,6 +245,7 @@
 (defn -main [& args]
   (if (= (System/getProperty "mode") "updater")
     (do
+      (def updater-app (wrap-cors (konfo-updater-api (contentful/create-contentful-client false)) :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
       (log/info "Starting Konfo-backend-updater!")
       (run-jetty (wrap-reload #'updater-app)
                  {:port (Integer/valueOf

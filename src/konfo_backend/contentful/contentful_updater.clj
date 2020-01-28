@@ -64,8 +64,8 @@
         (log/info (str "processing image " final-transform " scaling = " scale? ", md5 = " md5))
         [final-transform md5]))))
 
-(defn get-content-type-with-field-types []
-  (->> (.items (contentful/get-content-types))
+(defn get-content-type-with-field-types [client]
+  (->> (.items (contentful/get-content-types client))
        (map (fn [t]
                 [(.id t) (into {} (for [f (.fields t)]
                                     {(.id f) (.type f)}))]))
@@ -104,10 +104,10 @@
         (s3/put-object ttl s3-client key obj content-type)
         (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
 
-(defn asset-store-handler [s3-client gson url-cache _ locale base-url existing-url]
+(defn asset-store-handler [client s3-client gson url-cache _ locale base-url existing-url]
   (let [existing     (some-> existing-url
                              (s3/get-object s3-client))
-        latest-raw   (contentful/get-assets-raw locale false)
+        latest-raw   (contentful/get-assets-raw client locale)
         latest       (.toJson gson latest-raw)
         existing-obj (some-> latest
                              (cheshire/parse-string))
@@ -127,10 +127,10 @@
         key)
       existing-url)))
 
-(defn content-store-handler [s3-client gson _ content-type locale base-url existing-url]
+(defn content-store-handler [client s3-client gson _ content-type locale base-url existing-url]
   (let [existing   (some-> existing-url
                            (s3/get-object s3-client))
-        latest-raw (contentful/get-entries-raw content-type locale false)
+        latest-raw (contentful/get-entries-raw client content-type locale)
         latest     (.toJson gson latest-raw)
         key        (str base-url content-type ".json")]
     (if (not= existing latest)
@@ -139,12 +139,12 @@
         key)
       existing-url)))
 
-(defn contentful->s3 [started-timestamp & args]
+(defn contentful->s3 [client started-timestamp & args]
   (let [s3-client     (s3/create-client)]
     (try
       (log/info (str "timestamp: " started-timestamp ", args=" args))
       (let [update-id        started-timestamp
-            content-types    (get-content-type-with-field-types)
+            content-types    (get-content-type-with-field-types client)
             url-cache        (atom {})
             gson             (create-gson-serializer url-cache content-types)
             store->s3        (fn [ttl content-type key obj]
@@ -168,6 +168,7 @@
                                   (let [existing-url (get-in manifest [content-type locale] nil)
                                         base-url     (str update-id "/" locale "/")
                                         latest-url   (store-latest-fn
+                                                       client
                                                        s3-client
                                                        gson
                                                        url-cache

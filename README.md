@@ -26,6 +26,18 @@ Updater-sovelluksen voi käynnistää komennolla (testikäyttäjäntunnukset: op
 
 `lein run-updater`
 
+Muista lisätä paikallisesti kehittäessä `dev-configuration/konfo-backend.edn` muuttujat:
+```
+{
+ :contentful-space-id      "............"
+ :contentful-access-token  "..........................................."
+ :contentful-preview-token "..........................................."
+
+ :contentful-update-username "oph"
+ :contentful-update-password "oph"
+}
+```
+Token ja space-id löytyy contentful.com palvelusta Settings -> API keys.
 
 ## Contentful Backup
 

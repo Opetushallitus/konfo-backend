@@ -9,16 +9,14 @@
    [ring.middleware.session :as ring-session]
    [compojure.api.sweet :refer :all]
    [clojure.tools.logging :as log]
-   [ring.middleware.cors :refer [wrap-cors]]
    [ring.util.http-response :refer :all]
-   [environ.core :refer [env]])
-  (:import (java.util.concurrent Executors TimeUnit)))
+   [environ.core :refer [env]]))
 
 (defonce updater-agent (agent nil))
 
-(defn add-content-update-job []
+(defn add-content-update-job [client]
   (log/info "Adding content update job!")
-  (send-off updater-agent (partial contentful->s3 (System/currentTimeMillis))))
+  (send-off updater-agent (partial contentful->s3 client (System/currentTimeMillis))))
 
 (defn authenticated? [name pass]
   (and (= name (-> config :contentful-update-username))
@@ -28,7 +26,7 @@
   (-> site
       (wrap-basic-authentication authenticated?)))
 
-(def konfo-updater-api
+(defn konfo-updater-api [client]
   (api
     {:swagger {:ui   "/konfo-backend-updater/swagger"
                :spec "/konfo-backend-updater/swagger.json"
@@ -50,12 +48,5 @@
        (POST "/update" [:as request]
          :summary "POST update call"
          (log/info "Contentful update requested!")
-         (add-content-update-job)
+         (add-content-update-job client)
          (ok "ok"))))))
-
-(defn start-scheduled-update []
-  (let [scheduler (Executors/newSingleThreadScheduledExecutor)]
-    (.scheduleAtFixedRate scheduler add-content-update-job 0 60 TimeUnit/MINUTES)))
-
-(def updater-app
-  (wrap-cors konfo-updater-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
