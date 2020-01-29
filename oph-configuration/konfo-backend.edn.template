@@ -1,4 +1,18 @@
 {
     :elastic-url "{{konfo_backend_elastic_url}}"
     :elastic-timeout 120000
+
+    :contentful-space-id "{{konfo_contentful_space_id}}"
+    :contentful-access-token "{{konfo_contentful_access_token}}"
+    :contentful-preview-token "{{konfo_contentful_preview_token}}"
+
+    :konfo-host "https://{{host_beta}}"
+
+    :contentful-update-username "{{konfo_contentful_update_username}}"
+    :contentful-update-password "{{konfo_contentful_update_password}}"
+
+    :s3    {:region              "{{konfo_content_s3_region}}"
+            :credentials-profile nil
+            :feedback-queue      "{{palaute_queue_url}}"
+            :bucket-name         "{{konfo_content_s3_bucket}}"}
 }
