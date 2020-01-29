@@ -48,7 +48,7 @@
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "0.1.14-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.15-SNAPSHOT"]
-                                   [org.mockito/mockito-core "2.23.0"]
+                                   [org.mockito/mockito-core "2.28.2"]
                                    [fi.oph.kouta/kouta-backend "0.15-SNAPSHOT" :classifier "tests"]
                                    [oph/clj-test-utils "0.2.5-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
@@ -57,7 +57,7 @@
                                       [kouta-indeksoija-service "0.1.14-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.15-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.15-SNAPSHOT" :classifier "tests"]
-                                      [org.mockito/mockito-core "2.23.0"]
+                                      [org.mockito/mockito-core "2.28.2"]
                                       [oph/clj-test-utils "0.2.5-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
