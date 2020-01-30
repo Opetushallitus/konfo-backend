@@ -53,4 +53,3 @@ Token ja space-id löytyy contentful.com palvelusta Settings -> API keys.
 
 3. contentful space export --config config.json
 4. contentful space import --config config-2.json --content-file contentful-export-....json
-
