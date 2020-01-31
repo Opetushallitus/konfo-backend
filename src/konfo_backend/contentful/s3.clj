@@ -44,20 +44,18 @@
     (let [bucket-name (-> config :s3 :bucket-name)
           bytes       data
           metadata    (doto (ObjectMetadata.)
-                            (.setHttpExpiresDate (.toDate (.plusHours (DateTime/now) ttl-hours)))
-                            (.setContentType content-type)
-                            (.setContentLength (alength bytes)))
-
-          request     (->
-                       (PutObjectRequest. bucket-name
-                                          file-key
-                                          (io/input-stream bytes)
-                                          metadata)
-                       (.withCannedAcl CannedAccessControlList/PublicRead))]
+                        (.setHttpExpiresDate (.toDate (.plusHours (DateTime/now) ttl-hours)))
+                        (.setContentType content-type)
+                        (.setContentLength (alength bytes)))
+          request     (-> (PutObjectRequest. bucket-name
+                            file-key
+                            (io/input-stream bytes)
+                            metadata)
+                          (.withCannedAcl CannedAccessControlList/PublicRead))]
       (.putObject s3-client request))
     (catch Exception e
       (log/error
-       (str "Unable to put object " file-key " to bucket " (-> config :s3 :bucket-name) "! " e))
+        (str "Unable to put object " file-key " to bucket " (-> config :s3 :bucket-name) "! " e))
       (throw e))))
 
 (defn get-object [s3-client file-key]

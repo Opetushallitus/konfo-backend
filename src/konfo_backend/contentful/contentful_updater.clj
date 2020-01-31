@@ -156,7 +156,6 @@
             manifest         (some-> manifest-str
                                      (cheshire/parse-string))
             locales          ["fi" "sv"]
-
             resources        (concat
                               [["asset" "fi" asset-store-handler]
                                ["asset" "sv" asset-store-handler]]

@@ -6,7 +6,8 @@
 
 (defonce include-level 2)
 
-(defn create-contentful-client [preview?]
+(defn create-contentful-client
+  [preview?]
   (let [space-id     (:contentful-space-id config)
         access-token (if preview?
                        (:contentful-preview-token config)
@@ -19,34 +20,22 @@
 
 (defn get-entries-raw [client content-type locale]
   (let [query (doto
-               (.fetch
-                 client
-                 CDAEntry)
+               (.fetch client CDAEntry)
                 (.include include-level)
                 (.withContentType content-type)
-                (.where "locale" locale))
-        ]
+                (.where "locale" locale))]
     (-> query
         (.all)
         (.items))))
 
 (defn get-content-types [client]
-  (let [query  (doto
-                (.fetch
-                  client
-                  CDAContentType))
-        result (-> query
-                   (.all))]
-    result))
+  (-> (.fetch client CDAContentType)
+      (.all)))
 
 (defn get-assets-raw [client locale]
-  (let [query  (doto
-                (.fetch
-                  client
-                  CDAAsset)
-
-                 (.where "locale" locale))
-        result (-> query
-                   (.all)
-                   (.items))]
-    result))
+  (let [query (doto
+               (.fetch client CDAAsset)
+                (.where "locale" locale))]
+    (-> query
+        (.all)
+        (.items))))
