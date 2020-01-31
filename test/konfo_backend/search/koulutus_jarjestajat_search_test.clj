@@ -90,3 +90,14 @@
                            :nimi {:fi "kunta_091 nimi fi",
                                   :sv "kunta_091 nimi sv"}} ],
                 :kuvaus { }} (first (:hits r))))))))
+
+(deftest koulutus-jarjestajat-test-no-jarjestajia
+  (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat "" :organisaatio "1.2.246.562.10.00000000001" :metadata koulutus-metatieto)
+
+  (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001"]}, orgs)
+
+  (testing "Get koulutuksen järjestäjät"
+    (testing "no järjestäjiä"
+      (let [r (search "1.2.246.562.13.000001")]
+        (is (= 0 (:total r)))
+        (is (= [] (:hits r)))))))

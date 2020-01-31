@@ -73,6 +73,6 @@
                    {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.oppilaitosOid", "hits.nimi", "hits.metadata"]
                                           :from from
                                           :size size
-                                          :sort {(str "hits.nimi." lng ".keyword") {:order sort}}}
+                                          :sort {(str "hits.nimi." lng ".keyword") {:order sort :unmapped_type "string"}}}
                              :path "hits"
                              :query {:term {"hits.onkoTuleva" tuleva?}}}}]}}))

@@ -54,7 +54,7 @@
         (is (= "1.2.246.562.17.000001" (:toteutusOid (first (:hits r))))))))
 
   (testing "Get oppilaitoksen tarjonta"
-    (testing "no järjestäjiä"
+    (testing "no tarjontaa"
       (let [r (search "1.2.246.562.10.000666")]
         (is (= 0 (:total r)))
         (is (= [] (:hits r)))))
@@ -104,3 +104,12 @@
                                      :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                             :sv "tutkintonimikkeet_02 nimi sv"}} ],
                 :koulutustyyppi "amm"} (first (:hits r))))))))
+
+(deftest koulutus-jarjestajat-test-no-tarjontaa
+  (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)
+
+  (testing "Get oppilaitoksen tarjonta"
+    (testing "no tarjontaa"
+      (let [r (search punkaharjun-yliopisto)]
+        (is (= 0 (:total r)))
+        (is (= [] (:hits r)))))))
