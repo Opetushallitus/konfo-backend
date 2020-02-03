@@ -17,12 +17,4 @@
 
   (testing "Unauthorized access"
     (let [response ((konfo-updater-api client) (mock/request :post "/konfo-backend-updater/update"))]
-      (is (= (:status response) 401))))
-
-  (testing "Start update"
-    (let [response ((konfo-updater-api client)
-                    (mock/header
-                       (mock/request :post "/konfo-backend-updater/update")
-                       "Authorization"
-                       "Basic b3BoOm9waA=="))]
-      (is (= (:status response) 200)))))
+      (is (= (:status response) 401)))))
