@@ -105,8 +105,7 @@
         (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
 
 (defn asset-store-handler [client s3-client gson url-cache _ locale base-url existing-url]
-  (let [existing     (some-> existing-url
-                             (s3/get-object s3-client))
+  (let [existing     (s3/get-object s3-client existing-url)
         latest-raw   (contentful/get-assets-raw client locale)
         latest       (.toJson gson latest-raw)
         existing-obj (some-> latest
@@ -128,8 +127,7 @@
       existing-url)))
 
 (defn content-store-handler [client s3-client gson _ content-type locale base-url existing-url]
-  (let [existing   (some-> existing-url
-                           (s3/get-object s3-client))
+  (let [existing   (s3/get-object s3-client existing-url)
         latest-raw (contentful/get-entries-raw client content-type locale)
         latest     (.toJson gson latest-raw)
         key        (str base-url content-type ".json")]

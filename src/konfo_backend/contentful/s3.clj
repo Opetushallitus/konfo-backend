@@ -3,7 +3,7 @@
     [konfo-backend.config :refer [config]]
     [clojure.java.io :as io]
     [clojure.tools.logging :as log])
-  (:import [com.amazonaws.services.s3 AmazonS3Client]
+  (:import [com.amazonaws.services.s3 AmazonS3Client AmazonS3]
            [com.amazonaws.services.s3.model
             PutObjectRequest
             ObjectMetadata
@@ -58,8 +58,8 @@
         (str "Unable to put object " file-key " to bucket " (-> config :s3 :bucket-name) "! " e))
       (throw e))))
 
-(defn get-object [s3-client file-key]
-  (when s3-client
+(defn get-object [^AmazonS3 s3-client ^String file-key]
+  (when (and file-key s3-client)
         (try
           (-> (.getObject s3-client (-> config :s3 :bucket-name) file-key)
               (.getObjectContent)
