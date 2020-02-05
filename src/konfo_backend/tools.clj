@@ -5,7 +5,8 @@
     [clojure.string :refer [blank? split lower-case trim]]
     [clj-time.format :as format]
     [clj-time.coerce :as coerce]
-    [clj-time.core :as core]))
+    [clj-time.core :as core]
+    [clj-time.core :as time]))
 
 (defonce debug-pretty true)
 
@@ -58,8 +59,13 @@
         lt  (kouta-date-time-string->date-time (or (:lt hakuaika) (:paattyy hakuaika)))]
     (within? gte (long->date-time (System/currentTimeMillis)) lt)))
 
+(defn now-in-millis
+  []
+  (coerce/to-long (time/now)))
+
 (defn koodi-uri-no-version
   [koodi-uri]
+  (println koodi-uri "->" (first (split koodi-uri #"#")))
   (first (split koodi-uri #"#")))
 
 (defn ammatillinen?
