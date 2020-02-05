@@ -108,23 +108,22 @@
   (let [existing     (s3/get-object s3-client existing-url)
         latest-raw   (contentful/get-assets-raw client locale)
         latest       (.toJson gson latest-raw)
-        existing-obj (some-> latest
+        latest-obj (some-> latest
                              (cheshire/parse-string))
         key          (str base-url "asset" ".json")]
-    (if (not= existing latest)
-      (do
-        (doseq [asset existing-obj]
-          (let [s3-url   (get asset "url")
-                original (get asset "original")
-                [_ _ transformed md5] (get @url-cache original)
-                old-md5  (s3/get-object-md5 s3-client s3-url)]
+    (do
+      (doseq [asset latest-obj]
+        (let [s3-url   (get asset "url")
+              original (get asset "original")
+              [_ _ transformed md5] (get @url-cache original)
+              old-md5  (s3/get-object-md5 s3-client s3-url)]
+          (when-not (= old-md5 md5)
             (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
-            (when-not (= old-md5 md5))
             (let [[image content-type] (fetch->image (or transformed original))]
-              (store->s3 s3-client ttl-asset content-type s3-url image))))
-        (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest))
-        key)
-      existing-url)))
+              (store->s3 s3-client ttl-asset content-type s3-url image)))))
+      (when-not (= existing latest)
+        (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest)))
+      key)))
 
 (defn content-store-handler [client s3-client gson _ content-type locale base-url existing-url]
   (let [existing   (s3/get-object s3-client existing-url)
