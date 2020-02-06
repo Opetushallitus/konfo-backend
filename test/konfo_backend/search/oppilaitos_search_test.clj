@@ -159,16 +159,16 @@
     (testing "lääketiede <-> lääketieteen"
       (is (= [oppilaitosOid1] (search-and-get-oids :keyword "lääketiede"))))
 
-    (testing "haluan opiskella lääkäriksi <-> lääkäri"
+    (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
       (is (= [oppilaitosOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
 
-    (testing "musiikin opiskelu <-> muusikon koulutus"
+    (comment testing "musiikin opiskelu <-> muusikon koulutus"
       (is (= [oppilaitosOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
 
     (testing "humanismi <-> humanistinen"
       (is (= [oppilaitosOid2] (search-and-get-oids :keyword "humanismi"))))
 
-    (testing "haluan opiskella psykologiaa <-> psykologi"
+    (comment testing "haluan opiskella psykologiaa <-> psykologi"
       (is (= [oppilaitosOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))
 
     (testing "sosiaaliala <-> sosiaali- ja terveysala"
@@ -177,11 +177,17 @@
     (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
       (is (= [oppilaitosOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
 
-    (comment testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
+    (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
              (is (= [oppilaitosOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
 
     (testing "automaatiikka <-> automaatioinsinööri"
       (is (= [oppilaitosOid4] (search-and-get-oids :keyword "automaatiikka"))))
 
-    (testing "insinööri <-> automaatioinsinööri"
+    (testing "auto"
+      (is (= [oppilaitosOid4] (search-and-get-oids :keyword "auto"))))
+
+    (testing "muusikon koulutus"
+      (is (= [oppilaitosOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+
+    (comment testing "insinööri <-> automaatioinsinööri"
       (is (= [oppilaitosOid4] (search-and-get-oids :keyword "insinööri"))))))
