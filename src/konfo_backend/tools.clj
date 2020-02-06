@@ -65,7 +65,6 @@
 
 (defn koodi-uri-no-version
   [koodi-uri]
-  (println koodi-uri "->" (first (split koodi-uri #"#")))
   (first (split koodi-uri #"#")))
 
 (defn ammatillinen?
