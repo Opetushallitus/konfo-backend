@@ -1,5 +1,6 @@
 (ns konfo-backend.contentful.contentful-updater
   (:require
+   [clojure.string :as str]
    [konfo-backend.config :refer [config]]
    [konfo-backend.contentful.contentful :as contentful]
    [konfo-backend.contentful.s3 :as s3]
@@ -25,10 +26,48 @@
 (defonce ttl-manifest 0)
 (defonce ttl-asset 1)
 
+(defn image-link? [[_ _ link]]
+  (and (str/starts-with? link "//")
+       (not (str/ends-with? link ".svg"))))
+
 (defn fetch->image [image-url]
   (let [image   (client/get (str "https:" image-url) {:as :byte-array})
         headers (:headers image)]
     [(:body image) (get headers "Content-Type")]))
+
+(defn add-query-params-to-uri [uri params]
+  (reduce-kv (fn [u k v]
+                 (if (str/includes? u "?")
+                   (str u "&" (name k) "=" v)
+                   (str u "?" (name k) "=" v)))
+    uri
+    params))
+
+(defn resize-image? [image]
+  (let [image-input (ImageIO/read (io/input-stream image))
+        width       (.getWidth image-input)
+        height      (.getHeight image-input)
+        scale?      (or (> width max-width)
+                        (> height max-height))]
+    (when scale?
+          (let [w-scale          [max-width (Math/floor (* height (/ max-width width)))]
+                h-scale          [(Math/floor (* width (/ max-height height))) max-height]
+                w-scale-smaller? (< (* (first w-scale) (second w-scale))
+                                   (* (first h-scale) (second h-scale)))]
+            (if w-scale-smaller?
+              {:w max-width}
+              {:h max-height})))))
+
+(defn fetch-and-transform [url]
+  (if (or (str/ends-with? url ".svg") (str/ends-with? url "watch"))
+    [false url (fetch->image url)]
+    (let [transformed-url (add-query-params-to-uri url {:fm "jpg"})
+          [image mime] (fetch->image transformed-url)
+          params    (resize-image? image)]
+      (if params
+        (let [new-transformed-url (add-query-params-to-uri transformed-url params)]
+          [true new-transformed-url (fetch->image new-transformed-url)])
+        [true transformed-url [image mime]]))))
 
 (defn transform-url-if-needed [^CDAAsset cda-asset]
   (let [mime-type (.mimeType cda-asset)]
@@ -39,6 +78,7 @@
                                          (into-array ImageOption
                                            [(ImageOption/formatOf ImageOption$Format/jpg)])))]
       (let [[image _] (fetch->image transformed-image)
+
             image-input      (ImageIO/read (io/input-stream image))
             width            (.getWidth image-input)
             height           (.getHeight image-input)
@@ -71,38 +111,69 @@
                                     {(.id f) (.type f)}))]))
        (into {})))
 
-(defn create-gson-serializer [url-cache content-types]
-  (let [markdown-conv (fn [markdown]
-                          (let [r (reduce (fn [t [key value]]
-                                              (.replaceAll t key (first value)))
-                                          markdown
-                                          @url-cache)]
-                            r))]
-    (create-gson
-      (fn [entry field value]
-          (let [field-type (get-in content-types [(-> entry
-                                                      .contentType
-                                                      .id) field])]
-            (or (and (= field-type "Text")
-                     (markdown-conv value))
-                value)))
-      (fn [cda-asset]
-          (let [original (.url cda-asset)]
-            (or (get @url-cache original)
-                (let [[transformed-url md5] (transform-url-if-needed cda-asset)
-                      new-url (subs (str (assoc (uri (if transformed-url
-                                                       (str original ".jpg")
-                                                       original))
-                                                :scheme nil
-                                                :host nil)) 1)]
-                  (swap! url-cache assoc original [new-url original transformed-url md5])
-                  [new-url original transformed-url md5])))))))
+(defn markdown->links [markdown]
+  (let [matcher (re-matcher #"\[(?<text>[^\]]*)\]\((?<link>[^\)]*)\)" markdown)]
+    (loop [match (re-find matcher)
+           result []]
+      (if-not match
+        result
+        (recur (re-find matcher)
+          (conj result match))))))
+
+(defn strip-scheme-and-host [url]
+  (subs (str (assoc (uri url)
+                    :scheme nil
+                    :host nil)) 1))
 
 (defn store->s3 [s3-client ttl content-type key obj]
   (log/info (str "Putting " key " with ttl " ttl " (hours)"))
   (when s3-client
         (s3/put-object ttl s3-client key obj content-type)
         (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
+
+(defn create-gson-serializer [s3-client url-cache content-types]
+  (let [markdown-conv (fn [id markdown]
+                          (if-let [links (seq (filter image-link? (markdown->links markdown)))]
+                            (reduce (fn [t [_ _ original]]
+                                        (if-let [l (get @url-cache original)]
+                                          (do
+                                            (.replaceAll t original (first l)))
+                                          (do
+                                            (log/info (str "creating fake asset for entry " id))
+                                            (let [[transformed? transformed-url [image content-type]] (fetch-and-transform original)
+                                                  md5    (s3/calculate-md5 image)
+                                                  s3-url (strip-scheme-and-host (if transformed?
+                                                                                  (str original ".jpg")
+                                                                                  original))]
+                                              (when (not= (s3/get-object-md5 s3-client s3-url) md5)
+                                                    (log/info (str "Stored S3 " s3-url))
+                                                    (store->s3 s3-client ttl-asset content-type s3-url image))
+                                              (swap! url-cache assoc original [s3-url original transformed-url md5])
+                                              (.replaceAll t original s3-url)
+                                              )
+                                            )
+                                          )
+                                        )
+                                    markdown
+                                    links)
+                            markdown))]
+    (create-gson
+      (fn [entry field value]
+          (let [field-type (get-in content-types [(-> entry
+                                                      .contentType
+                                                      .id) field])]
+            (or (and (= field-type "Text")
+                     (markdown-conv (.id entry) value))
+                value)))
+      (fn [cda-asset]
+          (let [original (.url cda-asset)]
+            (or (get @url-cache original)
+                (let [[transformed-url md5] (transform-url-if-needed cda-asset)
+                      new-url (strip-scheme-and-host (if transformed-url
+                                                       (str original ".jpg")
+                                                       original))]
+                  (swap! url-cache assoc original [new-url original transformed-url md5])
+                  [new-url original transformed-url md5])))))))
 
 (defn asset-store-handler [client s3-client gson url-cache _ locale base-url existing-url]
   (let [existing     (s3/get-object s3-client existing-url)
@@ -143,7 +214,7 @@
       (let [update-id        started-timestamp
             content-types    (get-content-type-with-field-types client)
             url-cache        (atom {})
-            gson             (create-gson-serializer url-cache content-types)
+            gson             (create-gson-serializer s3-client url-cache content-types)
             store->s3        (fn [ttl content-type key obj]
                                  (log/info (str "Putting " key " with ttl " ttl " (hours)"))
                                  (when s3-client
