@@ -11,21 +11,20 @@
 
 (def koulutus-kouta-search (partial e/search-with-pagination index))
 
+(defn- assoc-kuvaus-to-ammatillinen
+  [kuvaukset hit]
+  (if (ammatillinen? hit)
+    (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
+      (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
+        (assoc hit :kuvaus (:kuvaus kuvaus))
+        hit))
+    hit))
+
 (defn- with-kuvaukset
   [result]
   (let [hits         (:hits result)
         kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map #(get-in % [:koulutus :koodiUri]) (filter ammatillinen? hits))))]
-
-      (defn- assoc-kuvaus-to-ammatillinen
-        [hit]
-        (if (ammatillinen? hit)
-          (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
-            (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
-              (assoc hit :kuvaus (:kuvaus kuvaus))
-              hit))
-          hit))
-
-      (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen %) hits)))))
+    (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen kuvaukset %) hits)))))
 
 (defn search
   [keyword lng page size sort & {:as constraints}]
