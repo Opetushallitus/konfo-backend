@@ -139,7 +139,7 @@
                                           (do
                                             (.replaceAll t original (first l)))
                                           (do
-                                            (log/info (str "creating fake asset for entry " id))
+                                            (log/warn (str "Creating fake asset for entry " id))
                                             (let [[transformed? transformed-url [image content-type]] (fetch-and-transform original)
                                                   md5    (s3/calculate-md5 image)
                                                   s3-url (strip-scheme-and-host (if transformed?
@@ -149,8 +149,7 @@
                                                     (log/info (str "Stored S3 " s3-url))
                                                     (store->s3 s3-client ttl-asset content-type s3-url image))
                                               (swap! url-cache assoc original [s3-url original transformed-url md5])
-                                              (.replaceAll t original s3-url)
-                                              )
+                                              (.replaceAll t original s3-url))
                                             )
                                           )
                                         )
