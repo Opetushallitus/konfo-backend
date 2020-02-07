@@ -191,7 +191,8 @@
             (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
             (let [[image content-type] (fetch->image (or transformed original))]
               (store->s3 s3-client ttl-asset content-type s3-url image)))))
-      (when-not (= existing latest)
+      (if (= existing latest)
+        (log/warn (str "Existing asset " existing-url " is identical to new asset from space " (:contentful-space-id config)))
         (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest)))
       key)))
 

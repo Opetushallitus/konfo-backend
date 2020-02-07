@@ -70,7 +70,6 @@
 (defn get-object-md5 [s3-client file-key]
   (try
     (when-let [meta-data (.getObjectMetadata s3-client (-> config :s3 :bucket-name) file-key)]
-      (log/info "META: " (str (into [] (.keySet (.getRawMetadata meta-data)))))
       (.getRawMetadataValue meta-data "ETag"))
     (catch Exception e
       (log/info (str "File doesn't exist " file-key "!")))))
