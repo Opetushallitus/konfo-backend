@@ -98,9 +98,9 @@
 
       (testing "Search koulutukset, get correct result"
         (let [r (search :sijainti "kunta_618")]
-          (is (= {:opintojenlaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_01",
-                                            :nimi  {:fi "opintojenlaajuusyksikko_01 nimi fi",
-                                                    :sv "opintojenlaajuusyksikko_01 nimi sv"}},
+          (is (= {:opintojenlaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
+                                            :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
+                                                    :sv "opintojenlaajuusyksikko_6 nimi sv"}},
                                             :kuvaus { },
                   :nimi {:fi "Autoalan koulutus fi",
                          :sv "Autoalan koulutus sv"},
@@ -115,9 +115,9 @@
                                        {:koodiUri  "tutkintonimikkeet_02",
                                         :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                                :sv "tutkintonimikkeet_02 nimi sv"}} ],
-                                        :opintojenlaajuus {:koodiUri  "opintojenlaajuus_01",
-                                                           :nimi {:fi "opintojenlaajuus_01 nimi fi",
-                                                                  :sv "opintojenlaajuus_01 nimi sv"}},
+                                        :opintojenlaajuus {:koodiUri  "opintojenlaajuus_150",
+                                                           :nimi {:fi "opintojenlaajuus_150 nimi fi",
+                                                                  :sv "opintojenlaajuus_150 nimi sv"}},
                   :koulutustyyppi "amm"} (first (:hits r))))))))
 
 (deftest koulutus-paging-and-sorting-test
@@ -164,16 +164,16 @@
    (testing "lääketiede <-> lääketieteen"
      (is (= [koulutusOid1] (search-and-get-oids :keyword "lääketiede"))))
 
-   (testing "haluan opiskella lääkäriksi <-> lääkäri"
+   (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
      (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
 
-   (testing "musiikin opiskelu <-> muusikon koulutus"
+   (comment testing "musiikin opiskelu <-> muusikon koulutus"
      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
 
    (testing "humanismi <-> humanistinen"
      (is (= [koulutusOid2] (search-and-get-oids :keyword "humanismi"))))
 
-   (testing "haluan opiskella psykologiaa <-> psykologi"
+   (comment testing "haluan opiskella psykologiaa <-> psykologi"
      (is (= [koulutusOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))
 
    (testing "sosiaaliala <-> sosiaali- ja terveysala"
@@ -182,11 +182,17 @@
    (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
      (is (= [koulutusOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
 
-   (comment testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
+   (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
 
    (testing "automaatiikka <-> automaatioinsinööri"
      (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatiikka"))))
 
-   (testing "insinööri <-> automaatioinsinööri"
+   (testing "auto"
+     (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
+
+   (testing "muusikon koulutus"
+     (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+
+   (comment testing "insinööri <-> automaatioinsinööri"
      (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))))

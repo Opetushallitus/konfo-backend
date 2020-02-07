@@ -5,11 +5,17 @@
     [ring.mock.request :as mock]
     [konfo-backend.core :refer :all]
     [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-    [cheshire.core :as cheshire]))
+    [cheshire.core :as cheshire]
+    [clj-time.coerce :as coerce]
+    [clj-time.core :as time]))
 
 (defn ->keywordized-response-body
   [response]
-  (fixture/->keywordized-json (slurp (:body response))))
+  (try
+    (fixture/->keywordized-json (slurp (:body response)))
+    (catch Exception e
+      (println e)
+      (:body response))))
 
 (defn get-and-check-status
   [url expected-status]
@@ -57,3 +63,7 @@
 (defn url-with-query-params
   [url & query-params]
   (str url (apply query-params->string query-params)))
+
+(defn now-in-millis
+  []
+  (coerce/to-long (time/now)))

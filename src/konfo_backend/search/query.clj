@@ -58,7 +58,7 @@
 (defn- bool
   [keyword lng constraints]
   (cond-> {}
-          (not-blank? keyword)       (assoc :must {:match {(->lng-keyword "hits.terms.%s" lng) (lower-case keyword)}})
+          (not-blank? keyword)       (assoc :must {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and"}}})
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
