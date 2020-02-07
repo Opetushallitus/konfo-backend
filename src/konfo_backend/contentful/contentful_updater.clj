@@ -192,7 +192,7 @@
             (let [[image content-type] (fetch->image (or transformed original))]
               (store->s3 s3-client ttl-asset content-type s3-url image)))))
       (if (= existing latest)
-        (log/warn (str "Existing asset " existing-url " is identical to new asset from space " (:contentful-space-id config)))
+        (log/warn (str "Existing asset in bucket " (-> config :s3 :bucket-name) " in url " existing-url " is identical to new asset from space " (:contentful-space-id config)))
         (store->s3 s3-client ttl-asset "application/json; charset=utf-8" key (.getBytes latest)))
       key)))
 
