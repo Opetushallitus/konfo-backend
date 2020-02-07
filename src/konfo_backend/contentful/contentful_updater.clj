@@ -187,7 +187,7 @@
               original (get asset "original")
               [_ _ transformed md5] (get @url-cache original)
               old-md5  (s3/get-object-md5 s3-client s3-url)]
-          (when-not (= old-md5 md5)
+          (when (or (nil? md5) (not= old-md5 md5))
             (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
             (let [[image content-type] (fetch->image (or transformed original))]
               (store->s3 s3-client ttl-asset content-type s3-url image)))))
