@@ -96,4 +96,5 @@
   (when-let [koulutuskoodit (seq (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
     (eperuste-search (partial kuvaukset-result-mapper koulutuskoodit)
                      :_source source
+                     :size (* 10 (count koulutuskoodit))
                      :query (->query koulutuskoodit))))
