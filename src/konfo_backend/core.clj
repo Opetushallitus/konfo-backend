@@ -232,9 +232,11 @@
       (POST "/palaute" [:as request]
         :summary "POST palaute"
         :form-params [{arvosana :- Long nil}
-                      {palaute :- String ""}]
+                      {palaute :- String ""}
+                      {path :- String ""}]
         (let [feedback {:stars      arvosana
                         :feedback   palaute
+                        :path       path
                         :user-agent (get-in request [:headers "user-agent"])}]
           (palaute/send-feedback sqs-client feedback)
           (ok {}))))))

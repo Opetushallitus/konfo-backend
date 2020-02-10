@@ -11,9 +11,10 @@
   {:stars      (:stars feedback)
    :feedback   (:feedback feedback)
    :user-agent (:user-agent feedback)
+   :service    "konfo"
    :created-at (.getTime (java.util.Date.))
    :data       {}
-   :key        "konfo"})
+   :key        (str "https://" (-> config :konfo-host)) "/" (:path feedback)})
 
 (defn send-feedback
   [amazon-sqs feedback]
