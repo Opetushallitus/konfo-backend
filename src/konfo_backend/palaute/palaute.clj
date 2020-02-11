@@ -14,7 +14,7 @@
    :service    "konfo"
    :created-at (.getTime (java.util.Date.))
    :data       {}
-   :key        (str "https://" (-> config :konfo-host) "/" (:path feedback))})
+   :key        (str (-> config :konfo-host) "/" (:path feedback))})
 
 (defn send-feedback
   [amazon-sqs feedback]
