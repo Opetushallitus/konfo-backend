@@ -5,6 +5,7 @@
    [ring.adapter.jetty :refer [run-jetty]]
    [konfo-backend.tools :refer [comma-separated-string->vec]]
    [clj-log.access-log :refer [with-access-logging]]
+   [konfo-backend.contentful.s3 :as s3]
    [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
    [ring.middleware.session :as ring-session]
    [compojure.api.sweet :refer :all]
@@ -16,7 +17,7 @@
 
 (defn add-content-update-job [client]
   (log/info "Adding content update job!")
-  (send-off updater-agent (partial contentful->s3 client (System/currentTimeMillis))))
+  (send-off updater-agent (partial contentful->s3 client (s3/create-client) (System/currentTimeMillis))))
 
 (defn authenticated? [name pass]
   (and (= name (-> config :contentful-update-username))

@@ -37,6 +37,17 @@ Muista lisätä paikallisesti kehittäessä `dev-configuration/konfo-backend.edn
  :contentful-update-password "oph"
 }
 ```
+
+Testien ajo repl:llä:
+`lein with-profile +test repl`
+
+```
+(require '[clojure.test :refer [run-tests]])
+
+; esimerkki ajo testille:
+(do (require 'konfo-backend.contentful.updater-test :reload-all) (run-tests 'konfo-backend.contentful.updater-test))
+```
+
 Token ja space-id löytyy contentful.com palvelusta Settings -> API keys.
 
 ## Contentful Backup
