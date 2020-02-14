@@ -146,53 +146,106 @@
 
 (deftest koulutus-keyword-search
 
-  (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus")
-  (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid4 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka")
-  (fixture/add-koulutus-mock koulutusOid5 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus")
-  (fixture/add-koulutus-mock koulutusOid6 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus")
+  (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus")
+  (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus")
+  (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka")
+  (fixture/add-koulutus-mock koulutusOid5  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus")
+  (fixture/add-koulutus-mock koulutusOid6  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid7  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Maanmittausalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid8  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Pintakäsittelyalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid9  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhtaus- ja kiinteistöpalvelualan ammattitutkinto")
+  (fixture/add-koulutus-mock koulutusOid10 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhevammaisten tulkkauksen erikoisammattitutkinto")
+  (fixture/add-koulutus-mock koulutusOid11 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hius- ja kauneudenhoitoalan perustutkinto")
 
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "lääkäri"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "psykologi"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000004" koulutusOid4 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "automaatioinsinööri"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000005" koulutusOid5 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :asiasanat [{:kieli "fi" :arvo "musiikkioppilaitokset"}]}))
+  (fixture/add-toteutus-mock "1.2.246.562.17.000006" koulutusOid8 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "maalari"}]}))
 
-  (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]})
+  (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6
+                                                             koulutusOid7 koulutusOid8 koulutusOid9 koulutusOid10 koulutusOid11]})
 
   (testing "Searching with keyword"
-   (testing "lääketiede <-> lääketieteen"
-     (is (= [koulutusOid1] (search-and-get-oids :keyword "lääketiede"))))
 
-   (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
-     (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
+    (testing "maalari <-> Pintakäsittelyala (EI maanmittausala)"
+      (is (= [koulutusOid8] (search-and-get-oids :keyword "maalari"))))
 
-   (comment testing "musiikin opiskelu <-> muusikon koulutus"
-     (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
+    (testing "puhtaus <-> Puhtaus- ja kiinteistöpalveluala (EI puhevammaisten)"
+      (is (= [koulutusOid9] (search-and-get-oids :keyword "puhtaus"))))
 
-   (testing "humanismi <-> humanistinen"
-     (is (= [koulutusOid2] (search-and-get-oids :keyword "humanismi"))))
+    (testing "palvelu <-> Puhtaus- ja kiinteistöpalveluala"
+      (is (= [koulutusOid9] (search-and-get-oids :keyword "palvelu"))))
 
-   (comment testing "haluan opiskella psykologiaa <-> psykologi"
-     (is (= [koulutusOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))
+    (testing "sosiaaliala <-> sosiaali- ja terveysala"
+      (is (= [koulutusOid6] (search-and-get-oids :keyword "sosiaaliala"))))
 
-   (testing "sosiaaliala <-> sosiaali- ja terveysala"
-     (is (= [koulutusOid6] (search-and-get-oids :keyword "sosiaaliala"))))
+    (testing "terveys <-> sosiaali- ja terveysala"
+      (is (= [koulutusOid6] (search-and-get-oids :keyword "terveys"))))
 
-   (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
-     (is (= [koulutusOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
+    (testing "musiikkioppilaitos <-> musiikkioppilaitokset"
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
 
-   (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
-     (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
+    (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
 
-   (testing "automaatiikka <-> automaatioinsinööri"
-     (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatiikka"))))
+    (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
 
-   (testing "auto"
-     (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
+    (testing "humanismi <-> humanistinen"
+      (is (= [koulutusOid2] (search-and-get-oids :keyword "humanismi"))))
 
-   (testing "muusikon koulutus"
-     (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+    (testing "lääketiede <-> lääketieteen"
+      (is (= [koulutusOid1] (search-and-get-oids :keyword "lääketiede"))))
 
-   (comment testing "insinööri <-> automaatioinsinööri"
-     (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))))
+    (testing "muusikko <-> muusikon koulutus"
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikko"))))
+
+    (testing "musiikki <-> musiikkioppilaitokset"
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikki"))))
+
+    (testing "insinööri <-> automaatioinsinööri"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))
+
+    (testing "tekniikka <-> automaatiotekniikka"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "tekniikka"))))
+
+    (testing "muusikon koulutus <-> EI muita koulutuksia"
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+
+    (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
+      (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittausalan%20perustutkinto"))))
+
+    (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
+      (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittauS%20peruS"))))
+
+    (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
+      (is (= [koulutusOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
+
+    (testing "automaatiikka <-> automaatioinsinööri"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatiikka"))))
+
+    (testing "hius <-> Hius- ja kauneudenhoitoalan perustutkinto"
+      (is (= [koulutusOid11] (search-and-get-oids :keyword "hius"))))
+
+    (testing "kauneudenhoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
+      (is (= [koulutusOid11] (search-and-get-oids :keyword "kauneudenhoito"))))
+
+    (testing "hoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
+      (is (= [koulutusOid11] (search-and-get-oids :keyword "hoito"))))
+
+    (testing "psykologia <-> Psykologi"
+      (is (= [koulutusOid2] (search-and-get-oids :keyword "psykologia"))))
+
+    (testing "lääke <-> lääketieteen"
+      (is (= [koulutusOid1] (search-and-get-oids :keyword "lääke"))))
+
+    (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
+             (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
+
+    (comment testing "musiikin opiskelu <-> muusikon koulutus"
+             (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
+
+    (comment testing "haluan opiskella psykologiaa <-> psykologi"
+             (is (= [koulutusOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))))
