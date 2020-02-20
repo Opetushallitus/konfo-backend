@@ -84,7 +84,7 @@
         :summary "Healthcheck API"
         (ok "OK"))
 
-      (GET "/client-error" [:as request]
+      (POST "/client-error" [:as request]
         :summary "Client error API"
         :body [error-details ClientError]
         (log/error (str "Error from client browser:\n"
