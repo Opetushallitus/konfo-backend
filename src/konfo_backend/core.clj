@@ -12,6 +12,7 @@
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.palaute.sqs :as sqs]
+    [schema.core :as s]
     [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
     [konfo-backend.search.filters :as filters]
     [konfo-backend.palaute.palaute :as palaute]
@@ -25,6 +26,14 @@
     [environ.core :refer [env]]
     [clojure.tools.logging :as log])
   (:gen-class))
+
+(s/defschema ClientError {:error-message s/Str
+                          :url s/Str
+                          :line s/Int
+                          :col s/Int
+                          :user-agent s/Str
+                          :stack s/Str})
+
 
 (defn init []
   (if-let [elastic-url (:elastic-url config)]
@@ -73,7 +82,18 @@
 
       (GET "/healthcheck" [:as request]
         :summary "Healthcheck API"
-           (-> (ok "OK")))
+        (ok "OK"))
+
+      (GET "/client-error" [:as request]
+        :summary "Client error API"
+        :body [error-details ClientError]
+        (log/error (str "Error from client browser:\n"
+                     (:error-message error-details) "\n"
+                     (:url error-details) "\n"
+                     "line: " (:line error-details) " column: " (:col error-details) "\n"
+                     "user-agent: " (:user-agent error-details) "\n"
+                     "stack trace: " (:stack error-details)))
+        (ok "OK"))
 
       (context "/koulutus"
         []
