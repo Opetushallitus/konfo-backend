@@ -52,5 +52,5 @@ Token ja space-id löytyy contentful.com palvelusta Settings -> API keys.
 2. [Asenna Contentful-cli](https://www.contentful.com/developers/docs/tutorials/cli/installation/)
 
 Import & Export [Ohjeet](https://www.contentful.com/developers/docs/tutorials/cli/import-and-export)
-3. contentful space export --config config.json
-4. contentful space import --config config-2.json --skip-webhooks --content-file contentful-export-....json
+3. contentful space export --config config.json --include-archived true --skip-webhooks true
+4. contentful space import --config config-2.json  --include-archived true --skip-webhooks true --content-file contentful-export-....json
