@@ -58,14 +58,22 @@
        :kuvaus           (:kuvaus eperuste)
        :id               (:id eperuste)})))
 
+(defn- get-kuvaukset
+  [sources]
+  (map (fn [eperuste]
+         {:kuvaus (:kuvaus eperuste)
+          :id     (:id eperuste)}) sources))
+
 (defn- kuvaukset-result-mapper
-  [koulutus-koodi-urit result]
-  (if-let [sources (seq (map :_source (get-in result [:hits :hits])))]
-    (->> (for [koulutus-koodi-uri koulutus-koodi-urit]
-           (get-kuvaus koulutus-koodi-uri sources))
-         (remove nil?)
-         (vec))
-    []))
+  ([koulutus-koodi-urit result]
+   (if-let [sources (seq (map :_source (get-in result [:hits :hits])))]
+     (->> (for [koulutus-koodi-uri koulutus-koodi-urit]
+            (get-kuvaus koulutus-koodi-uri sources))
+          (remove nil?)
+          (vec))))
+  ([result]
+   (if-let [sources (seq (map :_source (get-in result [:hits :hits])))]
+     (get-kuvaukset sources))))
 
 (defonce source [:koulutukset.nimi,
                  :koulutukset.koulutuskoodiUri
@@ -84,6 +92,13 @@
                 {:terms {:koulutukset.koulutuskoodiUri (vec koulutuskoodit)}})]
     {:bool {:must terms, :filter {:term {:tila "valmis"}}}}))
 
+(defn- ->id-query
+  [eperuste-ids]
+  (let [terms (if (= 1 (count eperuste-ids))
+                {:term  {:id (first eperuste-ids)}}
+                {:terms {:id (vec eperuste-ids)}})]
+    {:bool {:must terms, :filter {:term {:tila "valmis"}}}}))
+
 (defn get-kuvaus-by-koulutuskoodi
   [koulutuskoodi-uri]
   (let [koulutuskoodi (koodi-uri-no-version koulutuskoodi-uri)]
@@ -98,3 +113,10 @@
                      :_source source
                      :size (* 10 (count koulutuskoodit))
                      :query (->query koulutuskoodit))))
+
+(defn get-kuvaukset-by-eperuste-ids
+  [eperuste-ids]
+  (eperuste-search (partial kuvaukset-result-mapper)
+                   :_source source
+                   :size (* 10 (count eperuste-ids))
+                   :query (->id-query eperuste-ids)))

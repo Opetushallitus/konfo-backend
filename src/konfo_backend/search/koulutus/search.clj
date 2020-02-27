@@ -5,17 +5,19 @@
     [konfo-backend.search.query :refer [query aggregations inner-hits-query]]
     [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]
-    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit]]))
+    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit, get-kuvaukset-by-eperuste-ids]]))
 
 (defonce index "koulutus-kouta-search")
 
 (def koulutus-kouta-search (partial e/search-with-pagination index))
 
 (defn- assoc-kuvaus-to-ammatillinen
-  [kuvaukset hit]
+  [kuvaukset id-kuvaukset hit]
   (if (ammatillinen? hit)
-    (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
-      (if-let [kuvaus (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset))]
+    (let [koulutusKoodiUri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))
+          eperuste-id (:ePerusteId hit)]
+      (if-let [kuvaus (or (first (filter #(= (:id %) eperuste-id) id-kuvaukset))
+                          (first (filter #(= (:koulutuskoodiUri %) koulutusKoodiUri) kuvaukset)))]
         (assoc hit :kuvaus (:kuvaus kuvaus))
         hit))
     hit))
@@ -23,8 +25,9 @@
 (defn- with-kuvaukset
   [result]
   (let [hits         (:hits result)
-        kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map #(get-in % [:koulutus :koodiUri]) (filter ammatillinen? hits))))]
-    (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen kuvaukset %) hits)))))
+        kuvaukset    (get-kuvaukset-by-koulutuskoodit (set (map #(get-in % [:koulutus :koodiUri]) (filter ammatillinen? hits))))
+        id-kuvaukset (get-kuvaukset-by-eperuste-ids (set (filter some? (map #(:ePerusteId %) (filter ammatillinen? hits)))))]
+    (assoc result :hits (vec (map #(assoc-kuvaus-to-ammatillinen kuvaukset id-kuvaukset %) hits)))))
 
 (defn search
   [keyword lng page size sort & {:as constraints}]

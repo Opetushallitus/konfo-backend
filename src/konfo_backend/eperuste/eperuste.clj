@@ -16,3 +16,10 @@
         id     (:id kuvaus)]
     (cond-> kuvaus
             (and with-osaamisalakuvaukset? (some? id)) (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
+
+(defn get-kuvaus-by-eperuste-id
+  [id with-osaamisalakuvaukset?]
+  (let [kuvaus (:kuvaus (eperuste-index/get id))]
+    (if (some? kuvaus)
+      (cond-> {:id id :kuvaus (select-keys kuvaus [:fi :sv :en])}
+              with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id))))))
