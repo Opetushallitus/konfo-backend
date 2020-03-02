@@ -149,7 +149,7 @@
   (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus")
   (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus")
   (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka")
+  (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka (ylempi AMK)")
   (fixture/add-koulutus-mock koulutusOid5  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus")
   (fixture/add-koulutus-mock koulutusOid6  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto")
   (fixture/add-koulutus-mock koulutusOid7  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Maanmittausalan perustutkinto")
@@ -157,26 +157,32 @@
   (fixture/add-koulutus-mock koulutusOid9  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhtaus- ja kiinteistöpalvelualan ammattitutkinto")
   (fixture/add-koulutus-mock koulutusOid10 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhevammaisten tulkkauksen erikoisammattitutkinto")
   (fixture/add-koulutus-mock koulutusOid11 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hius- ja kauneudenhoitoalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid12 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Autoalan perustutkinto")
 
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "lääkäri"}]}))
-  (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "psykologi"}]}))
-  (fixture/add-toteutus-mock "1.2.246.562.17.000004" koulutusOid4 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "automaatioinsinööri"}]}))
+  (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "psykologi"}] :asiasanat [{:kieli "fi" :arvo "ammattikorkeakoulu"}]}))
+  (fixture/add-toteutus-mock "1.2.246.562.17.000004" koulutusOid4 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "automaatioinsinööri"}] :asiasanat [{:kieli "fi" :arvo "ammattioppilaitos"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000005" koulutusOid5 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :asiasanat [{:kieli "fi" :arvo "musiikkioppilaitokset"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000006" koulutusOid8 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "maalari"}]}))
+  (fixture/add-toteutus-mock "1.2.246.562.17.000007" koulutusOid12 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "amm" :ammattinimikkeet [{:kieli "fi" :arvo "automaalari"}]}))
+
 
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6
-                                                             koulutusOid7 koulutusOid8 koulutusOid9 koulutusOid10 koulutusOid11]})
+                                                             koulutusOid7 koulutusOid8 koulutusOid9 koulutusOid10 koulutusOid11 koulutusOid12]})
 
   (testing "Searching with keyword"
 
     (testing "maalari <-> Pintakäsittelyala (EI maanmittausala)"
-      (is (= [koulutusOid8] (search-and-get-oids :keyword "maalari"))))
+      (is (= [koulutusOid12 koulutusOid8] (search-and-get-oids :keyword "maalari"))))
 
     (testing "puhtaus <-> Puhtaus- ja kiinteistöpalveluala (EI puhevammaisten)"
       (is (= [koulutusOid9] (search-and-get-oids :keyword "puhtaus"))))
 
     (testing "palvelu <-> Puhtaus- ja kiinteistöpalveluala"
       (is (= [koulutusOid9] (search-and-get-oids :keyword "palvelu"))))
+
+    (testing "ammattitutkinto <-> EI ammattioppilaitos tai ammattikorkeakoulu"
+      (is (= [koulutusOid10 koulutusOid9] (search-and-get-oids :keyword "ammattitutkinto"))))
 
     (testing "sosiaaliala <-> sosiaali- ja terveysala"
       (is (= [koulutusOid6] (search-and-get-oids :keyword "sosiaaliala"))))
@@ -188,10 +194,10 @@
       (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
 
     (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
+      (is (= [koulutusOid12 koulutusOid4] (search-and-get-oids :keyword "auto"))))
 
-    (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "auto"))))
+    (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri, EI autoalan perustutkintoa"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatio"))))
 
     (testing "humanismi <-> humanistinen"
       (is (= [koulutusOid2] (search-and-get-oids :keyword "humanismi"))))
@@ -205,7 +211,13 @@
     (testing "musiikki <-> musiikkioppilaitokset"
       (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikki"))))
 
+    (testing "musikko <-> muusikko"
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikki"))))
+
     (testing "insinööri <-> automaatioinsinööri"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))
+
+    (testing "insinöö <-> automaatioinsinööri"
       (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))
 
     (testing "tekniikka <-> automaatiotekniikka"
@@ -216,6 +228,9 @@
 
     (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
       (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittausalan%20perustutkinto"))))
+
+    (testing "perustutkinto maanmittaus <-> EI muita perustutkintoja"
+      (is (= [koulutusOid7] (search-and-get-oids :keyword "perustutkinto%20maanmittaus"))))
 
     (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
       (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittauS%20peruS"))))
@@ -240,6 +255,27 @@
 
     (testing "lääke <-> lääketieteen"
       (is (= [koulutusOid1] (search-and-get-oids :keyword "lääke"))))
+
+    (testing "ylemp <-> ylempi (AMK)"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "ylemp"))))
+
+    (testing "amk <-> ylempi (AMK)"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "amk"))))
+
+    (testing "psygologia <-> psykologia"
+      (is (= [koulutusOid2] (search-and-get-oids :keyword "psygologia"))))
+
+    (testing "perus <-> kaikki perustutkinnot"
+      (is (= [koulutusOid12 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6] (search-and-get-oids :keyword "perus"))))
+
+    (testing "perututkito <-> kaikki perustutkinnot"
+      (is (= [koulutusOid12 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6] (search-and-get-oids :keyword "perus"))))
+
+    (testing "teknikko <-> tekniikka"
+      (is (= [koulutusOid4] (search-and-get-oids :keyword "teknikko"))))
+
+    (testing "tiede <-> lääketiede ja tietojenkäsittelytiede"
+      (is (= [koulutusOid1 koulutusOid3] (search-and-get-oids :keyword "tiede"))))
 
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
              (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
