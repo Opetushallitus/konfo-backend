@@ -35,7 +35,7 @@
 (defn create-fake-image []
   (let [img    (BufferedImage. 256 256 BufferedImage/TYPE_INT_RGB)
         buffer (ByteArrayOutputStream.)]
-    (.write ImageIO img "JPEG" buffer)
+    (ImageIO/write img "JPEG" buffer)
     (.toByteArray buffer)))
 
 (defn fetch->image [image-url allow-fail?]
