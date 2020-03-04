@@ -19,7 +19,9 @@
    [clojure.tools.logging :as log])
   (:import (com.contentful.java.cda.image ImageOption$Format ImageOption)
            (com.contentful.java.cda CDAAsset)
-           (javax.imageio ImageIO)))
+           (javax.imageio ImageIO)
+           (java.awt.image BufferedImage)
+           (java.io BufferedOutputStream)))
 
 (defonce max-width 1280)
 (defonce max-height 1080)
@@ -30,10 +32,22 @@
   (and (str/starts-with? link "//")
        (not (str/ends-with? link ".svg"))))
 
-(defn fetch->image [image-url]
-  (let [image   (client/get (str "https:" image-url) {:as :byte-array})
-        headers (:headers image)]
-    [(:body image) (get headers "Content-Type")]))
+(defn create-fake-image []
+  (let [img    (BufferedImage. 256 256 BufferedImage/TYPE_INT_RGB)
+        buffer (BufferedOutputStream.)]
+    (.write ImageIO img "JPEG" buffer)
+    (.toByteArray buffer)))
+
+(defn fetch->image [image-url allow-fail?]
+  (try
+    (let [image   (client/get (str "https:" image-url) {:as :byte-array})
+          headers (:headers image)]
+      [(:body image) (get headers "Content-Type")])
+    (catch Exception e
+      (log/error (str "Error while fetching image: " (.getMessage e)))
+      (if allow-fail?
+        [(create-fake-image) "image/jpeg"]
+        (throw e)))))
 
 (defn add-query-params-to-uri [uri params]
   (reduce-kv (fn [u k v]
@@ -58,15 +72,15 @@
               {:w max-width}
               {:h max-height})))))
 
-(defn fetch-and-transform [url]
+(defn fetch-and-transform [url allow-fail?]
   (if (or (str/ends-with? url ".svg") (str/ends-with? url "watch"))
-    [false url (fetch->image url)]
+    [false url (fetch->image url allow-fail?)]
     (let [transformed-url (add-query-params-to-uri url {:fm "jpg"})
-          [image mime] (fetch->image transformed-url)
+          [image mime] (fetch->image transformed-url allow-fail?)
           params    (resize-image? image)]
       (if params
         (let [new-transformed-url (add-query-params-to-uri transformed-url params)]
-          [true new-transformed-url (fetch->image new-transformed-url)])
+          [true new-transformed-url (fetch->image new-transformed-url allow-fail?)])
         [true transformed-url [image mime]]))))
 
 (defn transform-url-if-needed [^CDAAsset cda-asset]
@@ -77,7 +91,7 @@
                                          cda-asset
                                          (into-array ImageOption
                                            [(ImageOption/formatOf ImageOption$Format/jpg)])))]
-      (let [[image _] (fetch->image transformed-image)
+      (let [[image _] (fetch->image transformed-image false)
 
             image-input      (ImageIO/read (io/input-stream image))
             width            (.getWidth image-input)
@@ -100,7 +114,7 @@
                                   [(ImageOption/formatOf ImageOption$Format/jpg)])))
             md5              (s3/calculate-md5 (or (and (= transformed-image final-transform)
                                                         image)
-                                                   (first (fetch->image final-transform))))]
+                                                   (first (fetch->image final-transform false))))]
         (log/info (str "processing image " final-transform " scaling = " scale? ", md5 = " md5))
         [final-transform md5]))))
 
@@ -140,7 +154,7 @@
                                             (.replaceAll t original (first l)))
                                           (do
                                             (log/warn (str "Creating fake asset for entry " id))
-                                            (let [[transformed? transformed-url [image content-type]] (fetch-and-transform original)
+                                            (let [[transformed? transformed-url [image content-type]] (fetch-and-transform original true)
                                                   md5    (s3/calculate-md5 image)
                                                   s3-url (strip-scheme-and-host (if transformed?
                                                                                   (str original ".jpg")
@@ -189,7 +203,7 @@
               old-md5  (s3/get-object-md5 s3-client s3-url)]
           (when (or (nil? md5) (not= old-md5 md5))
             (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
-            (let [[image content-type] (fetch->image (or transformed original))]
+            (let [[image content-type] (fetch->image (or transformed original) false)]
               (store->s3 s3-client ttl-asset content-type s3-url image)))))
       (comment (= existing latest)
         (if (nil? latest)
