@@ -21,7 +21,7 @@
            (com.contentful.java.cda CDAAsset)
            (javax.imageio ImageIO)
            (java.awt.image BufferedImage)
-           (java.io BufferedOutputStream)))
+           (java.io ByteArrayOutputStream)))
 
 (defonce max-width 1280)
 (defonce max-height 1080)
@@ -34,7 +34,7 @@
 
 (defn create-fake-image []
   (let [img    (BufferedImage. 256 256 BufferedImage/TYPE_INT_RGB)
-        buffer (BufferedOutputStream.)]
+        buffer (ByteArrayOutputStream.)]
     (.write ImageIO img "JPEG" buffer)
     (.toByteArray buffer)))
 
