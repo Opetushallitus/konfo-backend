@@ -30,6 +30,8 @@
     (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
 
     (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000001")
+    (fixture/add-koulutus-mock "1.2.246.562.13.000001")
+    (fixture/add-haku-mock "1.2.246.562.29.000001")
 
     (fixture/index-oids-without-related-indices {:hakukohteet [hakukohdeOid1 hakukohdeOid2 hakukohdeOid3]})
 

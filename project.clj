@@ -46,19 +46,19 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "0.1.20-SNAPSHOT"]
+                                   [kouta-indeksoija-service "0.2.1-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.19-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.19-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.2.5-SNAPSHOT"]]
+                                   [oph/clj-test-utils "0.2.6-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "0.1.20-SNAPSHOT"]
+                                      [kouta-indeksoija-service "0.2.1-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.19-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.19-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.2.5-SNAPSHOT"]]
+                                      [oph/clj-test-utils "0.2.6-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                     (utils/global-elasticsearch-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}

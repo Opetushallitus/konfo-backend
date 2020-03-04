@@ -13,6 +13,12 @@
 (def koulutusOid4 "1.2.246.562.13.000004")
 (def koulutusOid5 "1.2.246.562.13.000005")
 (def koulutusOid6 "1.2.246.562.13.000006")
+(def koulutusOid7 "1.2.246.562.13.000007")
+(def koulutusOid8 "1.2.246.562.13.000008")
+(def koulutusOid9 "1.2.246.562.13.000009")
+(def koulutusOid10 "1.2.246.562.13.000010")
+(def koulutusOid11 "1.2.246.562.13.000011")
+(def koulutusOid12 "1.2.246.562.13.000012")
 
 (def oppilaitosOid1 "1.2.246.562.10.0000011")
 (def oppilaitosOid2 "1.2.246.562.10.0000012")
