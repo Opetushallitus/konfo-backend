@@ -171,7 +171,7 @@
     (comment testing "haluan opiskella psykologiaa <-> psykologi"
       (is (= [oppilaitosOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))
 
-    (testing "sosiaaliala <-> sosiaali- ja terveysala"
+    (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
       (is (= [oppilaitosOid6] (search-and-get-oids :keyword "sosiaaliala"))))
 
     (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
@@ -180,7 +180,7 @@
     (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
              (is (= [oppilaitosOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
 
-    (testing "automaatiikka <-> automaatioinsinööri"
+    (comment testing "automaatiikka <-> automaatioinsinööri" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
       (is (= [oppilaitosOid4] (search-and-get-oids :keyword "automaatiikka"))))
 
     (testing "auto"
