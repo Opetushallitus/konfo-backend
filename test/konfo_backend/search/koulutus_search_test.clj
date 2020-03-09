@@ -303,6 +303,9 @@
     (testing "seppä <-> seppä"
       (is (= [koulutusOid17] (search-and-get-oids :keyword "seppä"))))
 
+    (testing "tie <-> lääketiede ja tietojenkäsittelytiede"
+      (is (= [koulutusOid1 koulutusOid15 koulutusOid3] (search-and-get-oids :keyword "tie"))))
+
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
              (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
 
