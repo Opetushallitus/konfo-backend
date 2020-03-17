@@ -33,6 +33,13 @@
      :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1",
                             "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]}))
 
+(defonce yo-koulutus-metatieto
+  (cheshire/generate-string
+    {:tyyppi               "yo"
+     :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1",
+                            "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]
+     :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+
 (defonce toteutus-metatieto
   (cheshire/generate-string
     {:tyyppi           "amm"

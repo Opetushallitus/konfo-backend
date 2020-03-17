@@ -146,9 +146,9 @@
 
 (deftest koulutus-keyword-search
 
-  (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus")
-  (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus")
+  (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus" :metadata yo-koulutus-metatieto)
+  (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus" :metadata yo-koulutus-metatieto)
+  (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus" :metadata yo-koulutus-metatieto)
   (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka (ylempi AMK)")
   (fixture/add-koulutus-mock koulutusOid5  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus")
   (fixture/add-koulutus-mock koulutusOid6  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto")
