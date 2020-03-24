@@ -108,8 +108,9 @@
         []
         (GET "/:oid" [:as request]
           :summary "Hae toteutus oidilla"
+          :query-params [{draft :- Boolean false}]
           :path-params [oid :- String]
-          (with-access-logging request (if-let [result (toteutus/get oid)]
+          (with-access-logging request (if-let [result (toteutus/get oid draft)]
                                          (ok result)
                                          (not-found "Not found")))))
 
@@ -126,8 +127,9 @@
         []
         (GET "/:oid" [:as request]
           :summary "Hae hakukohde oidilla"
+          :query-params [{draft :- Boolean false}]
           :path-params [oid :- String]
-          (with-access-logging request (if-let [result (hakukohde/get oid)]
+          (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                          (ok result)
                                          (not-found "Not found")))))
 
@@ -135,8 +137,9 @@
         []
         (GET "/:id" [:as request]
           :summary "Hae valintaperuste id:llä"
+          :query-params [{draft :- Boolean false}]
           :path-params [id :- String]
-          (with-access-logging request (if-let [result (valintaperuste/get id)]
+          (with-access-logging request (if-let [result (valintaperuste/get id draft)]
                                          (ok result)
                                          (not-found "Not found")))))
 

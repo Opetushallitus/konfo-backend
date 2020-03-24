@@ -6,7 +6,7 @@
 (defonce index "valintaperuste-kouta")
 
 (defn get
-  [id]
+  [id draft?]
   (let [valintaperuste (get-source index id)]
-    (when (julkaistu? valintaperuste)
+    (when (or draft? (julkaistu? valintaperuste))
       valintaperuste)))
