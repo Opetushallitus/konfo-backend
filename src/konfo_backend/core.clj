@@ -99,8 +99,9 @@
         []
         (GET "/:oid" [:as request]
           :summary "Hae koulutus oidilla"
+          :query-params [{draft :- Boolean false}]
           :path-params [oid :- String]
-          (with-access-logging request (if-let [result (koulutus/get oid)]
+          (with-access-logging request (if-let [result (koulutus/get oid draft)]
                                          (ok result)
                                          (not-found "Not found")))))
       (context "/toteutus"
