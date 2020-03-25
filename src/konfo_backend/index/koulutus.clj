@@ -6,7 +6,7 @@
 (defonce index "koulutus-kouta")
 
 (defn get
-  [oid]
+  [oid draft?]
   (let [koulutus (get-source index oid)]
-    (when (julkaistu? koulutus)
+    (when (or draft? (julkaistu? koulutus))
       (assoc koulutus :toteutukset (-> koulutus (:toteutukset) (julkaistut))))))

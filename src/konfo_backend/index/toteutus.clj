@@ -6,9 +6,9 @@
 (defonce index "toteutus-kouta")
 
 (defn get
-  [oid]
+  [oid draft?]
   (let [toteutus (get-source index oid)]
-    (when (julkaistu? toteutus)
+    (when (or draft? (julkaistu? toteutus))
       (assoc toteutus :hakukohteet (-> toteutus :hakukohteet julkaistut)))))
 
 (defn- parse-kuvaukset
