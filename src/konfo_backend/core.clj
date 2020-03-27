@@ -24,7 +24,8 @@
     [ring.middleware.cors :refer [wrap-cors]]
     [ring.util.http-response :refer :all]
     [environ.core :refer [env]]
-    [clojure.tools.logging :as log])
+    [clojure.tools.logging :as log]
+    [konfo-backend.elastic-tools :as e])
   (:gen-class))
 
 (s/defschema ClientError {:error-message s/Str
@@ -40,7 +41,8 @@
     (intern 'clj-elasticsearch.elastic-utils 'elastic-host elastic-url)
     (throw (IllegalStateException. "Could not read elastic-url from configuration!")))
   (intern 'clj-log.access-log 'service "konfo-backend")
-  (intern 'clj-log.error-log 'test false))
+  (intern 'clj-log.error-log 'test false)
+  (e/update-aliases-on-startup))
 
 (defonce sqs-client (sqs/create-sqs-client))
 
