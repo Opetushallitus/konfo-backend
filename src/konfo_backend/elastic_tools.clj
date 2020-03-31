@@ -109,4 +109,4 @@
           :let [oppija-alias (virkailija-alias->oppija-alias virkailija-alias)]]
     (if-let [new-index (e/move-read-alias-to-write-index virkailija-alias oppija-alias)]
       (log/info oppija-alias " alias points to index" new-index "!!")
-      (log/warn "Cannot find write index for" virkailija-alias "index!!"))))
+      (log/warn "Cannot find write index for" virkailija-alias "alias!!"))))
