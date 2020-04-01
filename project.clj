@@ -46,7 +46,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "0.3.0-KTO-587-v2-SNAPSHOT"]
+                                   [kouta-indeksoija-service "0.3.1-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.21-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "0.21-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
@@ -54,7 +54,7 @@
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "0.3.0-KTO-587-v2-SNAPSHOT"]
+                                      [kouta-indeksoija-service "0.3.1-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.21-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "0.21-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
