@@ -71,11 +71,6 @@
                                                   :opetuskieli    opetuskielet
                                                   :koulutusala    koulutusalat)))))
 
-(defn filter->obj [suodatin koodi nimi]
-  {:suodatin suodatin
-   :koodi koodi
-   :nimi nimi})
-
 (def konfo-api
   (api
     {:swagger {:ui   "/konfo-backend/swagger"
@@ -186,11 +181,8 @@
 
         (GET "/filters_as_array" [:as request]
           :summary "Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkona"
-          (with-access-logging request (if-let [result (filters/hierarkia)]
-                                         (ok (reduce-kv (fn [r suodatin m]
-                                                            (concat r (into []
-                                                                            (for [[k v] m] (filter->obj suodatin k (:nimi v)))))
-                                                            ) [] result))
+          (with-access-logging request (if-let [result (filters/flattened-hierarkia)]
+                                         (ok result)
                                          (not-found "Not found"))))
 
         (GET "/koulutukset" [:as request]
