@@ -179,6 +179,12 @@
                                          (ok result)
                                          (not-found "Not found"))))
 
+        (GET "/filters_as_array" [:as request]
+          :summary "Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkona"
+          (with-access-logging request (if-let [result (filters/flattened-hierarkia)]
+                                         (ok result)
+                                         (not-found "Not found"))))
+
         (GET "/koulutukset" [:as request]
           :summary "Koulutus search API"
           :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}

@@ -37,3 +37,16 @@
       :koulutusala    (filters "kansallinenkoulutusluokitus2016koulutusalataso1")}))
   ([]
    (hierarkia {})))
+
+
+(defn filter->obj [suodatin koodi nimi]
+  {:suodatin suodatin
+   :koodi koodi
+   :nimi nimi})
+
+(defn flattened-hierarkia []
+  (if-let [result (hierarkia)]
+    (reduce-kv (fn [r suodatin m]
+                   (concat r (into []
+                                   (for [[k v] m] (filter->obj suodatin k (:nimi v)))))
+                   ) [] result)))
