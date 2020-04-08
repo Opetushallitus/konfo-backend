@@ -102,7 +102,7 @@
                                             :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                     :sv "opintojenlaajuusyksikko_6 nimi sv"}},
                   :kuvaus { },
-                  :teemakuva "https://testi.domain/koulutus-teemakuva/oid/kuva.jpg",
+                  :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                   :nimi {:fi "Autoalan koulutus fi",
                          :sv "Autoalan koulutus sv"},
                   :oid "1.2.246.562.13.000001",

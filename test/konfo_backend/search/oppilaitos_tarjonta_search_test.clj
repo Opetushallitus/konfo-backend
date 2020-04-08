@@ -21,12 +21,12 @@
   [oid & query-params]
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
-(deftest koulutus-jarjestajat-test
+(deftest oppilaitos-tarjonta-test
   (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-koulutus-mock "1.2.246.562.13.000002" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000002" :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock "1.2.246.562.17.000002" "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000003" "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock "1.2.246.562.17.000003" "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
 
   (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001" "1.2.246.562.13.000002"] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
@@ -73,7 +73,8 @@
                            :nimi {:fi "kunta_091 nimi fi",
                                   :sv "kunta_091 nimi sv"}} ],
                 :tutkintonimikkeet nil,
-                :koulutustyyppi "amm"} (first (:hits r))))))
+                :koulutustyyppi "amm",
+                :kuva "https://example.com/kuva.jpg"} (first (:hits r))))))
 
     (testing "tulevat"
       (let [r (search helsingin-yliopisto :tuleva true)]
@@ -94,6 +95,7 @@
                 :koulutusOid "1.2.246.562.13.000002"
                 :nimi {:fi "Hevosalan koulutus fi",
                        :sv "Hevosalan koulutus sv"},
+                :kuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                 :kunnat [ {:koodiUri "kunta_091",
                            :nimi {:fi "kunta_091 nimi fi",
                                   :sv "kunta_091 nimi sv"}} ],
@@ -105,7 +107,7 @@
                                             :sv "tutkintonimikkeet_02 nimi sv"}} ],
                 :koulutustyyppi "amm"} (first (:hits r))))))))
 
-(deftest koulutus-jarjestajat-test-no-tarjontaa
+(deftest oppilaitos-tarjonta-test-no-tarjontaa
   (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)
 
   (testing "Get oppilaitoksen tarjonta"
