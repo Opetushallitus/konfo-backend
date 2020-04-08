@@ -46,17 +46,17 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "0.4.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.23-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "0.23-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "0.4.0-KTO-609-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "0.24-SNAPSHOT-KTO-606"]
+                                   [fi.oph.kouta/kouta-backend "0.24-SNAPSHOT-KTO-606" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
                                    [oph/clj-test-utils "0.2.7-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
                                  (utils/global-elasticsearch-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "0.4.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.23-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "0.23-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "0.4.0-KTO-609-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "0.24-SNAPSHOT-KTO-606"]
+                                      [fi.oph.kouta/kouta-backend "0.24-SNAPSHOT-KTO-606" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
                                       [oph/clj-test-utils "0.2.7-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
