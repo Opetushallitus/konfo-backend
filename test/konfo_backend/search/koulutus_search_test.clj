@@ -119,6 +119,7 @@
                                         :opintojenlaajuus {:koodiUri  "opintojenlaajuus_150",
                                                            :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                                                   :sv "opintojenlaajuus_150 nimi sv"}},
+                  :eperuste 1234,
                   :koulutustyyppi "amm"} (first (:hits r))))))))
 
 (deftest koulutus-paging-and-sorting-test
