@@ -54,8 +54,8 @@
         :aggs aggs))))
 
 (defn search-koulutuksen-jarjestajat
-  [oid lng page size sort tuleva?]
+  [oid lng page size order tuleva?]
   (e/search index
             parse-inner-hits
             :_source ["oid", "koulutus", "nimi"]
-            :query (inner-hits-query oid lng page size sort tuleva?)))
+            :query (inner-hits-query oid lng page size order tuleva?)))

@@ -238,11 +238,11 @@
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
-                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
+                         {order          :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
           (with-access-logging request (cond
                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                         (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
-                                         :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid lng page size sort tuleva)]
+                                         (not (some #{order} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
+                                         :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid lng page size order tuleva)]
                                                  (ok result)
                                                  (not-found "Not found")))))
 
@@ -277,11 +277,11 @@
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
-                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
+                         {order           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}]
           (with-access-logging request (cond
                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                         (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
-                                         :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size sort tuleva)]
+                                         (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+                                         :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size order tuleva)]
                                                  (ok result)
                                                  (not-found "Not found"))))))
 

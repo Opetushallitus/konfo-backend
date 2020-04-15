@@ -77,13 +77,13 @@
     [{:_score {:order order}} (->name-sort "asc" lng)]))
 
 (defn inner-hits-query
-  [oid lng page size sort tuleva?]
+  [oid lng page size order tuleva?]
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
                    {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
                                           :from from
                                           :size size
-                                          :sort {(str "hits.nimi." lng ".keyword") {:order sort :unmapped_type "string"}}}
+                                          :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
                              :path "hits"
                              :query {:term {"hits.onkoTuleva" tuleva?}}}}]}}))
