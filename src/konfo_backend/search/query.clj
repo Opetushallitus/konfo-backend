@@ -65,6 +65,17 @@
   [keyword lng constraints]
   {:nested {:path "hits", :query {:bool (bool keyword lng constraints)}}})
 
+(defn- ->name-sort
+  [order lng]
+  {(->lng-keyword "nimi.%s.keyword" lng) {:order order :unmapped_type "string"}})
+
+(defn sorts
+  [sort order lng]
+  (case sort
+    "score" [{:_score {:order order}} (->name-sort "asc" lng)]
+    "name" [(->name-sort order lng)]
+    [{:_score {:order order}} (->name-sort "asc" lng)]))
+
 (defn inner-hits-query
   [oid lng page size sort tuleva?]
   (let [size (->size size)

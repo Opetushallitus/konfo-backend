@@ -8,7 +8,7 @@
 
 (defn- hits
   [response]
-  (map :_source (get-in response [:hits :hits])))
+  (map (fn [x] (-> (:_source x) (assoc :_score (:_score x)))) (get-in response [:hits :hits])))
 
 (defn- ->doc_count
   [response agg-key]

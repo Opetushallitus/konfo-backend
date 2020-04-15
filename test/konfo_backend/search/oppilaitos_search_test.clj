@@ -51,7 +51,7 @@
 
     (testing "Search oppilaitokset, filter with..."
       (testing "sijainti"
-        (let [r (search :sijainti "kunta_618")]
+        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
           (is (= 1 (count (:hits r))))
           (is (= punkaharjun-yliopisto (:oid (first (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
@@ -64,11 +64,11 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi])))))
 
       (testing "multiple sijainti"
-        (let [r (search :sijainti "%20kunta_618%20,%20kunta_091")]
+        (let [r (search :sijainti "%20kunta_618%20,%20kunta_091" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))))
 
       (testing "koulutustyyppi"
-        (let [r (search :koulutustyyppi "amm")]
+        (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -79,7 +79,7 @@
           (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
       (testing "opetuskieli"
-        (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01")]
+        (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
           (is (= 0 (count (:hits r))))
           (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -90,7 +90,7 @@
           (is (= 0 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
       (testing "koulutusala"
-        (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01")]
+        (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -101,7 +101,7 @@
           (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
       (testing "Search oppilaitokset, get correct result"
-        (let [r (search :sijainti "kunta_618")]
+        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
           (is (= {:nimi {:fi "Punkaharjun yliopisto",
                          :sv "Punkaharjun yliopisto sv"},
                   :koulutusohjelmia 2,
@@ -111,7 +111,7 @@
                                  {:koodiUri "kunta_220",
                                   :nimi {:fi "kunta_220 nimi fi",
                                          :sv "kunta_220 nimi sv"}} ],
-                  :oid "1.2.246.562.10.000002"} (first (:hits r)))))))))
+                  :oid "1.2.246.562.10.000002"} (dissoc (first (:hits r)) :_score))))))))
 
 (deftest oppilaitos-paging-and-sorting-test
 
@@ -126,17 +126,25 @@
 
   (testing "Oppilaitos search ordering"
     (testing "by default order"
-      (is (= [oppilaitosOid1 oppilaitosOid2 oppilaitosOid3 oppilaitosOid4 oppilaitosOid5] (search-and-get-oids :keyword "aakkosissa"))))
-    (testing "Koulutus search ordering"
-      (is (= [oppilaitosOid5 oppilaitosOid4 oppilaitosOid3 oppilaitosOid2 oppilaitosOid1]  (search-and-get-oids :keyword "aakkosissa" :sort "desc")))))
+      (let [hits (:hits (search :keyword "aakkosissa"))]
+        (is (= 5 (count hits)))
+        (is (>= (:_score (nth hits 0))
+                (:_score (nth hits 1))
+                (:_score (nth hits 2))
+                (:_score (nth hits 3))
+                (:_score (nth hits 4))))))
+    (testing "order by name asc"
+      (is (= [oppilaitosOid1 oppilaitosOid2 oppilaitosOid3 oppilaitosOid4 oppilaitosOid5] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "asc"))))
+    (testing "order by name desc"
+      (is (= [oppilaitosOid5 oppilaitosOid4 oppilaitosOid3 oppilaitosOid2 oppilaitosOid1]  (search-and-get-oids :keyword "aakkosissa"  :sort "name" :order "desc")))))
 
   (testing "Oppilaitos search paging"
     (testing "returns first page by default"
-      (is (= [oppilaitosOid1 oppilaitosOid2] (search-and-get-oids :keyword "aakkosissa" :size 2))))
+      (is (= [oppilaitosOid1 oppilaitosOid2] (search-and-get-oids :keyword "aakkosissa" :size 2 :sort "name" :order "asc"))))
     (testing "returns last page"
-      (is (= [oppilaitosOid5] (search-and-get-oids :keyword "aakkosissa" :size 2 :page 3))))
+      (is (= [oppilaitosOid5] (search-and-get-oids :keyword "aakkosissa" :size 2 :page 3 :sort "name" :order "asc"))))
     (testing "returns correct total count"
-      (is (= 5 (:total (get-ok (oppilaitos-search-url :keyword "aakkosissa" :size 2))))))))
+      (is (= 5 (:total (get-ok (oppilaitos-search-url :keyword "aakkosissa" :size 2 :sort "name" :order "asc"))))))))
 
 (deftest oppilaitos-keyword-search
 
@@ -157,37 +165,37 @@
 
   (testing "Searching with keyword"
     (testing "lääketiede <-> lääketieteen"
-      (is (= [oppilaitosOid1] (search-and-get-oids :keyword "lääketiede"))))
+      (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääketiede"))))
 
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
-      (is (= [oppilaitosOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
+      (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20lääkäriksi"))))
 
     (comment testing "musiikin opiskelu <-> muusikon koulutus"
-      (is (= [oppilaitosOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
+      (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikin%20opiskelu"))))
 
     (testing "humanismi <-> humanistinen"
-      (is (= [oppilaitosOid2] (search-and-get-oids :keyword "humanismi"))))
+      (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanismi"))))
 
     (comment testing "haluan opiskella psykologiaa <-> psykologi"
-      (is (= [oppilaitosOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))
+      (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20psykologiaa"))))
 
     (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [oppilaitosOid6] (search-and-get-oids :keyword "sosiaaliala"))))
+      (is (= [oppilaitosOid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaaliala"))))
 
     (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
-      (is (= [oppilaitosOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
+      (is (= [oppilaitosOid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittelytiede"))))
 
     (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
-             (is (= [oppilaitosOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
+             (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikkioppilaitos"))))
 
     (comment testing "automaatiikka <-> automaatioinsinööri" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [oppilaitosOid4] (search-and-get-oids :keyword "automaatiikka"))))
+      (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatiikka"))))
 
     (testing "auto"
-      (is (= [oppilaitosOid4] (search-and-get-oids :keyword "auto"))))
+      (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
 
     (testing "muusikon koulutus"
-      (is (= [oppilaitosOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+      (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))
 
     (comment testing "insinööri <-> automaatioinsinööri"
-      (is (= [oppilaitosOid4] (search-and-get-oids :keyword "insinööri"))))))
+      (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "insinööri"))))))

@@ -49,15 +49,16 @@
 (defonce sqs-client (sqs/create-sqs-client))
 
 (defn- ->search-with-validated-params
-  [f keyword lng page size sort koulutustyyppi sijainti opetuskieli koulutusala]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala]
   (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
         sijainnit           (comma-separated-string->vec sijainti)
         opetuskielet        (comma-separated-string->vec opetuskieli)
         koulutusalat        (comma-separated-string->vec koulutusala)]
 
     (cond
-      (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-      (not (some #{sort} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
+      (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
+      (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
+      (not (some #{order} ["asc" "desc"]))  (bad-request "Virheellinen järjestys ('asc'/'desc')")
       (and (nil? keyword)
            (empty? koulutustyypit)
            (empty? sijainti)
@@ -70,6 +71,7 @@
                                                   page
                                                   size
                                                   sort
+                                                  order
                                                   :koulutustyyppi koulutustyypit
                                                   :sijainti       sijainnit
                                                   :opetuskieli    opetuskielet
@@ -211,7 +213,8 @@
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
-                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}
+                         {sort           :- (describe String "Järjestys. 'name' tai 'score'") "score"}
+                         {order          :- (describe String "Järjestys. 'asc' tai 'desc'") "desc"}
                          {koulutustyyppi :- (describe String "Pilkulla eroteltu lista koulutustyyppejä, esim. 'amm,kk,lk'") nil}
                          {sijainti       :- (describe String "Pilkulla eroteltu kuntien ja maakuntien koodeja, esim. 'kunta_091,maakunta_01,maakunta_03'") nil}
                          {opetuskieli    :- (describe String "Pilkulla eroteltu opetuskielten koodeja, esim. 'oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2'") nil}
@@ -222,6 +225,7 @@
                                                                        page
                                                                        size
                                                                        sort
+                                                                       order
                                                                        koulutustyyppi
                                                                        sijainti
                                                                        opetuskieli
@@ -248,7 +252,8 @@
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
-                         {sort           :- (describe String "Järjestys. 'asc' tai 'desc'") "asc"}
+                         {sort           :- (describe String "Järjestys. 'name' tai 'score'") "score"}
+                         {order          :- (describe String "Järjestys. 'asc' tai 'desc'") "desc"}
                          {koulutustyyppi :- (describe String "Pilkulla eroteltu lista koulutustyyppejä, esim. 'amm,kk,lk'") nil}
                          {sijainti       :- (describe String "Pilkulla eroteltu kuntien ja maakuntien koodeja, esim. 'kunta_091,maakunta_01,maakunta_03'") nil}
                          {opetuskieli    :- (describe String "Pilkulla eroteltu opetuskielten koodeja, esim. 'oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2'") nil}
@@ -259,6 +264,7 @@
                                                                        page
                                                                        size
                                                                        sort
+                                                                       order
                                                                        koulutustyyppi
                                                                        sijainti
                                                                        opetuskieli
