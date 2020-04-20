@@ -2,20 +2,18 @@
   (:require
     [clj-elasticsearch.elastic-connect :as e]
     [clj-log.error-log :refer [with-error-logging]]
+    [clojure.string :as str]
     [clojure.tools.logging :as log]))
-
-(defn index-name [name] name)
 
 (defn get-source
   [index id]
-  (let [result (e/get-document (index-name index) (index-name index) id)]
+  (let [result (e/get-document index id)]
     (when (:found result)
       (:_source result))))
 
 (defn insert-query-perf [query duration started res-size]
   (e/create
-    (index-name "query_perf")
-    (index-name "query_perf")
+    "query_perf"
     {:created        (System/currentTimeMillis)
      :started        started
      :duration_mills duration
@@ -28,11 +26,14 @@
 
 (defn search
   [index mapper & query-parts]
-  (->> (apply e/search
-              (index-name index)
-              (index-name index)
-              query-parts)
-       mapper))
+  (try
+    (->> (apply e/search
+                index
+                query-parts)
+         mapper)
+    (catch Exception e
+      (log/error "Got exception when searching" e)
+      (throw e))))
 
 (defn ->size
   [size]
@@ -56,8 +57,7 @@
           size  (->size size)
           from  (->from page size)
             res (->> (apply e/search
-                       (index-name index)
-                       (index-name index)
+                       index
                        :from from
                        :size size
                        query-parts)
@@ -88,8 +88,25 @@
                      :filter { :terms { key values }},
                      :boost boost }})
 
-(defn insert [index data]
-  (e/create
-    (index-name index)
-    (index-name index)
-    (assoc data :created (System/currentTimeMillis))))
+(defn- virkailija-alias?
+  [alias]
+  (str/ends-with? alias "-virkailija"))
+
+(defn- virkailija-alias->oppija-alias
+  [virkailija-alias]
+  (str/replace virkailija-alias "-virkailija" ""))
+
+(defn- find-virkailija-aliases
+  []
+  (->> (e/list-aliases)
+       (mapcat #(->> (val %) :aliases (map key)))
+       (map name)
+       (filter virkailija-alias?)))
+
+(defn update-aliases-on-startup
+  []
+  (doseq [virkailija-alias (find-virkailija-aliases)
+          :let [oppija-alias (virkailija-alias->oppija-alias virkailija-alias)]]
+    (if-let [new-index (e/move-read-alias-to-write-index virkailija-alias oppija-alias)]
+      (log/info oppija-alias " alias points to index" new-index "!!")
+      (log/warn "Cannot find write index for" virkailija-alias "alias!!"))))

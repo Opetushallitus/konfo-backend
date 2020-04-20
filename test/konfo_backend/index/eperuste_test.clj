@@ -111,10 +111,10 @@
                                         :kuvaus {:fi "Osaamisala 2 teksti fi" :sv "Osaamisala 2 teksti sv"}}]})))))
 
   (testing "Get valmis eperuste"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y z] {:found true :_source {:id 3536456 :tila "valmis" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] {:found true :_source {:id 3536456 :tila "valmis" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
       (let [response (get-ok (eperuste-url 3536456))]
         (is (= (:id response) 3536456)))))
 
   (testing "Don't get not valmis eperuste"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y z] {:found true :_source {:id 3536456 :tila "luonnos" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] {:found true :_source {:id 3536456 :tila "luonnos" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
       (get-not-found (eperuste-url 3536456)))))
