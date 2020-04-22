@@ -37,7 +37,7 @@
         page
         size
         #(-> % parse with-kuvaukset)
-        :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
+        :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
         :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
         :query query
         :aggs aggs))))
