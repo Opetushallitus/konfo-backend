@@ -145,13 +145,16 @@
                                          (ok result)
                                          (not-found "Not found")))))
 
+      ;TODO: poista koulutuskoodi-uri, kun tuotannossa kaikilla koulutuksilla on eperuste-id
       (context "/kuvaus"
         []
-        (GET "/:koulutuskoodi" [:as request]
-          :summary "Hae koulutuksen kuvaus ePerusteista koulutuskoodin perusteella"
-          :path-params  [koulutuskoodi :- String]
+        (GET "/:koodi" [:as request]
+          :summary "Hae koulutuksen kuvaus ePerusteista koulutuskoodin tai eperuste-id:n perusteella"
+          :path-params [koodi :- String]
           :query-params [{osaamisalakuvaukset :- Boolean false}]
-          (with-access-logging request (if-let [result (eperuste/get-kuvaus-by-koulutuskoodi-uri koulutuskoodi osaamisalakuvaukset)]
+          (with-access-logging request (if-let [result (if (re-matches #"[1-9][0-9]*" koodi)
+                                                         (eperuste/get-kuvaus-by-eperuste-id (read-string koodi) osaamisalakuvaukset)
+                                                         (eperuste/get-kuvaus-by-koulutuskoodi-uri koodi osaamisalakuvaukset))]
                                          (ok result)
                                          (not-found "Not found")))))
 
