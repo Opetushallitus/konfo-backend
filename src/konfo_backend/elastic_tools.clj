@@ -26,14 +26,10 @@
 
 (defn search
   [index mapper & query-parts]
-  (try
-    (->> (apply e/search
-                index
-                query-parts)
-         mapper)
-    (catch Exception e
-      (log/error "Got exception when searching" e)
-      (throw e))))
+  (->> (apply e/search
+              index
+              query-parts)
+       mapper))
 
 (defn ->size
   [size]

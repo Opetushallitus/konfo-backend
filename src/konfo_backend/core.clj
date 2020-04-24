@@ -25,7 +25,9 @@
     [ring.util.http-response :refer :all]
     [environ.core :refer [env]]
     [clojure.tools.logging :as log]
-    [konfo-backend.elastic-tools :as e])
+    [konfo-backend.elastic-tools :as e]
+    [compojure.api.exception :as ex]
+    [cheshire.core :as cheshire])
   (:gen-class))
 
 (s/defschema ClientError {:error-message s/Str
@@ -73,9 +75,22 @@
                                                   :opetuskieli    opetuskielet
                                                   :koulutusala    koulutusalat)))))
 
+(defn- ->error-response-message
+  [message type]
+  {:message (str "Got exception when trying to fulfill request: " message) :type type})
+
+(defn exeption-handler
+  [^Exception e data request]
+  (if-let [error (some-> e (ex-data) :body (cheshire/parse-string true) :error)]
+    (do (log/error "Got exception from ElasticSearch:" (:reason error) e)
+        (internal-server-error (->error-response-message (:reason error) (:type error))))
+    (do (log/error "Got unknown exception for request" (:uri request) e)
+        (internal-server-error (->error-response-message (ex-message e) (.getName (class e)))))))
+
 (def konfo-api
   (api
-    {:swagger {:ui   "/konfo-backend/swagger"
+    {:exceptions {:handlers {::ex/default exeption-handler}}
+     :swagger {:ui   "/konfo-backend/swagger"
                :spec "/konfo-backend/swagger.json"
                :data {:info {:title       "Konfo-backend"
                              :description "Backend for Konfo koulutusinformaatio UI."}}}}
@@ -276,8 +291,19 @@
           (palaute/send-feedback sqs-client feedback)
           (ok {}))))))
 
+(defn wrap-exception-handling
+  [handler]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        (log/error "Something really bad happened" e)
+        {:status 500 :body (cheshire/generate-string (->error-response-message (ex-message e) (.getName (class e))))}))))
+
 (def app
-  (wrap-cors konfo-api :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
+  (-> konfo-api
+      (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post])
+      (wrap-exception-handling)))
 
 (defn -main [& args]
   (if (= (System/getProperty "mode") "updater")
