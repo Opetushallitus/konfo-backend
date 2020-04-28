@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query aggregations inner-hits-query]]
+    [konfo-backend.search.query :refer [query aggregations inner-hits-query sorts]]
     [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit, get-kuvaukset-by-eperuste-ids]]))
@@ -38,7 +38,7 @@
     (assoc result :hits (vec (map assoc-kuvaus (:hits result))))))
 
 (defn search
-  [keyword lng page size sort & {:as constraints}]
+  [keyword lng page size sort order & {:as constraints}]
   (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
@@ -49,13 +49,13 @@
         size
         #(-> % parse with-kuvaukset)
         :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
-        :sort [{(->lng-keyword "nimi.%s.keyword" lng) {:order sort}}]
+        :sort (sorts sort order lng)
         :query query
         :aggs aggs))))
 
 (defn search-koulutuksen-jarjestajat
-  [oid lng page size sort tuleva?]
+  [oid lng page size order tuleva?]
   (e/search index
             parse-inner-hits
             :_source ["oid", "koulutus", "nimi"]
-            :query (inner-hits-query oid lng page size sort tuleva?)))
+            :query (inner-hits-query oid lng page size order tuleva?)))

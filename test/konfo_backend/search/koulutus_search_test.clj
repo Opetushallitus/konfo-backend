@@ -39,7 +39,7 @@
       (testing "Invalid lng"
         (is (= "Virheellinen kieli")      (->bad-request-body :sijainti "kunta_618" :lng "foo")))
       (testing "Invalid sort"
-        (is (= "Virheellinen järjestys")  (->bad-request-body :sijainti "kunta_618" :sort "foo")))
+        (is (= "Virheellinen järjestys")  (->bad-request-body :sijainti "kunta_618" :order "foo")))
       (testing "Too short keyword"
         (is (= "Hakusana on liian lyhyt") (->bad-request-body :sijainti "kunta_618" :keyword "fo")))
       (testing "No keyword nor filters"
@@ -47,7 +47,7 @@
 
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"
-        (let [r (search :sijainti "kunta_618")]
+        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
           (is (= 1 (count (:hits r))))
           (is (= "1.2.246.562.13.000001" (:oid (first (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
@@ -60,11 +60,11 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi])))))
 
       (testing "multiple sijainti"
-        (let [r (search :sijainti "%20kunta_618%20,%20kunta_220")]
+        (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))))
 
       (testing "koulutustyyppi"
-        (let [r (search :koulutustyyppi "amm")]
+        (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -75,7 +75,7 @@
           (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
       (testing "opetuskieli"
-        (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01")]
+        (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
           (is (= 0 (count (:hits r))))
           (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -86,7 +86,7 @@
           (is (= 0 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
       (testing "koulutusala"
-        (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01")]
+        (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
           (is (= 2 (count (:hits r))))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -97,7 +97,7 @@
           (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count]))))))
 
       (testing "Search koulutukset, get correct result"
-        (let [r (search :sijainti "kunta_618")]
+        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
           (is (= {:opintojenlaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
                                             :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                     :sv "opintojenlaajuusyksikko_6 nimi sv"}},
@@ -120,7 +120,7 @@
                                                            :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                                                   :sv "opintojenlaajuus_150 nimi sv"}},
                   :eperuste 1234,
-                  :koulutustyyppi "amm"} (first (:hits r))))))))
+                  :koulutustyyppi "amm"} (dissoc (first (:hits r)) :_score)))))))
 
 (deftest koulutus-paging-and-sorting-test
 
@@ -134,17 +134,25 @@
 
   (testing "Koulutus search ordering"
     (testing "by default order"
-      (is (= [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5] (search-and-get-oids :keyword "aakkosissa"))))
-    (testing "Koulutus search ordering"
-      (is (= [koulutusOid5 koulutusOid4 koulutusOid3 koulutusOid2 koulutusOid1] (search-and-get-oids :keyword "aakkosissa" :sort "desc")))))
+      (let [hits (:hits (search :keyword "aakkosissa"))]
+        (is (= 5 (count hits)))
+        (is (>= (:_score (nth hits 0))
+                (:_score (nth hits 1))
+                (:_score (nth hits 2))
+                (:_score (nth hits 3))
+                (:_score (nth hits 4))))))
+    (testing "order by name asc"
+      (is (= [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "asc"))))
+    (testing "order by name desc"
+      (is (= [koulutusOid5 koulutusOid4 koulutusOid3 koulutusOid2 koulutusOid1] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "desc")))))
 
   (testing "Koulutus search paging"
     (testing "returns first page by default"
-      (is (= [koulutusOid1 koulutusOid2] (search-and-get-oids :keyword "aakkosissa" :size 2))))
+      (is (= [koulutusOid1 koulutusOid2] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "asc" :size 2))))
     (testing "returns last page"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "aakkosissa" :size 2 :page 3))))
+      (is (= [koulutusOid5] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "asc" :size 2 :page 3))))
     (testing "returns correct total count"
-      (is (= 5 (:total (get-ok (koulutus-search-url :keyword "aakkosissa" :size 2))))))))
+      (is (= 5 (:total (get-ok (koulutus-search-url :keyword "aakkosissa" :sort "name" :order "asc" :size 2))))))))
 
 (deftest koulutus-keyword-search
 
@@ -183,136 +191,136 @@
   (testing "Searching with keyword"
 
     (testing "maalari <-> Pintakäsittelyala (EI maanmittausala)"
-      (is (= [koulutusOid12 koulutusOid8] (search-and-get-oids :keyword "maalari"))))
+      (is (= [koulutusOid12 koulutusOid8] (search-and-get-oids :sort "name" :order "asc"  :keyword "maalari"))))
 
     (testing "puhtaus <-> Puhtaus- ja kiinteistöpalveluala (EI puhevammaisten)"
-      (is (= [koulutusOid9] (search-and-get-oids :keyword "puhtaus"))))
+      (is (= [koulutusOid9] (search-and-get-oids :sort "name" :order "asc"  :keyword "puhtaus"))))
 
     (testing "palvelu <-> Puhtaus- ja kiinteistöpalveluala"
-      (is (= [koulutusOid9] (search-and-get-oids :keyword "palvelu"))))
+      (is (= [koulutusOid9] (search-and-get-oids :sort "name" :order "asc"  :keyword "palvelu"))))
 
     (testing "ammattitutkinto <-> EI ammattioppilaitos tai ammattikorkeakoulu"
-      (is (= [koulutusOid14 koulutusOid10 koulutusOid9 koulutusOid15] (search-and-get-oids :keyword "ammattitutkinto"))))
+      (is (= [koulutusOid14 koulutusOid10 koulutusOid9 koulutusOid15] (search-and-get-oids :sort "name" :order "asc"  :keyword "ammattitutkinto"))))
 
     (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [koulutusOid6] (search-and-get-oids :keyword "sosiaaliala"))))
+      (is (= [koulutusOid6] (search-and-get-oids :sort "name" :order "asc"  :keyword "sosiaaliala"))))
 
     (testing "terveys <-> sosiaali- ja terveysala"
-      (is (= [koulutusOid6] (search-and-get-oids :keyword "terveys"))))
+      (is (= [koulutusOid6] (search-and-get-oids :sort "name" :order "asc"  :keyword "terveys"))))
 
     (testing "musiikkioppilaitos <-> musiikkioppilaitokset"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikkioppilaitos"))))
+      (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "musiikkioppilaitos"))))
 
     (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
-      (is (= [koulutusOid12 koulutusOid4] (search-and-get-oids :keyword "auto"))))
+      (is (= [koulutusOid12 koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "auto"))))
 
     (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri, EI autoalan perustutkintoa"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatio"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "automaatio"))))
 
     (testing "humanismi <-> humanistinen"
-      (is (= [koulutusOid2] (search-and-get-oids :keyword "humanismi"))))
+      (is (= [koulutusOid2] (search-and-get-oids :sort "name" :order "asc"  :keyword "humanismi"))))
 
     (testing "lääketiede <-> lääketieteen"
-      (is (= [koulutusOid1] (search-and-get-oids :keyword "lääketiede"))))
+      (is (= [koulutusOid1] (search-and-get-oids :sort "name" :order "asc"  :keyword "lääketiede"))))
 
     (testing "muusikko <-> muusikon koulutus"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikko"))))
+      (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "muusikko"))))
 
     (testing "musiikki <-> musiikkioppilaitokset"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikki"))))
+      (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "musiikki"))))
 
     (testing "musikko <-> muusikko"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikki"))))
+      (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "musiikki"))))
 
     (testing "insinööri <-> automaatioinsinööri"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "insinööri"))))
 
     (testing "insinöö <-> automaatioinsinööri"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "insinööri"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "insinööri"))))
 
     (testing "tekniikka <-> automaatiotekniikka"
-      (is (= [koulutusOid4 koulutusOid15] (search-and-get-oids :keyword "tekniikka"))))
+      (is (= [koulutusOid4 koulutusOid15] (search-and-get-oids :sort "name" :order "asc"  :keyword "tekniikka"))))
 
     (testing "muusikon koulutus <-> EI muita koulutuksia"
-      (is (= [koulutusOid5] (search-and-get-oids :keyword "muusikon%20koulutus"))))
+      (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "muusikon%20koulutus"))))
 
     (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
-      (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittausalan%20perustutkinto"))))
+      (is (= [koulutusOid7] (search-and-get-oids :sort "name" :order "asc"  :keyword "maanmittausalan%20perustutkinto"))))
 
     (testing "perustutkinto maanmittaus <-> EI muita perustutkintoja"
-      (is (= [koulutusOid7] (search-and-get-oids :keyword "perustutkinto%20maanmittaus"))))
+      (is (= [koulutusOid7] (search-and-get-oids :sort "name" :order "asc"  :keyword "perustutkinto%20maanmittaus"))))
 
     (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
-      (is (= [koulutusOid7] (search-and-get-oids :keyword "maanmittauS%20peruS"))))
+      (is (= [koulutusOid7] (search-and-get-oids :sort "name" :order "asc"  :keyword "maanmittauS%20peruS"))))
 
     (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
-      (is (= [koulutusOid3] (search-and-get-oids :keyword "tietojenkäsittelytiede"))))
+      (is (= [koulutusOid3] (search-and-get-oids :sort "name" :order "asc"  :keyword "tietojenkäsittelytiede"))))
 
     (comment testing "automaatiikka <-> automaatioinsinööri"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "automaatiikka"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "automaatiikka"))))
 
     (testing "hius <-> Hius- ja kauneudenhoitoalan perustutkinto"
-      (is (= [koulutusOid11] (search-and-get-oids :keyword "hius"))))
+      (is (= [koulutusOid11] (search-and-get-oids :sort "name" :order "asc"  :keyword "hius"))))
 
     (testing "kauneudenhoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
-      (is (= [koulutusOid11] (search-and-get-oids :keyword "kauneudenhoito"))))
+      (is (= [koulutusOid11] (search-and-get-oids :sort "name" :order "asc"  :keyword "kauneudenhoito"))))
 
     (comment testing "hoito <-> Eläintenhoidon ammattitutkinto sekä Hius- ja kauneudenhoitoalan perustutkinto"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [koulutusOid14 koulutusOid11] (search-and-get-oids :keyword "hoito"))))
+      (is (= [koulutusOid14 koulutusOid11] (search-and-get-oids :sort "name" :order "asc"  :keyword "hoito"))))
 
     (testing "psykologia <-> Psykologi"
-      (is (= [koulutusOid2] (search-and-get-oids :keyword "psykologia"))))
+      (is (= [koulutusOid2] (search-and-get-oids :sort "name" :order "asc"  :keyword "psykologia"))))
 
     (testing "lääke <-> lääketieteen"
-      (is (= [koulutusOid1] (search-and-get-oids :keyword "lääke"))))
+      (is (= [koulutusOid1] (search-and-get-oids :sort "name" :order "asc"  :keyword "lääke"))))
 
     (testing "ylemp <-> ylempi (AMK)"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "ylemp"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "ylemp"))))
 
     (testing "amk <-> ylempi (AMK)"
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "amk"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "amk"))))
 
     (testing "psygologia <-> psykologia"
-      (is (= [koulutusOid2] (search-and-get-oids :keyword "psygologia"))))
+      (is (= [koulutusOid2] (search-and-get-oids :sort "name" :order "asc"  :keyword "psygologia"))))
 
     (testing "perus <-> kaikki perustutkinnot"
-      (is (= [koulutusOid12 koulutusOid13 koulutusOid17 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6 koulutusOid16] (search-and-get-oids :keyword "perus"))))
+      (is (= [koulutusOid12 koulutusOid13 koulutusOid17 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6 koulutusOid16] (search-and-get-oids :sort "name" :order "asc"  :keyword "perus"))))
 
     (testing "perustutkinto <-> kaikki perustutkinnot"
-      (is (= [koulutusOid12 koulutusOid13 koulutusOid17 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6 koulutusOid16] (search-and-get-oids :keyword "perustutkinto"))))
+      (is (= [koulutusOid12 koulutusOid13 koulutusOid17 koulutusOid11 koulutusOid7 koulutusOid8 koulutusOid6 koulutusOid16] (search-and-get-oids :sort "name" :order "asc"  :keyword "perustutkinto"))))
 
     (comment testing "teknikko <-> tekniikka"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [koulutusOid4] (search-and-get-oids :keyword "teknikko"))))
+      (is (= [koulutusOid4] (search-and-get-oids :sort "name" :order "asc"  :keyword "teknikko"))))
 
     (comment testing "tiede <-> lääketiede ja tietojenkäsittelytiede" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [koulutusOid1 koulutusOid3] (search-and-get-oids :keyword "tiede"))))
+      (is (= [koulutusOid1 koulutusOid3] (search-and-get-oids :sort "name" :order "asc"  :keyword "tiede"))))
 
     (testing "eläin <-> eläintenhoito EI elintarviketta"
-      (is (= [koulutusOid14] (search-and-get-oids :keyword "eläin"))))
+      (is (= [koulutusOid14] (search-and-get-oids :sort "name" :order "asc"  :keyword "eläin"))))
 
     (testing "eläinten <-> eläintenhoito EI tieto- ja viestintätekniikan"
-      (is (= [koulutusOid14] (search-and-get-oids :keyword "eläinten"))))
+      (is (= [koulutusOid14] (search-and-get-oids :sort "name" :order "asc"  :keyword "eläinten"))))
 
     (testing "merimies <-> merimies EI esimiestä"
-      (is (= [koulutusOid8] (search-and-get-oids :keyword "merimies"))))
+      (is (= [koulutusOid8] (search-and-get-oids :sort "name" :order "asc"  :keyword "merimies"))))
 
     (testing "sosiaali <-> ei tanssialaa"
-      (is (= [koulutusOid6] (search-and-get-oids :keyword "sosiaali"))))
+      (is (= [koulutusOid6] (search-and-get-oids :sort "name" :order "asc"  :keyword "sosiaali"))))
 
     (testing "ensihoitaja <-> ei eläinten- eikä hevostenhoitajaa"
-      (is (= [] (search-and-get-oids :keyword "ensihoitaja"))))
+      (is (= [] (search-and-get-oids :sort "name" :order "asc"  :keyword "ensihoitaja"))))
 
     (testing "seppä <-> seppä"
-      (is (= [koulutusOid17] (search-and-get-oids :keyword "seppä"))))
+      (is (= [koulutusOid17] (search-and-get-oids :sort "name" :order "asc"  :keyword "seppä"))))
 
     (testing "tie <-> lääketiede ja tietojenkäsittelytiede"
-      (is (= [koulutusOid1 koulutusOid15 koulutusOid3] (search-and-get-oids :keyword "tie"))))
+      (is (= [koulutusOid1 koulutusOid15 koulutusOid3] (search-and-get-oids :sort "name" :order "asc"  :keyword "tie"))))
 
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
-             (is (= [koulutusOid1] (search-and-get-oids :keyword "haluan%20opiskella%20lääkäriksi"))))
+             (is (= [koulutusOid1] (search-and-get-oids :sort "name" :order "asc"  :keyword "haluan%20opiskella%20lääkäriksi"))))
 
     (comment testing "musiikin opiskelu <-> muusikon koulutus"
-             (is (= [koulutusOid5] (search-and-get-oids :keyword "musiikin%20opiskelu"))))
+             (is (= [koulutusOid5] (search-and-get-oids :sort "name" :order "asc"  :keyword "musiikin%20opiskelu"))))
 
     (comment testing "haluan opiskella psykologiaa <-> psykologi"
-             (is (= [koulutusOid2] (search-and-get-oids :keyword "haluan%20opiskella%20psykologiaa"))))))
+             (is (= [koulutusOid2] (search-and-get-oids :sort "name" :order "asc"  :keyword "haluan%20opiskella%20psykologiaa"))))))

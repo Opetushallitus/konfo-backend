@@ -33,17 +33,17 @@
   (testing "Search koulutuksen järjestäjät with bad requests:"
     (testing "Invalid lng"
       (is (= "Virheellinen kieli")      (->bad-request-body "1.2.246.562.13.000001" :lng "foo")))
-    (testing "Invalid sort"
-      (is (= "Virheellinen järjestys")  (->bad-request-body "1.2.246.562.13.000001" :sort "foo"))))
+    (testing "Invalid order"
+      (is (= "Virheellinen järjestys")  (->bad-request-body "1.2.246.562.13.000001" :order "foo"))))
 
   (testing "Sorting and paging järjestäjät"
     (testing "asc order"
-      (let [r (search "1.2.246.562.13.000001" :tuleva false :sort "asc")]
+      (let [r (search "1.2.246.562.13.000001" :tuleva false :order "asc")]
         (is (= 2 (:total r)))
         (is (= "1.2.246.562.17.000003" (:toteutusOid (first (:hits r)))))
         (is (= "1.2.246.562.17.000002" (:toteutusOid (second (:hits r)))))))
     (testing "desc order"
-      (let [r (search "1.2.246.562.13.000001" :tuleva false :sort "desc")]
+      (let [r (search "1.2.246.562.13.000001" :tuleva false :order "desc")]
         (is (= 2 (:total r)))
         (is (= "1.2.246.562.17.000002" (:toteutusOid (first (:hits r)))))
         (is (= "1.2.246.562.17.000003" (:toteutusOid (second (:hits r)))))))

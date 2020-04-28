@@ -33,17 +33,17 @@
   (testing "Search oppilaitoksen tarjonta with bad requests:"
     (testing "Invalid lng"
       (is (= "Virheellinen kieli")      (->bad-request-body punkaharjun-yliopisto :lng "foo")))
-    (testing "Invalid sort"
-      (is (= "Virheellinen järjestys")  (->bad-request-body punkaharjun-yliopisto :sort "foo"))))
+    (testing "Invalid order"
+      (is (= "Virheellinen järjestys")  (->bad-request-body punkaharjun-yliopisto :order "foo"))))
 
   (testing "Sorting and paging tarjonta"
     (testing "asc order"
-      (let [r (search punkaharjun-yliopisto :tuleva false :sort "asc")]
+      (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
         (is (= 2 (:total r)))
         (is (= "1.2.246.562.17.000002" (:toteutusOid (first (:hits r)))))
         (is (= "1.2.246.562.17.000001" (:toteutusOid (second (:hits r)))))))
     (testing "desc order"
-      (let [r (search punkaharjun-yliopisto :tuleva false :sort "desc")]
+      (let [r (search punkaharjun-yliopisto :tuleva false :order "desc")]
         (is (= 2 (:total r)))
         (is (= "1.2.246.562.17.000001" (:toteutusOid (first (:hits r)))))
         (is (= "1.2.246.562.17.000002" (:toteutusOid (second (:hits r)))))))
