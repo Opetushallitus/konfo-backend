@@ -11,15 +11,24 @@
 
 (def koulutus-kouta-search (partial e/search-with-pagination index))
 
+(defn- select-kuvaus
+  [eperuste]
+  (or (:suorittaneenOsaaminen eperuste) (:tyotehtavatJoissaVoiToimia eperuste) (:kuvaus eperuste)))
+
 (defn- assoc-kuvaus-to-ammatillinen
   [kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi hit]
-  (if (ammatillinen? hit)
-    (if-let [kuvaus (if (some? (:eperuste hit))
-                      (get kuvaukset-by-eperuste-id (:eperuste hit))
-                      (get kuvaukset-by-koulutuskoodi (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))))]
-      (assoc hit :kuvaus kuvaus)
-      hit)
-    hit))
+  (if-let [eperuste-id (:eperuste hit)]
+    (->> kuvaukset-by-eperuste-id
+         (filter #(= (:id %) eperuste-id))
+         (first)
+         (select-kuvaus)
+         (assoc hit :kuvaus))
+    (let [koulutus-koodi-uri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
+      (->> kuvaukset-by-koulutuskoodi
+           (filter #(= (:koulutuskoodiUri %) koulutus-koodi-uri))
+           (first)
+           (select-kuvaus)
+           (assoc hit :kuvaus)))))
 
 (defn- with-kuvaukset
   [result]
@@ -35,7 +44,12 @@
                                         (set)
                                         (get-kuvaukset-by-koulutuskoodit))
         assoc-kuvaus (partial assoc-kuvaus-to-ammatillinen kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi)]
-    (assoc result :hits (vec (map assoc-kuvaus (:hits result))))))
+    (->> (for [hit (:hits result)]
+           (if (ammatillinen? hit)
+             (assoc-kuvaus hit)
+             hit))
+         (vec)
+         (assoc result :hits))))
 
 (defn search
   [keyword lng page size sort order & {:as constraints}]

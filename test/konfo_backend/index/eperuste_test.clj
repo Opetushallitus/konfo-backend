@@ -14,7 +14,8 @@
   (str "/konfo-backend/kuvaus/" koulutuskoodi-uri))
 
 (defonce voimassa {:voimassaoloAlkaa (- (now-in-millis) 1000),
-                   :kuvaus {:fi "kuvaus fi" :sv "kuvaus sv"},
+                   :tyotehtavatJoissaVoiToimia  {:fi "työtehtävät fi" :sv "työtehtävät sv"},
+                   :suorittaneenOsaaminen {:fi "osaaminen fi" :sv "osaaminen sv"},
                    :id 3536456,
                    :koulutukset [{:nimi {:fi "Ammattisukeltajan ammattitutkinto",
                                          :sv "Yrkesexamen för yrkesdykare",
@@ -76,8 +77,8 @@
                                 :en "Further vocational qualification for Commercial Divers"},
                          :koulutuskoodiUri "koulutus_355201",
                          :id 3536456,
-                         :kuvaus {:fi "kuvaus fi"
-                                  :sv "kuvaus sv"}})))))
+                         :tyotehtavatJoissaVoiToimia  {:fi "työtehtävät fi" :sv "työtehtävät sv"},
+                         :suorittaneenOsaaminen {:fi "osaaminen fi" :sv "osaaminen sv"}})))))
 
   (testing "Get siirtyma-ajalla oleva if there is no voimassa oleva kuvaus"
     (with-redefs [clj-elasticsearch.elastic-connect/search (fn [x y & z] mocked-response-siirtyma)]
@@ -97,8 +98,8 @@
                                 :en "Further vocational qualification for Commercial Divers"},
                          :koulutuskoodiUri "koulutus_355201",
                          :id 3536456,
-                         :kuvaus {:fi "kuvaus fi"
-                                  :sv "kuvaus sv"}
+                         :tyotehtavatJoissaVoiToimia  {:fi "työtehtävät fi" :sv "työtehtävät sv"},
+                         :suorittaneenOsaaminen {:fi "osaaminen fi" :sv "osaaminen sv"},
                          :osaamisalat [{:nimi {:fi "Osaamisala 1 nimi fi" :sv "Osaamisala 1 nimi sv"}
                                         :osaamisalakoodiUri "osaamisala_1"
                                         :id 123

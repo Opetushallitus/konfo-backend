@@ -19,6 +19,6 @@
 
 (defn get-kuvaus-by-eperuste-id
   [id with-osaamisalakuvaukset?]
-  (when-let [kuvaus (some-> id eperuste-index/get :kuvaus)]
-    (cond-> {:id id :kuvaus (select-keys kuvaus [:fi :sv :en])}
+  (when-let [eperuste (some-> id eperuste-index/get)]
+    (cond-> (select-keys eperuste [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen])
             with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))

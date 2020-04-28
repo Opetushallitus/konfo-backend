@@ -53,21 +53,8 @@
   [koulutus-koodi-uri sources]
   (when-let [eperuste (find-eperuste-for-koulutuskoodi sources koulutus-koodi-uri)]
     (let [koulutus (get-koulutus eperuste koulutus-koodi-uri)]
-      {:nimi             (:nimi koulutus)
-       :koulutuskoodiUri (:koulutuskoodiUri koulutus)
-       :kuvaus           (:kuvaus eperuste)
-       :id               (:id eperuste)})))
-
-(defn- kuvaukset-result-mapper
-  ([koulutus-koodi-urit result]
-   (if-let [sources (seq (map :_source (get-in result [:hits :hits])))]
-     (->> (for [koulutus-koodi-uri koulutus-koodi-urit]
-            (get-kuvaus koulutus-koodi-uri sources))
-          (remove nil?)
-          (vec))))
-  ([result]
-   (if-let [sources (seq (map :_source (get-in result [:hits :hits])))]
-     (vec (map #(select-keys % [:id :kuvaus]) sources)))))
+      (merge (select-keys eperuste [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen])
+             (select-keys koulutus [:nimi :koulutuskoodiUri])))))
 
 (defonce source [:koulutukset.nimi,
                  :koulutukset.koulutuskoodiUri
@@ -75,6 +62,12 @@
                  :kuvaus.fi
                  :kuvaus.en
                  :kuvaus.sv
+                 :tyotehtavatJoissaVoiToimia.fi
+                 :tyotehtavatJoissaVoiToimia.en
+                 :tyotehtavatJoissaVoiToimia.sv
+                 :suorittaneenOsaaminen.fi
+                 :suorittaneenOsaaminen.en
+                 :suorittaneenOsaaminen.sv
                  :voimassaoloAlkaa
                  :voimassaoloLoppuu
                  :siirtymaPaattyy])
@@ -93,6 +86,16 @@
                 {:terms {:id (vec eperuste-ids)}})]
     {:bool {:must terms, :filter {:term {:tila "valmis"}}}}))
 
+
+
+(defn- kuvaukset-result-mapper
+  [koulutus-koodi-urit result]
+  (when-let [sources (seq (map :_source (get-in result [:hits :hits])))]
+    (->> (for [koulutus-koodi-uri koulutus-koodi-urit]
+           (get-kuvaus koulutus-koodi-uri sources))
+         (remove nil?)
+         (vec))))
+
 (defn get-kuvaus-by-koulutuskoodi
   [koulutuskoodi-uri]
   (let [koulutuskoodi (koodi-uri-no-version koulutuskoodi-uri)]
@@ -102,19 +105,21 @@
 
 (defn get-kuvaukset-by-koulutuskoodit
   [koulutuskoodi-uris]
-  (->> (when-let [koulutuskoodit (seq (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
-         (eperuste-search (partial kuvaukset-result-mapper koulutuskoodit)
-                          :_source source
-                          :size (* 10 (count koulutuskoodit))
-                          :query (->query koulutuskoodit)))
-       (map (fn [h] {(:koulutuskoodiUri h) (:kuvaus h)}))
-       (into (hash-map))))
+  (when-let [koulutuskoodit (seq (distinct (map koodi-uri-no-version koulutuskoodi-uris)))]
+    (eperuste-search (partial kuvaukset-result-mapper koulutuskoodit)
+                     :_source source
+                     :size (* 10 (count koulutuskoodit))
+                     :query (->query koulutuskoodit))))
+
+(defn- parse-kuvaukset
+  [result]
+  (->> (get-in result [:hits :hits])
+       (map :_source)
+       (map #(select-keys % [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen]))))
 
 (defn get-kuvaukset-by-eperuste-ids
   [eperuste-ids]
-  (->> (eperuste-search (partial kuvaukset-result-mapper)
-                        :_source source
-                        :size (count eperuste-ids)
-                        :query (->id-query eperuste-ids))
-       (map (fn [h] {(:id h) (:kuvaus h)}))
-       (into (hash-map))))
+  (eperuste-search parse-kuvaukset
+                   :_source source
+                   :size (count eperuste-ids)
+                   :query (->id-query eperuste-ids)))
