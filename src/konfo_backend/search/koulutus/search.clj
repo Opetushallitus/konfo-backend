@@ -5,7 +5,7 @@
     [konfo-backend.search.query :refer [query aggregations inner-hits-query sorts]]
     [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]
-    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit, get-kuvaukset-by-eperuste-ids]]))
+    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-eperuste-ids]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -16,19 +16,13 @@
   (or (:suorittaneenOsaaminen eperuste) (:tyotehtavatJoissaVoiToimia eperuste) (:kuvaus eperuste)))
 
 (defn- assoc-kuvaus-to-ammatillinen
-  [kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi hit]
+  [kuvaukset-by-eperuste-id hit]
   (if-let [eperuste-id (:eperuste hit)]
     (->> kuvaukset-by-eperuste-id
          (filter #(= (:id %) eperuste-id))
          (first)
          (select-kuvaus)
-         (assoc hit :kuvaus))
-    (let [koulutus-koodi-uri (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))]
-      (->> kuvaukset-by-koulutuskoodi
-           (filter #(= (:koulutuskoodiUri %) koulutus-koodi-uri))
-           (first)
-           (select-kuvaus)
-           (assoc hit :kuvaus)))))
+         (assoc hit :kuvaus))))
 
 (defn- with-kuvaukset
   [result]
@@ -38,12 +32,7 @@
                                       (map :eperuste)
                                       (set)
                                       (get-kuvaukset-by-eperuste-ids))
-        kuvaukset-by-koulutuskoodi (->> ammatilliset
-                                        (filter #(nil? (:eperuste %)))
-                                        (map #(get-in % [:koulutus :koodiUri]))
-                                        (set)
-                                        (get-kuvaukset-by-koulutuskoodit))
-        assoc-kuvaus (partial assoc-kuvaus-to-ammatillinen kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi)]
+        assoc-kuvaus (partial assoc-kuvaus-to-ammatillinen kuvaukset-by-eperuste-id)]
     (->> (for [hit (:hits result)]
            (if (ammatillinen? hit)
              (assoc-kuvaus hit)
