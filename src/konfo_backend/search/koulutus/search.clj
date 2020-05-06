@@ -22,7 +22,8 @@
          (filter #(= (:id %) eperuste-id))
          (first)
          (select-kuvaus)
-         (assoc hit :kuvaus))))
+         (assoc hit :kuvaus))
+    hit))
 
 (defn- with-kuvaukset
   [result]
