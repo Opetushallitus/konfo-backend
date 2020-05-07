@@ -5,20 +5,24 @@
     [konfo-backend.search.query :refer [query aggregations inner-hits-query sorts]]
     [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]
-    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-koulutuskoodit, get-kuvaukset-by-eperuste-ids]]))
+    [konfo-backend.index.eperuste :refer [get-kuvaukset-by-eperuste-ids]]))
 
 (defonce index "koulutus-kouta-search")
 
 (def koulutus-kouta-search (partial e/search-with-pagination index))
 
+(defn- select-kuvaus
+  [eperuste]
+  (or (:suorittaneenOsaaminen eperuste) (:tyotehtavatJoissaVoiToimia eperuste) (:kuvaus eperuste)))
+
 (defn- assoc-kuvaus-to-ammatillinen
-  [kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi hit]
-  (if (ammatillinen? hit)
-    (if-let [kuvaus (if (some? (:eperuste hit))
-                      (get kuvaukset-by-eperuste-id (:eperuste hit))
-                      (get kuvaukset-by-koulutuskoodi (koodi-uri-no-version (get-in hit [:koulutus :koodiUri]))))]
-      (assoc hit :kuvaus kuvaus)
-      hit)
+  [kuvaukset-by-eperuste-id hit]
+  (if-let [eperuste-id (:eperuste hit)]
+    (->> kuvaukset-by-eperuste-id
+         (filter #(= (:id %) eperuste-id))
+         (first)
+         (select-kuvaus)
+         (assoc hit :kuvaus))
     hit))
 
 (defn- with-kuvaukset
@@ -29,13 +33,13 @@
                                       (map :eperuste)
                                       (set)
                                       (get-kuvaukset-by-eperuste-ids))
-        kuvaukset-by-koulutuskoodi (->> ammatilliset
-                                        (filter #(nil? (:eperuste %)))
-                                        (map #(get-in % [:koulutus :koodiUri]))
-                                        (set)
-                                        (get-kuvaukset-by-koulutuskoodit))
-        assoc-kuvaus (partial assoc-kuvaus-to-ammatillinen kuvaukset-by-eperuste-id kuvaukset-by-koulutuskoodi)]
-    (assoc result :hits (vec (map assoc-kuvaus (:hits result))))))
+        assoc-kuvaus (partial assoc-kuvaus-to-ammatillinen kuvaukset-by-eperuste-id)]
+    (->> (for [hit (:hits result)]
+           (if (ammatillinen? hit)
+             (assoc-kuvaus hit)
+             hit))
+         (vec)
+         (assoc result :hits))))
 
 (defn search
   [keyword lng page size sort order & {:as constraints}]

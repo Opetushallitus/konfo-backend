@@ -26,6 +26,10 @@
   [& query-params]
   (:body (get-bad-request (apply koulutus-search-url query-params))))
 
+(defn mock-get-kuvaukset
+  [x]
+  [{:id 1234 :suorittaneenOsaaminen {:fi "osaaminen fi" :sv "osaaminen sv"} :tyotehtavatJoissaVoiToimia {:fi "työtehtävät fi" :sv "työtehtävät sv"}}])
+
 (deftest koulutus-search-test
 
   (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
@@ -34,7 +38,8 @@
 
   (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001" "1.2.246.562.13.000002"] :oppilaitokset [punkaharjun-yliopisto]} (fn [x & {:as params}] punkaharju-org))
 
-  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto]
+  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto
+                konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
     (testing "Search koulutukset with bad requests:"
       (testing "Invalid lng"
         (is (= "Virheellinen kieli")      (->bad-request-body :sijainti "kunta_618" :lng "foo")))
@@ -101,7 +106,7 @@
           (is (= {:opintojenlaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
                                             :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                     :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                  :kuvaus { },
+                  :kuvaus {:fi "osaaminen fi" :sv "osaaminen sv"},
                   :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                   :nimi {:fi "Autoalan koulutus fi",
                          :sv "Autoalan koulutus sv"},

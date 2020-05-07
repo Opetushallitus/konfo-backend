@@ -4,21 +4,16 @@
 
 (defn get-eperuste-by-id
   [id]
-  (eperuste-index/get id))
+  (when-let [eperuste (eperuste-index/get id)]
+    (when (= "valmis" (:tila eperuste))
+      eperuste)))
 
 (defn get-osaamisalakuvaus-by-id
   [id]
   (osaamisalakuvaus-index/get id))
 
-(defn get-kuvaus-by-koulutuskoodi-uri
-  [koulutuskoodi-uri with-osaamisalakuvaukset?]
-  (let [kuvaus (eperuste-index/get-kuvaus-by-koulutuskoodi koulutuskoodi-uri)
-        id     (:id kuvaus)]
-    (cond-> kuvaus
-            (and with-osaamisalakuvaukset? (some? id)) (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
-
 (defn get-kuvaus-by-eperuste-id
   [id with-osaamisalakuvaukset?]
-  (when-let [kuvaus (some-> id eperuste-index/get :kuvaus)]
-    (cond-> {:id id :kuvaus (select-keys kuvaus [:fi :sv :en])}
+  (when-let [eperuste (some-> id eperuste-index/get)]
+    (cond-> (select-keys eperuste [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen])
             with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
