@@ -40,7 +40,8 @@
     (testing "Get oppilaitos"
       (testing "ok"
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
-          (is (= oppilaitosOid1 (:oid response)))))
+          (is (= oppilaitosOid1 (:oid response)))
+          (is (= 0 (:koulutusohjelmia response)))))
       (testing "not found"
         (get-not-found (oppilaitos-url oppilaitosOid3)))
       (testing "filter julkaisematon oppilaitos in Kouta"

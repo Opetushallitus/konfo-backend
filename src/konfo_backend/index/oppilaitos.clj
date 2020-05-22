@@ -1,7 +1,8 @@
 (ns konfo-backend.index.oppilaitos
   (:require
     [konfo-backend.tools :refer [julkaistu?]]
-    [konfo-backend.elastic-tools :refer [get-source]]))
+    [konfo-backend.elastic-tools :refer [get-source]]
+    [konfo-backend.search.oppilaitos.search :refer [index] :rename {index search-index}]))
 
 (defonce index "oppilaitos-kouta")
 
@@ -15,9 +16,16 @@
           (seq (:osat oppilaitos))
           (assoc :osat (vec (map #(dissoc-if-not-julkaistu % :oppilaitoksenOsa) (:osat oppilaitos))))))
 
+(defn- assoc-koulutusohjelmat
+  [oid oppilaitos]
+  (if-let [koulutusohjelmia (some-> (get-source search-index oid) :koulutusohjelmia)]
+    (assoc oppilaitos :koulutusohjelmia koulutusohjelmia)
+    oppilaitos))
+
 (defn get
   [oid]
-  (let [oppilaitos (get-source index oid)]
-    (dissoc-kouta-data-if-not-julkaistu oppilaitos)))
+  (some->> (get-source index oid)
+           (dissoc-kouta-data-if-not-julkaistu)
+           (assoc-koulutusohjelmat oid)))
 
 
