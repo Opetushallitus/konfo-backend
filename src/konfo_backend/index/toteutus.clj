@@ -9,7 +9,7 @@
   [oid draft?]
   (let [toteutus (get-source index oid)]
     (when (or draft? (julkaistu? toteutus))
-      (assoc toteutus :hakukohteet (-> toteutus :hakukohteet julkaistut)))))
+      toteutus)))
 
 (defn- parse-kuvaukset
   [result]
