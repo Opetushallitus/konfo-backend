@@ -42,9 +42,7 @@
     (testing "Get toteutus"
       (let [response (get-ok (toteutus-url toteutusOid1))]
         (testing "ok"
-          (is (= toteutusOid1 (:oid response))))
-        (testing "toteutus contains only julkaistut hakukohteet"
-          (is (= 2 (count (:hakukohteet response))))))
+          (is (= toteutusOid1 (:oid response)))))
       (testing "not found"
         (get-not-found (toteutus-url toteutusOid3)))
       (testing "not julkaistu"
