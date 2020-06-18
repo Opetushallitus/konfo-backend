@@ -65,6 +65,10 @@
   [keyword lng constraints]
   {:nested {:path "hits", :query {:bool (bool keyword lng constraints)}}})
 
+(defn match-all-query
+  []
+  {:match_all {}})
+
 (defn- ->name-sort
   [order lng]
   {(->lng-keyword "nimi.%s.keyword" lng) {:order order :unmapped_type "string"}})
