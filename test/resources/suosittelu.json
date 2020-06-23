@@ -1,0 +1,109 @@
+{
+  "total" : 3,
+  "hits" : [ {
+    "oid" : "1.2.246.562.13.0000006",
+    "nimi" : {
+      "fi" : "Autoalan koulutus fi",
+      "sv" : "Autoalan koulutus sv"
+    },
+    "teemakuva" : "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
+    "koulutustyyppi" : "amm",
+    "tutkintonimike" : [ {
+      "koodiUri" : "tutkintonimikkeet_01",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_01 nimi fi",
+        "sv" : "tutkintonimikkeet_01 nimi sv"
+      }
+    }, {
+      "koodiUri" : "tutkintonimikkeet_02",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_02 nimi fi",
+        "sv" : "tutkintonimikkeet_02 nimi sv"
+      }
+    } ],
+    "opintojenLaajuusyksikko" : {
+      "koodiUri" : "opintojenlaajuusyksikko_6",
+      "nimi" : {
+        "fi" : "opintojenlaajuusyksikko_6 nimi fi",
+        "sv" : "opintojenlaajuusyksikko_6 nimi sv"
+      }
+    },
+    "opintojenLaajuus" : {
+      "koodiUri" : "opintojenlaajuus_150",
+      "nimi" : {
+        "fi" : "opintojenlaajuus_150 nimi fi",
+        "sv" : "opintojenlaajuus_150 nimi sv"
+      }
+    }
+  }, {
+    "oid" : "1.2.246.562.13.0000004",
+    "nimi" : {
+      "fi" : "Hevosalan koulutus fi",
+      "sv" : "Hevosalan koulutus sv"
+    },
+    "teemakuva" : "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
+    "koulutustyyppi" : "amm",
+    "tutkintonimike" : [ {
+      "koodiUri" : "tutkintonimikkeet_01",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_01 nimi fi",
+        "sv" : "tutkintonimikkeet_01 nimi sv"
+      }
+    }, {
+      "koodiUri" : "tutkintonimikkeet_02",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_02 nimi fi",
+        "sv" : "tutkintonimikkeet_02 nimi sv"
+      }
+    } ],
+    "opintojenLaajuusyksikko" : {
+      "koodiUri" : "opintojenlaajuusyksikko_6",
+      "nimi" : {
+        "fi" : "opintojenlaajuusyksikko_6 nimi fi",
+        "sv" : "opintojenlaajuusyksikko_6 nimi sv"
+      }
+    },
+    "opintojenLaajuus" : {
+      "koodiUri" : "opintojenlaajuus_150",
+      "nimi" : {
+        "fi" : "opintojenlaajuus_150 nimi fi",
+        "sv" : "opintojenlaajuus_150 nimi sv"
+      }
+    }
+  }, {
+    "oid" : "1.2.246.562.13.0000000",
+    "nimi" : {
+      "fi" : "Kokin koulutus fi",
+      "sv" : "Kokin koulutus sv"
+    },
+    "teemakuva" : "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
+    "koulutustyyppi" : "amm",
+    "tutkintonimike" : [ {
+      "koodiUri" : "tutkintonimikkeet_01",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_01 nimi fi",
+        "sv" : "tutkintonimikkeet_01 nimi sv"
+      }
+    }, {
+      "koodiUri" : "tutkintonimikkeet_02",
+      "nimi" : {
+        "fi" : "tutkintonimikkeet_02 nimi fi",
+        "sv" : "tutkintonimikkeet_02 nimi sv"
+      }
+    } ],
+    "opintojenLaajuusyksikko" : {
+      "koodiUri" : "opintojenlaajuusyksikko_6",
+      "nimi" : {
+        "fi" : "opintojenlaajuusyksikko_6 nimi fi",
+        "sv" : "opintojenlaajuusyksikko_6 nimi sv"
+      }
+    },
+    "opintojenLaajuus" : {
+      "koodiUri" : "opintojenlaajuus_150",
+      "nimi" : {
+        "fi" : "opintojenlaajuus_150 nimi fi",
+        "sv" : "opintojenlaajuus_150 nimi sv"
+      }
+    }
+  } ]
+}

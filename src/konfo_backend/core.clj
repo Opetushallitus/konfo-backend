@@ -17,6 +17,7 @@
     [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
     [konfo-backend.search.filters :as filters]
     [konfo-backend.palaute.palaute :as palaute]
+    [konfo-backend.suosittelu.service :as suosittelu]
     [ring.middleware.reload :refer [wrap-reload]]
     [ring.adapter.jetty :refer [run-jetty]]
     [konfo-backend.tools :refer [comma-separated-string->vec]]
@@ -287,6 +288,14 @@
                                          :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size order tuleva)]
                                                  (ok result)
                                                  (not-found "Not found"))))))
+
+      (GET "/suosittelu" [:as request]
+        :summary "Suosittelu API"
+        :query-params [{koulutukset :- (describe String "Pilkulla eroteltu lista koulutusten oideja, joiden perusteella suosittelu annetaan") nil}]
+        (with-access-logging request (let [oids (comma-separated-string->vec koulutukset)]
+                                       (if (< 0 (count oids) 6)
+                                         (ok (suosittelu/get-recommendations oids))
+                                         (bad-request "Koulutusten oideja pitää olla 1-5 kpl suosittelua varten")))))
 
       (POST "/palaute" [:as request]
         :summary "POST palaute"
