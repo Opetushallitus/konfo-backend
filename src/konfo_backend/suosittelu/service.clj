@@ -23,20 +23,23 @@
 
 (defn- get-recommendation-indices
   [oids]
-  (-> (for [oid oids]
-        (get-source "suosittelu" oid))
-      (vec)
-      (calculate-top-n-recommendations 3)))
+  (->> (for [oid oids]
+         (get-source "suosittelu" oid))
+       (remove nil?)
+       (vec)
+       (calculate-top-n-recommendations 3)))
 
 (defn get-recommendations
   [oids]
-  (let [indices          (get-recommendation-indices oids)
-        recommended-oids (get-oids-by-indices indices)
-        koulutukset      (get-koulutukset-by-oids recommended-oids)]
-    {:total 3
-     :hits (-> (for [i indices]
-                 (let [oid (first (filter #(= (:jarjestysnumero %) i) recommended-oids))
-                       koulutus (first (filter #(= (:oid %) (:oid oid)) koulutukset))]
-                   (merge (select-keys koulutus [:oid :nimi :teemakuva :koulutustyyppi])
-                          (:metadata koulutus))))
-               (vec))}))
+  (if-let [indices (seq (get-recommendation-indices oids))]
+    (let [recommended-oids (get-oids-by-indices indices)
+          koulutukset      (get-koulutukset-by-oids recommended-oids)
+          hits             (for [i indices]
+                             (let [oid (first (filter #(= (:jarjestysnumero %) i) recommended-oids))
+                                   koulutus (first (filter #(= (:oid %) (:oid oid)) koulutukset))]
+                               (merge (select-keys koulutus [:oid :nimi :teemakuva :koulutustyyppi])
+                                      (:metadata koulutus))))]
+      {:total (count hits)
+       :hits (vec hits)})
+    {:total 0
+     :hits []}))

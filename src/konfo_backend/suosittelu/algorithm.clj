@@ -42,9 +42,10 @@
        (vec)))
 
 (defn calculate-top-n-recommendations
-  [matrix-data n]
-  (let [skip-indices (vec (map :jarjestysnumero matrix-data))]
-    (-> matrix-data
-        (get-sum-array)
-        (find-min-n-indices (+ (count skip-indices) n))
-        (get-n-relevant-indices skip-indices n))))
+  [n matrix-data]
+  (when (seq matrix-data)
+    (let [skip-indices (vec (map :jarjestysnumero matrix-data))]
+      (-> matrix-data
+          (get-sum-array)
+          (find-min-n-indices (+ (count skip-indices) n))
+          (get-n-relevant-indices skip-indices n)))))

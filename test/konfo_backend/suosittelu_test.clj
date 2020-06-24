@@ -18,7 +18,7 @@
     (let [matrix [{:oid "1.1" :jarjestysnumero 1 :etaisyydet [2, 0, 20, 50, 7, 90, 6, 12]}
                   {:oid "1.3" :jarjestysnumero 3 :etaisyydet [20, 20, 3, 0, 7, 2, 5, 17]}]]
 
-      (is (= [6 4 0] (algorithm/calculate-top-n-recommendations matrix 3))))))
+      (is (= [6 4 0] (algorithm/calculate-top-n-recommendations 3 matrix))))))
 
 (deftest suosittelu-api-test
   (testing "Get correct recommendation from api"
@@ -39,9 +39,14 @@
                {:oid "1.2.246.562.13.0000007" :jarjestysnumero 7 :etaisyydet [20, 20, 3, 99, 7, 2, 5, 0]}]]
       (u/elastic-put (u/elastic-url "suosittelu" "_doc" (:oid r)) r))
     (c/refresh-index "suosittelu")
-    (let [result (get-ok "/konfo-backend/suosittelu?koulutukset=1.2.246.562.13.0000001,1.2.246.562.13.0000003")
+    (let [result (get-ok "/konfo-backend/suosittelu?koulutukset=1.2.246.562.13.0000001,1.2.246.562.13.0000003,1.2.246.562.13.44")
           oids   (vec (map :oid (:hits result)))]
+      (is (= 3 (:total result)))
       (is (= "1.2.246.562.13.0000006" (first oids)))
       (is (= "1.2.246.562.13.0000004" (second oids)))
       (is (= "1.2.246.562.13.0000000" (nth oids 2)))
-      (is (= result (keywordize-keys (parse-string (slurp "test/resources/suosittelu.json"))))))))
+      (is (= result (keywordize-keys (parse-string (slurp "test/resources/suosittelu.json"))))))
+
+    (let [result (get-ok "/konfo-backend/suosittelu?koulutukset=1.2.246.562.13.44")]
+      (is (= 0 (:total result)))
+      (is (= 0 (count (:hits result)))))))
