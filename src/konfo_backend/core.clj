@@ -10,6 +10,7 @@
     [konfo-backend.index.valintaperuste :as valintaperuste]
     [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
+    [konfo-backend.index.lokalisointi :as lokalisointi]
     [konfo-backend.search.koulutus.search :as koulutus-search]
     [konfo-backend.palaute.sqs :as sqs]
     [schema.core :as s]
@@ -99,11 +100,11 @@
     (context "/konfo-backend"
       []
 
-      (GET "/healthcheck" [:as request]
+      (GET "/healthcheck" []
         :summary "Healthcheck API"
         (ok "OK"))
 
-      (POST "/client-error" [:as request]
+      (POST "/client-error" []
         :summary "Client error API"
         :body [error-details ClientError]
         (log/error (str "Error from client browser:\n"
@@ -113,6 +114,15 @@
                      "user-agent: " (:user-agent error-details) "\n"
                      "stack trace: " (:stack error-details)))
         (ok "OK"))
+
+      (GET "/translation/:lng" [:as request]
+        :summary "Hae käännökset annetulla kielellä (fi/sv/en)"
+        :path-params [lng :- String]
+        (with-access-logging request (if (not (some #{lng} ["fi" "sv" "en"]))
+                                       (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
+                                       (if-let [result (lokalisointi/get lng)]
+                                         (ok result)
+                                         (not-found "Not found")))))
 
       (context "/koulutus"
         []
