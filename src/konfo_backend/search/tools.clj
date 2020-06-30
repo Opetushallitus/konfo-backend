@@ -35,3 +35,7 @@
 (defn do-search?
   [keyword constraints]
   (or (not (empty keyword)) (constraints? constraints)))
+
+(defn match-all?
+  [keyword constraints]
+  (not (do-search? keyword constraints)))

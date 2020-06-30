@@ -46,9 +46,18 @@
       (testing "Invalid sort"
         (is (= "Virheellinen järjestys")  (->bad-request-body :sijainti "kunta_618" :order "foo")))
       (testing "Too short keyword"
-        (is (= "Hakusana on liian lyhyt") (->bad-request-body :sijainti "kunta_618" :keyword "fo")))
-      (testing "No keyword nor filters"
-        (is (= "Hakusana tai jokin rajain on pakollinen") (->bad-request-body))))
+        (is (= "Hakusana on liian lyhyt") (->bad-request-body :sijainti "kunta_618" :keyword "fo"))))
+
+    (testing "Search all koulutukset"
+      (let [r (search :sort "name" :order "asc")]
+        (is (= 2 (count (:hits r))))
+        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+        (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+        (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
+        (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
+        (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+        (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"

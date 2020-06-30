@@ -60,11 +60,6 @@
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
       (not (some #{order} ["asc" "desc"]))  (bad-request "Virheellinen järjestys ('asc'/'desc')")
-      (and (nil? keyword)
-           (empty? koulutustyypit)
-           (empty? sijainti)
-           (empty? opetuskielet)
-           (empty? koulutusalat))          (bad-request "Hakusana tai jokin rajain on pakollinen")
       (and (not (nil? keyword))
            (> 3 (count keyword)))          (bad-request "Hakusana on liian lyhyt")
       :else                                (ok (f keyword
@@ -217,7 +212,7 @@
 
         (GET "/koulutukset" [:as request]
           :summary "Koulutus search API"
-          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
+          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
@@ -256,7 +251,7 @@
 
         (GET "/oppilaitokset" [:as request]
           :summary "Oppilaitokset search API"
-          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
+          :query-params [{keyword        :- (describe String "Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki. Muussa tapauksessa vähimmäispituus on 3 merkkiä.") nil}
                          {page           :- Long 1}
                          {size           :- Long 20}
                          {lng            :- (describe String "Haun kieli. 'fi', 'sv' tai 'en'") "fi"}
