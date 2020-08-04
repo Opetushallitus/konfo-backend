@@ -78,6 +78,7 @@
               |    name: \"EUPL 1.1 or latest approved by the European Commission\"
               |    url: \"http://www.osor.eu/eupl/\"
               |servers:
+              |  - url: /konfo-backend/
               |  - url: http://localhost:3006/konfo-backend/
               |  - url: https://beta.opintopolku.fi/konfo-backend/
               |  - url: https://beta.untuvaopintopolku.fi/konfo-backend/

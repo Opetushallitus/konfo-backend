@@ -12,7 +12,7 @@
   "|  /search/filters:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae hakurajaimet
    |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      responses:
@@ -27,7 +27,7 @@
    |  /search/filters_as_array:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae hakurajaimet taulukkomuodossa
    |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      responses:
@@ -42,7 +42,7 @@
    |  /search/koulutukset:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae koulutuksia
    |      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
@@ -136,7 +136,7 @@
    |  /search/koulutus/{oid}/jarjestajat:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae koulutuksen tarjoajat
    |      description: Hakee annetun koulutuksen järjestäjiä. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
@@ -197,7 +197,7 @@
    |  /search/oppilaitokset:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae oppilaitoksia
    |      description: Hakee oppilaitoksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
@@ -291,7 +291,7 @@
    |  /search/oppilaitos/{oid}/tarjonta:
    |    get:
    |      tags:
-   |        - search
+   |        - internal-search
    |      summary: Hae oppilaitoksen koulutustarjonnan
    |      description: Hakee annetun oppilaitoksen koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
