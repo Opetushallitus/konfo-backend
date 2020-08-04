@@ -8,6 +8,7 @@
    [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
    [ring.middleware.session :as ring-session]
    [compojure.api.sweet :refer :all]
+   [compojure.api.core :refer [route-middleware]]
    [clojure.tools.logging :as log]
    [ring.util.http-response :refer :all]
    [environ.core :refer [env]]))
@@ -41,7 +42,7 @@
         :summary "Healthcheck API"
         (ok "ok"))
 
-      (middleware
+      (route-middleware
        [ring-session/wrap-session
         basic-auth]
 

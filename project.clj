@@ -10,7 +10,8 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [clj-time "0.15.0"]
                  ; Rest + server
-                 [metosin/compojure-api "1.1.11"]
+                 [metosin/compojure-api "2.0.0-alpha31"]
+                 [metosin/ring-swagger-ui "3.25.3"]
                  [clj-http "3.10.0"]
                  [com.amazonaws/aws-java-sdk-s3 "1.11.641"]
                  [com.amazonaws/aws-java-sdk-sqs "1.11.642"]
