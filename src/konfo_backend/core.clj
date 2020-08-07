@@ -18,6 +18,7 @@
     [konfo-backend.index.api :as index]
     [konfo-backend.search.api :as search]
     [konfo-backend.palaute.api :as palaute]
+    [konfo-backend.external.api :as external]
     [clojure.string]
     [ring.swagger.swagger-ui :as ui])
   (:gen-class))
@@ -89,17 +90,21 @@
               default/paths "\n"
               index/paths "\n"
               search/paths "\n"
-              palaute/paths
+              palaute/paths "\n"
+              external/paths
               "
               |components:
               |  schemas:
               "
-              default/schemas))))
+              default/schemas "\n"
+              external/schemas
+              ))))
 
       default/routes
       index/routes
       search/routes
-      palaute/routes)))
+      palaute/routes
+      external/routes)))
 
 (defn wrap-exception-handling
   [handler]
