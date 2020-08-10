@@ -93,7 +93,6 @@
      |                nimi:
      |                  fi: Opintopistettä
      |                  sv: Opintopistettä ruotsiksi
-
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
@@ -126,9 +125,9 @@
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmMetadata)
+   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata)
    :organisaatio                 Organisaatio
    :teemakuva                    Url
    (s/->OptionalKey :ePerusteId) s/Int
-   :modified                     Modified
+   :modified                     Datetime
    :timestamp                    s/Int})

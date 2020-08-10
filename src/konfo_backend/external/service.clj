@@ -3,7 +3,7 @@
     [konfo-backend.koodisto.koodisto :as k]
     [konfo-backend.tools :refer [reduce-merge-map]]
     [konfo-backend.index.koulutus :as koulutus]
-    [konfo-backend.index.hakukohde :as hakukohde]))
+    [konfo-backend.index.toteutus :as toteutus]))
 
 (comment defn- toteutukset
   [koulutus toteutukset?]
@@ -22,3 +22,8 @@
           (dissoc :muokkaaja :julkinen :esikatselu :toteutukset :organisaatiot)
           ;(toteutukset totetukset?)
           ))
+
+(defn get-toteutus
+  [oid]
+  (some-> (toteutus/get oid false)
+          (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)))

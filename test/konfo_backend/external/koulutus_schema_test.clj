@@ -14,6 +14,10 @@
   [oid]
   (str "/konfo-backend/external/koulutus/" oid))
 
+(defn toteutus-url
+  [oid]
+  (str "/konfo-backend/external/toteutus/" oid))
+
 (deftest koulutus-schema-test
   (testing "Testing external koulutus api"
     (let [koulutusOid1 "1.2.246.562.13.000001"
@@ -27,7 +31,7 @@
       (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid1 :tila "tallennettu")
       (fixture/add-toteutus-mock "1.2.246.562.17.000003" koulutusOid1 :tila "julkaistu")
 
-      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2]})
+      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2] :toteutukset ["1.2.246.562.17.000001"]})
 
       (testing "Get koulutus"
         (testing "ok"
@@ -39,4 +43,16 @@
         (testing "not found"
                  (get-not-found (koulutus-url koulutusOid3)))
         (testing "not julkaistu"
-                 (get-not-found (koulutus-url koulutusOid2)))))))
+                 (get-not-found (koulutus-url koulutusOid2))))
+
+      (testing "Get toteutus"
+        (testing "ok"
+          (let [response (get-ok-or-print-schema-error (toteutus-url "1.2.246.562.17.000001"))]
+            (is (= "1.2.246.562.17.000001" (:oid response)))
+            )
+          )
+        )
+
+
+
+      )))

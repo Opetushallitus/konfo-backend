@@ -88,7 +88,7 @@
 ;    |                - amk 
 )
 
-(def AmmMetadata
+(def AmmKoulutusMetadata
   {:tyyppi                                    Amm
    :kuvaus                                    Kielistetty
    :lisatiedot                                [KoulutusLisatieto]

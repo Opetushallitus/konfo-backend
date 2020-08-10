@@ -123,7 +123,7 @@
 
 (def TutkintonimikeKkKoodi #"tutkintonimikekk_\d+(#\d{1,2})?$")
 
-(def opitojenlaajuus-schema
+(def opintojenlaajuus-schema
   "|    OpintojenLaajuus:
    |      type: object
    |      properties:
@@ -140,7 +140,7 @@
 
 (def OpintojenLaajuusKoodi #"opintojenlaajuus_\d+(#\d{1,2})?$")
 
-(def opitojenlaajuusyksikko-schema
+(def opintojenlaajuusyksikko-schema
   "|    OpintojenLaajuusyksikko:
    |      type: object
    |      properties:
@@ -157,6 +157,74 @@
 
 (def OpintojenLaajuusyksikkoKoodi #"opintojenlaajuusyksikko_\d+(#\d{1,2})?$")
 
+(def opetuskieli-schema
+  "|    Opetuskieli:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: oppilaitoksenopetuskieli_1
+   |          description: Opetuskieli. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/oppilaitoksenopetuskieli/1)
+   |        nimi:
+   |          type: object
+   |          description: Opetuskieli eri kielillä.
+   |          example: {\"fi\": \"suomi\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def OpetuskieliKoodi #"oppilaitoksenopetuskieli_\d+(#\d{1,2})?$")
+
+(def opetusaika-schema
+  "|    Opetusaika:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: opetusaikakk_1
+   |          description: Opetusaika. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetusaikakk/1)
+   |        nimi:
+   |          type: object
+   |          description: Opetusaika eri kielillä.
+   |          example: {\"fi\": \"suomi\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def OpetusaikaKoodi #"opetusaikakk_\d+(#\d{1,2})?$")
+
+(def opetustapa-schema
+  "|    Opetustapa:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: opetuspaikkakk_1
+   |          description: Opetustapa. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetuspaikkakk/1)
+   |        nimi:
+   |          type: object
+   |          description: Opetustapa eri kielillä.
+   |          example: {\"fi\": \"suomi\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def OpetustapaKoodi #"opetuspaikkakk_\d+(#\d{1,2})?$")
+
+(def alkamiskausi-schema
+  "|    Alkamiskausi:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: kausi_s
+   |          description: Alkamiskausi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
+   |        nimi:
+   |          type: object
+   |          description: Alkamiskausi eri kielillä
+   |          example: {\"fi\": \"syksy\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def AlkamiskausiKoodi #"kausi_\w+(#\d{1,2})?$")
+
 (def schemas
   (str
     kunta-schema "\n"
@@ -166,5 +234,9 @@
     koulutuslisatieto-koodi-schema "\n"
     tutkintonimike-schema "\n"
     tutkintonimikekk-schema "\n"
-    opitojenlaajuus-schema "\n"
-    opitojenlaajuusyksikko-schema))
+    opintojenlaajuus-schema "\n"
+    opintojenlaajuusyksikko-schema "\n"
+    opetuskieli-schema "\n"
+    opetustapa-schema "\n"
+    opetusaika-schema "\n"
+    alkamiskausi-schema))
