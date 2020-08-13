@@ -1,7 +1,8 @@
 (ns konfo-backend.external.schema.common
   (:require
     [schema.core :as s]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]])
+  (:import (io.reactivex.internal.operators.observable ObservableFromIterable$FromIterableDisposable)))
 
 (def kieli-schema
   "|    Kieli:
@@ -90,6 +91,9 @@
 
 (def KoulutusOid     #"^1.2.246.562.13.\d+$")
 (def ToteutusOid     #"^1.2.246.562.17.\d+$")
+(def HakukohdeOid    #"^1.2.246.562.20.\d+$")
+(def HakuOid         #"^1.2.246.562.29.\d+$")
+
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
 (def Koulutustyyppi (s/enum "amm" "yo" "amk" "lk" "muu"))
@@ -98,6 +102,8 @@
 (def Amk            (s/eq "amk"))
 (def Lk             (s/eq "lk"))
 (def Muu            (s/eq "muu"))
+
+(def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 
 (def Datetime s/Str)                                        ;TODO 2019-02-01T13:16
 (def Url s/Str)                                             ;TODO
@@ -186,6 +192,44 @@
    :puhelinnumero Kielistetty
    :wwwSivu       Kielistetty})
 
+(def ajanjakso-schema
+  "|    Ajanjakso:
+   |      type: object
+   |      properties:
+   |        alkaa:
+   |           type: string
+   |           format: date-time
+   |           description: Ajanjakson alkuaika
+   |           example: 2019-08-23T09:55
+   |        paattyy:
+   |           type: string
+   |           format: date-time
+   |           description: Ajanjakson päättymisaika
+   |           example: 2019-08-23T09:55")
+
+(def Ajanjakso
+  {:alkaa   Datetime
+   :paattyy Datetime})
+
+(def osoite-schema
+  "|    Osoite:
+   |      type: object
+   |      properties:
+   |        osoite:
+   |          type: object
+   |          description: Osoite eri kielillä. Kielet on määritetty kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'
+   |        postinumero:
+   |          type: object
+   |          description: Postinumero ja -toimipaikka
+   |          allOf:
+   |            - $ref: '#/components/schemas/Postinumero'")
+
+(def Osoite
+  {:osoite Kielistetty
+   :postinumero (->Koodi PostinumeroKoodi)})
+
 (def schemas
   (str kieli-schema "\n"
        kuvaus-schema "\n"
@@ -193,4 +237,6 @@
        teksti-schema "\n"
        organisaatio-schema "\n"
        koulutuslisatieto-schema "\n"
-       yhteyshenkilo-schema "\n"))
+       yhteyshenkilo-schema "\n"
+       ajanjakso-schema "\n"
+       osoite-schema))

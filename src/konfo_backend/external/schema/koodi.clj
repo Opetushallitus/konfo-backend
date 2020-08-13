@@ -225,6 +225,74 @@
 
 (def AlkamiskausiKoodi #"kausi_\w+(#\d{1,2})?$")
 
+(def pohjakoulutusvaatimus-schema
+  "|    Pohjakoulutusvaatimus:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: pohjakoulutusvaatimustoinenaste_pk
+   |          description: Toisen asteen hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/pohjakoulutusvaatimustoinenaste/1)
+   |        nimi:
+   |          type: object
+   |          description: Pohjakoulutusvaatimus eri kielillä
+   |          example: {\"fi\": \"syksy\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def PohjakoulutusvaatimusKoodi #"pohjakoulutusvaatimustoinenaste_\w+(#\d{1,2})?$")
+
+(def postinumero-schema
+  "|    Postinumero:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: posti_04230#2
+   |          description: Postinumero. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/posti/2)
+   |        nimi:
+   |          type: object
+   |          description: Postitoimipaikan nimi eri kielillä
+   |          example: {\"fi\": \"Kerava\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def PostinumeroKoodi #"posti_\d+(#\d{1,2})?$")
+
+(def liitteen-tyyppi-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: liitetyypitamm_3#1
+   |          description: Liitteen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/liitetyypitamm/1)
+   |        nimi:
+   |          type: object
+   |          description: Liitteen tyyppi eri kielillä
+   |          example: {\"fi\": \"Todistus\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def LiitteenTyyppiKoodi #"liitetyypitamm_\d+(#\d{1,2})?$")
+
+(def valintakokeen-tyyppi-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: liitetyypitamm_3#1
+   |          description: Valintakokeen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/valintakokeentyyppi/1)
+   |        nimi:
+   |          type: object
+   |          description: Valintakokeen tyyppi eri kielillä
+   |          example: {\"fi\": \"Kuulustelu\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def ValintakokeenTyyppiKoodi #"valintakokeentyyppi_\d+(#\d{1,2})?$")
+
 (def schemas
   (str
     kunta-schema "\n"
@@ -239,4 +307,8 @@
     opetuskieli-schema "\n"
     opetustapa-schema "\n"
     opetusaika-schema "\n"
-    alkamiskausi-schema))
+    alkamiskausi-schema "\n"
+    pohjakoulutusvaatimus-schema "\n"
+    postinumero-schema "\n"
+    liitteen-tyyppi-schema "\n"
+    valintakokeen-tyyppi-schema))

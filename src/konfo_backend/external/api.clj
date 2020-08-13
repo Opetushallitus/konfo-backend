@@ -8,6 +8,9 @@
     [konfo-backend.external.schema.koulutus-metadata :as koulutus-metadata]
     [konfo-backend.external.schema.toteutus :as toteutus]
     [konfo-backend.external.schema.toteutus-metadata :as toteutus-metadata]
+    [konfo-backend.external.schema.hakukohde :as hakukohde]
+    [konfo-backend.external.schema.valintakoe :as valintakoe]
+    [konfo-backend.external.schema.liite :as liite]
     [konfo-backend.external.service :as service]
     [clj-log.access-log :refer [with-access-logging]]
     [cheshire.core :as cheshire]))
@@ -60,6 +63,30 @@
    |              schema:
    |                $ref: '#/components/schemas/Toteutus'
    |        '404':
+   |          description: Not found
+   |  /external/hakukohde/{oid}:
+   |    get:
+   |      summary: Hae hakukohteen tiedot annetulla oidilla
+   |      operationId: Hae hakukohde
+   |      description: Hae hakukohteen ja tarvittaessa siihen liittyvien hakujen ja koulutusten tiedot
+   |      tags:
+   |        - External
+   |      parameters:
+   |        - in: path
+   |          name: path
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Hakukohteen oid
+   |          example: 1.2.246.562.20.00000000000000000009
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                $ref: '#/components/schemas/Toteutus'
+   |        '404':
    |          description: Not found")
 
 (def schemas
@@ -68,7 +95,10 @@
        koulutus/schemas "\n"
        koulutus-metadata/schemas "\n"
        toteutus/schemas "\n"
-       toteutus-metadata/schemas))
+       toteutus-metadata/schemas "\n"
+       hakukohde/schemas "\n"
+       valintakoe/schemas "\n"
+       liite/schemas "\n"))
 
 
 (def routes
@@ -94,6 +124,16 @@
                                          (println (cheshire/generate-string result {:pretty true}))
                                          (ok result))
                                        (not-found "Not found"))))
+
+    (GET "/hakukohde/:oid" [:as request]
+         :path-params [oid :- String]
+         ;:query-params [{draft :- Boolean false}]
+         :return hakukohde/Hakukohde
+      (with-access-logging request (if-let [result (service/get-hakukohde oid)]
+                                     (do
+                                       (println (cheshire/generate-string result {:pretty true}))
+                                       (ok result))
+                                     (not-found "Not found"))))
 
 
 
