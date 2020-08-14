@@ -21,7 +21,7 @@
         page
         size
         parse
-        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat"]
+        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
         :sort (sorts sort order lng)
         :query query
         :aggs aggs))))
