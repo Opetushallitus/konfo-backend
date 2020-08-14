@@ -174,6 +174,74 @@
 
 (def OpetuskieliKoodi #"oppilaitoksenopetuskieli_\d+(#\d{1,2})?$")
 
+(def kielitaitovaatimus-kieli-schema
+  "|    KielitaitovaatimusKieli:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: kieli_en
+   |          description: Kieli. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kieli/1)
+   |        nimi:
+   |          type: object
+   |          description: Kieli eri kielillä.
+   |          example: {\"fi\": \"englanti\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def KielitaitovaatimusKieliKoodi #"kieli_\w+(#\d{1,2})?$")
+
+(def kielitaidonOsoittaminen-schema
+  "|    KielitaidonOsoittaminen:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: kielitaidonosoittaminen_01
+   |          description: Kielitaidon osoittaminen. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaidonosoittaminen/1)
+   |        nimi:
+   |          type: object
+   |          description: Kielitaidon osoittaminen eri kielillä.
+   |          example: {\"fi\": \"englanti\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def KielitaidonOsoitteminenKoodi #"kielitaidonosoittaminen_\d+(#\d{1,2})?$")
+
+(def kielitaitovaatimus-tyyppi-schema
+  "|    KielitaitovaatimusTyyppi:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: kielitaitovaatimustyypit_01
+   |          description: Kielitaitovaatimuksen tyyppi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaitovaatimustyypit/1)
+   |        nimi:
+   |          type: object
+   |          description: Kielitaitovaatimuksen tyyppi eri kielillä.
+   |          example: {\"fi\": \"kielitaitovaatimustyyppi\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def KielitaitovaatimusTyyppiKoodi #"kielitaitovaatimustyypit_\d+(#\d{1,2})?$")
+
+(def kielitaitovaatimus-tyyppi-kuvaus-schema
+  "|    KielitaitovaatimusTyypinKuvaus:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: kielitaitovaatimustyypitkuvaus_01
+   |          description: Kielitaitovaatimus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaitovaatimustyypitkuvaus/1)
+   |        nimi:
+   |          type: object
+   |          description: Kielitaitovaatimuksen kuvaus eri kielillä.
+   |          example: {\"fi\": \"kielitaitovaatimustyypin kuvausteksti\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def KielitaitovaatimusTyypinKuvausKoodi #"kielitaitovaatimustyypitkuvaus_\d+(#\d{1,2})?$")
+
 (def opetusaika-schema
   "|    Opetusaika:
    |      type: object
@@ -293,6 +361,74 @@
 
 (def ValintakokeenTyyppiKoodi #"valintakokeentyyppi_\d+(#\d{1,2})?$")
 
+(def hakutapa-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: hakutapa_03#1
+   |          description: Hakutapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/hakutapa/11)
+   |        nimi:
+   |          type: object
+   |          description: Hakutavan nimi eri kielillä
+   |          example: {\"fi\": \"Yhteishaku\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def HakutapaKoodi #"hakutapa_\d+(#\d{1,2})?$")
+
+(def haun-kohdejoukko-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: haunkohdejoukko_03#1
+   |          description: Haun kohdejoukko. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukko/11)
+   |        nimi:
+   |          type: object
+   |          description: Haun kohdejoukon nimi eri kielillä
+   |          example: {\"fi\": \"Kohdejoukko\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def HaunKohdejoukkoKoodi #"haunkohdejoukko_\d+(#\d{1,2})?$")
+
+(def haun-kohdejoukon-tarkenne-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: haunkohdejoukontarkenne_03#1
+   |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukontarkenne/11)
+   |        nimi:
+   |          type: object
+   |          description: Haun kohdejoukon tarkenne eri kielillä
+   |          example: {\"fi\": \"Kohdejoukon tarkenne\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def HaunKohdejoukonTarkenneKoodi #"haunkohdejoukontarkenne_\d+(#\d{1,2})?$")
+
+(def valintatapa-schema
+  "|    LiitteenTyyppi:
+   |      type: object
+   |      properties:
+   |        koodi:
+   |          type: string
+   |          example: valintatapajono_av#1
+   |          description: Valintatapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/valintatapajono/1)
+   |        nimi:
+   |          type: object
+   |          description: Valintatapa eri kielillä
+   |          example: {\"fi\": \"Valintatapa suomeksi\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def ValintatapaKoodi #"valintatapajono_\w+(#\d{1,2})?$")
+
 (def schemas
   (str
     kunta-schema "\n"
@@ -304,6 +440,10 @@
     tutkintonimikekk-schema "\n"
     opintojenlaajuus-schema "\n"
     opintojenlaajuusyksikko-schema "\n"
+    kielitaitovaatimus-kieli-schema "\n"
+    kielitaitovaatimus-tyyppi-schema "\n"
+    kielitaitovaatimus-tyyppi-kuvaus-schema "\n"
+    kielitaidonOsoittaminen-schema "\n"
     opetuskieli-schema "\n"
     opetustapa-schema "\n"
     opetusaika-schema "\n"
@@ -311,4 +451,8 @@
     pohjakoulutusvaatimus-schema "\n"
     postinumero-schema "\n"
     liitteen-tyyppi-schema "\n"
-    valintakokeen-tyyppi-schema))
+    valintakokeen-tyyppi-schema "\n"
+    hakutapa-schema "\n"
+    haun-kohdejoukko-schema "\n"
+    haun-kohdejoukon-tarkenne-schema "\n"
+    valintatapa-schema))

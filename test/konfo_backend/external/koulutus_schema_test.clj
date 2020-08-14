@@ -48,7 +48,7 @@
                                                    :toteutukset ["1.2.246.562.17.000001"]
                                                    :haut ["1.2.246.562.29.000001"]
                                                    :hakukohteet ["1.2.246.562.20.000001"]
-                                                   :valintaperusteet ["fe39c85a-05de-4f92-9306-9844c5841664"]})
+                                                   :valintaperusteet [valintaperusteId1]})
 
       (testing "Get koulutus"
         (testing "ok"
@@ -73,10 +73,9 @@
       (testing "Get hakukohde"
         (testing "ok"
           (let [response (get-ok-or-print-schema-error (hakukohde-url "1.2.246.562.20.000001"))]
-            (is (= "1.2.246.562.20.000001" (:oid response)))
-            )
-          )
-        )
+            (is (= "1.2.246.562.20.000001" (:oid response))))))
+
+
 
 
 

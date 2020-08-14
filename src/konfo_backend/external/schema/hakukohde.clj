@@ -5,7 +5,8 @@
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.valintaperustekuvaus  :refer :all :exclude [schemas]]))
 
 (def hakukohde-metadata-schema
   "|    HakukohdeMetadata:
@@ -119,10 +120,11 @@
    |          description: Hakukohteen hakuajat, jos ei käytetä haun hakuaikoja
    |          items:
    |            $ref: '#/components/schemas/Ajanjakso'
-   |        valintaperusteId:
-   |          type: string
-   |          description: Hakukohteeseen liittyvän valintaperustekuvauksen yksilöivä tunniste
-   |          example: ea596a9c-5940-497e-b5b7-aded3a2352a7
+   |        valintaperustekuvaus:
+   |          type: object
+   |          description: Hakukohteeseen liittyvä valintaperustekuvaus
+   |          allOf:
+   |            - $ref: '#/components/schemas/Valintaperustekuvaus'
    |        liitteetOnkoSamaToimitusaika:
    |          type: boolean
    |          description: Onko kaikilla hakukohteen liitteillä sama toimitusaika?
@@ -202,7 +204,7 @@
    :toinenAsteOnkoKaksoistutkinto  s/Bool
    :kaytetaanHaunAikataulua        s/Bool
    :hakuajat                       [Ajanjakso]
-   ;:valintaperusteId               s/Uuid
+   :valintaperustekuvaus           Valintaperustekuvaus
    :liitteetOnkoSamaToimitusaika   s/Bool
    :liitteetOnkoSamaToimitusosoite s/Bool
    (s/->OptionalKey :liitteidenToimitusaika)         Datetime
