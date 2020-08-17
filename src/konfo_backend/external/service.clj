@@ -5,6 +5,7 @@
     [konfo-backend.index.koulutus :as koulutus]
     [konfo-backend.index.toteutus :as toteutus]
     [konfo-backend.index.hakukohde :as hakukohde]
+    [konfo-backend.index.haku :as haku]
     [konfo-backend.index.valintaperuste :as valintaperuste]))
 
 (comment defn- toteutukset
@@ -35,10 +36,18 @@
   (let [hakukohde (some-> (hakukohde/get oid false)
                           (dissoc :muokkaaja :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto))
         valintaperusteId (get-in hakukohde [:valintaperuste :id])
-        valintaperuste   (valintaperuste/get valintaperusteId false)]
+        valintaperuste   (valintaperuste/get valintaperusteId false)
+        haku             (dissoc (haku/get (:hakuOid hakukohde)) :hakukohteenLiittamisenTakaraja :hakukohteenMuokkaamisenTakaraja :ajastettuJulkaisu :hakulomakeAtaruId :muokkaaja :hakukohteet)]
+
+    (println "HAKU=" (:hakuOid hakukohde))
+    (println (haku/get (:hakuOid hakukohde)) )
 
     (-> hakukohde
         (assoc  :valintaperustekuvaus (-> valintaperuste
                                           (dissoc :sorakuvausId :muokkaaja :julkinen)
                                           (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
-        (dissoc :valintaperuste))))
+        (dissoc :valintaperuste)
+        (assoc :haku haku))))
+
+
+

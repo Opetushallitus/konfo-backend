@@ -24,45 +24,26 @@
    |          description: Haun nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
    |          allOf:
    |            - $ref: '#/components/schemas/Nimi'
-   |        hakutapaKoodiUri:
-   |          type: string
-   |          description: Haun hakutapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/hakutapa/11)
-   |          example: hakutapa_03#1
-   |        hakukohteenLiittamisenTakaraja:
-   |          type: string
-   |          format: date-time
-   |          description: Viimeinen ajanhetki, jolloin hakuun saa liittää hakukohteen.
-   |            Hakukohteita ei saa lisätä enää sen jälkeen, kun haku on käynnissä.
-   |          example: 2019-08-23T09:55
-   |        hakukohteenMuokkaamiseenTakaraja:
-   |          type: string
-   |          format: date-time
-   |          description: Viimeinen ajanhetki, jolloin hakuun liitettyä hakukohdetta on sallittua muokata.
-   |            Hakukohteen tietoja ei saa muokata enää sen jälkeen, kun haku on käynnissä.
-   |          example: 2019-08-23T09:55
-   |        ajastettuJulkaisu:
-   |          type: string
-   |          format: date-time
-   |          description: Ajanhetki, jolloin haku ja siihen liittyvät hakukohteet ja koulutukset julkaistaan
-   |            automaattisesti Opintopolussa, jos ne eivät vielä ole julkisia
-   |          example: 2019-08-23T09:55
-   |        alkamiskausiKoodiUri:
-   |          type: string
+   |        hakutapa:
+   |          type: object
+   |          description: Haun hakutapa
+   |          $ref: '#/components/schemas/Hakutapa'
+   |        alkamiskausi:
+   |          type: object
    |          description: Haun koulutusten alkamiskausi. Hakukohteella voi olla eri alkamiskausi kuin haulla.
-   |            Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
-   |          example: kausi_k#1
+   |          $ref: '#/components/schemas/Alkamiskausi'
    |        alkamisvuosi:
    |          type: string
    |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
    |          example: 2020
-   |        kohdejoukkoKoodiUri:
-   |          type: string
-   |          description: Haun kohdejoukko. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukko/1)
-   |          example: haunkohdejoukko_17#1
-   |        kohdejoukonTarkenneKoodiUri:
-   |          type: string
-   |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukontarkenne/1)
-   |          example: haunkohdejoukontarkenne_1#1
+   |        kohdejoukko:
+   |          type: object
+   |          description: Haun kohdejoukko
+   |          $ref: '#/components/schemas/HaunKohdejoukko'
+   |        kohdejoukonTarkenne:
+   |          type: object
+   |          description: Haun kohdejoukon tarkenne
+   |          $ref: '#/components/schemas/HaunKohdejoukonTarkenne'
    |        hakulomaketyyppi:
    |          type: string
    |          description: Hakulomakkeen tyyppi. Kertoo, käytetäänkö Atarun (hakemuspalvelun) hakulomaketta, muuta hakulomaketta
@@ -73,10 +54,6 @@
    |            - ataru
    |            - ei sähköistä
    |            - muu
-   |        hakulomakeAtaruId:
-   |          type: string
-   |          description: Hakulomakkeen yksilöivä tunniste, jos käytössä on Atarun (hakemuspalvelun) hakulomake. Hakukohteella voi olla eri hakulomake kuin haulla.
-   |          example: ea596a9c-5940-497e-b5b7-aded3a2352a7
    |        hakulomakeKuvaus:
    |          type: object
    |          description: Hakulomakkeen kuvausteksti eri kielillä. Kielet on määritetty haun kielivalinnassa. Hakukohteella voi olla eri hakulomake kuin haulla.
@@ -94,7 +71,17 @@
    |            $ref: '#/components/schemas/Ajanjakso'
    |        metadata:
    |          type: object
-   |          $ref: '#/components/schemas/HakuMetadata'
+   |          properties:
+   |            yhteyshenkilot:
+   |              type: array
+   |              description: Lista haun yhteyshenkilöistä
+   |              items:
+   |                $ref: '#/components/schemas/Yhteyshenkilo'
+   |            tulevaisuudenAikataulu:
+   |              type: array
+   |              description: Oppijalle Opintopolussa näytettävät haun mahdolliset tulevat hakuajat
+   |              items:
+   |                $ref: '#/components/schemas/Ajanjakso'
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille haun nimi, kuvailutiedot ja muut tekstit on käännetty
@@ -103,18 +90,15 @@
    |          example:
    |            - fi
    |            - sv
-   |        muokkaaja:
-   |          type: string
-   |          description: Hakua viimeksi muokanneen virkailijan henkilö-oid
-   |          example: 1.2.246.562.10.00101010101
-   |        organisaatioOid:
-   |           type: string
-   |           description: Haun luoneen organisaation oid
-   |           example: 1.2.246.562.10.00101010101
+   |        organisaatio:
+   |          type: object
+   |          description: Haun luonut organisaatio
+   |          allOf:
+   |           - $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |           type: string
    |           format: date-time
-   |           description: Haun viimeisin muokkausaika. Järjestelmän generoima
+   |           description: Haun viimeisin muokkausaika
    |           example: 2019-08-23T09:55")
 
 (def haku-metadata-schema
@@ -132,3 +116,22 @@
    |          items:
    |            $ref: '#/components/schemas/Ajanjakso'")
 
+(def Haku
+  {:oid                            HakuOid
+   :tila                           Julkaistu
+   :nimi                           Kielistetty
+   :hakutapa                       (->Koodi HakutapaKoodi)
+   :kohdejoukko                    (->Koodi HaunKohdejoukkoKoodi)
+   :kohdejoukonTarkenne            (->Koodi HaunKohdejoukonTarkenneKoodi)
+   (s/->OptionalKey :alkamiskausi) (->Koodi AlkamiskausiKoodi)
+   (s/->OptionalKey :alkamisvuosi) s/Str
+   :hakulomaketyyppi               Hakulomaketyyppi
+   :hakulomakeKuvaus               Kielistetty
+   :hakulomakeLinkki               Kielistetty
+   :hakuajat                       [Ajanjakso]
+   :kielivalinta                   [Kieli]
+   (s/->OptionalKey :metadata)     {:yhteyshenkilot         [Yhteyshenkilo]
+                                    :tulevaisuudenAikataulu [Ajanjakso]}
+   :organisaatio                   Organisaatio
+   :modified                       Datetime
+   :timestamp                      s/Int})

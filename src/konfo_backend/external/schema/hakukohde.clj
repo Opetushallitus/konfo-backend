@@ -5,6 +5,7 @@
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.haku :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintaperustekuvaus  :refer :all :exclude [schemas]]))
 
@@ -169,7 +170,7 @@
    |            - sv
    |        organisaatio:
    |          type: object
-   |          description: Koulutuksen luonut organisaatio
+   |          description: Hakukohteen luonut organisaatio
    |          allOf:
    |           - $ref: '#/components/schemas/Organisaatio'
    |        modified:
@@ -204,6 +205,7 @@
    :toinenAsteOnkoKaksoistutkinto  s/Bool
    :kaytetaanHaunAikataulua        s/Bool
    :hakuajat                       [Ajanjakso]
+   (s/->OptionalKey :haku)         Haku
    :valintaperustekuvaus           Valintaperustekuvaus
    :liitteetOnkoSamaToimitusaika   s/Bool
    :liitteetOnkoSamaToimitusosoite s/Bool
