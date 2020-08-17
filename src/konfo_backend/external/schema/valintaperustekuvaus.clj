@@ -4,7 +4,8 @@
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintaperustekuvaus-metadata :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.valintaperustekuvaus-metadata :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.sorakuvaus :refer :all :exclude [schemas]]))
 
 (def valintaperustekuvaus-schema
   "|    Valintaperustekuvaus:
@@ -146,6 +147,7 @@
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata)
+   (s/->OptionalKey :sorakuvaus) Sorakuvaus
    :organisaatio                 Organisaatio
    :modified                     Datetime
    :timestamp                    s/Int})

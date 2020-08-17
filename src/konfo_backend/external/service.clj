@@ -35,8 +35,10 @@
   (let [hakukohde (some-> (hakukohde/get oid false)
                           (dissoc :muokkaaja :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto))
         valintaperusteId (get-in hakukohde [:valintaperuste :id])
-        valintaperuste (valintaperuste/get valintaperusteId false)]
+        valintaperuste   (valintaperuste/get valintaperusteId false)]
 
     (-> hakukohde
-        (assoc  :valintaperustekuvaus (dissoc valintaperuste :sorakuvausId :muokkaaja :julkinen :sorakuvaus))
+        (assoc  :valintaperustekuvaus (-> valintaperuste
+                                          (dissoc :sorakuvausId :muokkaaja :julkinen)
+                                          (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
         (dissoc :valintaperuste))))
