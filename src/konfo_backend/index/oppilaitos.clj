@@ -1,7 +1,7 @@
 (ns konfo-backend.index.oppilaitos
   (:require
     [konfo-backend.tools :refer [julkaistu?]]
-    [konfo-backend.elastic-tools :refer [get-source]]
+    [konfo-backend.elastic-tools :refer [get-source search]]
     [konfo-backend.search.oppilaitos.search :refer [index] :rename {index search-index}]))
 
 (defonce index "oppilaitos-kouta")
@@ -28,4 +28,25 @@
            (dissoc-kouta-data-if-not-julkaistu)
            (assoc-koulutusohjelmat oid)))
 
+(defn- select-matching-osat
+  [oid oppilaitos]
+  (->> (:osat oppilaitos)
+       (filter #(= oid (:oid %)))
+       (assoc oppilaitos :osat)))
 
+(defn- swap-osa-and-parent
+  [oppilaitos]
+   (assoc (first (:osat oppilaitos)) :oppilaitos (dissoc oppilaitos :osat)))
+
+(defn- oppilaitos-osa-mapper
+  [result]
+  (let [oppilaitos (first (map :_source (some-> result :hits :hits)))]
+    oppilaitos))
+
+(defn get-by-osa
+  [oid]
+  (some->> (search index oppilaitos-osa-mapper :query {:term {:osat.oid.keyword oid}})
+           (select-matching-osat oid)
+           (dissoc-kouta-data-if-not-julkaistu)
+           (swap-osa-and-parent)
+           (assoc-koulutusohjelmat oid)))
