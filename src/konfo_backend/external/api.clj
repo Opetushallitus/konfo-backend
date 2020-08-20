@@ -9,11 +9,14 @@
     [konfo-backend.external.schema.toteutus :as toteutus]
     [konfo-backend.external.schema.toteutus-metadata :as toteutus-metadata]
     [konfo-backend.external.schema.hakukohde :as hakukohde]
+    [konfo-backend.external.schema.haku :as haku]
     [konfo-backend.external.schema.valintakoe :as valintakoe]
+    [konfo-backend.external.schema.valintaperustekuvaus :as valintaperuste]
+    [konfo-backend.external.schema.sorakuvaus :as sorakuvaus]
+    [konfo-backend.external.schema.response :as response]
     [konfo-backend.external.schema.liite :as liite]
     [konfo-backend.external.service :as service]
-    [clj-log.access-log :refer [with-access-logging]]
-    [cheshire.core :as cheshire]))
+    [clj-log.access-log :refer [with-access-logging]]))
 
 (def paths
   "|  /external/koulutus/{oid}:
@@ -25,19 +28,40 @@
    |        - External
    |      parameters:
    |        - in: path
-   |          name: path
+   |          name: oid
    |          schema:
    |            type: string
    |          required: true
    |          description: Koulutuksen oid
    |          example: 1.2.246.562.13.00000000000000000009
+   |        - in: query
+   |          name: toteutukset
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös koulutuksen toteutukset?
+   |        - in: query
+   |          name: hakukohteet
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös hakukohteet, joissa voi hakea koulutukseen?
+   |        - in: query
+   |          name: haut
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös haut, joissa voi hakea koulutukseen?
    |      responses:
    |        '200':
    |          description: Ok
    |          content:
    |            application/json:
    |              schema:
-   |                $ref: '#/components/schemas/Koulutus'
+   |                $ref: '#/components/schemas/KoulutusResponse'
    |        '404':
    |          description: Not found
    |  /external/toteutus/{oid}:
@@ -55,13 +79,34 @@
    |          required: true
    |          description: Toteutuksen oid
    |          example: 1.2.246.562.17.00000000000000000009
+   |        - in: query
+   |          name: koulutus
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös toteutuksen koulutus?
+   |        - in: query
+   |          name: hakukohteet
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös hakukohteet, joissa voi hakea toteutukseen?
+   |        - in: query
+   |          name: haut
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös haut, joissa voi hakea toteutukseen?
    |      responses:
    |        '200':
    |          description: Ok
    |          content:
    |            application/json:
    |              schema:
-   |                $ref: '#/components/schemas/Toteutus'
+   |                $ref: '#/components/schemas/ToteutusResponse'
    |        '404':
    |          description: Not found
    |  /external/hakukohde/{oid}:
@@ -79,13 +124,86 @@
    |          required: true
    |          description: Hakukohteen oid
    |          example: 1.2.246.562.20.00000000000000000009
+   |        - in: query
+   |          name: valintaperustekuvaus
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös hakukohteen valintaperusteiden kuvaus?
+   |        - in: query
+   |          name: koulutus
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös sen koulutuksen tiedot, johon hakukohteessa voi hakea?
+   |        - in: query
+   |          name: toteutus
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös sen toteutuksen tiedot, johon haussa voi hakea?
+   |        - in: query
+   |          name: haku
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös haku, johon hakukohde kuuluu?
    |      responses:
    |        '200':
    |          description: Ok
    |          content:
    |            application/json:
    |              schema:
-   |                $ref: '#/components/schemas/Toteutus'
+   |                $ref: '#/components/schemas/HakukohdeResponse'
+   |        '404':
+   |          description: Not found
+   |  /external/haku/{oid}:
+   |    get:
+   |      summary: Hae haun tiedot annetulla oidilla
+   |      operationId: Hae haku
+   |      description: Hae haun ja tarvittaessa siihen liittyvien hakukohteiden, koulutusten ja toteutusten tiedot
+   |      tags:
+   |        - External
+   |      parameters:
+   |        - in: path
+   |          name: path
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Haun oid
+   |          example: 1.2.246.562.29.00000000000000000009
+   |        - in: query
+   |          name: koulutukset
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös niiden koulutusten tiedot, joihin haussa voi hakea?
+   |        - in: query
+   |          name: toteutukset
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko myös niiden toteutusten tiedot, joihin haussa voi hakea?
+   |        - in: query
+   |          name: hakukohteet
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          default: false
+   |          description: Haetaanko haun hakukohteet?
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                $ref: '#/components/schemas/HakuResponse'
    |        '404':
    |          description: Not found")
 
@@ -98,8 +216,11 @@
        toteutus-metadata/schemas "\n"
        hakukohde/schemas "\n"
        valintakoe/schemas "\n"
-       liite/schemas "\n"))
-
+       liite/schemas "\n"
+       haku/schemas "\n"
+       valintaperuste/schemas "\n"
+       sorakuvaus/schemas "\n"
+       response/schemas "\n"))
 
 (def routes
   (context "/external" []
@@ -107,34 +228,41 @@
 
     (GET "/koulutus/:oid" [:as request]
          :path-params [oid :- String]
-         ;:query-params [{draft :- Boolean false}]
-         :return koulutus/Koulutus
-      (with-access-logging request (if-let [result (service/get-koulutus oid false false false)]
-                                     (do
-                                       (println (cheshire/generate-string result {:pretty true}))
-                                       (ok result))
+         :query-params [{toteutukset :- Boolean false}
+                        {hakukohteet :- Boolean false}
+                        {haut        :- Boolean false}]
+         :return response/KoulutusResponse
+      (with-access-logging request (if-let [result (service/koulutus oid toteutukset hakukohteet haut)]
+                                     (ok result)
                                      (not-found "Not found"))))
 
     (GET "/toteutus/:oid" [:as request]
         :path-params [oid :- String]
-        ;:query-params [{draft :- Boolean false}]
-        :return toteutus/Toteutus
-        (with-access-logging request (if-let [result (service/get-toteutus oid)]
-                                       (do
-                                         (println (cheshire/generate-string result {:pretty true}))
-                                         (ok result))
+        :query-params [{koulutus    :- Boolean false}
+                       {hakukohteet :- Boolean false}
+                       {haut        :- Boolean false}]
+        :return response/ToteutusResponse
+        (with-access-logging request (if-let [result (service/toteutus oid koulutus hakukohteet haut)]
+                                       (ok result)
                                        (not-found "Not found"))))
 
     (GET "/hakukohde/:oid" [:as request]
          :path-params [oid :- String]
-         ;:query-params [{draft :- Boolean false}]
-         :return hakukohde/Hakukohde
-      (with-access-logging request (if-let [result (service/get-hakukohde oid)]
-                                     (do
-                                       (println (cheshire/generate-string result {:pretty true}))
-                                       (ok result))
+         :query-params [{koulutus             :- Boolean false}
+                        {toteutus             :- Boolean false}
+                        {valintaperustekuvaus :- Boolean false}
+                        {haku                 :- Boolean false}]
+         :return response/HakukohdeResponse
+      (with-access-logging request (if-let [result (service/hakukohde oid koulutus toteutus valintaperustekuvaus haku)]
+                                     (ok result)
                                      (not-found "Not found"))))
 
-
-
-           ))
+    (GET "/haku/:oid" [:as request]
+         :path-params [oid :- String]
+         :query-params [{koulutukset    :- Boolean false}
+                        {toteutukset    :- Boolean false}
+                        {hakukohteet    :- Boolean false}]
+         :return response/HakuResponse
+      (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
+                                     (ok result)
+                                     (not-found "Not found"))))))

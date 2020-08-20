@@ -101,21 +101,6 @@
    |           description: Haun viimeisin muokkausaika
    |           example: 2019-08-23T09:55")
 
-(def haku-metadata-schema
-  "|    HakuMetadata:
-   |      type: object
-   |      properties:
-   |        yhteyshenkilot:
-   |          type: array
-   |          description: Lista haun yhteyshenkilöistä
-   |          items:
-   |            $ref: '#/components/schemas/Yhteyshenkilo'
-   |        tulevaisuudenAikataulu:
-   |          type: array
-   |          description: Oppijalle Opintopolussa näytettävät haun mahdolliset tulevat hakuajat
-   |          items:
-   |            $ref: '#/components/schemas/Ajanjakso'")
-
 (def Haku
   {:oid                            HakuOid
    :tila                           Julkaistu
@@ -135,3 +120,6 @@
    :organisaatio                   Organisaatio
    :modified                       Datetime
    :timestamp                      s/Int})
+
+(def schemas
+  haku-schema)

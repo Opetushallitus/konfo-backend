@@ -205,8 +205,6 @@
    :toinenAsteOnkoKaksoistutkinto  s/Bool
    :kaytetaanHaunAikataulua        s/Bool
    :hakuajat                       [Ajanjakso]
-   (s/->OptionalKey :haku)         Haku
-   :valintaperustekuvaus           Valintaperustekuvaus
    :liitteetOnkoSamaToimitusaika   s/Bool
    :liitteetOnkoSamaToimitusosoite s/Bool
    (s/->OptionalKey :liitteidenToimitusaika)         Datetime

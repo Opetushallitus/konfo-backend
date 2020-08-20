@@ -1,7 +1,7 @@
 (ns konfo-backend.index.koulutus
   (:require
     [konfo-backend.tools :refer [julkaistut julkaistu?]]
-    [konfo-backend.elastic-tools :refer [get-source]]))
+    [konfo-backend.elastic-tools :refer [get-source get-sources]]))
 
 (defonce index "koulutus-kouta")
 
@@ -10,3 +10,9 @@
   (let [koulutus (get-source index oid)]
     (when (or draft? (julkaistu? koulutus))
       (assoc koulutus :toteutukset (-> koulutus (:toteutukset) (julkaistut))))))
+
+(defn get-many
+  ([oids excludes]
+   (get-sources index oids excludes))
+  ([oids]
+   (get-many oids [])))

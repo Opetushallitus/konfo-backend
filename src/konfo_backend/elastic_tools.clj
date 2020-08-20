@@ -1,6 +1,7 @@
 (ns konfo-backend.elastic-tools
   (:require
     [clj-elasticsearch.elastic-connect :as e]
+    [clj-elasticsearch.elastic-utils :as u]
     [clj-log.error-log :refer [with-error-logging]]
     [clojure.string :as str]
     [clojure.tools.logging :as log]))
@@ -10,6 +11,12 @@
   (let [result (e/get-document index id)]
     (when (:found result)
       (:_source result))))
+
+(defn get-sources
+  [index ids excludes]
+  (if (seq excludes)
+    (e/multi-get index ids :_source_excludes (clojure.string/join "," excludes))
+    (e/multi-get index ids)))
 
 (defn search
   [index mapper & query-parts]
