@@ -345,7 +345,7 @@
 (def LiitteenTyyppiKoodi #"liitetyypitamm_\d+(#\d{1,2})?$")
 
 (def valintakokeen-tyyppi-schema
-  "|    LiitteenTyyppi:
+  "|    ValintakokeenTyyppi:
    |      type: object
    |      properties:
    |        koodi:
@@ -362,7 +362,7 @@
 (def ValintakokeenTyyppiKoodi #"valintakokeentyyppi_\d+(#\d{1,2})?$")
 
 (def hakutapa-schema
-  "|    LiitteenTyyppi:
+  "|    Hakutapa:
    |      type: object
    |      properties:
    |        koodi:
@@ -379,7 +379,7 @@
 (def HakutapaKoodi #"hakutapa_\d+(#\d{1,2})?$")
 
 (def haun-kohdejoukko-schema
-  "|    LiitteenTyyppi:
+  "|    HaunKohdejoukko:
    |      type: object
    |      properties:
    |        koodi:
@@ -396,7 +396,7 @@
 (def HaunKohdejoukkoKoodi #"haunkohdejoukko_\d+(#\d{1,2})?$")
 
 (def haun-kohdejoukon-tarkenne-schema
-  "|    LiitteenTyyppi:
+  "|    HaunKohdejoukonTarkenne:
    |      type: object
    |      properties:
    |        koodi:
@@ -413,7 +413,7 @@
 (def HaunKohdejoukonTarkenneKoodi #"haunkohdejoukontarkenne_\d+(#\d{1,2})?$")
 
 (def valintatapa-schema
-  "|    LiitteenTyyppi:
+  "|    Valintatapa:
    |      type: object
    |      properties:
    |        koodi:

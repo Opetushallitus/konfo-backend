@@ -119,15 +119,15 @@
    |              fi: Suomenkielinen kuvaus
    |              sv: Ruotsinkielinen kuvaus
    |        organisaatio:
-   |           type: object
-   |           description: Valintaperustekuvauksen luoneen organisaation oid
+   |          type: object
+   |          description: Valintaperustekuvauksen luoneen organisaation oid
    |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |            - $ref: '#/components/schemas/Organisaatio'
    |        modified:
-   |           type: string
-   |           format: date-time
-   |           description: Valintaperustekuvauksen viimeisin muokkausaika
-   |           example: 2019-08-23T09:55
+   |          type: string
+   |          format: date-time
+   |          description: Valintaperustekuvauksen viimeisin muokkausaika
+   |          example: 2019-08-23T09:55
    |        timestamp:
    |          type: number
    |          description: Valintaperustekuvauksen viimeisin indeksointiaika

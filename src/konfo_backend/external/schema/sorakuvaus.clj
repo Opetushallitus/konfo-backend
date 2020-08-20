@@ -51,15 +51,15 @@
    |              allOf:
    |                - $ref: '#/components/schemas/Kuvaus'
    |        organisaatio:
-   |           type: object
-   |           description: Valintaperustekuvauksen luoneen organisaation oid
+   |          type: object
+   |          description: Valintaperustekuvauksen luoneen organisaation oid
    |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |            - $ref: '#/components/schemas/Organisaatio'
    |        modified:
-   |           type: string
-   |           format: date-time
-   |           description: SORA-kuvauksen viimeisin muokkausaika. Järjestelmän generoima
-   |           example: 2019-08-23T09:55")
+   |          type: string
+   |          format: date-time
+   |          description: SORA-kuvauksen viimeisin muokkausaika. Järjestelmän generoima
+   |          example: 2019-08-23T09:55")
 
 (def Sorakuvaus
   {:id s/Str
