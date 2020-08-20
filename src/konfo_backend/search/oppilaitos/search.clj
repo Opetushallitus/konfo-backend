@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query aggregations inner-hits-query sorts]]
+    [konfo-backend.search.query :refer [query aggregations inner-hits-query inner-hits-query-osat sorts]]
     [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]))
 
@@ -32,3 +32,10 @@
             parse-inner-hits
             :_source ["oid"]
             :query (inner-hits-query oid lng page size order tuleva?)))
+
+(defn search-oppilaitoksen-osan-tarjonta
+  [oid lng page size order tuleva?]
+  (e/search index
+            parse-inner-hits
+            :_source ["oid"]
+            :query (inner-hits-query-osat oid lng page size order tuleva?)))

@@ -40,12 +40,13 @@
 
 (defn- oppilaitos-osa-mapper
   [result]
-  (let [oppilaitos (first (map :_source (some-> result :hits :hits)))]
+  (let [oppilaitos (map :_source (some-> result :hits :hits))]
     oppilaitos))
 
 (defn get-by-osa
   [oid]
   (some->> (search index oppilaitos-osa-mapper :query {:term {:osat.oid.keyword oid}})
+           (first)
            (select-matching-osat oid)
            (dissoc-kouta-data-if-not-julkaistu)
            (swap-osa-and-parent)
