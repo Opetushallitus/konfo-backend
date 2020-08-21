@@ -147,7 +147,7 @@
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata)
-   (s/->OptionalKey :sorakuvaus) Sorakuvaus
+   (s/->OptionalKey :sorakuvaus) (s/maybe Sorakuvaus)
    :organisaatio                 Organisaatio
    :modified                     Datetime
    :timestamp                    s/Int})
