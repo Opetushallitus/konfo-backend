@@ -73,7 +73,7 @@
    |        - External
    |      parameters:
    |        - in: path
-   |          name: path
+   |          name: oid
    |          schema:
    |            type: string
    |          required: true
@@ -118,7 +118,7 @@
    |        - External
    |      parameters:
    |        - in: path
-   |          name: path
+   |          name: oid
    |          schema:
    |            type: string
    |          required: true
@@ -170,7 +170,7 @@
    |        - External
    |      parameters:
    |        - in: path
-   |          name: path
+   |          name: oid
    |          schema:
    |            type: string
    |          required: true
