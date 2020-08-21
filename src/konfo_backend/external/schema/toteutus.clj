@@ -159,6 +159,6 @@
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmToteutusMetadata)
    :organisaatio                 Organisaatio
-   :teemakuva                    Url
+   (s/->OptionalKey :teemakuva)  Url
    :modified                     Datetime
    :timestamp                    s/Int})

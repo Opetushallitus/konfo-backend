@@ -107,7 +107,7 @@
    :nimi                           Kielistetty
    :hakutapa                       (->Koodi HakutapaKoodi)
    :kohdejoukko                    (->Koodi HaunKohdejoukkoKoodi)
-   :kohdejoukonTarkenne            (->Koodi HaunKohdejoukonTarkenneKoodi)
+   (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
    (s/->OptionalKey :alkamiskausi) (->Koodi AlkamiskausiKoodi)
    (s/->OptionalKey :alkamisvuosi) s/Str
    :hakulomaketyyppi               Hakulomaketyyppi

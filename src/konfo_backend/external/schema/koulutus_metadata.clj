@@ -94,8 +94,8 @@
    :lisatiedot                                [KoulutusLisatieto]
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
    (s/->OptionalKey :tutkintonimike)          [(->Koodi TutkintonimikeKoodi)]
-   (s/->OptionalKey :opintojenLaajuus)        (->Koodi OpintojenLaajuusKoodi)
-   (s/->OptionalKey :opintojenLaajuusyksikko) (->Koodi OpintojenLaajuusyksikkoKoodi)})
+   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))})
 
 (comment def KkMetadata
   {:kuvaus                             Kielistetty

@@ -184,39 +184,39 @@
    |          example: 1587537927174")
 
 (s/defschema Hakukohde
-  {:oid                            HakukohdeOid
-   :toteutusOid                    ToteutusOid
-   :hakuOid                        HakuOid
-   :tila                           Julkaistu
-   :nimi                           Kielistetty
-   :alkamiskausi                   (->Koodi AlkamiskausiKoodi)
-   :alkamisvuosi                   s/Str
-   :kaytetaanHaunAlkamiskautta     s/Bool
-   :jarjestyspaikka                Organisaatio
-   :kaytetaanHaunHakulomaketta     s/Bool
-   :hakulomaketyyppi               Hakulomaketyyppi
-   :hakulomakeKuvaus               Kielistetty
-   :hakulomakeLinkki               Kielistetty
-   :aloituspaikat                  s/Int
-   :ensikertalaisenAloituspaikat   s/Int
-   :pohjakoulutusvaatimus          [(->Koodi PohjakoulutusvaatimusKoodi)]
-   :pohjakoulutusvaatimusTarkenne  Kielistetty
-   :muuPohjakoulutusvaatimus       Kielistetty
-   :toinenAsteOnkoKaksoistutkinto  s/Bool
-   :kaytetaanHaunAikataulua        s/Bool
-   :hakuajat                       [Ajanjakso]
-   :liitteetOnkoSamaToimitusaika   s/Bool
-   :liitteetOnkoSamaToimitusosoite s/Bool
-   (s/->OptionalKey :liitteidenToimitusaika)         Datetime
-   (s/->OptionalKey :liitteidenToimitusosoite)       LiitteenToimitusosoite
-   (s/->OptionalKey :liitteidenToimitustapa)         LiitteenToimitustapa
-   :liitteet                       [Liite]
-   :valintakokeet                  [Valintakoe]
-   :kielivalinta                   [Kieli]
-   (s/->OptionalKey :metadata)     HakukohdeMetadata
-   :organisaatio                   Organisaatio
-   :modified                       Datetime
-   :timestamp                      s/Int})
+  {:oid                                            HakukohdeOid
+   :toteutusOid                                    ToteutusOid
+   :hakuOid                                        HakuOid
+   :tila                                           Julkaistu
+   :nimi                                           Kielistetty
+   (s/->OptionalKey :alkamiskausi)                 (->Koodi AlkamiskausiKoodi)
+   (s/->OptionalKey :alkamisvuosi)                 s/Str
+   :kaytetaanHaunAlkamiskautta                     s/Bool
+   :jarjestyspaikka                                Organisaatio
+   :kaytetaanHaunHakulomaketta                     s/Bool
+   (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
+   :hakulomakeKuvaus                               Kielistetty
+   :hakulomakeLinkki                               Kielistetty
+   (s/->OptionalKey :aloituspaikat)                s/Int
+   (s/->OptionalKey :ensikertalaisenAloituspaikat) s/Int
+   :pohjakoulutusvaatimus                          [(->Koodi PohjakoulutusvaatimusKoodi)]
+   :pohjakoulutusvaatimusTarkenne                  Kielistetty
+   :muuPohjakoulutusvaatimus                       Kielistetty
+   :toinenAsteOnkoKaksoistutkinto                  s/Bool
+   :kaytetaanHaunAikataulua                        s/Bool
+   :hakuajat                                       [Ajanjakso]
+   :liitteetOnkoSamaToimitusaika                   s/Bool
+   :liitteetOnkoSamaToimitusosoite                 s/Bool
+   (s/->OptionalKey :liitteidenToimitusaika)       Datetime
+   (s/->OptionalKey :liitteidenToimitusosoite)     LiitteenToimitusosoite
+   (s/->OptionalKey :liitteidenToimitustapa)       LiitteenToimitustapa
+   :liitteet                                       [Liite]
+   :valintakokeet                                  [Valintakoe]
+   :kielivalinta                                   [Kieli]
+   (s/->OptionalKey :metadata)                     HakukohdeMetadata
+   :organisaatio                                   Organisaatio
+   :modified                                       Datetime
+   :timestamp                                      s/Int})
 
 (def schemas
   (str

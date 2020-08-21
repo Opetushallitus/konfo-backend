@@ -110,7 +110,7 @@
 
 (defn ->Koodi
   [koodi]
-  {:koodiUri koodi
+  {:koodiUri (s/maybe koodi)
    :nimi     Kielistetty})
 
 (def organisaatio-schema

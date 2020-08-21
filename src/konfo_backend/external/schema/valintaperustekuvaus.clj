@@ -142,7 +142,7 @@
    :koulutustyyppi               Koulutustyyppi
    :hakutapa                     (->Koodi HakutapaKoodi)
    :kohdejoukko                  (->Koodi HaunKohdejoukkoKoodi)
-   :kohdejoukonTarkenne          (->Koodi HaunKohdejoukonTarkenneKoodi)
+   (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
    :valintakokeet                [Valintakoe]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty

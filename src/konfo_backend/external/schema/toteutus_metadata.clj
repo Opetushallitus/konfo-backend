@@ -107,27 +107,27 @@
    |            - $ref: '#/components/schemas/Kuvaus'")
 
 (def Opetus
-  {:opetuskieli                    [(->Koodi OpetuskieliKoodi)]
-   :opetuskieletKuvaus             Kielistetty
-   :opetusaika                     [(->Koodi OpetusaikaKoodi)]
-   :opetusaikaKuvaus               Kielistetty
-   :opetustapa                     [(->Koodi OpetustapaKoodi)]
-   :opetustapaKuvaus               Kielistetty
-   :onkoMaksullinen                s/Bool
-   :maksullisuusKuvaus             Kielistetty
-   :maksunMaara                    s/Num
-   :koulutuksenTarkkaAlkamisaika   s/Bool
+  {:opetuskieli                                      [(->Koodi OpetuskieliKoodi)]
+   (s/->OptionalKey :opetuskieletKuvaus)             Kielistetty
+   :opetusaika                                       [(->Koodi OpetusaikaKoodi)]
+   (s/->OptionalKey :opetusaikaKuvaus)               Kielistetty
+   :opetustapa                                       [(->Koodi OpetustapaKoodi)]
+   (s/->OptionalKey :opetustapaKuvaus)               Kielistetty
+   :onkoMaksullinen                                  s/Bool
+   (s/->OptionalKey :maksullisuusKuvaus)             Kielistetty
+   (s/->OptionalKey :maksunMaara)                    s/Num
+   :koulutuksenTarkkaAlkamisaika                     s/Bool
    (s/->OptionalKey :koulutuksenAlkamispaivamaara)   Datetime
    (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
    (s/->OptionalKey :koulutuksenAlkamiskausi)        (->Koodi AlkamiskausiKoodi)
    (s/->OptionalKey :koulutuksenAlkamisvuosi)        s/Num
-   :lisatiedot                     [KoulutusLisatieto]
-   :onkoStipendia                  s/Bool
-   :stipendinMaara                 s/Num
-   :stipendinKuvaus                Kielistetty
-   :suunniteltuKestoVuodet         s/Num
-   :suunniteltuKestoKuukaudet      s/Num
-   :suunniteltuKestoKuvaus         Kielistetty})
+   :lisatiedot                                       [KoulutusLisatieto]
+   :onkoStipendia                                    s/Bool
+   (s/->OptionalKey :stipendinMaara)                 s/Num
+   (s/->OptionalKey :stipendinKuvaus)                Kielistetty
+   :suunniteltuKestoVuodet                           s/Num
+   :suunniteltuKestoKuukaudet                        s/Num
+   (s/->OptionalKey :suunniteltuKestoKuvaus)         Kielistetty})
 
 (def amm-osaamisala-schema
   "|    AmmOsaamisala:
