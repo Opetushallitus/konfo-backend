@@ -137,18 +137,18 @@
   valintaperustekuvaus-schema)
 
 (def Valintaperustekuvaus
-  {:id                           s/Str
-   :tila                         Julkaistu
-   :koulutustyyppi               Koulutustyyppi
-   :hakutapa                     (->Koodi HakutapaKoodi)
-   :kohdejoukko                  (->Koodi HaunKohdejoukkoKoodi)
+  {:id                                    s/Str
+   :tila                                  Julkaistu
+   :koulutustyyppi                        Koulutustyyppi
+   :hakutapa                              (->Koodi HakutapaKoodi)
+   :kohdejoukko                           (->Koodi HaunKohdejoukkoKoodi)
    (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
-   :valintakokeet                [Valintakoe]
-   :kielivalinta                 [Kieli]
-   :nimi                         Kielistetty
-   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata)
-   (s/->OptionalKey :sorakuvaus) (s/maybe Sorakuvaus)
-   :organisaatio                 Organisaatio
-   :modified                     Datetime
-   :timestamp                    s/Int})
+   (s/->OptionalKey :valintakokeet)       [Valintakoe]
+   :kielivalinta                          [Kieli]
+   :nimi                                  Kielistetty
+   (s/->OptionalKey :metadata)            (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata)
+   (s/->OptionalKey :sorakuvaus)          (s/maybe Sorakuvaus)
+   :organisaatio                          Organisaatio
+   :modified                              Datetime
+   :timestamp                             s/Int})
 

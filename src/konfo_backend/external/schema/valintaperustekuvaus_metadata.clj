@@ -191,38 +191,38 @@
        valintatapa-sisalto-taulukko-schema))
 
 (def Kielitaitovaatimus
-  {:kieli                  (->Koodi KielitaitovaatimusKieliKoodi)
-   :kielitaidonVoiOsoittaa [{:kielitaito (->Koodi KielitaidonOsoitteminenKoodi)
-                             :lisatieto  Kielistetty}]
-   :vaatimukset            [{:kielitaitovaatimus          (->Koodi KielitaitovaatimusTyyppiKoodi)
-                             :kielitaitovaatimusKuvaukset [{:kielitaitovaatimusKuvaus (->Koodi KielitaitovaatimusTyypinKuvausKoodi)
-                                                            :kielitaitovaatimusTaso   s/Str}]}]})
+  {:kieli                                    (->Koodi KielitaitovaatimusKieliKoodi)
+   (s/->OptionalKey :kielitaidonVoiOsoittaa) [{(s/->OptionalKey :kielitaito) (s/maybe (->Koodi KielitaidonOsoitteminenKoodi))
+                                               (s/->OptionalKey :lisatieto)  Kielistetty}]
+   (s/->OptionalKey :vaatimukset)            [{(s/->OptionalKey :kielitaitovaatimus)          (s/maybe (->Koodi KielitaitovaatimusTyyppiKoodi))
+                                               (s/->OptionalKey :kielitaitovaatimusKuvaukset) [{(s/->OptionalKey :kielitaitovaatimusKuvaus) (s/maybe (->Koodi KielitaitovaatimusTyypinKuvausKoodi))
+                                                                                                (s/->OptionalKey :kielitaitovaatimusTaso)   (s/maybe s/Str)}]}]})
 
 (def ValintatapaSisaltoTeksti
-  {:tyyppi (s/eq "teksti")
-   :data   Kielistetty})
+  {:tyyppi                   (s/eq "teksti")
+   (s/->OptionalKey :data)   Kielistetty})
 
 (def ValintatapaSisaltoTaulukko
-  {:tyyppi (s/eq "taulukko")
-   :data   {:nimi Kielistetty
-            :rows [{:index s/Num
-                    :isHeader s/Bool
-                    :columns [{:index s/Num
-                               :text  Kielistetty}]}]}})
+  {:tyyppi                   (s/eq "taulukko")
+   (s/->OptionalKey :data)   {(s/->OptionalKey :nimi) Kielistetty
+                              :rows                   [{:index s/Num
+                                                        :isHeader s/Bool
+                                                        (s/->OptionalKey :columns) [{:index s/Num
+                                                                                     (s/->OptionalKey :text) Kielistetty}]}]}})
 
 (def Valintatapa
-  {:valintatapa          (->Koodi ValintatapaKoodi)
-   :nimi                 Kielistetty
-   :kuvaus               Kielistetty
-   :sisalto              [(s/if #(= "taulukko" (:tyyppi %)) ValintatapaSisaltoTaulukko ValintatapaSisaltoTeksti)]
-   :kaytaMuuntotaulukkoa s/Bool
-   :kynnysehto           Kielistetty
-   :enimmaispisteet      s/Num
-   :vahimmaispisteet     s/Num})
+  {:valintatapa                            (->Koodi ValintatapaKoodi)
+   (s/->OptionalKey :nimi)                 Kielistetty
+   (s/->OptionalKey :kuvaus)               Kielistetty
+   (s/->OptionalKey :sisalto)              [(s/if #(= "taulukko" (:tyyppi %)) ValintatapaSisaltoTaulukko ValintatapaSisaltoTeksti)]
+   (s/->OptionalKey :kaytaMuuntotaulukkoa) (s/maybe s/Bool)
+   (s/->OptionalKey :kynnysehto)           Kielistetty
+   (s/->OptionalKey :enimmaispisteet)      (s/maybe s/Num)
+   (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
 (def AmmValintaperustekuvausMetadata
-  {:tyyppi                     Koulutustyyppi
-   :kielitaitovaatimukset      [Kielitaitovaatimus]
-   :valintatavat               [Valintatapa]
-   :valintakokeidenYleiskuvaus Kielistetty
-   :kuvaus                     Kielistetty})
+  {:tyyppi                                       Koulutustyyppi
+   (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
+   (s/->OptionalKey :valintatavat)               [Valintatapa]
+   (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty
+   (s/->OptionalKey :kuvaus)                     Kielistetty})

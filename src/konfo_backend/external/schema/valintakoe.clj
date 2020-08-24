@@ -31,10 +31,10 @@
    |            - $ref: '#/components/schemas/Teksti'")
 
 (def ValintakoeTilaisuus
-  {:osoite            Osoite
-   :aika              Ajanjakso
-   :jarjestamispaikka Kielistetty
-   :lisatietoja       Kielistetty})
+  {:osoite                              Osoite
+   :aika                                Ajanjakso
+   (s/->OptionalKey :jarjestamispaikka) Kielistetty
+   (s/->OptionalKey :lisatietoja)       Kielistetty})
 
 (def valintakoe-metadata-schema
   "|    ValintakoeMetadata:
@@ -63,11 +63,11 @@
    |            - $ref: '#/components/schemas/Teksti'")
 
 (def ValintakoeMetadata
-  {:tietoja                        Kielistetty
-   :liittyyEnnakkovalmistautumista s/Bool
-   :ohjeetEnnakkovalmistautumiseen Kielistetty
-   :erityisjarjestelytMahdollisia  s/Bool
-   :ohjeetErityisjarjestelyihin    Kielistetty})
+  {(s/->OptionalKey :tietoja)                        Kielistetty
+   (s/->OptionalKey :liittyyEnnakkovalmistautumista) s/Bool
+   (s/->OptionalKey :ohjeetEnnakkovalmistautumiseen) Kielistetty
+   (s/->OptionalKey :erityisjarjestelytMahdollisia)  s/Bool
+   (s/->OptionalKey :ohjeetErityisjarjestelyihin)    Kielistetty})
 
 (def valintakoe-schema
   "|    Valintakoe:
@@ -97,11 +97,11 @@
    |            $ref: '#/components/schemas/Valintakoetilaisuus'")
 
 (def Valintakoe
-  {:id s/Str                                                ;s/Uuid
-   :tyyppi (->Koodi ValintakokeenTyyppiKoodi)
-   :nimi Kielistetty
-   :metadata ValintakoeMetadata
-   :tilaisuudet [ValintakoeTilaisuus]})
+  {:id                            s/Str
+   (s/->OptionalKey :tyyppi)      (->Koodi ValintakokeenTyyppiKoodi)
+   (s/->OptionalKey :nimi)        Kielistetty
+   (s/->OptionalKey :metadata)    ValintakoeMetadata
+   (s/->OptionalKey :tilaisuudet) [ValintakoeTilaisuus]})
 
 (def schemas
   (str

@@ -96,7 +96,7 @@
 (def HakukohdeResponse
   (st/merge
     Hakukohde
-    {(s/->OptionalKey :valintaperustekuvaus) Valintaperustekuvaus
+    {(s/->OptionalKey :valintaperustekuvaus) (s/maybe Valintaperustekuvaus)
      (s/->OptionalKey :koulutus)             Koulutus
      (s/->OptionalKey :toteutus)             Toteutus
      (s/->OptionalKey :haku)                 Haku}))

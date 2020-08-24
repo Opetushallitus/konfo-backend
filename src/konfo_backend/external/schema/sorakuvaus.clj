@@ -67,7 +67,7 @@
    :tila Julkaistu
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     {:kuvaus Kielistetty}
+   :metadata                     {(s/->OptionalKey :kuvaus) Kielistetty}
    :organisaatio                 Organisaatio
    :modified                     Datetime})
 
