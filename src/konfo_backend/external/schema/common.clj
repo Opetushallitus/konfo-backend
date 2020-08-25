@@ -209,7 +209,7 @@
 
 (def Ajanjakso
   {:alkaa   Datetime
-   :paattyy Datetime})
+   (s/->OptionalKey :paattyy) (s/maybe Datetime)})
 
 (def osoite-schema
   "|    Osoite:
