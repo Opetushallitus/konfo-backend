@@ -1,0 +1,117 @@
+{
+  "tyyppi" : "yo",
+  "kuvaus": {},
+  "osaamisalat": [
+    {
+      "koodiUri": "osaamisala_1#1",
+      "linkki": {
+        "fi": "http://osaamisala.fi/linkki/fi",
+        "sv": "http://osaamisala.fi/linkki/sv"
+      },
+      "otsikko": {
+        "fi": "Katso osaamisalan tarkempi kuvaus t\u00e4st\u00e4",
+        "sv": "Katso osaamisalan tarkempi kuvaus t\u00e4st\u00e4 sv"
+      }
+    }
+  ],
+  "opetus": {
+    "opetuskieliKoodiUrit": [
+      "oppilaitoksenopetuskieli_1#1"
+    ],
+    "opetusaikaKoodiUrit": ["opetusaikakk_1#1"],
+    "opetustapaKoodiUrit": ["opetuspaikkakk_1#1"],
+    "onkoMaksullinen": true,
+    "maksunMaara": 200.5,
+    "koulutuksenTarkkaAlkamisaika" : false,
+    "koulutuksenAlkamiskausi": "kausi_k#1",
+    "koulutuksenAlkamisvuosi": 2023,
+    "kuvaus": {
+      "fi": "Kuvaus fi",
+      "sv": "Kuvaus sv"
+    },
+    "osiot": [
+      {
+        "otsikko": {
+          "fi": "Opintojen rakenne",
+          "sv": "Rakenne sv"
+        },
+        "teksti": {
+          "fi": "Opintojen rakenteen kuvaus",
+          "sv": "Rakenne kuvaus sv"
+        }
+      },
+      {
+        "otsikko": {
+          "fi": "Sis\u00e4lt\u00f6",
+          "sv": "Sis\u00e4lt\u00f6 sv"
+        },
+        "teksti": {
+          "fi": "Sis\u00e4lt\u00f6 kuvaus",
+          "sv": "Sis\u00e4lt\u00f6 kuvaus sv"
+        }
+      }
+    ]
+  },
+  "asiasanat": [
+    {
+      "kieli": "fi",
+      "arvo": "robotiikka"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "robottiautomatiikka"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "musiikkioppilaitokset"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "hevoset"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "psykologia"
+    }
+  ],
+  "ammattinimikkeet": [
+    {
+      "kieli": "fi",
+      "arvo": "automaatioinsin\u00f6\u00f6ri"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "koneinsin\u00f6\u00f6ri"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "muusikko"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "psykologi"
+    },
+    {
+      "kieli": "fi",
+      "arvo": "hevonen"
+    }
+  ],
+  "yhteyshenkilot": [{
+    "nimi": {
+      "fi": "Aku Ankka",
+      "sv": "Aku Ankka"
+    },
+    "titteli": {
+      "fi": "titteli",
+      "sv": "titteli sv"
+    },
+    "sahkoposti": {
+      "fi": "aku.ankka@ankkalinnankoulu.fi",
+      "sv": "aku.ankka@ankkalinnankoulu.fi"
+    },
+    "puhelinnumero": {
+      "fi": "123",
+      "sv": "123"
+    }
+  }]
+}

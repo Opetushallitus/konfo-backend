@@ -9,14 +9,25 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.valintaperuste :as valintaperuste]))
 
+(defn- when-satisfy
+  [e pred]
+  (when (pred e)
+    e))
+
+(defn- ammatillinen-metadata?
+  [e]
+  (= "amm" (get-in e [:metadata :tyyppi])))
+
 (defn- get-koulutus
   [oid]
   (some-> (koulutus/get oid false)
+          (when-satisfy ammatillinen?)
           (dissoc :muokkaaja :julkinen :esikatselu :organisaatiot)))
 
 (defn get-toteutus
   [oid]
   (some-> (toteutus/get oid false)
+          (when-satisfy ammatillinen-metadata?)
           (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)))
 
 (defn get-hakukohde
@@ -32,18 +43,21 @@
 (defn get-valintaperustekuvaus
   [id]
   (some-> (valintaperuste/get id false)
+          (when-satisfy ammatillinen?)
           (dissoc :sorakuvausId :muokkaaja :julkinen)
           (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
 
 (defn- get-koulutukset-by-oids
   [oids]
   (when (seq oids)
-    (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset"])))
+    (->> (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset"])
+         (filter ammatillinen?))))
 
 (defn- get-toteutukset-by-oids
   [oids]
   (when (seq oids)
     (->> (toteutus/get-many oids ["hakutiedot" "muokkaaja" "organisaatiot"])
+         (filter ammatillinen-metadata?)
          (filter julkaistu?)
          (vec))))
 
@@ -97,13 +111,13 @@
                                  (when-let [valintaperusteId (get-in hakukohde [:valintaperuste :id])]
                                    (get-valintaperustekuvaus valintaperusteId)))
           toteutus (when (or koulutus? toteutus?) (get-toteutus (:toteutusOid hakukohde)))
-          koulutus (when koulutus? (-> toteutus :koulutusOid (get-koulutus) (dissoc :toteutukset)))
-          haku (when haku? (-> hakukohde :hakuOid (get-haku) (dissoc :hakukohteet)))]
+          koulutus (when koulutus? (some-> toteutus :koulutusOid (get-koulutus) (dissoc :toteutukset)))
+          haku (when haku? (some-> hakukohde :hakuOid (get-haku) (dissoc :hakukohteet)))]
       (cond-> (dissoc hakukohde :valintaperuste)
-              koulutus?             (assoc :koulutus koulutus)
-              toteutus?             (assoc :toteutus toteutus)
-              haku?                 (assoc :haku haku)
-              valintaperustekuvaus? (assoc :valintaperustekuvaus valintaperustekuvaus)))))
+              (and koulutus? koulutus)                         (assoc :koulutus koulutus)
+              (and toteutus? toteutus)                         (assoc :toteutus toteutus)
+              (and haku? haku)                                 (assoc :haku haku)
+              (and valintaperustekuvaus? valintaperustekuvaus) (assoc :valintaperustekuvaus valintaperustekuvaus)))))
 
 (defn haku
   [oid koulutukset? toteutukset? hakukohteet?]
