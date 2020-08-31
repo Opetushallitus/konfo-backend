@@ -91,3 +91,15 @@
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
                              :path "hits"
                              :query {:term {"hits.onkoTuleva" tuleva?}}}}]}}))
+
+(defn inner-hits-query-osat
+  [oid lng page size order tuleva?]
+  (let [size (->size size)
+        from (->from page size)]
+    {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
+                           :from    from
+                           :size    size
+                           :sort    {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
+              :path       "hits"
+              :query      {:bool {:must [{:term {"hits.onkoTuleva" tuleva?}}
+                                         {:term {"hits.tarjoajat" oid}}]}}}}))

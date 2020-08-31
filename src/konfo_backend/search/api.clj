@@ -348,6 +348,67 @@
    |        '404':
    |          description: Not found
    |        '400':
+   |          description: Bad request
+   |  /search/oppilaitoksen-osa/{oid}/tarjonta:
+   |    get:
+   |      tags:
+   |        - internal-search
+   |      summary: Hae oppilaitoksen osan koulutustarjonnan
+   |      description: Hakee annetun oppilaitoksen osan koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: oid
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Oppilaitoksen osan yksilöivä oid
+   |          example: 1.2.246.562.10.12345
+   |        - in: query
+   |          name: page
+   |          schema:
+   |            type: number
+   |          required: false
+   |          description: Hakutuloksen sivunumero
+   |          default: 1
+   |        - in: query
+   |          name: size
+   |          schema:
+   |            type: number
+   |          required: false
+   |          description: Hakutuloksen sivun koko
+   |          default: 20
+   |        - in: query
+   |          name: tuleva
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
+   |            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
+   |          default: false
+   |        - in: query
+   |          name: lng
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Haun kieli. 'fi', 'sv' tai 'en'
+   |          default: fi
+   |        - in: query
+   |          name: order
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Järjestys. 'asc' tai 'desc'
+   |          default: desc
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
+   |        '400':
    |          description: Bad request")
 
 (defn- ->search-with-validated-params
@@ -458,5 +519,19 @@
                                         (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
                                         (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
                                         :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size order tuleva)]
+                                                (ok result)
+                                                (not-found "Not found")))))
+
+    (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
+         :path-params [oid :- String]
+         :query-params [{tuleva         :- Boolean false}
+                        {page           :- Long 1}
+                        {size           :- Long 20}
+                        {lng            :- String "fi"}
+                        {order          :- String"asc"}]
+         (with-access-logging request (cond
+                                        (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+                                        (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+                                        :else (if-let [result (oppilaitos-search/search-oppilaitoksen-osan-tarjonta oid lng page size order tuleva)]
                                                 (ok result)
                                                 (not-found "Not found")))))))

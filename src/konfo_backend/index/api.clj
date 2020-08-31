@@ -207,6 +207,29 @@
    |                type: json
    |        '404':
    |          description: Not found
+   |  /oppilaitoksen-osa/{oid}:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae oppilaitoksen osa
+   |      description: Hae oppilaitoksen osan tiedot annetulla oidilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: oid
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Oppilaitoksen osan yksilöivä oid
+   |          example: 1.2.246.562.10.12345
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
    |  /eperuste/{id}:
    |    get:
    |      tags:
@@ -309,6 +332,12 @@
     (GET "/oppilaitos/:oid" [:as request]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (oppilaitos/get oid)]
+                                        (ok result)
+                                        (not-found "Not found"))))
+
+    (GET "/oppilaitoksen-osa/:oid" [:as request]
+         :path-params [oid :- String]
+         (with-access-logging request (if-let [result (oppilaitos/get-by-osa oid)]
                                         (ok result)
                                         (not-found "Not found"))))
 
