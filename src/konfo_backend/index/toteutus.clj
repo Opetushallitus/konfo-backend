@@ -1,7 +1,7 @@
 (ns konfo-backend.index.toteutus
   (:require
     [konfo-backend.tools :refer :all]
-    [konfo-backend.elastic-tools :refer [get-source search]]))
+    [konfo-backend.elastic-tools :refer [get-source search get-sources]]))
 
 (defonce index "toteutus-kouta")
 
@@ -10,6 +10,12 @@
   (let [toteutus (get-source index oid)]
     (when (or draft? (julkaistu? toteutus))
       toteutus)))
+
+(defn get-many
+  ([oids excludes]
+   (get-sources index oids excludes))
+  ([oids]
+   (get-many oids [])))
 
 (defn- parse-kuvaukset
   [result]

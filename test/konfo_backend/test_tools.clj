@@ -17,6 +17,14 @@
       (println e)
       (:body response))))
 
+(defn get-ok-or-print-schema-error
+  [url]
+  (let [response (app (mock/request :get url))
+        status   (:status response)]
+    (if (= 200 status)
+      (->keywordized-response-body response)
+      (is (= status 200) (cheshire/generate-string (->keywordized-response-body response) {:pretty true})))))
+
 (defn get-and-check-status
   [url expected-status]
   (let [response (app (mock/request :get url))]
