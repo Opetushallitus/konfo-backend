@@ -347,6 +347,12 @@
                                         (ok result)
                                         (not-found "Not found"))))
 
+    (GET "/tutkinnonosat/:id" [:as request]
+         :path-params [id :- String]
+         (with-access-logging request (if-let [result (eperuste/get-tutkinnonosat-by-id id)]
+                                        (ok result)
+                                        (not-found "Not found"))))
+
     (GET "/kuvaus/:id" [:as request]
          :path-params [id :- String]
          :query-params [{osaamisalakuvaukset :- Boolean false}]
