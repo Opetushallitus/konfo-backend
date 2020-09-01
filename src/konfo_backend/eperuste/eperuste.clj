@@ -1,6 +1,6 @@
 (ns konfo-backend.eperuste.eperuste
   (:require [konfo-backend.index.eperuste :as eperuste-index]
-            [konfo-backend.index.tutkinnonosat :as tutkinnonosat-index]
+            [konfo-backend.index.tutkinnonosa :as tutkinnonosa-index]
             [konfo-backend.index.osaamisalakuvaus :as osaamisalakuvaus-index]))
 
 (defn get-eperuste-by-id
@@ -19,7 +19,7 @@
     (cond-> (select-keys eperuste [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen])
             with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
 
-(defn get-tutkinnonosat-by-id
+(defn get-tutkinnonosa-by-id
   [id]
-  (when-let [tutkinnonosat (some-> id tutkinnonosat-index/get)]
-    tutkinnonosat))
+  (when-let [tutkinnonosa (some-> id tutkinnonosa-index/get)]
+    tutkinnonosa))

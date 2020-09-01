@@ -347,9 +347,9 @@
                                         (ok result)
                                         (not-found "Not found"))))
 
-    (GET "/tutkinnonosat/:id" [:as request]
+    (GET "/tutkinnonosa/:id" [:as request]
          :path-params [id :- String]
-         (with-access-logging request (if-let [result (eperuste/get-tutkinnonosat-by-id id)]
+         (with-access-logging request (if-let [result (eperuste/get-tutkinnonosa-by-id id)]
                                         (ok result)
                                         (not-found "Not found"))))
 

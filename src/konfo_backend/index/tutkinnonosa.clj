@@ -1,4 +1,4 @@
-(ns konfo-backend.index.tutkinnonosat
+(ns konfo-backend.index.tutkinnonosa
   (:require
     [konfo-backend.tools :refer [koodi-uri-no-version]]
     [konfo-backend.elastic-tools :refer [get-source search]]
@@ -6,9 +6,9 @@
 
 ;TODO tilan pitäisi olla "julkaistu" eikä "valmis"
 
-(defonce index "tutkinnonosat")
+(defonce index "tutkinnonosa")
 
-(def tutkinnonosat-search (partial search index))
+(def tutkinnonosa-search (partial search index))
 
 (defn get
   [id]
@@ -27,9 +27,9 @@
   [result]
   result)
 
-(defn get-tutkinnonosat-by-ids
+(defn get-tutkinnonosa-by-ids
   [ids]
-  (tutkinnonosat-search parse-kuvaukset
+  (tutkinnonosa-search parse-kuvaukset
                    :_source source
                    :size (count ids)
                    :query (->id-query ids)))
