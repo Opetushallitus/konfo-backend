@@ -11,7 +11,7 @@
    |        koodiUri:
    |          type: string
    |          example: kunta_091
-   |          description: Kunnan koodi uri koodistossa
+   |          description: Kunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kunta/1)
    |        nimi:
    |          type: object
    |          description: Kunnan nimi eri kielillä.
@@ -20,6 +20,23 @@
    |            - $ref: '#/components/schemas/Nimi'")
 
 (def KuntaKoodi    #"^kunta_\d+")
+
+(def maakunta-schema
+  "|    Maakunta:
+   |      type: object
+   |      properties:
+   |        maakoodiUri:
+   |          type: string
+   |          example: maakunta_01
+   |          description: Maakunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/maakunta/1)
+   |        nimi:
+   |          type: object
+   |          description: Maakunnan nimi eri kielillä.
+   |          example: {\"fi\": \"Uusimaa\"}
+   |          allOf:
+   |            - $ref: '#/components/schemas/Nimi'")
+
+(def MaakuntaKoodi    #"^maakunta_\d+")
 
 (def koulutus-koodi-schema
   "|    KoulutusKoodi:
@@ -432,6 +449,7 @@
 (def schemas
   (str
     kunta-schema "\n"
+    maakunta-schema "\n"
     koulutus-koodi-schema "\n"
     koulutusala-1-schema "\n"
     koulutusala-2-schema "\n"

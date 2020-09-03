@@ -411,7 +411,7 @@
    |        '400':
    |          description: Bad request")
 
-(defn- ->search-with-validated-params
+(defn ->search-with-validated-params
   [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala]
   (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
         sijainnit           (comma-separated-string->vec sijainti)

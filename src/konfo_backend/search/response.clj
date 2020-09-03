@@ -4,7 +4,7 @@
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.filters :refer [hierarkia]]
     [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-    [konfo-backend.tools :refer [reduce-merge-map]]))
+    [konfo-backend.tools :refer [reduce-merge-map rename-key]]))
 
 (defn- hits
   [response]
@@ -31,6 +31,32 @@
   {:total   (get-in response [:hits :total])
    :hits    (hits response)
    :filters (filters response)})
+
+(defn- inner-hit->toteutus-hit
+  [inner-hit]
+  (let [source (:_source inner-hit)]
+    {:toteutusOid         (:toteutusOid source)
+     :toteutusNimi        (:toteutusNimi source)
+     :oppilaitosOid       (:oppilaitosOid source)
+     :oppilaitosNimi      (:nimi source)
+     :kunnat              (get-in source [:metadata :kunnat])}))
+
+(defn- external-hits
+  [response]
+  (map
+    (fn [hit]
+      (-> (:_source hit)
+          (rename-key :eperuste :ePerusteId)
+          (rename-key :opintojenlaajuus :opintojenLaajuus)
+          (rename-key :opintojenlaajuusyksikko :opintojenLaajuusyksikko)
+          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :hits :hits :hits]))))))
+    (get-in response [:hits :hits])))
+
+(defn parse-external
+  [response]
+  (log-pretty response)
+  {:total   (get-in response [:hits :total])
+   :hits    (external-hits response)})
 
 (defn- inner-hits-with-kuvaukset
   [inner-hits]
