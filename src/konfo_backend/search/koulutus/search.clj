@@ -2,8 +2,8 @@
   (:require
     [konfo-backend.tools :refer [not-blank? log-pretty ammatillinen? koodi-uri-no-version]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query match-all-query aggregations inner-hits-query sorts]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits]]
+    [konfo-backend.search.query :refer [query match-all-query aggregations inner-hits-query sorts external-query]]
+    [konfo-backend.search.response :refer [parse parse-inner-hits parse-external]]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.index.eperuste :refer [get-kuvaukset-by-eperuste-ids]]))
 
@@ -64,3 +64,15 @@
             parse-inner-hits
             :_source ["oid", "koulutus", "nimi"]
             :query (inner-hits-query oid lng page size order tuleva?)))
+
+(defn external-search
+  [keyword lng page size sort order & {:as constraints}]
+  (let [query (external-query keyword lng constraints)]
+    (log-pretty query)
+    (koulutus-kouta-search
+      page
+      size
+      #(-> % parse-external with-kuvaukset)
+      :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenlaajuus", "opintojenlaajuusyksikko", "koulutustyyppi"]
+      :sort (sorts sort order lng)
+      :query query)))

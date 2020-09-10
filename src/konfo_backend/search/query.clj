@@ -103,3 +103,11 @@
               :path       "hits"
               :query      {:bool {:must [{:term {"hits.onkoTuleva" tuleva?}}
                                          {:term {"hits.tarjoajat" oid}}]}}}}))
+
+(defn external-query
+  [keyword lng constraints]
+  {:nested {:path "hits",
+            :inner_hits {},
+            :query {:bool {:must {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}
+                           :filter [{:term {"hits.onkoTuleva" false}},
+                                    (->terms-query :hits.koulutustyypit.keyword ["amm"])]}}}})

@@ -15,8 +15,11 @@
     [konfo-backend.external.schema.sorakuvaus :as sorakuvaus]
     [konfo-backend.external.schema.response :as response]
     [konfo-backend.external.schema.liite :as liite]
+    [konfo-backend.external.schema.search :as search]
     [konfo-backend.external.service :as service]
-    [clj-log.access-log :refer [with-access-logging]]))
+    [clj-log.access-log :refer [with-access-logging]]
+    [konfo-backend.search.api :refer [->search-with-validated-params]]
+    [konfo-backend.search.koulutus.search :refer [external-search]]))
 
 (def paths
   "|  /external/koulutus/{oid}:
@@ -205,7 +208,69 @@
    |              schema:
    |                $ref: '#/components/schemas/HakuResponse'
    |        '404':
-   |          description: Not found")
+   |          description: Not found
+   |  /external/search/toteutukset-koulutuksittain:
+   |    get:
+   |      tags:
+   |        - External
+   |      summary: Hae toteutuksia ja koulutuksia
+   |      description: Hakee toteutuksia koulutuksittain jaoteltuna annetulla hakusanalla
+   |      parameters:
+   |        - in: query
+   |          name: keyword
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
+   |            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
+   |          default: nil
+   |          example: Hevostalous
+   |        - in: query
+   |          name: page
+   |          schema:
+   |            type: number
+   |          required: false
+   |          description: Hakutuloksen sivunumero
+   |          default: 1
+   |        - in: query
+   |          name: size
+   |          schema:
+   |            type: number
+   |          required: false
+   |          description: Hakutuloksen sivun koko
+   |          default: 20
+   |        - in: query
+   |          name: lng
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Haun kieli. 'fi', 'sv' tai 'en'
+   |          default: fi
+   |        - in: query
+   |          name: sort
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Järjestysperuste. 'name' tai 'score'
+   |          default: score
+   |        - in: query
+   |          name: order
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Järjestys. 'asc' tai 'desc'
+   |          default: desc
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                $ref: '#/components/schemas/KoulutusToteutusSearchResponse'
+   |        '404':
+   |          description: Not found
+   |        '400':
+   |          description: Bad request")
 
 (def schemas
   (str common/schemas "\n"
@@ -220,7 +285,8 @@
        haku/schemas "\n"
        valintaperuste/schemas "\n"
        sorakuvaus/schemas "\n"
-       response/schemas "\n"))
+       search/schemas "\n"
+       response/schemas))
 
 (def routes
   (context "/external" []
@@ -265,4 +331,24 @@
          :return response/HakuResponse
       (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
                                      (ok result)
-                                     (not-found "Not found"))))))
+                                     (not-found "Not found"))))
+
+    (GET "/search/toteutukset-koulutuksittain" [:as request]
+         :query-params [{keyword        :- String nil}
+                        {page           :- Long 1}
+                        {size           :- Long 20}
+                        {lng            :- String "fi"}
+                        {sort           :- String "score"}
+                        {order          :- String "desc"}]
+         :return response/KoulutusToteutusSearchResponse
+         (with-access-logging request (->search-with-validated-params external-search
+                                                                      keyword
+                                                                      lng
+                                                                      page
+                                                                      size
+                                                                      sort
+                                                                      order
+                                                                      "amm"
+                                                                      nil
+                                                                      nil
+                                                                      nil)))))

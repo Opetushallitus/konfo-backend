@@ -85,3 +85,9 @@
 (defn ->lower-case-vec
   [coll]
   (vec (map lower-case coll)))
+
+(defn rename-key
+  [coll old new]
+  (-> coll
+      (assoc new (old coll))
+      (dissoc old)))

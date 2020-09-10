@@ -9,8 +9,9 @@
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.hakukohde :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.haku :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintaperustekuvaus  :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.liite :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.valintaperustekuvaus :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.search :refer :all :exclude [schemas]]))
 
 (def koulutus-response-schema
   "|    KoulutusResponse:
@@ -130,8 +131,26 @@
      (s/->OptionalKey :hakukohteet) [Hakukohde]
      (s/->OptionalKey :toteutukset) [Toteutus]}))
 
+(def koulutus-toteutus-search-response-schema
+  "|    KoulutusToteutusSearchResponse:
+   |      type: object
+   |      properties:
+   |        total:
+   |          type: number
+   |          description: Hakutulosten lukumäärä
+   |        hits:
+   |          type: array
+   |          description: Hakutulokset
+   |          items:
+   |            $ref: '#/components/schemas/KoulutusToteutusHit'")
+
+(def KoulutusToteutusSearchResponse
+  {:total s/Int
+   :hits  [KoulutusHit]})
+
 (def schemas
   (str koulutus-response-schema "\n"
        toteutus-response-schema "\n"
        hakukohde-response-schema "\n"
-       haku-response-schema))
+       haku-response-schema "\n"
+       koulutus-toteutus-search-response-schema))
