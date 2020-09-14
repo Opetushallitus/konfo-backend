@@ -44,49 +44,59 @@
     |        opintojenLaajuusyksikko:
     |          type: object
     |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+    |    KorkeakouluMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      properties:
+    |        kuvauksenNimi:
+    |          type: object
+    |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          allOf:
+    |            - $ref: '#/components/schemas/Nimi'
+    |        tutkintonimikeKoodiUrit:
+    |          type: array
+    |          description: Lista koulutuksen tutkintonimikkeistä. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikekk/2)
+    |          items:
+    |            type: string
+    |          example:
+    |            - tutkintonimikekk_110#2
+    |            - tutkintonimikekk_111#2
+    |        opintojenLaajuusKoodiUri:
+    |          type: string
+    |          description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+    |          example: opintojenlaajuus_40#1
+    |    YliopistoKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
+    |        - type: object
+    |          properties:
+    |            koulutustyyppi:
+    |              type: string
+    |              description: Koulutuksen metatiedon tyyppi
+    |              example: yo
+    |              enum:
+    |                - yo
+    |    AmmattikorkeaKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
+    |        - type: object
+    |          properties:
+    |            koulutustyyppi:
+    |              type: string
+    |              description: Koulutuksen metatiedon tyyppi
+    |              example: amk
+    |              enum:
+    |                - amk
     |"
-;    |    KorkeakouluMetadata:
-;    |      allOf:
-;    |        - $ref: '#/components/schemas/KoulutusMetadata'
-;    |      properties:
-;    |        kuvauksenNimi:
-;    |          type: object
-;    |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-;    |          allOf:
-;    |            - $ref: '#/components/schemas/Nimi'
-;    |        tutkintonimike:
-;    |          type: array
-;    |          description: Lista koulutuksen tutkintonimikkeistä. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikekk/2)
-;    |          items:
-;    |            type: object
-;    |            $ref: '#/components/schemas/TutkintonimikeKk'
-;    |        opintojenLaajuus:
-;    |          type: object
-;    |          allOf:
-;    |            - $ref: '#/components/schemas/Tutkinnonlaajuus'
-;    |    YliopistoKoulutusMetadata:
-;    |      allOf:
-;    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
-;    |        - type: object
-;    |          properties:
-;    |            koulutustyyppi:
-;    |              type: string
-;    |              description: Koulutuksen metatiedon tyyppi
-;    |              example: yo
-;    |              enum:
-;    |                - yo
-;    |    AmmattikorkeaKoulutusMetadata:
-;    |      allOf:
-;    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
-;    |        - type: object
-;    |          properties:
-;    |            koulutustyyppi:
-;    |              type: string
-;    |              description: Koulutuksen metatiedon tyyppi
-;    |              example: amk
-;    |              enum:
-;    |                - amk 
-)
+  )
+
+(def KkMetadata
+  {:kuvaus                             Kielistetty
+   :kuvauksenNimi                      Kielistetty
+   :lisatiedot                         [KoulutusLisatieto]
+   :koulutusala                        [(->Koodi Koulutusala2Koodi)]
+   (s/->OptionalKey :tutkintonimike)   [(->Koodi TutkintonimikeKkKoodi)]
+   (s/->OptionalKey :opintojenLaajuus) (->Koodi OpintojenLaajuusKoodi)})
 
 (def AmmKoulutusMetadata
   {:tyyppi                                    Amm
@@ -97,20 +107,22 @@
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))})
 
-(comment def KkMetadata
-  {:kuvaus                             Kielistetty
-   :lisatiedot                         [KoulutusLisatieto]
-   :koulutusala                        [(->Koodi Koulutusala2Koodi)]
-   :kuvauksenNimi                      Kielistetty
-   (s/->OptionalKey :tutkintonimike)   [(->Koodi TutkintonimikeKkKoodi)]
-   (s/->OptionalKey :opintojenLaajuus) (->Koodi OpintojenLaajuusKoodi)})
-
-(comment def AmkMetadata
+(def AmkMetadata
   (st/merge
     {:tyyppi Amk}
     KkMetadata))
 
-(comment def YoMetadata
+(def YoMetadata
   (st/merge
     {:tyyppi Yo}
     KkMetadata))
+
+(comment def LkMetadata
+         (st/merge
+           {:tyyppi Lk}
+           KkMetadata))
+
+(comment def MuuMetadata
+         (st/merge
+           {:tyyppi Muu}
+           KkMetadata))

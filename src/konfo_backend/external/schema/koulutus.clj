@@ -125,7 +125,9 @@
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata)
+   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
+                                                #(= "yo" (:tyyppi %)) YoMetadata
+                                                #(= "amk" (:tyyppi %)) AmkMetadata)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    (s/->OptionalKey :ePerusteId) s/Int

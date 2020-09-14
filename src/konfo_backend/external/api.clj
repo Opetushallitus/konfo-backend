@@ -260,6 +260,13 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    |          default: desc
+   |        - in: query
+   |          name: koulutustyyppi
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Koulutustyyppi
+   |          default: amm
    |      responses:
    |        '200':
    |          description: Ok
@@ -339,7 +346,8 @@
                         {size           :- Long 20}
                         {lng            :- String "fi"}
                         {sort           :- String "score"}
-                        {order          :- String "desc"}]
+                        {order          :- String "desc"}
+                        {koulutustyyppi :- String "amm"}]
          :return response/KoulutusToteutusSearchResponse
          (with-access-logging request (->search-with-validated-params external-search
                                                                       keyword
@@ -348,7 +356,7 @@
                                                                       size
                                                                       sort
                                                                       order
-                                                                      "amm"
+                                                                      koulutustyyppi
                                                                       nil
                                                                       nil
                                                                       nil)))))
