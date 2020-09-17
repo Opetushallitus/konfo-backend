@@ -57,7 +57,9 @@
            {:tyyppi           "yo"
             :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
             :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
-            :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]}}))
+            :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+                     :koulutuksenTarkkaAlkamisaika false
+                     :koulutuksenAlkamisvuosi 2022}}))
 
 (defn mock-get-koodisto
   [x]
