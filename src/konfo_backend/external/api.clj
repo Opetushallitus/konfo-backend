@@ -265,7 +265,8 @@
    |          schema:
    |            type: string
    |          required: false
-   |          description: Koulutustyyppi. 'amm', 'yo' tai 'amk'
+   |          description: Pilkulla eroteltu koulutustyypit. 'amm, 'yo' tai 'amk'
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok

@@ -54,7 +54,7 @@
     |          allOf:
     |            - $ref: '#/components/schemas/Nimi'
     |       tutkintonimike:
-    |         type: object
+    |         type: array
     |         properties:
     |           koodiUri:
     |             type: string

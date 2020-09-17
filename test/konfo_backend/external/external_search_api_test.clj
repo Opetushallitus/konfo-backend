@@ -38,7 +38,6 @@
   (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "julkaistu" :nimi "Koirakoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu" :nimi "Kissakoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
   (fixture/add-toteutus-mock toteutusOid4 koulutusOid3 :tila "tallennettu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock toteutusOid4 koulutusOid4 :tila "tallennettu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata yo-toteutus-metatieto)
 
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
@@ -80,14 +79,6 @@
                            :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                               :nimi {:fi "opintojenlaajuus_150 nimi fi", :sv "opintojenlaajuus_150 nimi sv"}},
                            :koulutustyyppi "amm"}]}))))
-    ;(testing "Search toteutus"
-    ;  (let [r (search :keyword "Hevosalan")]
-    ;    (is (= 2 (:total r)))
-    ;    (is (= [koulutusOid2 koulutusOid4] (vec (map :oid (:hits r)))))))
-    ;(testing "Search toteutus"
-    ;  (let [r (search :keyword "Hevosalan" :koulutustyyppi "yo")]
-    ;    (is (= 1 (:total r)))
-    ;    (is (= [koulutusOid4] (vec (map :oid (:hits r)))))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan")]
         (is (= 1 (:total r)))

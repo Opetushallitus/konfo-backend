@@ -109,6 +109,5 @@
   {:nested {:path "hits",
             :inner_hits {},
             :query {:bool {:must   {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}
-                                :filter (cond-> [{:term {"hits.onkoTuleva" false}}]
-                                                (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints))))
-                                }}}})
+                           :filter (cond-> [{:term {"hits.onkoTuleva" false}}]
+                                           (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}})
