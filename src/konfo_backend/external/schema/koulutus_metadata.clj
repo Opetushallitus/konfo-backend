@@ -53,18 +53,32 @@
     |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
     |          allOf:
     |            - $ref: '#/components/schemas/Nimi'
-    |        tutkintonimikeKoodiUrit:
-    |          type: array
-    |          description: Lista koulutuksen tutkintonimikkeistä. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikekk/2)
-    |          items:
-    |            type: string
-    |          example:
-    |            - tutkintonimikekk_110#2
-    |            - tutkintonimikekk_111#2
-    |        opintojenLaajuusKoodiUri:
-    |          type: string
-    |          description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
-    |          example: opintojenlaajuus_40#1
+    |       tutkintonimike:
+    |         type: object
+    |         properties:
+    |           koodiUri:
+    |             type: string
+    |             example: tutkintonimikekk_110#2
+    |             description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikkeet/2)
+    |           nimi:
+    |             type: object
+    |             description: Tutkintonimikkeem nimi eri kielillä.
+    |             example: {\"fi\": \"Tutkintonimike suomeksi\"}
+    |             allOf:
+    |               - $ref: '#/components/schemas/Nimi'
+    |       opintojenLaajuus:
+    |         type: object
+    |         properties:
+    |           koodiUri:
+    |             type: string
+    |             example: opintojenlaajuus_40
+    |             description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+    |           nimi:
+    |             type: object
+    |             description: Tutkinnon laajuuden eri kielillä.
+    |             example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
+    |             allOf:
+    |               - $ref: '#/components/schemas/Teksti'
     |    YliopistoKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
@@ -95,8 +109,8 @@
    :kuvauksenNimi                      Kielistetty
    :lisatiedot                         [KoulutusLisatieto]
    :koulutusala                        [(->Koodi Koulutusala2Koodi)]
-   (s/->OptionalKey :tutkintonimike)   [(->Koodi TutkintonimikeKkKoodi)]
-   (s/->OptionalKey :opintojenLaajuus) (->Koodi OpintojenLaajuusKoodi)})
+   (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
+   (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))})
 
 (def AmmKoulutusMetadata
   {:tyyppi                                    Amm
@@ -116,13 +130,3 @@
   (st/merge
     {:tyyppi Yo}
     KkMetadata))
-
-(comment def LkMetadata
-         (st/merge
-           {:tyyppi Lk}
-           KkMetadata))
-
-(comment def MuuMetadata
-         (st/merge
-           {:tyyppi Muu}
-           KkMetadata))

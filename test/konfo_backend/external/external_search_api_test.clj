@@ -38,22 +38,23 @@
   (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "julkaistu" :nimi "Koirakoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu" :nimi "Kissakoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
   (fixture/add-toteutus-mock toteutusOid4 koulutusOid3 :tila "tallennettu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock toteutusOid4 koulutusOid4 :tila "tallennettu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata yo-toteutus-metatieto)
 
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto]
     (testing "Search toteutukset"
-      (let [r (search :keyword "hevonen")]
+      (let [r (search :keyword "hevonen" :koulutustyyppi "amm")]
         (is (= 2 (:total r)))
         (is (= [koulutusOid1 koulutusOid2] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid2 toteutusOid3] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Search toteutus"
-      (let [r (search :keyword "koira")]
+      (let [r (search :keyword "koira" :koulutustyyppi "amm")]
         (is (= 1 (:total r)))
         (is (= [koulutusOid1] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid2] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Get correct result"
-      (let [r (search :keyword "kissa")]
+      (let [r (search :keyword "kissa" :koulutustyyppi "amm")]
         (is (= r {:total 1,
                   :hits [{:opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
                                                     :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
@@ -79,9 +80,22 @@
                            :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                               :nimi {:fi "opintojenlaajuus_150 nimi fi", :sv "opintojenlaajuus_150 nimi sv"}},
                            :koulutustyyppi "amm"}]}))))
+    ;(testing "Search toteutus"
+    ;  (let [r (search :keyword "Hevosalan")]
+    ;    (is (= 2 (:total r)))
+    ;    (is (= [koulutusOid2 koulutusOid4] (vec (map :oid (:hits r)))))))
+    ;(testing "Search toteutus"
+    ;  (let [r (search :keyword "Hevosalan" :koulutustyyppi "yo")]
+    ;    (is (= 1 (:total r)))
+    ;    (is (= [koulutusOid4] (vec (map :oid (:hits r)))))))
+    (testing "Search toteutus"
+      (let [r (search :keyword "Hevosalan")]
+        (is (= 1 (:total r)))
+        (is (= [koulutusOid2] (vec (map :oid (:hits r)))))))
+    (testing "Search toteutus"
+      (let [r (search :keyword "Hevosalan" :koulutustyyppi "amm")]
+        (is (= 1 (:total r)))
+        (is (= [koulutusOid2] (vec (map :oid (:hits r)))))))
     (testing "Nothing found"
       (is (= {:total 0,
-              :hits []} (search :keyword "mummo"))))
-
-
-    )))
+              :hits []} (search :keyword "mummo")))))))

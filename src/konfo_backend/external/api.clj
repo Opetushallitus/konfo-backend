@@ -265,8 +265,7 @@
    |          schema:
    |            type: string
    |          required: false
-   |          description: Koulutustyyppi
-   |          default: amm
+   |          description: Koulutustyyppi. 'amm', 'yo' tai 'amk'
    |      responses:
    |        '200':
    |          description: Ok
@@ -347,7 +346,7 @@
                         {lng            :- String "fi"}
                         {sort           :- String "score"}
                         {order          :- String "desc"}
-                        {koulutustyyppi :- String "amm"}]
+                        {koulutustyyppi :- String nil}]
          :return response/KoulutusToteutusSearchResponse
          (with-access-logging request (->search-with-validated-params external-search
                                                                       keyword
