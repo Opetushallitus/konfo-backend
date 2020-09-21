@@ -40,7 +40,9 @@
                                         :koulutusalataso2      {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
                                                                                     :kansallinenkoulutusluokitus2016koulutusalataso2_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutustyyppi        {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}}}}
+                                        :koulutustyyppi        {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}},
+                                                                                    :amm-tutkinnon-osa {:term {:hits.koulutustyypit.keyword "amm-tutkinnon-osa"}},
+                                                                                    :amm-osaamisala {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutustyyppitaso2   {:filters {:filters {:koulutustyyppi_01 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_01"}}
                                                                                     :koulutustyyppi_02 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_02"}}}}
