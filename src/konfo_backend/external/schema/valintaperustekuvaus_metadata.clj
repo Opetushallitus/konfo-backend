@@ -6,8 +6,8 @@
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
     [schema-tools.core :as st]))
 
-(def valintaperuste-metadata-schema
-  "|    ValintaperusteMetadata:
+(def valintaperustekuvaus-metadata-schema
+  "|    ValintaperustekuvausMetadata:
    |      type: object
    |      properties:
    |        kielitaitovaatimukset:
@@ -122,11 +122,11 @@
    |          description: Valintatavan vähimmäispisteet
    |          example: 10.0")
 
-(def amm-valintaperuste-metadata-schema
-  "|    AmmValintaperusteMetadata:
+(def amm-valintaperustekuvaus-metadata-schema
+  "|    AmmValintaperustekuvausMetadata:
    |      type: object
    |      allOf:
-   |        - $ref: '#/components/schemas/ValintaperusteMetadata'
+   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -135,11 +135,11 @@
    |          enum:
    |            - amm")
 
-(def korkeakoulutus-valintaperuste-metadata-schema
-  "|    KorkeakoulutusValintaperusteMetadata:
+(def korkeakoulutus-valintaperustekuvaus-metadata-schema
+  "|    KorkeakoulutusValintaperustekuvausMetadata:
    |      type: object
    |      allOf:
-   |        - $ref: '#/components/schemas/ValintaperusteMetadata'
+   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |      properties:
    |        osaamistaustat:
    |          type: array
@@ -153,11 +153,11 @@
    |          allOf:
    |            - $ref: '#/components/schemas/Kuvaus'")
 
-(def yo-valintaperuste-metadata-schema
-  "|    YoValintaperusteMetadata:
+(def yo-valintaperustekuvaus-metadata-schema
+  "|    YoValintaperustekuvausMetadata:
    |      type: object
    |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperusteMetadata'
+   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -166,11 +166,11 @@
    |          enum:
    |            - yo")
 
-(def amk-valintaperuste-metadata-schema
-  "|    AmkValintaperusteMetadata:
+(def amk-valintaperustekuvaus-metadata-schema
+  "|    AmkValintaperustekuvausMetadata:
    |      type: object
    |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperusteMetadata'
+   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -247,13 +247,13 @@
 (def schemas
   (str valintatapa-sisalto-teksti-schema "\n"
        valintatapa-sisalto-taulukko-schema "\n"
-       valintaperuste-metadata-schema "\n"
+       valintaperustekuvaus-metadata-schema "\n"
        kielitaitovaatimus-schema "\n"
        valintatapa-data-schema "\n"
-       amm-valintaperuste-metadata-schema "\n"
-       korkeakoulutus-valintaperuste-metadata-schema "\n"
-       yo-valintaperuste-metadata-schema "\n"
-       amk-valintaperuste-metadata-schema))
+       amm-valintaperustekuvaus-metadata-schema "\n"
+       korkeakoulutus-valintaperustekuvaus-metadata-schema "\n"
+       yo-valintaperustekuvaus-metadata-schema "\n"
+       amk-valintaperustekuvaus-metadata-schema))
 
 (def Kielitaitovaatimus
   {:kieli                                    (->Koodi KielitaitovaatimusKieliKoodi)
@@ -285,7 +285,7 @@
    (s/->OptionalKey :enimmaispisteet)      (s/maybe s/Num)
    (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
-(def ValintaperusteMetadata
+(def ValintaperusteKuvausMetadata
    {(s/->OptionalKey :valintatavat)               [Valintatapa]
     (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
     (s/->OptionalKey :kuvaus)                     Kielistetty
@@ -294,19 +294,19 @@
 (def AmmValintaperustekuvausMetadata
   (st/merge
      {:tyyppi Amm}
-     ValintaperusteMetadata))
+     ValintaperusteKuvausMetadata))
 
-(def KorkeakoulutusValintaperusteMetadata
+(def KorkeakoulutusValintaperusteKuvausMetadata
   (st/merge
      {:osaamistaustat    [(->Koodi OsaamistaustaKoodi)]}
-     ValintaperusteMetadata))
+     ValintaperusteKuvausMetadata))
 
-(def YoValintaperusteMetadata
+(def YoValintaperusteKuvausMetadata
   (st/merge
      {:tyyppi Yo}
-     KorkeakoulutusValintaperusteMetadata))
+     KorkeakoulutusValintaperusteKuvausMetadata))
 
-(def AmkValintaperusteMetadata
+(def AmkValintaperusteKuvausMetadata
   (st/merge
      {:tyyppi Amk}
-     KorkeakoulutusValintaperusteMetadata))
+     KorkeakoulutusValintaperusteKuvausMetadata))

@@ -108,7 +108,7 @@
         (testing "not julkaistu"
           (get-not-found (koulutus-url koulutusOid2)))
         (testing "not amm"
-          (get-not-found (koulutus-url kkKoulutusOid))))
+          (get-ok (koulutus-url kkKoulutusOid))))
 
       (testing "Get toteutus"
         (testing "ok only toteutus"
@@ -140,7 +140,7 @@
         (testing "not julkaistu"
           (get-not-found (toteutus-url toteutusOid2)))
         (testing "not amm"
-          (get-not-found (toteutus-url kkToteutusOid))))
+          (get-ok (toteutus-url kkToteutusOid))))
 
       (testing "Get hakukohde"
         (testing "ok only hakukohde"
@@ -185,8 +185,8 @@
         (testing "not amm"
           (let [response (get-ok-or-print-schema-error (hakukohde-url kkHakukohdeOid :koulutus true :toteutus true :haku true :valintaperustekuvaus true))]
             (is (= kkHakukohdeOid (:oid response)))
-            (is (nil? (get-in response [:koulutus :oid])))
-            (is (nil? (get-in response [:toteutus :oid])))
+            (is (= kkKoulutusOid (get-in response [:koulutus :oid])))
+            (is (= kkToteutusOid (get-in response [:toteutus :oid])))
             (is (= kkHakuOid (get-in response [:haku :oid])))
             (is (nil? (get-in response [:valintaperustekuvaus :id]))))))
 
@@ -222,6 +222,6 @@
         (testing "not amm"
           (let [response (get-ok-or-print-schema-error (haku-url kkHakuOid :toteutukset true :koulutukset true :hakukohteet true))]
             (is (= kkHakuOid (:oid response)))
-            (is (= [] (response :koulutukset)))
-            (is (= [] (response :toteutukset)))
+            (is (= [kkKoulutusOid] (vec (sort (map :oid (:koulutukset response))))))
+            (is (= [kkToteutusOid] (vec (sort (map :oid (:toteutukset response))))))
             (is (= [kkHakukohdeOid] (vec (sort (map :oid (:hakukohteet response))))))))))))

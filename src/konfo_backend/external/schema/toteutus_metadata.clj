@@ -125,8 +125,8 @@
    :onkoStipendia                                    s/Bool
    (s/->OptionalKey :stipendinMaara)                 s/Num
    (s/->OptionalKey :stipendinKuvaus)                Kielistetty
-   :suunniteltuKestoVuodet                           s/Num
-   :suunniteltuKestoKuukaudet                        s/Num
+   (s/->OptionalKey :suunniteltuKestoVuodet)         s/Num
+   (s/->OptionalKey :suunniteltuKestoKuukaudet)      s/Num
    (s/->OptionalKey :suunniteltuKestoKuvaus)         Kielistetty})
 
 (def korkeakoulu-osaamisala-schema
