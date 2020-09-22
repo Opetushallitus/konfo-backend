@@ -6,7 +6,7 @@
     [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
     [schema-tools.core :as st]))
 
-(def ValintaperusteMetadata-schema
+(def valintaperuste-metadata-schema
   "|    ValintaperusteMetadata:
    |      type: object
    |      properties:
@@ -31,7 +31,7 @@
    |          allOf:
    |            - $ref: '#/components/schemas/Kuvaus'")
 
-(def Kielitaitovaatimus-schema
+(def kielitaitovaatimus-schema
   "|    Kielitaitovaatimus:
    |      type: object
    |      properties:
@@ -79,7 +79,7 @@
    |                      description: Kielitaitovaatimuksen taso
    |                      example: A")
 
-(def ValintatapaData-schema
+(def valintatapa-data-schema
   "|    ValintatapaData:
    |      type: object
    |      properties:
@@ -122,7 +122,7 @@
    |          description: Valintatavan vähimmäispisteet
    |          example: 10.0")
 
-(def AmmValintaperusteMetadata-schema
+(def amm-valintaperuste-metadata-schema
   "|    AmmValintaperusteMetadata:
    |      type: object
    |      allOf:
@@ -135,7 +135,7 @@
    |          enum:
    |            - amm")
 
-(def KorkeakoulutusValintaperusteMetadata-schema
+(def korkeakoulutus-valintaperuste-metadata-schema
   "|    KorkeakoulutusValintaperusteMetadata:
    |      type: object
    |      allOf:
@@ -153,7 +153,7 @@
    |          allOf:
    |            - $ref: '#/components/schemas/Kuvaus'")
 
-(def YoValintaperusteMetadata-schema
+(def yo-valintaperuste-metadata-schema
   "|    YoValintaperusteMetadata:
    |      type: object
    |      allOf:
@@ -166,7 +166,7 @@
    |          enum:
    |            - yo")
 
-(def AmkValintaperusteMetadata-schema
+(def amk-valintaperuste-metadata-schema
   "|    AmkValintaperusteMetadata:
    |      type: object
    |      allOf:
@@ -247,13 +247,13 @@
 (def schemas
   (str valintatapa-sisalto-teksti-schema "\n"
        valintatapa-sisalto-taulukko-schema "\n"
-       ValintaperusteMetadata-schema "\n"
-       Kielitaitovaatimus-schema "\n"
-       ValintatapaData-schema "\n"
-       AmmValintaperusteMetadata-schema "\n"
-       KorkeakoulutusValintaperusteMetadata-schema "\n"
-       YoValintaperusteMetadata-schema "\n"
-       AmkValintaperusteMetadata-schema))
+       valintaperuste-metadata-schema "\n"
+       kielitaitovaatimus-schema "\n"
+       valintatapa-data-schema "\n"
+       amm-valintaperuste-metadata-schema "\n"
+       korkeakoulutus-valintaperuste-metadata-schema "\n"
+       yo-valintaperuste-metadata-schema "\n"
+       amk-valintaperuste-metadata-schema))
 
 (def Kielitaitovaatimus
   {:kieli                                    (->Koodi KielitaitovaatimusKieliKoodi)

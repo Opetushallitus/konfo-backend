@@ -129,7 +129,7 @@
    :suunniteltuKestoKuukaudet                        s/Num
    (s/->OptionalKey :suunniteltuKestoKuvaus)         Kielistetty})
 
-(def KorkeakouluOsaamisala-schema
+(def korkeakoulu-osaamisala-schema
   "|    KorkeakouluOsaamisala:
    |      type: object
    |      properties:
@@ -161,7 +161,7 @@
    :otsikko Kielistetty
    })
 
-(def ToteutusMetadata-schema
+(def toteutus-metadata-schema
   "|    ToteutusMetadata:
    |      type: object
    |      properties:
@@ -189,7 +189,7 @@
    |          items:
    |            $ref: '#/components/schemas/Ammattinimike'")
 
-(def KorkeakouluToteutusMetadata-schema
+(def korkeakoulu-toteutus-metadata-schema
   "|    KorkeakouluToteutusMetadata:
    |      allOf:
    |        - $ref: '#/components/schemas/ToteutusMetadata'
@@ -205,7 +205,7 @@
    |            $ref: '#/components/schemas/KorkeakouluOsaamisala'
    |          description: Lista ylemmän korkeakoulututkinnon erikoistumisalojen, opintosuuntien, pääaineiden tms. kuvauksista.")
 
-(def YliopistoToteutusMetadata-schema
+(def yliopisto-toteutus-metadata-schema
   "|    YliopistoToteutusMetadata:
    |      allOf:
    |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
@@ -218,7 +218,7 @@
    |              enum:
    |                - yo")
 
-(def AmmattikorkeaToteutusMetadata-schema
+(def ammattikorkea-toteutus-metadata-schema
   "|    AmmattikorkeaToteutusMetadata:
    |      allOf:
    |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
@@ -348,8 +348,8 @@
        amm-toteutus-metadata-schema "\n"
        asiasana-schema "\n"
        ammattinimike-schema "\n"
-       KorkeakouluOsaamisala-schema "\n"
-       ToteutusMetadata-schema "\n"
-       KorkeakouluToteutusMetadata-schema "\n"
-       YliopistoToteutusMetadata-schema "\n"
-       AmmattikorkeaToteutusMetadata-schema))
+       korkeakoulu-osaamisala-schema "\n"
+       toteutus-metadata-schema "\n"
+       korkeakoulu-toteutus-metadata-schema "\n"
+       yliopisto-toteutus-metadata-schema "\n"
+       ammattikorkea-toteutus-metadata-schema))
