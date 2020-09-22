@@ -157,7 +157,9 @@
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmToteutusMetadata)
+   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmToteutusMetadata
+                                                #(= "yo" (:tyyppi %)) YoToteutusMetadata
+                                                #(= "amk" (:tyyppi %)) AmkToteutusMetadata)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    :modified                     Datetime

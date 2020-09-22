@@ -53,32 +53,23 @@
     |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
     |          allOf:
     |            - $ref: '#/components/schemas/Nimi'
-    |       tutkintonimike:
-    |         type: array
-    |         properties:
-    |           koodiUri:
-    |             type: string
-    |             example: tutkintonimikekk_110#2
-    |             description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikkeet/2)
-    |           nimi:
-    |             type: object
-    |             description: Tutkintonimikkeem nimi eri kielillä.
-    |             example: {\"fi\": \"Tutkintonimike suomeksi\"}
-    |             allOf:
-    |               - $ref: '#/components/schemas/Nimi'
-    |       opintojenLaajuus:
-    |         type: object
-    |         properties:
-    |           koodiUri:
-    |             type: string
-    |             example: opintojenlaajuus_40
-    |             description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
-    |           nimi:
-    |             type: object
-    |             description: Tutkinnon laajuuden eri kielillä.
-    |             example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-    |             allOf:
-    |               - $ref: '#/components/schemas/Teksti'
+    |        tutkintonimike:
+    |          type: array
+    |          items:
+    |            #ref: '#/components/schemas/Tutkintonimike'
+    |        opintojenLaajuus:
+    |          type: object
+    |          properties:
+    |            koodiUri:
+    |              type: string
+    |              example: opintojenlaajuus_40
+    |              description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+    |            nimi:
+    |              type: object
+    |              description: Tutkinnon laajuuden eri kielillä.
+    |              example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
+    |              allOf:
+    |                - $ref: '#/components/schemas/Teksti'
     |    YliopistoKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'

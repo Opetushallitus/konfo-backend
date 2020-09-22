@@ -446,6 +446,22 @@
 
 (def ValintatapaKoodi #"valintatapajono_\w+(#\d{1,2})?$")
 
+(def osaamistausta-schema
+  "|    Osaamistausta:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: osaamistausta_1
+   |          description: Osaamistausta. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
+   |        nimi:
+   |          type: object
+   |          description: Osaamistausta.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def OsaamistaustaKoodi #"osaamistausta_\d+(#\d{1,2})?$")
+
 (def schemas
   (str
     kunta-schema "\n"
@@ -473,4 +489,5 @@
     hakutapa-schema "\n"
     haun-kohdejoukko-schema "\n"
     haun-kohdejoukon-tarkenne-schema "\n"
-    valintatapa-schema))
+    valintatapa-schema "\n"
+    osaamistausta-schema))

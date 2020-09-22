@@ -129,6 +129,108 @@
    :suunniteltuKestoKuukaudet                        s/Num
    (s/->OptionalKey :suunniteltuKestoKuvaus)         Kielistetty})
 
+(def KorkeakouluOsaamisala-schema
+  "|    KorkeakouluOsaamisala:
+   |      type: object
+   |      properties:
+   |        nimi:
+   |          type: object
+   |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. nimi
+   |          allOf:
+   |            - $ref: '#/components/schemas/Nimi'
+   |        kuvaus:
+   |          type: object
+   |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. kuvaus
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus'
+   |        linkki:
+   |          type: object
+   |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. linkki
+   |          allOf:
+   |            - $ref: '#/components/schemas/Linkki'
+   |        otsikko:
+   |          type: object
+   |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. linkin otsikko
+   |          allOf:
+   |            - $ref: '#/components/schemas/Teksti'")
+
+(def KorkeakouluOsaamisala
+  {:nimi    Kielistetty
+   :kuvaus  Kielistetty
+   :linkki  Kielistetty
+   :otsikko Kielistetty
+   })
+
+(def ToteutusMetadata-schema
+  "|    ToteutusMetadata:
+   |      type: object
+   |      properties:
+   |        kuvaus:
+   |          type: object
+   |          description: Toteutuksen kuvausteksti eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus'
+   |        opetus:
+   |          type: object
+   |          $ref: '#/components/schemas/Opetus'
+   |        yhteyshenkilot:
+   |          type: array
+   |          description: Lista toteutuksen yhteyshenkilöistä
+   |          items:
+   |            $ref: '#/components/schemas/Yhteyshenkilo'
+   |        asiasanat:
+   |          type: array
+   |          description: Lista toteutukseen liittyvistä asiasanoista, joiden avulla opiskelija voi hakea koulutusta Opintopolusta
+   |          items:
+   |            $ref: '#/components/schemas/Asiasana'
+   |        ammattinimikkeet:
+   |          type: array
+   |          description: Lista toteutukseen liittyvistä ammattinimikkeistä, joiden avulla opiskelija voi hakea koulutusta Opintopolusta
+   |          items:
+   |            $ref: '#/components/schemas/Ammattinimike'")
+
+(def KorkeakouluToteutusMetadata-schema
+  "|    KorkeakouluToteutusMetadata:
+   |      allOf:
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
+   |      properties:
+   |        alemmanKorkeakoulututkinnonOsaamisalat:
+   |          type: array
+   |          description: Lista alemman korkeakoulututkinnon erikoistumisalojen, opintosuuntien, pääaineiden tms. kuvauksista.
+   |          items:
+   |            $ref: '#/components/schemas/KorkeakouluOsaamisala'
+   |        ylemmanKorkeakoulututkinnonOsaamisalat:
+   |          type: array
+   |          items:
+   |            $ref: '#/components/schemas/KorkeakouluOsaamisala'
+   |          description: Lista ylemmän korkeakoulututkinnon erikoistumisalojen, opintosuuntien, pääaineiden tms. kuvauksista.")
+
+(def YliopistoToteutusMetadata-schema
+  "|    YliopistoToteutusMetadata:
+   |      allOf:
+   |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
+   |        - type: object
+   |          properties:
+   |            koulutustyyppi:
+   |              type: string
+   |              description: Koulutuksen metatiedon tyyppi
+   |              example: yo
+   |              enum:
+   |                - yo")
+
+(def AmmattikorkeaToteutusMetadata-schema
+  "|    AmmattikorkeaToteutusMetadata:
+   |      allOf:
+   |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
+   |        - type: object
+   |          properties:
+   |            koulutustyyppi:
+   |              type: string
+   |              description: Koulutuksen metatiedon tyyppi
+   |              example: amk
+   |              enum:
+   |                - amk")
+
 (def amm-osaamisala-schema
   "|    AmmOsaamisala:
    |      type: object
@@ -160,43 +262,22 @@
    :otsikko Kielistetty})
 
 (def amm-toteutus-metadata-schema
-  "|    AmmToteutusMetadata:
-   |      type: object
-   |      properties:
-   |        koulutustyyppi:
-   |          type: string
-   |          description: Toteutuksen metatiedon tyyppi
-   |          example: amm
-   |          enum:
-   |            - amm
-   |        osaamisalat:
-   |          type: array
-   |          items:
-   |            $ref: '#/components/schemas/AmmOsaamisala'
-   |            description: Lista ammatillisen koulutuksen osaamisalojen kuvauksia
-   |        kuvaus:
-   |          type: object
-   |          description: Toteutuksen kuvausteksti eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
-   |        opetus:
-   |          type: object
-   |          $ref: '#/components/schemas/Opetus'
-   |        yhteyshenkilot:
-   |          type: array
-   |          description: Lista toteutuksen yhteyshenkilöistä
-   |          items:
-   |            $ref: '#/components/schemas/Yhteyshenkilo'
-   |        asiasanat:
-   |          type: array
-   |          description: Lista toteutukseen liittyvistä asiasanoista, joiden avulla opiskelija voi hakea koulutusta Opintopolusta
-   |          items:
-   |            $ref: '#/components/schemas/Asiasana'
-   |        ammattinimikkeet:
-   |          type: array
-   |          description: Lista toteutukseen liittyvistä ammattinimikkeistä, joiden avulla opiskelija voi hakea koulutusta Opintopolusta
-   |          items:
-   |            $ref: '#/components/schemas/Ammattinimike'")
+  "|    AmmatillinenToteutusMetadata:
+   |      allOf:
+   |        - $ref: '#/components/schemas/KoulutusMetadata'
+   |        - type: object
+   |          properties:
+   |            osaamisalat:
+   |              type: array
+   |              items:
+   |                $ref: '#/components/schemas/Osaamisala'
+   |              description: Lista ammatillisen koulutuksen osaamisalojen kuvauksia
+   |            koulutustyyppi:
+   |              type: string
+   |              description: Koulutuksen metatiedon tyyppi
+   |              example: amm
+   |              enum:
+   |                - amm")
 
 (def asiasana-schema
   "|    Asiasana:
@@ -232,18 +313,43 @@
   {:kieli Kieli
    :arvo s/Str})
 
-(def AmmToteutusMetadata
-  {:tyyppi Amm
-   :osaamisalat [AmmOsaamisala]
-   :kuvaus  Kielistetty
+(def ToteutusMetadata
+  {:kuvaus  Kielistetty
    :opetus Opetus
    :yhteyshenkilot [Yhteyshenkilo]
    :asiasanat [Keyword]
    :ammattinimikkeet [Keyword]})
+
+(def KorkeakoulutusToteutusMetadata
+  (st/merge
+    {:alemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]
+     :ylemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]}
+    ToteutusMetadata))
+
+(def AmmToteutusMetadata
+  (st/merge
+  {:tyyppi Amm
+   :osaamisalat [AmmOsaamisala]}
+    ToteutusMetadata))
+
+(def YoToteutusMetadata
+  (st/merge
+  {:tyyppi Yo}
+  KorkeakoulutusToteutusMetadata))
+
+(def AmkToteutusMetadata
+  (st/merge
+    {:tyyppi Amk}
+    KorkeakoulutusToteutusMetadata))
 
 (def schemas
   (str opetus-schema "\n"
        amm-osaamisala-schema "\n"
        amm-toteutus-metadata-schema "\n"
        asiasana-schema "\n"
-       ammattinimike-schema))
+       ammattinimike-schema "\n"
+       KorkeakouluOsaamisala-schema "\n"
+       ToteutusMetadata-schema "\n"
+       KorkeakouluToteutusMetadata-schema "\n"
+       YliopistoToteutusMetadata-schema "\n"
+       AmmattikorkeaToteutusMetadata-schema))
