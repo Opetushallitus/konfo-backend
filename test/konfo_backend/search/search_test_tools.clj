@@ -45,6 +45,13 @@
                             "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
      :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
+(defonce amk-koulutus-metatieto
+   (cheshire/generate-string
+     {:tyyppi               "amk"
+      :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso2_01#1",
+                             "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
+      :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+
 (defonce toteutus-metatieto
   (cheshire/generate-string
     {:tyyppi           "amm"
@@ -53,13 +60,22 @@
      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]}}))
 
 (defonce yo-toteutus-metatieto
-         (cheshire/generate-string
-           {:tyyppi           "yo"
-            :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
-            :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
-            :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
-                     :koulutuksenTarkkaAlkamisaika false
-                     :koulutuksenAlkamisvuosi 2022}}))
+   (cheshire/generate-string
+     {:tyyppi           "yo"
+      :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
+      :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
+      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+               :koulutuksenTarkkaAlkamisaika false
+               :koulutuksenAlkamisvuosi 2022}}))
+
+(defonce amk-toteutus-metatieto
+   (cheshire/generate-string
+     {:tyyppi           "amk"
+      :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
+      :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
+      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+               :koulutuksenTarkkaAlkamisaika true
+               :koulutuksenAlkamisvuosi 2019}}))
 
 (defn mock-get-koodisto
   [x]

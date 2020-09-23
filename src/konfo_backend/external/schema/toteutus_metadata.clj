@@ -158,8 +158,7 @@
   {:nimi    Kielistetty
    :kuvaus  Kielistetty
    :linkki  Kielistetty
-   :otsikko Kielistetty
-   })
+   :otsikko Kielistetty})
 
 (def toteutus-metadata-schema
   "|    ToteutusMetadata:

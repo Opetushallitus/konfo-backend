@@ -19,7 +19,7 @@
    |          type: array
    |          description: Lista valintaperustekuvauksen valintatavoista
    |          items:
-   |            $ref: '#/components/schemas/ValintatapaData'
+   |            $ref: '#/components/schemas/ValintaperustekuvausValintatapa'
    |        valintakokeidenYleiskuvaus:
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
@@ -79,8 +79,8 @@
    |                      description: Kielitaitovaatimuksen taso
    |                      example: A")
 
-(def valintatapa-data-schema
-  "|    ValintatapaData:
+(def valintaperustekuvaus-valintatapa-schema
+  "|    ValintaperustekuvausValintatapa:
    |      type: object
    |      properties:
    |        valintatapa:
@@ -249,7 +249,7 @@
        valintatapa-sisalto-taulukko-schema "\n"
        valintaperustekuvaus-metadata-schema "\n"
        kielitaitovaatimus-schema "\n"
-       valintatapa-data-schema "\n"
+       valintaperustekuvaus-valintatapa-schema "\n"
        amm-valintaperustekuvaus-metadata-schema "\n"
        korkeakoulutus-valintaperustekuvaus-metadata-schema "\n"
        yo-valintaperustekuvaus-metadata-schema "\n"
