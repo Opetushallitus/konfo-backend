@@ -267,6 +267,7 @@
    |          required: false
    |          description: Pilkulla eroteltu koulutustyypit. 'amm, 'yo' tai 'amk'
    |          default: nil
+   |          example: amk
    |      responses:
    |        '200':
    |          description: Ok
