@@ -6,7 +6,7 @@
     [compojure.api.core :refer [GET context]]
     [ring.util.http-response :refer :all]
     [clj-log.access-log :refer [with-access-logging]]
-    [konfo-backend.tools :refer [comma-separated-string->vec]]))
+    [konfo-backend.tools :refer [comma-separated-string->vec amm-muu->alatyypit]]))
 
 (def paths
   "|  /search/filters:
@@ -96,7 +96,7 @@
    |            type: string
    |          required: false
    |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: amm,kk,lk
+   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala
    |          default: nil
    |        - in: query
    |          name: sijainti
@@ -251,7 +251,7 @@
    |            type: string
    |          required: false
    |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: amm,kk,lk
+   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala
    |          default: nil
    |        - in: query
    |          name: sijainti
@@ -413,7 +413,7 @@
 
 (defn ->search-with-validated-params
   [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala]
-  (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
+  (let [koulutustyypit      (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
         sijainnit           (comma-separated-string->vec sijainti)
         opetuskielet        (comma-separated-string->vec opetuskieli)
         koulutusalat        (comma-separated-string->vec koulutusala)]
