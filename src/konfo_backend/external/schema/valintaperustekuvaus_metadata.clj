@@ -3,122 +3,181 @@
     [schema.core :as s]
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
+    [schema-tools.core :as st]))
 
-
-(def amm-valinteperustekuvaus-metadata-schema
-  "|    AmmValintaperusteMetadata:
+(def valintaperustekuvaus-metadata-schema
+  "|    ValintaperustekuvausMetadata:
    |      type: object
+   |      properties:
+   |        kielitaitovaatimukset:
+   |          type: array
+   |          description: Lista valintaperustekuvauksen kielitaitovaatimuksista
+   |          items:
+   |            $ref: '#/components/schemas/Kielitaitovaatimus'
+   |        valintatavat:
+   |          type: array
+   |          description: Lista valintaperustekuvauksen valintatavoista
+   |          items:
+   |            $ref: '#/components/schemas/ValintaperustekuvausValintatapa'
+   |        valintakokeidenYleiskuvaus:
+   |          type: object
+   |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus')
+   |        kuvaus:
+   |          type: object
+   |          description: Valintaperusteen kuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus'")
+
+(def kielitaitovaatimus-schema
+  "|    Kielitaitovaatimus:
+   |      type: object
+   |      properties:
+   |        kieli:
+   |          type: object
+   |          description: Kielitaitovaatimuksen kieli
+   |          $ref: '#/components/schemas/KielitaitovaatimusKieli'
+   |        kielitaidonVoiOsoittaa:
+   |         type: array
+   |          description: Lista tavoista, joilla kielitaidon voi osoittaa
+   |          items:
+   |            type: object
+   |            properties:
+   |              kielitaito:
+   |                type: object
+   |                description: Kielitaidon osoittaminen
+   |                $ref: '#/components/schemas/KielitaidonOsoittaminen'
+   |              lisatieto:
+   |                type: object
+   |                description: Kielitaidon osoittamisen lisätieto eri kielillä.
+   |                allOf:
+   |                  - $ref: '#/components/schemas/Teksti'
+   |        vaatimukset:
+   |          type: array
+   |          description: Lista kielitaitovaatimuksista
+   |          items:
+   |            type: object
+   |            properties:
+   |              kielitaitovaatimus:
+   |                type: string
+   |                description: Kielitaitovaatimuksen tyyppi
+   |                $ref: '#/components/schemas/KielitaitovaatimusTyyppi'
+   |              kielitaitovaatimusKuvaukset:
+   |                type: array
+   |                description: Lista kielitaitovaatimusten kuvauksia eri kielillä.
+   |                items:
+   |                  type: object
+   |                  properties:
+   |                    kielitaitovaatimusKuvaus:
+   |                      type: string
+   |                      description: Kielitaitovaatimuksen kuvaus
+   |                      $ref: '#/components/schemas/KielitaitovaatimusTyyppiKuvaus'
+   |                    kielitaitovaatimusTaso:
+   |                      type: string
+   |                      description: Kielitaitovaatimuksen taso
+   |                      example: A")
+
+(def valintaperustekuvaus-valintatapa-schema
+  "|    ValintaperustekuvausValintatapa:
+   |      type: object
+   |      properties:
+   |        valintatapa:
+   |          type: object
+   |          description: Valintatapa
+   |          $ref: '#/components/schemas/Valintatapa'
+   |        nimi:
+   |          type: object
+   |          description: Valintatapakuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Nimi'
+   |        kuvaus:
+   |          type: object
+   |          description: Valintatavan kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus'
+   |        sisalto:
+   |          type: array
+   |          description: Valintatavan sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
+   |          items:
+   |          type: object
+   |          oneOf:
+   |            - $ref: '#/components/schemas/ValintatapaSisaltoTeksti'
+   |            - $ref: '#/components/schemas/ValintatapaSisaltoTaulukko'
+   |        kaytaMuuntotaulukkoa:
+   |          type: boolean
+   |          description: Käytetäänkö muuntotaulukkoa?
+   |        kynnysehto:
+   |          type: object
+   |          description: Kynnysehdon kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          allOf:
+   |            - $ref: '#/components/schemas/Kuvaus'
+   |        enimmaispisteet:
+   |          type: double
+   |          description: Valintatavan enimmäispisteet
+   |          example: 20.0
+   |        vahimmaispisteet:
+   |          type: double
+   |          description: Valintatavan vähimmäispisteet
+   |          example: 10.0")
+
+(def amm-valintaperustekuvaus-metadata-schema
+  "|    AmmValintaperustekuvausMetadata:
+   |      type: object
+   |      allOf:
+   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
    |          description: Valintaperustekuvauksen metatiedon tyyppi
    |          example: amm
    |          enum:
-   |            - amm
-   |        kielitaitovaatimukset:
+   |            - amm")
+
+(def korkeakoulutus-valintaperustekuvaus-metadata-schema
+  "|    KorkeakoulutusValintaperustekuvausMetadata:
+   |      type: object
+   |      allOf:
+   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
+   |      properties:
+   |        osaamistaustat:
    |          type: array
-   |          description: Lista valintaperustekuvauskuvauksen kielitaitovaatimuksista
+   |          description: Lista valintaperustekuvauksen osaamistaustoista
    |          items:
    |            type: object
-   |            properties:
-   |              kieli:
-   |                type: object
-   |                description: Kielitaitovaatimuksen kieli
-   |                $ref: '#/components/schemas/KielitaitovaatimusKieli'
-   |              kielitaidonVoiOsoittaa:
-   |                type: array
-   |                description: Lista tavoista, joilla kielitaidon voi osoittaa
-   |                items:
-   |                  type: object
-   |                  properties:
-   |                    kielitaito:
-   |                      type: object
-   |                      description: Kielitaidon osoittaminen
-   |                       $ref: '#/components/schemas/KielitaidonOsoittaminen'
-   |                    lisatieto:
-   |                      type: object
-   |                      description: Kielitaidon osoittamisen lisätieto eri kielillä.
-   |                      allOf:
-   |                        - $ref: '#/components/schemas/Teksti'
-   |              vaatimukset:
-   |                type: array
-   |                description: Lista kielitaitovaatimuksista
-   |                items:
-   |                  type: object
-   |                  properties:
-   |                    kielitaitovaatimus:
-   |                      type: string
-   |                      description: Kielitaitovaatimuksen tyyppi
-   |                      $ref: '#/components/schemas/KielitaitovaatimusTyyppi'
-   |                    kielitaitovaatimusKuvaukset:
-   |                      type: array
-   |                      description: Lista kielitaitovaatimusten kuvauksia eri kielillä.
-   |                      items:
-   |                        type: object
-   |                        properties:
-   |                          kielitaitovaatimusKuvaus:
-   |                            type: string
-   |                            description: Kielitaitovaatimuksen kuvaus
-   |                            $ref: '#/components/schemas/KielitaitovaatimusTyyppiKuvaus'
-   |                          kielitaitovaatimusTaso:
-   |                            type: string
-   |                            description: Kielitaitovaatimuksen taso
-   |                            example: A
-   |        valintatavat:
-   |          type: array
-   |          description: Lista valintaperustekuvauksen valintatavoista
-   |          items:
-   |            type: object
-   |            properties:
-   |              valintatapa:
-   |                type: object
-   |                description: Valintatapa
-   |                $ref: '#/components/schemas/Valintatapa'
-   |              nimi:
-   |                type: object
-   |                description: Valintatapakuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |                allOf:
-   |                  - $ref: '#/components/schemas/Nimi'
-   |              kuvaus:
-   |                type: object
-   |                description: Valintatavan kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |                allOf:
-   |                  - $ref: '#/components/schemas/Kuvaus'
-   |              sisalto:
-   |                type: array
-   |                description: Valintatavan sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
-   |                items:
-   |                type: object
-   |                oneOf:
-   |                  - $ref: '#/components/schemas/ValintatapaSisaltoTeksti'
-   |                  - $ref: '#/components/schemas/ValintatapaSisaltoTaulukko'
-   |              kaytaMuuntotaulukkoa:
-   |                type: boolean
-   |                description: Käytetäänkö muuntotaulukkoa?
-   |              kynnysehto:
-   |                type: object
-   |                description: Kynnysehdon kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |                allOf:
-   |                  - $ref: '#/components/schemas/Kuvaus'
-   |              enimmaispisteet:
-   |                type: double
-   |                description: Valintatavan enimmäispisteet
-   |                example: 20.0
-   |              vahimmaispisteet:
-   |                type: double
-   |                description: Valintatavan vähimmäispisteet
-   |                example: 10.0
-   |        valintakokeidenYleiskuvaus:
-   |          type: object
-   |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |            $ref: '#/components/schemas/Osaamistausta'
    |        kuvaus:
    |          type: object
-   |          description: Valintaperusteen kuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          description: Valintaperustekuvauksen kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
    |          allOf:
    |            - $ref: '#/components/schemas/Kuvaus'")
+
+(def yo-valintaperustekuvaus-metadata-schema
+  "|    YoValintaperustekuvausMetadata:
+   |      type: object
+   |      allOf:
+   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
+   |      properties:
+   |        tyyppi:
+   |          type: string
+   |          description: Valintaperustekuvauksen metatiedon tyyppi
+   |          example: yo
+   |          enum:
+   |            - yo")
+
+(def amk-valintaperustekuvaus-metadata-schema
+  "|    AmkValintaperustekuvausMetadata:
+   |      type: object
+   |      allOf:
+   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
+   |      properties:
+   |        tyyppi:
+   |          type: string
+   |          description: Valintaperustekuvauksen metatiedon tyyppi
+   |          example: amk
+   |          enum:
+   |            - amk")
 
 (def valintatapa-sisalto-teksti-schema
   "|    ValintatapaSisaltoTeksti:
@@ -186,9 +245,15 @@
    |                            - $ref: '#/components/schemas/Teksti'")
 
 (def schemas
-  (str amm-valinteperustekuvaus-metadata-schema "\n"
-       valintatapa-sisalto-teksti-schema "\n"
-       valintatapa-sisalto-taulukko-schema))
+  (str valintatapa-sisalto-teksti-schema "\n"
+       valintatapa-sisalto-taulukko-schema "\n"
+       valintaperustekuvaus-metadata-schema "\n"
+       kielitaitovaatimus-schema "\n"
+       valintaperustekuvaus-valintatapa-schema "\n"
+       amm-valintaperustekuvaus-metadata-schema "\n"
+       korkeakoulutus-valintaperustekuvaus-metadata-schema "\n"
+       yo-valintaperustekuvaus-metadata-schema "\n"
+       amk-valintaperustekuvaus-metadata-schema))
 
 (def Kielitaitovaatimus
   {:kieli                                    (->Koodi KielitaitovaatimusKieliKoodi)
@@ -220,9 +285,28 @@
    (s/->OptionalKey :enimmaispisteet)      (s/maybe s/Num)
    (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
+(def ValintaperusteKuvausMetadata
+   {(s/->OptionalKey :valintatavat)               [Valintatapa]
+    (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
+    (s/->OptionalKey :kuvaus)                     Kielistetty
+    (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty})
+
 (def AmmValintaperustekuvausMetadata
-  {:tyyppi                                       Koulutustyyppi
-   (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
-   (s/->OptionalKey :valintatavat)               [Valintatapa]
-   (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty
-   (s/->OptionalKey :kuvaus)                     Kielistetty})
+  (st/merge
+     {:tyyppi Amm}
+     ValintaperusteKuvausMetadata))
+
+(def KorkeakoulutusValintaperusteKuvausMetadata
+  (st/merge
+     {:osaamistaustat    [(->Koodi OsaamistaustaKoodi)]}
+     ValintaperusteKuvausMetadata))
+
+(def YoValintaperusteKuvausMetadata
+  (st/merge
+     {:tyyppi Yo}
+     KorkeakoulutusValintaperusteKuvausMetadata))
+
+(def AmkValintaperusteKuvausMetadata
+  (st/merge
+     {:tyyppi Amk}
+     KorkeakoulutusValintaperusteKuvausMetadata))
