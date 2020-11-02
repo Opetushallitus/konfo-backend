@@ -78,6 +78,7 @@
                                     {:koodiUri "tutkintonimikkeet_02",
                                      :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                             :sv "tutkintonimikkeet_02 nimi sv"}} ],
+                :oppilaitosTila nil,
                 :koulutustyyppi "yo"} (first (:hits r))))))
 
     (testing "tulevat"
@@ -86,6 +87,7 @@
         (is (= {:oppilaitosOid "1.2.246.562.10.000005",
                 :nimi {:fi "Helsingin yliopisto",
                        :sv "Helsingin yliopisto sv"},
+                :oppilaitosTila nil,
                 :koulutustyyppi "yo",
                 :kunnat [ {:koodiUri "kunta_091",
                            :nimi {:fi "kunta_091 nimi fi",
