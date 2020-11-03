@@ -89,6 +89,7 @@
                 :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
                                           :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                  :sv "opintojenlaajuusyksikko_6 nimi sv"}},
+                :opintojenLaajuusNumero 150,
                 :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                    :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                           :sv "opintojenlaajuus_150 nimi sv"}},

@@ -110,6 +110,7 @@
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
    (s/->OptionalKey :tutkintonimike)          [(->Koodi TutkintonimikeKoodi)]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Int)
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))})
 
 (def AmkMetadata

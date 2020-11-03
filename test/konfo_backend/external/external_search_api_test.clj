@@ -83,6 +83,7 @@
                                                 :nimi {:fi "tutkintonimikkeet_02 nimi fi", :sv "tutkintonimikkeet_02 nimi sv"}}],
                            :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                               :nimi {:fi "opintojenlaajuus_150 nimi fi", :sv "opintojenlaajuus_150 nimi sv"}},
+                           :opintojenLaajuusNumero 150,
                            :koulutustyyppi "amm"}]}))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan")]

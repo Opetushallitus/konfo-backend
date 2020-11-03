@@ -112,7 +112,7 @@
 
       (testing "Search koulutukset, get correct result"
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
-          (is (= {:opintojenlaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
+          (is (= {:opintojenLaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
                                             :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                     :sv "opintojenlaajuusyksikko_6 nimi sv"}},
                   :kuvaus {:fi "osaaminen fi" :sv "osaaminen sv"},
@@ -130,9 +130,10 @@
                                        {:koodiUri  "tutkintonimikkeet_02",
                                         :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                                :sv "tutkintonimikkeet_02 nimi sv"}} ],
-                                        :opintojenlaajuus {:koodiUri  "opintojenlaajuus_150",
-                                                           :nimi {:fi "opintojenlaajuus_150 nimi fi",
-                                                                  :sv "opintojenlaajuus_150 nimi sv"}},
+                  :opintojenLaajuusNumero 150,
+                  :opintojenLaajuus {:koodiUri  "opintojenlaajuus_150",
+                                     :nimi {:fi "opintojenlaajuus_150 nimi fi",
+                                            :sv "opintojenlaajuus_150 nimi sv"}},
                   :eperuste 1234,
                   :koulutustyyppi "amm"} (dissoc (first (:hits r)) :_score)))))))
 
