@@ -47,8 +47,6 @@
     (fn [hit]
       (-> (:_source hit)
           (rename-key :eperuste :ePerusteId)
-          (rename-key :opintojenlaajuus :opintojenLaajuus)
-          (rename-key :opintojenlaajuusyksikko :opintojenLaajuusyksikko)
           (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :hits :hits :hits]))))))
     (get-in response [:hits :hits])))
 

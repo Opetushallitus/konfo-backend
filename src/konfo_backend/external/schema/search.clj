@@ -90,6 +90,7 @@
    (s/->OptionalKey :ePerusteId)              (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)               (s/maybe Url)
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Int)
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
    (s/->OptionalKey :tutkintonimikkeet)       [(->Koodi TutkintonimikeKoodi)]
    :toteutukset                               [KoulutusToteutusHit]})
