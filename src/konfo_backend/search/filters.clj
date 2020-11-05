@@ -34,7 +34,8 @@
       :maakunta       (filters "maakunta")
       :kunta          (filters "kunta")
       :koulutustyyppi (beta-koulutustyyppi aggs) ;TODO! Koodisto
-      :koulutusala    (filters "kansallinenkoulutusluokitus2016koulutusalataso1")}))
+      :koulutusala    (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
+      :opetustapa     (filters "opetuspaikkakk")}))
   ([]
    (hierarkia {})))
 

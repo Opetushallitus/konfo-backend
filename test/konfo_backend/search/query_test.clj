@@ -34,6 +34,9 @@
                                         :opetuskieli           {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
                                                                                     :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
+                                        :opetustapa            {:filters {:filters {:opetuspaikkakk_01 {:term {:hits.opetustavat.keyword "opetuspaikkakk_01"}}
+                                                                                    :opetuspaikkakk_02 {:term {:hits.opetustavat.keyword "opetuspaikkakk_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
                                                                                     :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}

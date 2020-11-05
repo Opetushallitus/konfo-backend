@@ -360,4 +360,5 @@
                                                                       koulutustyyppi
                                                                       nil
                                                                       nil
+                                                                      nil
                                                                       nil)))))

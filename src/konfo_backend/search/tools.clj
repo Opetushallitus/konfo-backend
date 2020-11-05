@@ -24,9 +24,17 @@
   [constraints]
   (constraint? constraints :koulutusala))
 
+(defn opetustapa?
+  [constraints]
+  (constraint? constraints :opetustapa))
+
 (defn constraints?
   [constraints]
-  (or (sijainti? constraints) (koulutustyyppi? constraints) (koulutusala? constraints) (opetuskieli? constraints)))
+  (or (sijainti? constraints)
+      (koulutustyyppi? constraints)
+      (koulutusala? constraints)
+      (opetuskieli? constraints)
+      (opetustapa? constraints)))
 
 (defn ->lng-keyword
   [str lng]

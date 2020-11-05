@@ -122,6 +122,14 @@
    |          description: Pilkulla eroteltu koulutusalojen koodeja
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
    |          default: nil
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -277,6 +285,14 @@
    |          description: Pilkulla eroteltu koulutusalojen koodeja
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
    |          default: nil
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -412,11 +428,12 @@
    |          description: Bad request")
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
   (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
         sijainnit           (comma-separated-string->vec sijainti)
         opetuskielet        (comma-separated-string->vec opetuskieli)
-        koulutusalat        (comma-separated-string->vec koulutusala)]
+        koulutusalat        (comma-separated-string->vec koulutusala)
+        opetustavat         (comma-separated-string->vec opetustapa)]
 
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
@@ -433,7 +450,8 @@
                                                   :koulutustyyppi koulutustyypit
                                                   :sijainti       sijainnit
                                                   :opetuskieli    opetuskielet
-                                                  :koulutusala    koulutusalat)))))
+                                                  :koulutusala    koulutusalat
+                                                  :opetustapa     opetustavat)))))
 
 (def routes
   (context "/search" []
@@ -458,7 +476,8 @@
                         {koulutustyyppi :- String nil}
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
-                        {koulutusala    :- String nil}]
+                        {koulutusala    :- String nil}
+                        {opetustapa     :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
                                                                       keyword
                                                                       lng
@@ -469,7 +488,8 @@
                                                                       koulutustyyppi
                                                                       sijainti
                                                                       opetuskieli
-                                                                      koulutusala)))
+                                                                      koulutusala
+                                                                      opetustapa)))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
          :path-params [oid :- String]
@@ -495,7 +515,8 @@
                         {koulutustyyppi :- String nil}
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
-                        {koulutusala    :- String nil}]
+                        {koulutusala    :- String nil}
+                        {opetustapa     :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                       keyword
                                                                       lng
@@ -506,7 +527,8 @@
                                                                       koulutustyyppi
                                                                       sijainti
                                                                       opetuskieli
-                                                                      koulutusala)))
+                                                                      koulutusala
+                                                                      opetustapa)))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
