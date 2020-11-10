@@ -67,7 +67,6 @@
                 :opetusajat [ ],
                 :nimi {:fi "Punkaharjun yliopisto",
                        :sv "Punkaharjun yliopisto sv"},
-                :oppilaitosTila nil,
                 :oppilaitosOid "1.2.246.562.10.000002",
                 :onkoMaksullinen false,
                 :kunnat [ {:koodiUri "kunta_220",
