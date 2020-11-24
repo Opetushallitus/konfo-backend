@@ -2,7 +2,8 @@
   (:require
     [konfo-backend.tools :refer [koodi-uri-no-version]]
     [konfo-backend.elastic-tools :refer [get-source search]]
-    [konfo-backend.tools :refer [now-in-millis]]))
+    [konfo-backend.tools :refer [now-in-millis]]
+    [konfo-backend.tools :refer [log-pretty]]))
 
 ;TODO tilan pitäisi olla "julkaistu" eikä "valmis"
 
@@ -47,5 +48,29 @@
   [eperuste-ids]
   (eperuste-search parse-kuvaukset
                    :_source source
+                   :size (count eperuste-ids)
+                   :query (->id-query eperuste-ids)))
+
+(defn- parse-tutkinnon-osa-kuvaukset
+  [result]
+  (let [hits (->> (get-in result [:hits :hits]) (map :_source) (vec))]
+    (if (seq hits)
+      (vec (for [hit hits]
+             (assoc hit :tutkinnonOsat (vec (filter #(= (:tila %) "valmis") (:tutkinnonOsat hit))))))
+      hits)))
+
+(defn get-tutkinnon-osa-kuvaukset-by-eperuste-ids
+  [eperuste-ids]
+  (eperuste-search parse-tutkinnon-osa-kuvaukset
+                   :_source [:id
+                             :tutkinnonOsat.id
+                             :tutkinnonOsat.koodiUri
+                             :tutkinnonOsat.tila
+                             :tutkinnonOsat.ammattitaitovaatimukset.fi
+                             :tutkinnonOsat.ammattitaitovaatimukset.sv
+                             :tutkinnonOsat.ammattitaitovaatimukset.en
+                             :tutkinnonOsat.ammattitaidonOsoittamistavat.fi
+                             :tutkinnonOsat.ammattitaidonOsoittamistavat.sv
+                             :tutkinnonOsat.ammattitaidonOsoittamistavat.en]
                    :size (count eperuste-ids)
                    :query (->id-query eperuste-ids)))

@@ -71,6 +71,14 @@
   [e]
   (= "amm" (:koulutustyyppi e)))
 
+(defn amm-osaamisala?
+  [e]
+  (= "amm-osaamisala" (:koulutustyyppi e)))
+
+(defn amm-tutkinnon-osa?
+  [e]
+  (= "amm-tutkinnon-osa" (:koulutustyyppi e)))
+
 (defn comma-separated-string->vec
   [s]
   (->> (some-> s (split #","))
