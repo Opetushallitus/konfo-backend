@@ -23,3 +23,20 @@
   [id]
   (when-let [tutkinnonosa (some-> id tutkinnonosa-index/get)]
     tutkinnonosa))
+
+(defn in?
+  [value coll]
+  (some #(= value %) coll))
+
+(defn get-tutkinnonosa-kuvaukset
+  [eperuste-id koodi-urit]
+  (cond->> (some->> (eperuste-index/get-tutkinnon-osa-kuvaukset-by-eperuste-ids [eperuste-id])
+                    (first)
+                    :tutkinnonOsat
+                    (filter #(= (:tila %) "valmis")))
+           (seq koodi-urit) (filter #(in? (:koodiUri %) koodi-urit))))
+
+(defn get-osaamisala-kuvaukset
+  [eperuste-id koodi-urit]
+  (cond->> (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id eperuste-id)
+           (seq koodi-urit) (filter #(in? (:osaamisalakoodiUri %) koodi-urit))))
