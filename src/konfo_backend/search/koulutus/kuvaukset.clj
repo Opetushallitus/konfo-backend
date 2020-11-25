@@ -49,7 +49,7 @@
 
 (defn- find-amm-kuvaus
   [kuvaukset hit]
-  (when-let [kuvaus (some #(= (:id %) (:eperuste hit)) kuvaukset)]
+  (when-let [kuvaus (first (filter #(= (:id %) (:eperuste hit)) kuvaukset))]
     (select-amm-kuvaus kuvaus)))
 
 (defn- find-amm-osaamisala-kuvaus
