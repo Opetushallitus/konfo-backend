@@ -514,12 +514,19 @@
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}]
-         (with-access-logging request (cond
-                                        (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                        (not (some #{order} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
-                                        :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid lng page size order tuleva)]
-                                                (ok result)
-                                                (not-found "Not found")))))
+         (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
+           (with-access-logging request (cond
+                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+                                          (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+                                          :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid
+                                                                                                                lng
+                                                                                                                page
+                                                                                                                size
+                                                                                                                order
+                                                                                                                tuleva
+                                                                                                                constraints)]
+                                                  (ok result)
+                                                  (not-found "Not found"))))))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword        :- String nil}

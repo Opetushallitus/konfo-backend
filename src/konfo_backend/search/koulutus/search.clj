@@ -59,7 +59,7 @@
       :aggs aggs)))
 
 (defn search-koulutuksen-jarjestajat
-  [oid lng page size order tuleva? & {:as constraints}]
+  [oid lng page size order tuleva? constraints]
   (e/search index
             parse-inner-hits
             :_source ["oid", "koulutus", "nimi"]
