@@ -370,6 +370,38 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    |          default: desc
+   |        - in: query
+   |          name: koulutustyyppi
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu lista koulutustyyppejä
+   |          example: amm,kk,lk
+   |          default: nil
+   |        - in: query
+   |          name: sijainti
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
+   |          example: kunta_091,maakunta_01,maakunta_03
+   |          default: nil
+   |        - in: query
+   |          name: opetuskieli
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
+   |          default: nil
+   |        - in: query
+   |          name: koulutusala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -557,13 +589,24 @@
                         {page           :- Long 1}
                         {size           :- Long 20}
                         {lng            :- String "fi"}
-                        {order          :- String"asc"}]
-         (with-access-logging request (cond
-                                        (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                        (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-                                        :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size order tuleva)]
-                                                (ok result)
-                                                (not-found "Not found")))))
+                        {order          :- String"asc"}
+                        {koulutustyyppi :- String nil}
+                        {sijainti       :- String nil}
+                        {opetuskieli    :- String nil}
+                        {koulutusala    :- String nil}]
+         (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
+           (with-access-logging request (cond
+                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+                                          (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+                                          :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid
+                                                                                                                 lng
+                                                                                                                 page
+                                                                                                                 size
+                                                                                                                 order
+                                                                                                                 tuleva
+                                                                                                                 constraints)]
+                                                  (ok result)
+                                                  (not-found "Not found"))))))
 
     (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
