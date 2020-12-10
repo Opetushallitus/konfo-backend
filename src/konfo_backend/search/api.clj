@@ -443,13 +443,16 @@
    |        '400':
    |          description: Bad request")
 
+
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala]
+  {:koulutustyyppi (comma-separated-string->vec koulutustyyppi)
+   :sijainti (comma-separated-string->vec sijainti)
+   :opetuskieli (comma-separated-string->vec opetuskieli)
+   :koulutusala(comma-separated-string->vec koulutusala)})
+
 (defn ->search-with-validated-params
   [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala]
-  (let [koulutustyypit      (comma-separated-string->vec koulutustyyppi)
-        sijainnit           (comma-separated-string->vec sijainti)
-        opetuskielet        (comma-separated-string->vec opetuskieli)
-        koulutusalat        (comma-separated-string->vec koulutusala)]
-
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -462,10 +465,7 @@
                                                   size
                                                   sort
                                                   order
-                                                  :koulutustyyppi koulutustyypit
-                                                  :sijainti       sijainnit
-                                                  :opetuskieli    opetuskielet
-                                                  :koulutusala    koulutusalat)))))
+                                                  constraints)))))
 
 (def routes
   (context "/search" []

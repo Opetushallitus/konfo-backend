@@ -42,7 +42,7 @@
          (assoc result :hits))))
 
 (defn search
-  [keyword lng page size sort order & {:as constraints}]
+  [keyword lng page size sort order constraints]
   (let [query (if (match-all? keyword constraints)
                 (match-all-query)
                 (query keyword lng constraints))
