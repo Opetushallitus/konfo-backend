@@ -499,6 +499,22 @@
                                                   order
                                                   constraints)))))
 
+(defn- ->search-subentities-with-validated-params
+  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
+    (cond
+      (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+      (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+      :else (if-let [result (f oid
+                               lng
+                               page
+                               size
+                               order
+                               tuleva
+                               constraints)]
+              (ok result)
+              (not-found "Not found")))))
+
 (def routes
   (context "/search" []
 
@@ -546,19 +562,17 @@
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}]
-         (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
-           (with-access-logging request (cond
-                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                          (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-                                          :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid
-                                                                                                                lng
-                                                                                                                page
-                                                                                                                size
-                                                                                                                order
-                                                                                                                tuleva
-                                                                                                                constraints)]
-                                                  (ok result)
-                                                  (not-found "Not found"))))))
+         (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
+                                                                                  oid
+                                                                                  lng
+                                                                                  page
+                                                                                  size
+                                                                                  order
+                                                                                  tuleva
+                                                                                  koulutustyyppi
+                                                                                  sijainti
+                                                                                  opetuskieli
+                                                                                  koulutusala)))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword        :- String nil}
@@ -594,19 +608,17 @@
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}]
-         (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala)]
-           (with-access-logging request (cond
-                                          (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                          (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-                                          :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid
-                                                                                                                 lng
-                                                                                                                 page
-                                                                                                                 size
-                                                                                                                 order
-                                                                                                                 tuleva
-                                                                                                                 constraints)]
-                                                  (ok result)
-                                                  (not-found "Not found"))))))
+         (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
+                                                                                  oid
+                                                                                  lng
+                                                                                  page
+                                                                                  size
+                                                                                  order
+                                                                                  tuleva
+                                                                                  koulutustyyppi
+                                                                                  sijainti
+                                                                                  opetuskieli
+                                                                                  koulutusala)))
 
     (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
