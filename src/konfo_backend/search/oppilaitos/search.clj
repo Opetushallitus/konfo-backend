@@ -27,11 +27,11 @@
         :aggs aggs))))
 
 (defn search-oppilaitoksen-tarjonta
-  [oid lng page size order tuleva?]
+  [oid lng page size order tuleva? & {:as constraints}]
   (e/search index
             parse-inner-hits
             :_source ["oid"]
-            :query (inner-hits-query oid lng page size order tuleva?)))
+            :query (inner-hits-query oid lng page size order tuleva? constraints)))
 
 (defn search-oppilaitoksen-osan-tarjonta
   [oid lng page size order tuleva?]
