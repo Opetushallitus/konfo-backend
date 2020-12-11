@@ -82,11 +82,10 @@
    |              description: Oppijalle Opintopolussa näytettävät haun mahdolliset tulevat hakuajat
    |              items:
    |                $ref: '#/components/schemas/Ajanjakso'
-   |        koulutuksenAlkamiskausi:
-   |          type: object
-   |          description: Koulutuksen alkamiskausi
-   |          allOf:
-   |            - $ref: '#/components/schemas/KoulutuksenAlkamiskausiHaulla'
+   |            koulutuksenAlkamiskausi:
+   |              type: object
+   |              description: Koulutuksen alkamiskausi
+   |              $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille haun nimi, kuvailutiedot ja muut tekstit on käännetty
