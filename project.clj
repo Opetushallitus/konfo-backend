@@ -14,7 +14,7 @@
                  [metosin/ring-swagger-ui "3.25.3"]
                  [clj-http "3.10.0"]
                  [com.amazonaws/aws-java-sdk-s3 "1.11.641"]
-                 [com.amazonaws/aws-java-sdk-sqs "1.11.642"]
+                 [com.amazonaws/aws-java-sdk-sqs "1.11.913"]
                  [compojure "1.6.1"]
                  [lambdaisland/uri "1.1.0"]
                  [ring/ring-core "1.7.1"]
