@@ -11,7 +11,7 @@
 (def oppilaitos-kouta-search (partial e/search-with-pagination index))
 
 (defn search
-  [keyword lng page size sort order & {:as constraints}]
+  [keyword lng page size sort order constraints]
   (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
