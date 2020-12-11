@@ -28,14 +28,6 @@
    |          type: object
    |          description: Haun hakutapa
    |          $ref: '#/components/schemas/Hakutapa'
-   |        alkamiskausi:
-   |          type: object
-   |          description: Haun koulutusten alkamiskausi. Hakukohteella voi olla eri alkamiskausi kuin haulla.
-   |          $ref: '#/components/schemas/Alkamiskausi'
-   |        alkamisvuosi:
-   |          type: string
-   |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
-   |          example: 2020
    |        kohdejoukko:
    |          type: object
    |          description: Haun kohdejoukko
@@ -112,8 +104,6 @@
    :hakutapa                       (->Koodi HakutapaKoodi)
    :kohdejoukko                    (->Koodi HaunKohdejoukkoKoodi)
    (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
-   (s/->OptionalKey :alkamiskausi) (->Koodi AlkamiskausiKoodi)
-   (s/->OptionalKey :alkamisvuosi) s/Str
    :hakulomaketyyppi               Hakulomaketyyppi
    :hakulomakeKuvaus               Kielistetty
    :hakulomakeLinkki               Kielistetty
