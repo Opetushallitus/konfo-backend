@@ -289,23 +289,6 @@
 
 (def OpetustapaKoodi #"opetuspaikkakk_\d+(#\d{1,2})?$")
 
-(def koulutuksenalkamiskausi-schema
-  "|    KoulutuksenAlkamiskausi:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kausi_s
-   |          description: Koulutuksen alkamiskausi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
-   |        nimi:
-   |          type: object
-   |          description: Alkamiskausi eri kielillä
-   |          example: {\"fi\": \"syksy\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
-
-(def KoulutuksenAlkamiskausiKoodi #"kausi_\w+(#\d{1,2})?$")
-
 (def alkamiskausi-schema
   "|    Alkamiskausi:
    |      type: object
@@ -494,7 +477,6 @@
     opetuskieli-schema "\n"
     opetustapa-schema "\n"
     opetusaika-schema "\n"
-    koulutuksenalkamiskausi-schema "\n"
     alkamiskausi-schema "\n"
     pohjakoulutusvaatimus-schema "\n"
     postinumero-schema "\n"
