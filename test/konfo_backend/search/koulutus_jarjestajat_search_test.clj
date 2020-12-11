@@ -56,6 +56,11 @@
         (is (= 1 (count (:hits r))))
         (is (= "1.2.246.562.17.000002" (:toteutusOid (first (:hits r))))))))
 
+  (testing "Can filter by sijainti"
+    (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220")]
+      (is (= 1 (:total r)))
+      (is (= "1.2.246.562.17.000002" (:toteutusOid (first (:hits r)))))))
+
   (testing "Get koulutuksen järjestäjät"
     (testing "no järjestäjiä"
       (let [r (search "1.2.246.562.13.000009")]
