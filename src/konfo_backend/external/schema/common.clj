@@ -211,6 +211,43 @@
   {:alkaa   Datetime
    (s/->OptionalKey :paattyy) (s/maybe Datetime)})
 
+(def Alkamiskausityyppi (s/enum "henkilokohtainen suunnitelma" "tarkka alkamisajankohta" "alkamiskausi ja -vuosi"))
+
+(def koulutuksenalkamiskausi-schema
+  "|    KoulutuksenAlkamiskausi:
+   |      type: object
+   |      properties:
+   |        alkamiskausityyppi:
+   |          type: string
+   |          description: Alkamiskauden tyyppi
+   |          enum:
+   |            - 'henkilokohtainen suunnitelma'
+   |            - 'tarkka alkamisajankohta'
+   |            - 'alkamiskausi ja -vuosi'
+   |        koulutuksenAlkamispaivamaara:
+   |          type: string
+   |          description: Koulutuksen tarkka alkamisen päivämäärä
+   |          example: 2019-11-20T12:00
+   |        koulutuksenPaattymispaivamaara:
+   |          type: string
+   |          description: Koulutuksen päättymisen päivämäärä
+   |          example: 2019-11-20T12:00
+   |        koulutuksenAlkamiskausi:
+   |          type: object
+   |          description: Haun koulutusten alkamiskausi. Hakukohteella voi olla eri alkamiskausi kuin haulla.
+   |          $ref: '#/components/schemas/Alkamiskausi'
+   |        koulutuksenAlkamisvuosi:
+   |          type: string
+   |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
+   |          example: 2020")
+
+(def KoulutuksenAlkamiskausi
+  {(s/->OptionalKey :alkamiskausityyppi) Alkamiskausityyppi
+   (s/->OptionalKey :koulutuksenAlkamispaivamaara) Datetime
+   (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
+   (s/->OptionalKey :koulutuksenAlkamiskausi) (->Koodi KoulutuksenAlkamiskausiKoodi)
+   (s/->OptionalKey :koulutuksenAlkamisvuosi) s/Str})
+
 (def osoite-schema
   "|    Osoite:
    |      type: object
@@ -239,4 +276,5 @@
        koulutuslisatieto-schema "\n"
        yhteyshenkilo-schema "\n"
        ajanjakso-schema "\n"
+       koulutuksenalkamiskausi-schema "\n"
        osoite-schema))
