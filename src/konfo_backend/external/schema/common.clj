@@ -1,8 +1,7 @@
 (ns konfo-backend.external.schema.common
   (:require
     [schema.core :as s]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]])
-  (:import (io.reactivex.internal.operators.observable ObservableFromIterable$FromIterableDisposable)))
+    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def kieli-schema
   "|    Kieli:
