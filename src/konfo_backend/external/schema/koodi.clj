@@ -296,7 +296,7 @@
    |        koodiUri:
    |          type: string
    |          example: kausi_s
-   |          description: Koultuksen alkamiskausi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
+   |          description: Koulutuksen alkamiskausi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
    |        nimi:
    |          type: object
    |          description: Alkamiskausi eri kielillä
