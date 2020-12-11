@@ -66,7 +66,7 @@
             :query (inner-hits-query oid lng page size order tuleva? constraints)))
 
 (defn external-search
-  [keyword lng page size sort order & {:as constraints}]
+  [keyword lng page size sort order constraints]
   (let [query (external-query keyword lng constraints)]
     (log-pretty query)
     (koulutus-kouta-search
