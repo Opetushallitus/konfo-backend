@@ -82,6 +82,11 @@
    |              description: Oppijalle Opintopolussa näytettävät haun mahdolliset tulevat hakuajat
    |              items:
    |                $ref: '#/components/schemas/Ajanjakso'
+   |        koulutuksenAlkamiskausi:
+   |          type: object
+   |          description: Koulutuksen alkamiskausi
+   |          allOf:
+   |            - $ref: '#/components/schemas/KoulutuksenAlkamiskausiHaulla'
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille haun nimi, kuvailutiedot ja muut tekstit on käännetty
@@ -116,7 +121,8 @@
    :hakuajat                       [Ajanjakso]
    :kielivalinta                   [Kieli]
    (s/->OptionalKey :metadata)     {:yhteyshenkilot         [Yhteyshenkilo]
-                                    :tulevaisuudenAikataulu [Ajanjakso]}
+                                    :tulevaisuudenAikataulu [Ajanjakso]
+                                    :koulutuksenAlkamiskausi KoulutuksenAlkamiskausi}
    :organisaatio                   Organisaatio
    :modified                       Datetime
    :timestamp                      s/Int})

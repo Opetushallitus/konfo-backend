@@ -213,7 +213,7 @@
 
 (def Alkamiskausityyppi (s/enum "henkilokohtainen suunnitelma" "tarkka alkamisajankohta" "alkamiskausi ja -vuosi"))
 
-(def koulutuksenalkamiskausi-schema
+(def koulutuksenalkamiskausihaulla-schema
   "|    KoulutuksenAlkamiskausi:
    |      type: object
    |      properties:
@@ -235,7 +235,7 @@
    |        koulutuksenAlkamiskausi:
    |          type: object
    |          description: Haun koulutusten alkamiskausi. Hakukohteella voi olla eri alkamiskausi kuin haulla.
-   |          $ref: '#/components/schemas/Alkamiskausi'
+   |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        koulutuksenAlkamisvuosi:
    |          type: string
    |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
@@ -276,5 +276,5 @@
        koulutuslisatieto-schema "\n"
        yhteyshenkilo-schema "\n"
        ajanjakso-schema "\n"
-       koulutuksenalkamiskausi-schema "\n"
+       koulutuksenalkamiskausihaulla-schema "\n"
        osoite-schema))
