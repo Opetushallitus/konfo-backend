@@ -76,7 +76,7 @@
       :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
       :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
       :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_01"]
-               :opetustapaKoodiUrit ["opetuspaikkakk_02"]
+               :opetustapaKoodiUrit ["opetuspaikkakk_1"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
 

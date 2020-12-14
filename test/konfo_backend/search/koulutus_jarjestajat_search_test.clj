@@ -74,6 +74,10 @@
     (testing "Can filter by opetuskieli"
       (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
         (is (= 1 (:total r)))
+        (is (= audikoulu-oid (:toteutusOid (first (:hits r)))))))
+    (testing "Can filter by opetustapa"
+      (let [r (search autoala-oid :tuleva false :order "asc" :opetustapa "opetuspaikkakk_1")]
+        (is (= 1 (:total r)))
         (is (= audikoulu-oid (:toteutusOid (first (:hits r))))))))
 
   (testing "Get koulutuksen järjestäjät"
