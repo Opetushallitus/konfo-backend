@@ -21,14 +21,21 @@
   [oid & query-params]
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
-(deftest oppilaitos-tarjonta-test
-  (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock "1.2.246.562.13.000002" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000002" :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000002" "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000003" "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
+(def autoala-oid "1.2.246.562.13.000001")
+(def hevosala-oid "1.2.246.562.13.000002")
 
-  (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001" "1.2.246.562.13.000002"] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
+(def ponikoulu-oid "1.2.246.562.17.000001")
+(def mersukoulu-oid "1.2.246.562.17.000002")
+(def audikoulu-oid "1.2.246.562.17.000003")
+
+(deftest oppilaitos-tarjonta-test
+  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
+  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
+  (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock mersukoulu-oid autoala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
+
+  (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
   (testing "Search oppilaitoksen tarjonta with bad requests:"
     (testing "Invalid lng"
@@ -40,18 +47,19 @@
     (testing "asc order"
       (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
         (is (= 2 (:total r)))
-        (is (= "1.2.246.562.17.000002" (:toteutusOid (first (:hits r)))))
-        (is (= "1.2.246.562.17.000001" (:toteutusOid (second (:hits r)))))))
+        (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))
+        (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))))
     (testing "desc order"
       (let [r (search punkaharjun-yliopisto :tuleva false :order "desc")]
         (is (= 2 (:total r)))
-        (is (= "1.2.246.562.17.000001" (:toteutusOid (first (:hits r)))))
-        (is (= "1.2.246.562.17.000002" (:toteutusOid (second (:hits r)))))))
+        (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+        (is (= mersukoulu-oid (:toteutusOid (second (:hits r)))))))
     (testing "paging"
       (let [r (search punkaharjun-yliopisto :tuleva false :page 2 :size 1)]
         (is (= 2 (:total r)))
         (is (= 1 (count (:hits r))))
-        (is (= "1.2.246.562.17.000001" (:toteutusOid (first (:hits r))))))))
+        (is (= ponikoulu-oid (:toteutusOid (first (:hits r))))))))
+
 
   (testing "Get oppilaitoksen tarjonta"
     (testing "no tarjontaa"
@@ -63,8 +71,8 @@
         (is (= 1 (:total r)))
         (is (= {:maksunMaara nil,
                 :kuvaus { },
-                :koulutusOid "1.2.246.562.13.000001"
-                :toteutusOid "1.2.246.562.17.000003",
+                :koulutusOid autoala-oid
+                :toteutusOid audikoulu-oid,
                 :opetusajat [ ],
                 :nimi {:fi "Audikoulutus fi",
                        :sv "Audikoulutus sv"},
@@ -93,7 +101,7 @@
                 :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                    :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                           :sv "opintojenlaajuus_150 nimi sv"}},
-                :koulutusOid "1.2.246.562.13.000002"
+                :koulutusOid hevosala-oid
                 :nimi {:fi "Hevosalan koulutus fi",
                        :sv "Hevosalan koulutus sv"},
                 :kuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
