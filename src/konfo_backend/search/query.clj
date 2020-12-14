@@ -25,7 +25,7 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm"]))
+  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
 
 (defn- aggs
   []
