@@ -73,7 +73,7 @@
      {:tyyppi           "amk"
       :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
       :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
-      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_01"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
 

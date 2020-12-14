@@ -33,7 +33,7 @@
   (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock mersukoulu-oid autoala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata amk-toteutus-metatieto)
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
@@ -60,10 +60,21 @@
         (is (= 1 (count (:hits r))))
         (is (= mersukoulu-oid (:toteutusOid (first (:hits r))))))))
 
-  (testing "Can filter by sijainti"
-    (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220")]
-      (is (= 1 (:total r)))
-      (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
+  (testing "Filtering järjestäjät"
+    (testing "Can filter by sijainti"
+      (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220")]
+        (is (= 1 (:total r)))
+        (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
+    (testing "Can filter by koulutustyyppi"
+      (let [r (search autoala-oid :tuleva false :order "asc" :koulutustyyppi "yo")]
+        (is (= 0 (:total r)))))
+    (testing "All filterts must match"
+      (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220" :koulutustyyppi "yo")]
+        (is (= 0 (:total r)))))
+    (testing "Can filter by opetuskieli"
+      (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
+        (is (= 1 (:total r)))
+        (is (= audikoulu-oid (:toteutusOid (first (:hits r))))))))
 
   (testing "Get koulutuksen järjestäjät"
     (testing "no järjestäjiä"
