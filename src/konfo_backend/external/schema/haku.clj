@@ -111,7 +111,7 @@
    :kielivalinta                   [Kieli]
    (s/->OptionalKey :metadata)     {:yhteyshenkilot         [Yhteyshenkilo]
                                     :tulevaisuudenAikataulu [Ajanjakso]
-                                    :koulutuksenAlkamiskausi KoulutuksenAlkamiskausi}
+                                    :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)}
    :organisaatio                   Organisaatio
    :modified                       Datetime
    :timestamp                      s/Int})

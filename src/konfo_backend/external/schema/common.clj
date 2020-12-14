@@ -241,11 +241,11 @@
    |          example: 2020")
 
 (def KoulutuksenAlkamiskausi
-  {(s/->OptionalKey :alkamiskausityyppi) Alkamiskausityyppi
-   (s/->OptionalKey :koulutuksenAlkamispaivamaara) Datetime
-   (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
-   (s/->OptionalKey :koulutuksenAlkamiskausi) (->Koodi AlkamiskausiKoodi)
-   (s/->OptionalKey :koulutuksenAlkamisvuosi) s/Str})
+  {(s/->OptionalKey :alkamiskausityyppi) (s/maybe Alkamiskausityyppi)
+   (s/->OptionalKey :koulutuksenAlkamispaivamaara) (s/maybe Datetime)
+   (s/->OptionalKey :koulutuksenPaattymispaivamaara) (s/maybe Datetime)
+   (s/->OptionalKey :koulutuksenAlkamiskausi) (s/maybe (->Koodi AlkamiskausiKoodi))
+   (s/->OptionalKey :koulutuksenAlkamisvuosi) (s/maybe s/Str)})
 
 (def osoite-schema
   "|    Osoite:
