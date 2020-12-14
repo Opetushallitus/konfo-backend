@@ -25,7 +25,7 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm"]))
+  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
 
 (defn- aggs
   []
@@ -35,7 +35,8 @@
    :koulutusala         (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso1")
    :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
    :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
-   :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")})
+   :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
+   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
 
 (defn aggregations
   []
@@ -53,7 +54,8 @@
           (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints)))
           (opetuskieli? constraints)     (conj (->terms-query :hits.opetuskielet.keyword   (:opetuskieli constraints)))
           (sijainti? constraints)        (conj (->terms-query :hits.sijainti.keyword       (:sijainti constraints)))
-          (koulutusala? constraints)     (conj (->terms-query :hits.koulutusalat.keyword   (:koulutusala constraints)))))
+          (koulutusala? constraints)     (conj (->terms-query :hits.koulutusalat.keyword   (:koulutusala constraints)))
+          (opetustapa? constraints)      (conj (->terms-query :hits.opetustavat.keyword    (:opetustapa constraints)))))
 
 (defn- bool
   [keyword lng constraints]

@@ -78,6 +78,21 @@
        (map trim)
        (vec)))
 
+(defn contains-element?
+  [coll e]
+  (some? (first (filter #(= e %) coll))))
+
+(defn remove-element
+  [coll e]
+  (remove #(= e %) coll))
+
+;TODO Tämä mäppäily pitäisi tehdä indeksoijassa (laitetaan koulutustyypiksi hakuindeksiin myös amm-muu kyseisille koulutuksille)
+(defn amm-muu->alatyypit
+  [coll]
+  (if (contains-element? coll "amm-muu")
+    (-> coll (remove-element "amm-muu") (conj "amm-tutkinnon-osa" "amm-osaamisala"))
+    coll))
+
 (defn ->koodi-with-version-wildcard
   [koodi]
   (str koodi "#*"))
