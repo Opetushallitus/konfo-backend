@@ -18,7 +18,7 @@
 
 (defn- doc_count-by-koodi-uri
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
 (defn- filters
