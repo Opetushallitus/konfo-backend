@@ -1,8 +1,4 @@
-(ns konfo-backend.external.schema.koodi
-  (:require
-    [schema.core :as s]
-    [ring.swagger.json-schema :as rjs]
-    [schema-tools.core :as st]))
+(ns konfo-backend.external.schema.koodi)
 
 (def kunta-schema
   "|    Kunta:

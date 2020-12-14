@@ -57,7 +57,8 @@
     {:tyyppi           "amm"
      :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
      :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
-     :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]}}))
+     :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+              :opetustapaKoodiUrit ["opetuspaikkakk_02"]}}))
 
 (defonce yo-toteutus-metatieto
    (cheshire/generate-string
@@ -65,6 +66,7 @@
       :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
       :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
       :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+               :opetustapaKoodiUrit ["opetuspaikkakk_02"]
                :koulutuksenTarkkaAlkamisaika false
                :koulutuksenAlkamisvuosi 2022}}))
 
@@ -74,6 +76,7 @@
       :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
       :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
       :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+               :opetustapaKoodiUrit ["opetuspaikkakk_02"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
 
@@ -93,6 +96,14 @@
                                                              :koodit [{:koodiUri "koulutustyyppi_11"
                                                                        :versio 1
                                                                        :nimi {:fi "Mahtava koulutustyyppi"}}]}
+    (= "opetuspaikkakk" x)                                  {:id "opetuspaikkakk"
+                                                             :koodisto "opetuspaikkakk"
+                                                             :koodit [{:koodiUri "opetuspaikkakk_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Mahtava opetustapa"}}
+                                                                      {:koodiUri "opetuspaikkakk_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Toinen mahtava opetustapa"}}]}
     (= "oppilaitoksenopetuskieli" x)                        {:id "oppilaitoksenopetuskieli"
                                                              :koodisto "oppilaitoksenopetuskieli"
                                                              :koodit [{:koodiUri "oppilaitoksenopetuskieli_01"

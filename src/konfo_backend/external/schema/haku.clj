@@ -28,14 +28,6 @@
    |          type: object
    |          description: Haun hakutapa
    |          $ref: '#/components/schemas/Hakutapa'
-   |        alkamiskausi:
-   |          type: object
-   |          description: Haun koulutusten alkamiskausi. Hakukohteella voi olla eri alkamiskausi kuin haulla.
-   |          $ref: '#/components/schemas/Alkamiskausi'
-   |        alkamisvuosi:
-   |          type: string
-   |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
-   |          example: 2020
    |        kohdejoukko:
    |          type: object
    |          description: Haun kohdejoukko
@@ -82,6 +74,10 @@
    |              description: Oppijalle Opintopolussa näytettävät haun mahdolliset tulevat hakuajat
    |              items:
    |                $ref: '#/components/schemas/Ajanjakso'
+   |            koulutuksenAlkamiskausi:
+   |              type: object
+   |              description: Koulutuksen alkamiskausi
+   |              $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille haun nimi, kuvailutiedot ja muut tekstit on käännetty
@@ -108,15 +104,14 @@
    :hakutapa                       (->Koodi HakutapaKoodi)
    :kohdejoukko                    (->Koodi HaunKohdejoukkoKoodi)
    (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
-   (s/->OptionalKey :alkamiskausi) (->Koodi AlkamiskausiKoodi)
-   (s/->OptionalKey :alkamisvuosi) s/Str
    :hakulomaketyyppi               Hakulomaketyyppi
    :hakulomakeKuvaus               Kielistetty
    :hakulomakeLinkki               Kielistetty
    :hakuajat                       [Ajanjakso]
    :kielivalinta                   [Kieli]
    (s/->OptionalKey :metadata)     {:yhteyshenkilot         [Yhteyshenkilo]
-                                    :tulevaisuudenAikataulu [Ajanjakso]}
+                                    :tulevaisuudenAikataulu [Ajanjakso]
+                                    :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)}
    :organisaatio                   Organisaatio
    :modified                       Datetime
    :timestamp                      s/Int})
