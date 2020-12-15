@@ -60,10 +60,13 @@
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
-  (e/search index
-            parse-inner-hits
-            :_source ["oid", "koulutus", "nimi"]
-            :query (inner-hits-query oid lng page size order tuleva? constraints)))
+  (let [query (inner-hits-query oid lng page size order tuleva? constraints)
+        aggs (aggregations)]
+    (e/search index
+              parse-inner-hits
+              :_source ["oid", "koulutus", "nimi"]
+              :query query
+              :aggs aggs)))
 
 (defn external-search
   [keyword lng page size sort order constraints]
