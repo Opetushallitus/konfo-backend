@@ -192,14 +192,6 @@
    |          description: Järjestys. 'asc' tai 'desc'
    |          default: desc
    |        - in: query
-   |          name: koulutustyyppi
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: amm,kk,lk
-   |          default: nil
-   |        - in: query
    |          name: sijainti
    |          schema:
    |            type: string
@@ -593,7 +585,6 @@
                         {size           :- Long 20}
                         {lng            :- String "fi"}
                         {order          :- String "asc"}
-                        {koulutustyyppi :- String nil}
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}
@@ -605,7 +596,7 @@
                                                                                   size
                                                                                   order
                                                                                   tuleva
-                                                                                  koulutustyyppi
+                                                                                  nil
                                                                                   sijainti
                                                                                   opetuskieli
                                                                                   koulutusala

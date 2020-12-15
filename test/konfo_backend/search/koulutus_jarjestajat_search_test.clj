@@ -65,11 +65,8 @@
       (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220")]
         (is (= 1 (:total r)))
         (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
-    (testing "Can filter by koulutustyyppi"
-      (let [r (search autoala-oid :tuleva false :order "asc" :koulutustyyppi "yo")]
-        (is (= 0 (:total r)))))
     (testing "All filterts must match"
-      (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220" :koulutustyyppi "yo")]
+      (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220" :opetuskieli "oppilaitoksenopetuskieli_03")]
         (is (= 0 (:total r)))))
     (testing "Can filter by opetuskieli"
       (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
