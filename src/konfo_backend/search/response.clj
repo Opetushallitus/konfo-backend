@@ -72,5 +72,5 @@
 (defn parse-inner-hits
   [response]
   (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
-    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits)}
-    {:total 0 :hits []}))
+    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filters response)}
+    {:total 0 :hits [] :filters {}}))
