@@ -10,7 +10,8 @@
     [konfo-backend.index.lokalisointi :as lokalisointi]
     [compojure.api.core :as c :refer [GET POST]]
     [ring.util.http-response :refer :all]
-    [clj-log.access-log :refer [with-access-logging]]))
+    [clj-log.access-log :refer [with-access-logging]]
+    [konfo-backend.tools :refer [comma-separated-string->vec]]))
 
 (def paths
   "|  /translation/{lng}:
@@ -284,6 +285,70 @@
    |              schema:
    |                type: json
    |        '404':
+   |          description: Not found
+   |  /kuvaus/{id}/tutkinnonosat:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae tutkinnon osan kuvaukset ePerusteista
+   |      description: Hae tutkinnon osan kuvaus ePerusteista eperuste-id:n ja tutkinnon osan koodi-uri:n perusteella.
+   |        Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: id
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: ePerusteen yksilöivä id
+   |          example: 12234
+   |        - in: query
+   |          name: koodi-urit
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: pilkulla erotettu lista tutkinnon osien koodi-ureja.
+   |            Jos puuttuu, palautetaan kaikkien tutkinnon osien kuvaukset
+   |          example: tutkinnonosat_123,tutkinnonosat_124
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
+   |  /kuvaus/{id}/osaamisalat:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae osaamisalojen kuvaukset ePerusteista
+   |      description: Hae osaamisalan kuvaus ePerusteista eperuste-id:n ja osaamisalan koodi-uri:n perusteella.
+   |        Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: id
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: ePerusteen yksilöivä id
+   |          example: 12234
+   |        - in: query
+   |          name: koodi-urit
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: pilkulla erotettu lista osaamisalojen koodi-ureja.
+   |            Jos puuttuu, palautetaan kaikkien osaamisalojen kuvaukset
+   |          example: osaamisala_123,osaamisala_124
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
    |          description: Not found")
 
 (def routes
@@ -357,5 +422,19 @@
          :path-params [id :- String]
          :query-params [{osaamisalakuvaukset :- Boolean false}]
          (with-access-logging request (if-let [result (eperuste/get-kuvaus-by-eperuste-id id osaamisalakuvaukset)]
+                                        (ok result)
+                                        (not-found "Not found"))))
+
+    (GET "/kuvaus/:id/tutkinnonosat" [:as request]
+         :path-params [id :- String]
+         :query-params [{koodi-urit :- String nil}]
+         (with-access-logging request (if-let [result (eperuste/get-tutkinnonosa-kuvaukset id (comma-separated-string->vec koodi-urit))]
+                                        (ok result)
+                                        (not-found "Not found"))))
+
+    (GET "/kuvaus/:id/osaamisalat" [:as request]
+         :path-params [id :- String]
+         :query-params [{koodi-urit :- String nil}]
+         (with-access-logging request (if-let [result (eperuste/get-osaamisala-kuvaukset id (comma-separated-string->vec koodi-urit))]
                                         (ok result)
                                         (not-found "Not found"))))))
