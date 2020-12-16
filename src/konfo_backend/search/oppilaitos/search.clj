@@ -11,7 +11,7 @@
 (def oppilaitos-kouta-search (partial e/search-with-pagination index))
 
 (defn search
-  [keyword lng page size sort order & {:as constraints}]
+  [keyword lng page size sort order constraints]
   (when (do-search? keyword constraints)
     (let [query (query keyword lng constraints)
           aggs (aggregations)]
@@ -27,11 +27,11 @@
         :aggs aggs))))
 
 (defn search-oppilaitoksen-tarjonta
-  [oid lng page size order tuleva?]
+  [oid lng page size order tuleva? constraints]
   (e/search index
             parse-inner-hits
             :_source ["oid"]
-            :query (inner-hits-query oid lng page size order tuleva?)))
+            :query (inner-hits-query oid lng page size order tuleva? constraints)))
 
 (defn search-oppilaitoksen-osan-tarjonta
   [oid lng page size order tuleva?]

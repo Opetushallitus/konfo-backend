@@ -83,7 +83,7 @@
     [{:_score {:order order}} (->name-sort "asc" lng)]))
 
 (defn inner-hits-query
-  [oid lng page size order tuleva?]
+  [oid lng page size order tuleva? constraints]
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
@@ -92,7 +92,8 @@
                                           :size size
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
                              :path "hits"
-                             :query {:term {"hits.onkoTuleva" tuleva?}}}}]}}))
+                             :query {:bool {:must {:term {"hits.onkoTuleva" tuleva?}}
+                                            :filter (filters constraints)}}}}]}}))
 
 (defn inner-hits-query-osat
   [oid lng page size order tuleva?]

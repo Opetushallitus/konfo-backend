@@ -191,6 +191,38 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    |          default: desc
+   |        - in: query
+   |          name: sijainti
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
+   |          example: kunta_091,maakunta_01,maakunta_03
+   |          default: nil
+   |        - in: query
+   |          name: opetuskieli
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
+   |          default: nil
+   |        - in: query
+   |          name: koulutusala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
+   |          default: nil
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -354,6 +386,46 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    |          default: desc
+   |        - in: query
+   |          name: koulutustyyppi
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu lista koulutustyyppejä
+   |          example: amm,kk,lk
+   |          default: nil
+   |        - in: query
+   |          name: sijainti
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
+   |          example: kunta_091,maakunta_01,maakunta_03
+   |          default: nil
+   |        - in: query
+   |          name: opetuskieli
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
+   |          default: nil
+   |        - in: query
+   |          name: koulutusala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
+   |          default: nil
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -427,14 +499,17 @@
    |        '400':
    |          description: Bad request")
 
+
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
+  {:koulutustyyppi (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
+   :sijainti (comma-separated-string->vec sijainti)
+   :opetuskieli (comma-separated-string->vec opetuskieli)
+   :koulutusala (comma-separated-string->vec koulutusala)
+   :opetustapa (comma-separated-string->vec opetustapa)})
+
 (defn ->search-with-validated-params
   [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [koulutustyypit      (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
-        sijainnit           (comma-separated-string->vec sijainti)
-        opetuskielet        (comma-separated-string->vec opetuskieli)
-        koulutusalat        (comma-separated-string->vec koulutusala)
-        opetustavat         (comma-separated-string->vec opetustapa)]
-
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -447,11 +522,23 @@
                                                   size
                                                   sort
                                                   order
-                                                  :koulutustyyppi koulutustyypit
-                                                  :sijainti       sijainnit
-                                                  :opetuskieli    opetuskielet
-                                                  :koulutusala    koulutusalat
-                                                  :opetustapa     opetustavat)))))
+                                                  constraints)))))
+
+(defn- ->search-subentities-with-validated-params
+  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa)]
+    (cond
+      (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
+      (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
+      :else (if-let [result (f oid
+                               lng
+                               page
+                               size
+                               order
+                               tuleva
+                               constraints)]
+              (ok result)
+              (not-found "Not found")))))
 
 (def routes
   (context "/search" []
@@ -497,13 +584,23 @@
                         {page           :- Long 1}
                         {size           :- Long 20}
                         {lng            :- String "fi"}
-                        {order          :- String "asc"}]
-         (with-access-logging request (cond
-                                        (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                        (not (some #{order} ["asc" "desc"]))  (bad-request "Virheellinen järjestys")
-                                        :else (if-let [result (koulutus-search/search-koulutuksen-jarjestajat oid lng page size order tuleva)]
-                                                (ok result)
-                                                (not-found "Not found")))))
+                        {order          :- String "asc"}
+                        {sijainti       :- String nil}
+                        {opetuskieli    :- String nil}
+                        {koulutusala    :- String nil}
+                        {opetustapa     :- String nil}]
+         (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
+                                                                                  oid
+                                                                                  lng
+                                                                                  page
+                                                                                  size
+                                                                                  order
+                                                                                  tuleva
+                                                                                  nil
+                                                                                  sijainti
+                                                                                  opetuskieli
+                                                                                  koulutusala
+                                                                                  opetustapa)))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword        :- String nil}
@@ -536,13 +633,24 @@
                         {page           :- Long 1}
                         {size           :- Long 20}
                         {lng            :- String "fi"}
-                        {order          :- String"asc"}]
-         (with-access-logging request (cond
-                                        (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                        (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-                                        :else (if-let [result (oppilaitos-search/search-oppilaitoksen-tarjonta oid lng page size order tuleva)]
-                                                (ok result)
-                                                (not-found "Not found")))))
+                        {order          :- String"asc"}
+                        {koulutustyyppi :- String nil}
+                        {sijainti       :- String nil}
+                        {opetuskieli    :- String nil}
+                        {koulutusala    :- String nil}
+                        {opetustapa     :- String nil}]
+         (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
+                                                                                  oid
+                                                                                  lng
+                                                                                  page
+                                                                                  size
+                                                                                  order
+                                                                                  tuleva
+                                                                                  koulutustyyppi
+                                                                                  sijainti
+                                                                                  opetuskieli
+                                                                                  koulutusala
+                                                                                  opetustapa)))
 
     (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
