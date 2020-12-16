@@ -63,7 +63,7 @@
                   :hits [{:opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
                                                     :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                            :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                           :kuvaus { },
+                           :kuvaus nil,
                            :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                            :toteutukset [{:toteutusOid "1.2.246.562.17.000003",
                                           :toteutusNimi {:fi "Kissakoulutus fi", :sv "Kissakoulutus sv" },
