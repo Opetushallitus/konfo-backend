@@ -84,14 +84,14 @@
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))
 
+(defn parse-inner-hits
+  ([response]
+   (parse-inner-hits response filters))
+  ([response filter-generator]
+   (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
+     {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filter-generator response)}
+     {:total 0 :hits [] :filters {}})))
+
 (defn parse-inner-hits-for-jarjestajat
   [response]
-  (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
-    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filters-for-jarjestajat response)}
-    {:total 0 :hits [] :filters {}}))
-
-(defn parse-inner-hits
-  [response]
-  (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
-    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filters response)}
-    {:total 0 :hits [] :filters {}}))
+  (parse-inner-hits response filters-for-jarjestajat))
