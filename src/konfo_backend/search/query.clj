@@ -19,9 +19,17 @@
   [field terms]
   {:filters {:filters (->term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
 
+(defn- ->filters-aggregation-for-jarjestajat
+  [field terms]
+  {:filters {:filters (->term-filters field terms)}})
+
 (defn- koodisto-filters
   [field koodisto]
   (->filters-aggregation field (list-koodi-urit koodisto)))
+
+(defn- koodisto-filters-for-jarjestajat
+  [field koodisto]
+  (->filters-aggregation-for-jarjestajat field (list-koodi-urit koodisto)))
 
 (defn- koulutustyyppi-filters
   [field]
@@ -38,9 +46,23 @@
    :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
    :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
 
-(defn aggregations
+(defn- jarjestajat-aggs
   []
-  {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs)}})
+  {:jarjestajat-agg {:filter {}
+                     :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
+                            :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
+                            :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                            :opetustapa (koodisto-filters-for-jarjestajat :hits.opetustavat.keyword "opetuspaikkakk")}}})
+
+(defn aggregations
+  ([]
+   (aggregations aggs))
+  ([aggs-generator]
+   {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
+
+(defn jarjestajat-aggregations
+  []
+  (aggregations jarjestajat-aggs))
 
 (defn- ->terms-query
   [key coll]
