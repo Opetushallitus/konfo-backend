@@ -87,7 +87,7 @@
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
-                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
+                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.opetuskielet", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
                                           :from from
                                           :size size
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
