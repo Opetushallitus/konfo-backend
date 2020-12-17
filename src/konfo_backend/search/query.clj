@@ -7,63 +7,6 @@
     [konfo-backend.elastic-tools :refer [->size ->from]]
     [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
 
-(defn- ->term-filter
-  [field term]
-  {(keyword term) {:term {field term}}})
-
-(defn- ->term-filters
-  [field terms]
-  (reduce merge {} (map #(->term-filter field %) terms)))
-
-(defn- ->filters-aggregation
-  [field terms]
-  {:filters {:filters (->term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
-
-(defn- ->filters-aggregation-for-jarjestajat
-  [field terms]
-  {:filters {:filters (->term-filters field terms)}})
-
-(defn- koodisto-filters
-  [field koodisto]
-  (->filters-aggregation field (list-koodi-urit koodisto)))
-
-(defn- koodisto-filters-for-jarjestajat
-  [field koodisto]
-  (->filters-aggregation-for-jarjestajat field (list-koodi-urit koodisto)))
-
-(defn- koulutustyyppi-filters
-  [field]
-  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
-
-(defn- aggs
-  []
-  {:maakunta            (koodisto-filters :hits.sijainti.keyword       "maakunta")
-   :kunta               (koodisto-filters :hits.sijainti.keyword       "kunta")
-   :opetuskieli         (koodisto-filters :hits.opetuskielet.keyword   "oppilaitoksenopetuskieli")
-   :koulutusala         (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso1")
-   :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
-   :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
-   :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
-   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
-
-(defn- jarjestajat-aggs
-  []
-  {:jarjestajat-agg {:filter {}
-                     :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
-                            :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
-                            :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                            :opetustapa (koodisto-filters-for-jarjestajat :hits.opetustavat.keyword "opetuspaikkakk")}}})
-
-(defn aggregations
-  ([]
-   (aggregations aggs))
-  ([aggs-generator]
-   {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
-
-(defn jarjestajat-aggregations
-  []
-  (aggregations jarjestajat-aggs))
-
 (defn- ->terms-query
   [key coll]
   (if (= 1 (count coll))
@@ -136,3 +79,60 @@
             :query {:bool {:must   {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}
                            :filter (cond-> [{:term {"hits.onkoTuleva" false}}]
                                            (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}})
+
+(defn- ->term-filter
+  [field term]
+  {(keyword term) {:term {field term}}})
+
+(defn- ->term-filters
+  [field terms]
+  (reduce merge {} (map #(->term-filter field %) terms)))
+
+(defn- ->filters-aggregation
+  [field terms]
+  {:filters {:filters (->term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
+
+(defn- ->filters-aggregation-for-jarjestajat
+  [field terms]
+  {:filters {:filters (->term-filters field terms)}})
+
+(defn- koodisto-filters
+  [field koodisto]
+  (->filters-aggregation field (list-koodi-urit koodisto)))
+
+(defn- koodisto-filters-for-jarjestajat
+  [field koodisto]
+  (->filters-aggregation-for-jarjestajat field (list-koodi-urit koodisto)))
+
+(defn- koulutustyyppi-filters
+  [field]
+  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+
+(defn- aggs
+  []
+  {:maakunta            (koodisto-filters :hits.sijainti.keyword       "maakunta")
+   :kunta               (koodisto-filters :hits.sijainti.keyword       "kunta")
+   :opetuskieli         (koodisto-filters :hits.opetuskielet.keyword   "oppilaitoksenopetuskieli")
+   :koulutusala         (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso1")
+   :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
+   :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
+   :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
+   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
+
+(defn- jarjestajat-aggs
+  []
+  {:jarjestajat-agg {:filter {}
+                     :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
+                            :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
+                            :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                            :opetustapa (koodisto-filters-for-jarjestajat :hits.opetustavat.keyword "opetuspaikkakk")}}})
+
+(defn aggregations
+  ([]
+   (aggregations aggs))
+  ([aggs-generator]
+   {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
+
+(defn jarjestajat-aggregations
+  []
+  (aggregations jarjestajat-aggs))
