@@ -81,7 +81,7 @@
         (is (= 1 (:total r)))
         (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
     (testing "Can filter by opetustapa"
-      (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_1")]
+      (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
         (is (= 1 (:total r)))
         (is (= mersukoulu-oid (:toteutusOid (first (:hits r))))))))
 
