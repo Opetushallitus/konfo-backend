@@ -47,6 +47,14 @@
   ([]
    (hierarkia {})))
 
+(defn hierarkia-for-jarjestajat
+  [aggs]
+  (let [filters (partial koodisto->filters aggs)]
+    {:opetuskieli (filters "oppilaitoksenopetuskieli")
+     :maakunta (filters "maakunta")
+     :kunta (filters "kunta")
+     :opetustapa (filters "opetuspaikkakk")}))
+
 
 (defn filter->obj [suodatin koodi nimi]
   {:suodatin suodatin

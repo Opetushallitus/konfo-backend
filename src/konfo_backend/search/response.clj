@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [hierarkia]]
+    [konfo-backend.search.filters :refer [hierarkia hierarkia-for-jarjestajat]]
     [konfo-backend.index.toteutus :refer [get-kuvaukset]]
     [konfo-backend.tools :refer [reduce-merge-map rename-key]]))
 
@@ -16,14 +16,29 @@
         mapper  (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
+(defn- ->doc_count-for-jarjestajat
+  [response agg-key]
+  (let [buckets (get-in response [:aggregations :hits_aggregation agg-key :buckets])
+        mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
+    (reduce-merge-map mapper (keys buckets))))
+
 (defn- doc_count-by-koodi-uri
   [response]
   (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
+(defn- doc_count-by-koodi-uri-for-jarjestajat
+  [response]
+  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa]]
+    (reduce-merge-map #(->doc_count-for-jarjestajat response %) agg-keys)))
+
 (defn- filters
   [response]
   (hierarkia (doc_count-by-koodi-uri response)))
+
+(defn- filters-for-jarjestajat
+  [response]
+  (hierarkia-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
 
 (defn parse
   [response]
@@ -68,6 +83,12 @@
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))
+
+(defn parse-inner-hits-for-jarjestajat
+  [response]
+  (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
+    {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filters-for-jarjestajat response)}
+    {:total 0 :hits [] :filters {}}))
 
 (defn parse-inner-hits
   [response]
