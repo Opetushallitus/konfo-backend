@@ -47,6 +47,11 @@
     "name" [(->name-sort order lng)]
     [{:_score {:order order}} (->name-sort "asc" lng)]))
 
+(defn- inner-hits-filters
+  [tuleva? constraints]
+  {:bool {:must {:term {"hits.onkoTuleva" tuleva?}}
+          :filter (filters constraints)}})
+
 (defn inner-hits-query
   [oid lng page size order tuleva? constraints]
   (let [size (->size size)
@@ -57,8 +62,7 @@
                                           :size size
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
                              :path "hits"
-                             :query {:bool {:must {:term {"hits.onkoTuleva" tuleva?}}
-                                            :filter (filters constraints)}}}}]}}))
+                             :query (inner-hits-filters tuleva? constraints)}}]}}))
 
 (defn inner-hits-query-osat
   [oid lng page size order tuleva?]
@@ -120,8 +124,8 @@
    :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
 
 (defn- jarjestajat-aggs
-  []
-  {:jarjestajat-agg {:filter {}
+  [tuleva? constraints]
+  {:jarjestajat_agg {:filter (inner-hits-filters tuleva? constraints)
                      :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
                             :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
                             :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
@@ -134,5 +138,5 @@
    {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
 
 (defn jarjestajat-aggregations
-  []
-  (aggregations jarjestajat-aggs))
+  [tuleva? constraints]
+  (aggregations #(jarjestajat-aggs tuleva? constraints)))
