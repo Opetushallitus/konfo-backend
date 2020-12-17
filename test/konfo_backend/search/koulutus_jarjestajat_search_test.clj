@@ -24,9 +24,9 @@
 (def autoala-oid "1.2.246.562.13.000001")
 (def hevosala-oid "1.2.246.562.13.000002")
 
- (def ponikoulu-oid "1.2.246.562.17.000001")
- (def mersukoulu-oid "1.2.246.562.17.000002")
- (def audikoulu-oid "1.2.246.562.17.000003")
+(def ponikoulu-oid "1.2.246.562.17.000001")
+(def mersukoulu-oid "1.2.246.562.17.000002")
+(def audikoulu-oid "1.2.246.562.17.000003")
 
 (deftest koulutus-jarjestajat-test
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
@@ -74,9 +74,31 @@
           (is (= 1 (:total r)))
           (is (= audikoulu-oid (:toteutusOid (first (:hits r)))))))
       (testing "Can filter by opetustapa"
-        (let [r (search autoala-oid :tuleva false :order "asc" :opetustapa "opetuspaikkakk_1")]
+        (let [r (search autoala-oid :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
           (is (= 1 (:total r)))
           (is (= audikoulu-oid (:toteutusOid (first (:hits r))))))))
+
+    (testing "Filter counts"
+      (testing "Without any filters"
+        (let [r (search autoala-oid :tuleva false :order "asc")]
+          (is (= 2 (:total r)))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          ))
+      (testing "Filtering reduces counts"
+        (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
+          ;(let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_02")]
+          (is (= 1 (:total r)))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count]))))))
 
     (testing "Get koulutuksen järjestäjät"
       (testing "no järjestäjiä"
