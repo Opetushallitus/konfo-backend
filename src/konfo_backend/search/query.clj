@@ -125,7 +125,7 @@
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]
-  {:jarjestajat_agg {:filter (inner-hits-filters tuleva? constraints)
+  {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
                      :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
                             :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
                             :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")

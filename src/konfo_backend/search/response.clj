@@ -18,7 +18,7 @@
 
 (defn- ->doc_count-for-jarjestajat
   [response agg-key]
-  (let [buckets (get-in response [:aggregations :hits_aggregation :jarjestajat_agg agg-key :buckets])
+  (let [buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
         mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
