@@ -27,6 +27,11 @@
   (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
+(defn- doc_count-by-koodi-uri-for-tarjojat
+  [response]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa]]
+    (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
+
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
   (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa]]
@@ -35,6 +40,10 @@
 (defn- filters
   [response]
   (hierarkia (doc_count-by-koodi-uri response)))
+
+(defn- filters-for-tarjoajat
+  [response]
+  (hierarkia (doc_count-by-koodi-uri-for-tarjojat response)))
 
 (defn- filters-for-jarjestajat
   [response]
@@ -95,3 +104,7 @@
 (defn parse-inner-hits-for-jarjestajat
   [response]
   (parse-inner-hits response filters-for-jarjestajat))
+
+(defn parse-inner-hits-for-tarjoajat
+  [response]
+  (parse-inner-hits response filters-for-tarjoajat))
