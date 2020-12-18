@@ -87,11 +87,9 @@
           (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
-          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-          ))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))))
       (testing "Filtering reduces counts"
         (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
-          ;(let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_02")]
           (is (= 1 (:total r)))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
