@@ -16,7 +16,7 @@
         mapper  (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
-(defn- ->doc_count-for-jarjestajat
+(defn- ->doc_count-for-subentity
   [response agg-key]
   (let [buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
         mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
@@ -30,7 +30,7 @@
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
   (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa]]
-    (reduce-merge-map #(->doc_count-for-jarjestajat response %) agg-keys)))
+    (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
 (defn- filters
   [response]
