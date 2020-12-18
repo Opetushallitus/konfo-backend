@@ -112,6 +112,10 @@
   [field]
   (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
 
+(defn- koulutustyyppi-filters-for-subentity
+  [field]
+  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+
 (defn- aggs
   []
   {:maakunta            (koodisto-filters :hits.sijainti.keyword       "maakunta")
@@ -137,6 +141,26 @@
   ([aggs-generator]
    {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
 
+
+
+(defn- tarjoajat-aggs
+  [tuleva? constraints]
+  {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
+                    :aggs {:maakunta            (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
+                           :kunta               (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
+                           :opetuskieli         (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                           :koulutusala         (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
+                           :koulutusalataso2    (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
+                           :koulutustyyppi      (koulutustyyppi-filters-for-subentity :hits.koulutustyypit.keyword)
+                           :koulutustyyppitaso2 (koodisto-filters-for-subentity :hits.koulutustyypit.keyword "koulutustyyppi")
+                           :opetustapa          (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")}}})
+
+
+
 (defn jarjestajat-aggregations
   [tuleva? constraints]
   (aggregations #(jarjestajat-aggs tuleva? constraints)))
+
+(defn tarjoajat-aggregations
+  [tuleva? constraints]
+  (aggregations #(tarjoajat-aggs tuleva? constraints)))
