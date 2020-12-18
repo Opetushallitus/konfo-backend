@@ -86,6 +86,30 @@
           (is (= 1 (:total r)))
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r))))))))
 
+    (testing "Filter counts"
+      (testing "Without any filters"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
+          (is (= 2 (:total r)))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
+          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
+      (testing "Filetering reduces counts"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
+          (is (= 1 (:total r)))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
+          (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count]))))))
+
     (testing "Get oppilaitoksen tarjonta"
       (testing "no tarjontaa"
         (let [r (search "1.2.246.562.10.000666")]
