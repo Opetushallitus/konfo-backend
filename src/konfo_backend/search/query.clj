@@ -96,7 +96,7 @@
   [field terms]
   {:filters {:filters (->term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
 
-(defn- ->filters-aggregation-for-jarjestajat
+(defn- ->filters-aggregation-for-subentity
   [field terms]
   {:filters {:filters (->term-filters field terms)}})
 
@@ -104,9 +104,9 @@
   [field koodisto]
   (->filters-aggregation field (list-koodi-urit koodisto)))
 
-(defn- koodisto-filters-for-jarjestajat
+(defn- koodisto-filters-for-subentity
   [field koodisto]
-  (->filters-aggregation-for-jarjestajat field (list-koodi-urit koodisto)))
+  (->filters-aggregation-for-subentity field (list-koodi-urit koodisto)))
 
 (defn- koulutustyyppi-filters
   [field]
@@ -126,10 +126,10 @@
 (defn- jarjestajat-aggs
   [tuleva? constraints]
   {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
-                     :aggs {:maakunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "maakunta")
-                            :kunta (koodisto-filters-for-jarjestajat :hits.sijainti.keyword "kunta")
-                            :opetuskieli (koodisto-filters-for-jarjestajat :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                            :opetustapa (koodisto-filters-for-jarjestajat :hits.opetustavat.keyword "opetuspaikkakk")}}})
+                     :aggs {:maakunta (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
+                            :kunta (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
+                            :opetuskieli (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                            :opetustapa (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")}}})
 
 (defn aggregations
   ([]
