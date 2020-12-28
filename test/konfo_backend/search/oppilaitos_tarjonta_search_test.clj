@@ -130,6 +130,7 @@
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
                   :tutkintonimikkeet nil,
+                  :opetuskielet ["oppilaitoksenopetuskieli_02"],
                   :koulutustyyppi "amm",
                   :kuva "https://example.com/kuva.jpg"} (first (:hits r))))))
 
@@ -157,6 +158,7 @@
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
+                  :opetuskielet [],
                   :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
                                        :nimi {:fi "tutkintonimikkeet_01 nimi fi",
                                               :sv "tutkintonimikkeet_01 nimi sv"}},
