@@ -78,7 +78,9 @@
    :nimi Kielistetty
    :metadata {(s/optional-key :kuvaus) Kielistetty
               (s/optional-key :koulutus) [(->Koodi KoulutusKoodi)]
-              (s/optional-key :koulutusala) (->Koodi Koulutusala1Koodi)}
+              (s/optional-key :koulutusala) (s/if #(re-matches Koulutusala1Koodi (:koodiUri %))
+                                              (->Koodi Koulutusala1Koodi)
+                                              (->Koodi Koulutusala2Koodi))}
    :organisaatio Organisaatio
    :modified Datetime})
 
