@@ -49,9 +49,17 @@
    |              description: SORA-kuvauksen kuvausteksti eri kielillä. Kielet on määritetty kuvauksen kielivalinnassa.
    |              $ref: '#/components/schemas/Kuvaus'
    |            koulutus:
+   |              type: array
+   |              description: Koulutusten koodi urit ja nimet
+   |              items:
+   |                type: object
+   |                $ref: '#/components/schemas/KoulutusKoodi'
+   |            koulutusala:
    |              type: object
-   |              description: Koulutuksen koodi uri ja nimi
-   |              $ref: '#/components/schemas/KoulutusKoodi'
+   |              description: Koulutusalan koodi URI ja nimi.
+   |              oneOf:
+   |                - $ref: '#/components/schemas/Koulutusala1'
+   |                - $ref: '#/components/schemas/Koulutusala2'
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid
@@ -69,7 +77,8 @@
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
    :metadata                     {(s/optional-key :kuvaus) Kielistetty
-                                  (s/optional-key :koulutus) (->Koodi KoulutusKoodi)}
+                                  (s/optional-key :koulutus) (->Koodi KoulutusKoodi)
+                                  (s/optional-key :koulutusala) (->Koodi Koulutusala1Koodi)}
    :organisaatio                 Organisaatio
    :modified                     Datetime})
 
