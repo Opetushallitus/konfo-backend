@@ -39,8 +39,7 @@
    |        nimi:
    |          type: object
    |          description: SORA-kuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty SORA-kuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        metadata:
    |          type: object
    |          description: SORA-kuvauksen kuvailutiedot eri kielillä
@@ -48,13 +47,23 @@
    |            kuvaus:
    |              type: object
    |              description: SORA-kuvauksen kuvausteksti eri kielillä. Kielet on määritetty kuvauksen kielivalinnassa.
-   |              allOf:
-   |                - $ref: '#/components/schemas/Kuvaus'
+   |              $ref: '#/components/schemas/Kuvaus'
+   |            koulutus:
+   |              type: array
+   |              description: Koulutusten koodi urit ja nimet
+   |              items:
+   |                type: object
+   |                $ref: '#/components/schemas/KoulutusKoodi'
+   |            koulutusala:
+   |              type: object
+   |              description: Koulutusalan koodi URI ja nimi.
+   |              oneOf:
+   |                - $ref: '#/components/schemas/Koulutusala1'
+   |                - $ref: '#/components/schemas/Koulutusala2'
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid
-   |          allOf:
-   |            - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |          type: string
    |          format: date-time
@@ -65,11 +74,15 @@
   {:id s/Str
    :koulutustyyppi Koulutustyyppi
    :tila Julkaistu
-   :kielivalinta                 [Kieli]
-   :nimi                         Kielistetty
-   :metadata                     {(s/->OptionalKey :kuvaus) Kielistetty}
-   :organisaatio                 Organisaatio
-   :modified                     Datetime})
+   :kielivalinta [Kieli]
+   :nimi Kielistetty
+   :metadata {(s/optional-key :kuvaus) Kielistetty
+              (s/optional-key :koulutus) [(->Koodi KoulutusKoodi)]
+              (s/optional-key :koulutusala) (s/if #(re-matches Koulutusala1Koodi (:koodiUri %))
+                                              (->Koodi Koulutusala1Koodi)
+                                              (->Koodi Koulutusala2Koodi))}
+   :organisaatio Organisaatio
+   :modified Datetime})
 
 (def schemas
   sorakuvaus-schema)

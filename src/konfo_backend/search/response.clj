@@ -87,7 +87,7 @@
     (vec (for [hit hits
                :let [toteutusOid (:toteutusOid hit)]]
            (-> hit
-               (select-keys [:koulutusOid :oppilaitosOid :toteutusOid :nimi :koulutustyyppi :kuva])
+               (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
                (merge (:metadata hit))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})

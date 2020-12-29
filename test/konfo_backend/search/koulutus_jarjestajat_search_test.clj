@@ -124,6 +124,8 @@
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
                   :oppilaitosTila nil,
+                  :opetuskielet ["oppilaitoksenopetuskieli_02"]
+                  :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "yo"} (first (:hits r))))))
 
       (testing "tulevat"
@@ -134,6 +136,7 @@
                          :sv "Helsingin yliopisto sv"},
                   :oppilaitosTila nil,
                   :koulutustyyppi "yo",
+                  :opetuskielet [],
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
