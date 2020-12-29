@@ -39,8 +39,7 @@
    |        nimi:
    |          type: object
    |          description: SORA-kuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty SORA-kuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        metadata:
    |          type: object
    |          description: SORA-kuvauksen kuvailutiedot eri kielillä
@@ -48,13 +47,15 @@
    |            kuvaus:
    |              type: object
    |              description: SORA-kuvauksen kuvausteksti eri kielillä. Kielet on määritetty kuvauksen kielivalinnassa.
-   |              allOf:
-   |                - $ref: '#/components/schemas/Kuvaus'
+   |              $ref: '#/components/schemas/Kuvaus'
+   |            koulutus:
+   |              type: object
+   |              description: Koulutuksen koodi uri ja nimi
+   |              $ref: '#/components/schemas/KoulutusKoodi'
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid
-   |          allOf:
-   |            - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |          type: string
    |          format: date-time
@@ -67,7 +68,8 @@
    :tila Julkaistu
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     {(s/->OptionalKey :kuvaus) Kielistetty}
+   :metadata                     {(s/optional-key :kuvaus) Kielistetty
+                                  (s/optional-key :koulutus) (->Koodi KoulutusKoodi)}
    :organisaatio                 Organisaatio
    :modified                     Datetime})
 
