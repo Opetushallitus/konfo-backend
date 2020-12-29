@@ -99,7 +99,7 @@
   ([response filter-generator]
    (if-let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)]
      {:total (:total inner-hits) :hits (inner-hits-with-kuvaukset inner-hits) :filters (filter-generator response)}
-     {:total 0 :hits [] :filters {}})))
+     {:total 0 :hits [] :filters (filter-generator response)})))
 
 (defn parse-inner-hits-for-jarjestajat
   [response]
