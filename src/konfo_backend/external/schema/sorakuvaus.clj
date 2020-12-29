@@ -74,13 +74,13 @@
   {:id s/Str
    :koulutustyyppi Koulutustyyppi
    :tila Julkaistu
-   :kielivalinta                 [Kieli]
-   :nimi                         Kielistetty
-   :metadata                     {(s/optional-key :kuvaus) Kielistetty
-                                  (s/optional-key :koulutus) (->Koodi KoulutusKoodi)
-                                  (s/optional-key :koulutusala) (->Koodi Koulutusala1Koodi)}
-   :organisaatio                 Organisaatio
-   :modified                     Datetime})
+   :kielivalinta [Kieli]
+   :nimi Kielistetty
+   :metadata {(s/optional-key :kuvaus) Kielistetty
+              (s/optional-key :koulutus) [(->Koodi KoulutusKoodi)]
+              (s/optional-key :koulutusala) (->Koodi Koulutusala1Koodi)}
+   :organisaatio Organisaatio
+   :modified Datetime})
 
 (def schemas
   sorakuvaus-schema)
