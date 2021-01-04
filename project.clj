@@ -52,18 +52,18 @@
                                    [fi.oph.kouta/kouta-backend "1.1.2-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "1.1.2-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.2.7-SNAPSHOT"]]
-                    :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
-                                 (utils/global-elasticsearch-fixture)]}
+                                   [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                    :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
+                                 (utils/global-docker-elastic-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
                                       [kouta-indeksoija-service "0.4.9-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "1.1.2-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "1.1.2-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "1.1.2-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.2.7-SNAPSHOT"]]
-                       :injections [(require '[clj-test-utils.elasticsearch-mock-utils :as utils])
-                                    (utils/global-elasticsearch-fixture)]
+                                      [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                       :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
+                                    (utils/global-docker-elastic-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
