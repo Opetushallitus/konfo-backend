@@ -45,7 +45,7 @@
    |        metadata:
    |          type: object
    |          oneOf:
-   |            - $ref: '#/components/schemas/AmmToteutusMetadata'
+   |            - $ref: '#/components/schemas/AmmatillinenToteutusMetadata'
    |          example:
    |            tyyppi: amm
    |            kuvaus:
