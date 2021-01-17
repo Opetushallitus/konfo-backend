@@ -40,8 +40,7 @@
    |        nimi:
    |          type: object
    |          description: Toteutuksen näytettävä nimi eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        metadata:
    |          type: object
    |          oneOf:
@@ -134,8 +133,7 @@
    |        organisaatio:
    |          type: object
    |          description: Toteutuksen luonut organisaatio
-   |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        teemakuva:
    |          type: string
    |          description: Toteutuksen teemakuvan URL.
