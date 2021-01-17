@@ -54,6 +54,10 @@
    |          type: double
    |          description: Koulutuksen toteutuksen maksun määrä euroissa?
    |          example: 220.50
+   |        koulutuksenAlkamiskausiUUSI:
+   |          type: object
+   |          description: Koulutuksen alkamiskausi
+   |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        koulutuksenTarkkaAlkamisaika:
    |          type: boolean
    |          description: Jos alkamisaika on tiedossa niin alkamis- ja päättymispäivämäärä on pakollinen. Muussa tapauksessa kausi ja vuosi on pakollisia tietoja.
@@ -116,6 +120,7 @@
    :onkoMaksullinen                                  s/Bool
    (s/->OptionalKey :maksullisuusKuvaus)             Kielistetty
    (s/->OptionalKey :maksunMaara)                    s/Num
+   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI)    (s/maybe KoulutuksenAlkamiskausi)
    :koulutuksenTarkkaAlkamisaika                     s/Bool
    (s/->OptionalKey :koulutuksenAlkamispaivamaara)   Datetime
    (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
