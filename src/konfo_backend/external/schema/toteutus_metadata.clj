@@ -263,13 +263,13 @@
 (def amm-toteutus-metadata-schema
   "|    AmmatillinenToteutusMetadata:
    |      allOf:
-   |        - $ref: '#/components/schemas/KoulutusMetadata'
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
    |        - type: object
    |          properties:
    |            osaamisalat:
    |              type: array
    |              items:
-   |                $ref: '#/components/schemas/Osaamisala'
+   |                $ref: '#/components/schemas/AmmOsaamisala'
    |              description: Lista ammatillisen koulutuksen osaamisalojen kuvauksia
    |            koulutustyyppi:
    |              type: string
