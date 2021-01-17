@@ -247,13 +247,11 @@
    |        linkki:
    |          type: object
    |          description: Osaamisalan linkki ePerusteisiin
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'
+   |          $ref: '#/components/schemas/Linkki'
    |        otsikko:
    |          type: object
    |          description: Osaamisalan linkin otsikko eri kielillä
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def AmmOsaamisala
   {:koodi   (->Koodi #"osaamisala_\d+(#\d{1,2})?$")
