@@ -271,6 +271,7 @@
        kuvaus-schema "\n"
        nimi-schema "\n"
        teksti-schema "\n"
+       linkki-schema "\n"
        organisaatio-schema "\n"
        koulutuslisatieto-schema "\n"
        yhteyshenkilo-schema "\n"
