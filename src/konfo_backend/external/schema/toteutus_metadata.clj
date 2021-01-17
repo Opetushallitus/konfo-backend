@@ -167,8 +167,7 @@
    |        kuvaus:
    |          type: object
    |          description: Toteutuksen kuvausteksti eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        opetus:
    |          type: object
    |          $ref: '#/components/schemas/Opetus'
