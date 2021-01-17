@@ -238,14 +238,19 @@
    |        koulutuksenAlkamisvuosi:
    |          type: string
    |          description: Haun koulutusten alkamisvuosi. Hakukohteella voi olla eri alkamisvuosi kuin haulla.
-   |          example: 2020")
+   |          example: 2020
+   |        henkilokohtaisenSuunnitelmanLisatiedot:
+   |          type: object
+   |          description: Lisätietoa koulutuksen alkamisesta henkilökohtaisen suunnitelman mukaan.
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KoulutuksenAlkamiskausi
   {(s/->OptionalKey :alkamiskausityyppi) (s/maybe Alkamiskausityyppi)
    (s/->OptionalKey :koulutuksenAlkamispaivamaara) (s/maybe Datetime)
    (s/->OptionalKey :koulutuksenPaattymispaivamaara) (s/maybe Datetime)
    (s/->OptionalKey :koulutuksenAlkamiskausi) (s/maybe (->Koodi AlkamiskausiKoodi))
-   (s/->OptionalKey :koulutuksenAlkamisvuosi) (s/maybe s/Str)})
+   (s/->OptionalKey :koulutuksenAlkamisvuosi) (s/maybe s/Str)
+   (s/->OptionalKey :henkilokohtaisenSuunnitelmanLisatiedot) (s/maybe Kielistetty)})
 
 (def osoite-schema
   "|    Osoite:
