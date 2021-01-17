@@ -97,8 +97,7 @@
    |          type: object
    |          description: Koulutuksen lisatiedon otsikko eri kielillä.
    |          example: {\"fi\": \"Otsikko suomeksi\", \"sv\": \"Otsikko på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KoulutusLisatietoKoodi #"koulutuksenlisatiedot_\d+(#\d{1,2})?$")
 
