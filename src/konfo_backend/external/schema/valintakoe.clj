@@ -12,8 +12,7 @@
    |        osoite:
    |          type: object
    |          description: Valintakokeen järjestämispaikan osoite
-   |          allOf:
-   |            - $ref: '#/components/schemas/Osoite'
+   |          $ref: '#/components/schemas/Osoite'
    |        aika:
    |          type: array
    |          description: Valintakokeen järjestämisaika
@@ -22,13 +21,11 @@
    |        jarjestamispaikka:
    |          type: object
    |          description: Valintakokeen järjestämispaikka eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        lisatietoja:
    |          type: object
    |          description: Lisätietoja valintakokeesta eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def ValintakoeTilaisuus
   {:osoite                              Osoite
@@ -43,24 +40,21 @@
    |        tietoja:
    |          type: object
    |          description: Tietoa valintakokeesta
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        liittyyEnnakkovalmistautumista:
    |          type: boolean
    |          description: Liittyykö valintakokeeseen ennakkovalmistautumista
    |        ohjeetEnnakkovalmistautumiseen:
    |          type: object
    |          description: Ohjeet valintakokeen ennakkojärjestelyihin
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        erityisjarjestelytMahdollisia:
    |          type: boolean
    |          description: Ovatko erityisjärjestelyt mahdollisia valintakokeessa
    |        ohjeetErityisjarjestelyihin:
    |          type: object
    |          description: Ohjeet valintakokeen erityisjärjestelyihin
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def ValintakoeMetadata
   {(s/->OptionalKey :tietoja)                        Kielistetty
@@ -85,8 +79,7 @@
    |        nimi:
    |          type: object
    |          description: Valintakokeen nimi eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        metadata:
    |          type: object
    |          $ref: '#/components/schemas/ValintakoeMetadata'
