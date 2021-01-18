@@ -169,9 +169,9 @@
    |            - amk")
 
 (def valintatapa-sisalto-teksti-schema
-  "|    ValintatapaSisaltoTeksti:
+  "|    SisaltoTeksti:
    |      type: object
-   |      description: Tekstimuotoinen valintatavan sisällön kuvaus
+   |      description: Tekstimuotoinen sisällön kuvaus
    |      properties:
    |        tyyppi:
    |          type: string
@@ -187,7 +187,7 @@
 (def valintatapa-sisalto-taulukko-schema
   "|    ValintatapaSisaltoTaulukko:
    |      type: object
-   |      description: Taulukkomuotoinen valintatavan sisällön kuvaus
+   |      description: Taulukkomuotoinen sisällön kuvaus
    |      properties:
    |        tyyppi:
    |          type: string
@@ -249,7 +249,7 @@
                                                (s/->OptionalKey :kielitaitovaatimusKuvaukset) [{(s/->OptionalKey :kielitaitovaatimusKuvaus) (s/maybe (->Koodi KielitaitovaatimusTyypinKuvausKoodi))
                                                                                                 (s/->OptionalKey :kielitaitovaatimusTaso)   (s/maybe s/Str)}]}]})
 
-(def ValintatapaSisaltoTeksti
+(def SisaltoTeksti
   {:tyyppi                   (s/eq "teksti")
    (s/->OptionalKey :data)   Kielistetty})
 
@@ -265,7 +265,7 @@
   {:valintatapa                            (->Koodi ValintatapaKoodi)
    (s/->OptionalKey :nimi)                 Kielistetty
    (s/->OptionalKey :kuvaus)               Kielistetty
-   (s/->OptionalKey :sisalto)              [(s/if #(= "taulukko" (:tyyppi %)) ValintatapaSisaltoTaulukko ValintatapaSisaltoTeksti)]
+   (s/->OptionalKey :sisalto)              [(s/if #(= "taulukko" (:tyyppi %)) ValintatapaSisaltoTaulukko SisaltoTeksti)]
    (s/->OptionalKey :kaytaMuuntotaulukkoa) (s/maybe s/Bool)
    (s/->OptionalKey :kynnysehto)           Kielistetty
    (s/->OptionalKey :enimmaispisteet)      (s/maybe s/Num)
@@ -274,6 +274,7 @@
 (def ValintaperusteKuvausMetadata
    {(s/->OptionalKey :valintatavat)               [Valintatapa]
     (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
+    (s/->OptionalKey :sisalto)                    [(s/if #(= "taulukko" (:tyyppi %)) ValintatapaSisaltoTaulukko SisaltoTeksti)]
     (s/->OptionalKey :kuvaus)                     Kielistetty
     (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty})
 
