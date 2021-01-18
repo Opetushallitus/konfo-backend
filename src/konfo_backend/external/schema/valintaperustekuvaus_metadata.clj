@@ -70,7 +70,7 @@
    |                    kielitaitovaatimusKuvaus:
    |                      type: string
    |                      description: Kielitaitovaatimuksen kuvaus
-   |                      $ref: '#/components/schemas/KielitaitovaatimusTyyppiKuvaus'
+   |                      $ref: '#/components/schemas/KielitaitovaatimusTyypinKuvaus'
    |                    kielitaitovaatimusTaso:
    |                      type: string
    |                      description: Kielitaitovaatimuksen taso
