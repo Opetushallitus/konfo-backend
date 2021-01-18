@@ -80,11 +80,10 @@
    |                fi: Maksullisuuden suomenkielinen kuvaus
    |                sv: Maksullisuuden ruotsinkielinen kuvaus
    |              maksunMaara: 200.50
-   |              alkamiskausiKoodiUri: kausi_k#1
-   |              alkamisvuosi : 2020
-   |              alkamisaikaKuvaus:
-   |                fi: Alkamisajan suomenkielinen kuvaus
-   |                sv: Alkamisajan ruotsinkielinen kuvaus
+   |              koulutuksenAlkamiskausiUUSI:
+   |                - alkamiskausityyppi : 'tarkka alkamisajankohta'
+   |                - koulutuksenAlkamispaivamaara: 2019-11-20T12:00
+   |                - koulutuksenPaattymispaivamaara: 2019-12-20T12:00
    |              lisatiedot:
    |                - otsikkoKoodiUri: koulutuksenlisatiedot_03#1
    |                  teksti:
