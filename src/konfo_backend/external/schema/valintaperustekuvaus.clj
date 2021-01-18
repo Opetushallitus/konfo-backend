@@ -58,8 +58,7 @@
    |        nimi:
    |          type: object
    |          description: Valintaperustekuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        valintakokeet:
    |          type: array
    |          description: Hakuun liittyvät valintakokeet
@@ -121,8 +120,7 @@
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid
-   |          allOf:
-   |            - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |          type: string
    |          format: date-time

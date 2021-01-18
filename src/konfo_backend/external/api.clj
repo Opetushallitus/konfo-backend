@@ -12,6 +12,7 @@
     [konfo-backend.external.schema.haku :as haku]
     [konfo-backend.external.schema.valintakoe :as valintakoe]
     [konfo-backend.external.schema.valintaperustekuvaus :as valintaperuste]
+    [konfo-backend.external.schema.valintaperustekuvaus-metadata :as valintaperuste-metadata]
     [konfo-backend.external.schema.sorakuvaus :as sorakuvaus]
     [konfo-backend.external.schema.response :as response]
     [konfo-backend.external.schema.liite :as liite]
@@ -292,6 +293,7 @@
        liite/schemas "\n"
        haku/schemas "\n"
        valintaperuste/schemas "\n"
+       valintaperuste-metadata/schemas "\n"
        sorakuvaus/schemas "\n"
        search/schemas "\n"
        response/schemas))

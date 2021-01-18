@@ -23,8 +23,7 @@
    |        nimi:
    |          type: object
    |          description: Koulutuksen näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille koulutuksen nimi, kuvailutiedot ja muut tekstit on käännetty.
@@ -47,18 +46,15 @@
    |        koulutus:
    |          type: object
    |          description: Koulutuksen koodi uri ja nimi
-   |          allOf:
-   |            - $ref: '#/components/schemas/KoulutusKoodi'
+   |          $ref: '#/components/schemas/KoulutusKoodi'
    |        kuvaus:
    |          type: object
    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        organisaatio:
    |          type: object
    |          description: Koulutuksen luonut organisaatio
-   |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        ePerusteId:
    |          type: number
    |          description: Ammatillisen koulutuksen ePerusteen id.

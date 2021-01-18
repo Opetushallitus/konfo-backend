@@ -16,8 +16,7 @@
    |        valintakokeidenYleiskuvaus:
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'")
 
 (def HakukohdeMetadata
   {:valintakokeidenYleiskuvaus Kielistetty})
@@ -47,8 +46,7 @@
    |        nimi:
    |          type: object
    |          description: Hakukohteen nimi eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        alkamiskausi:
    |          type: object
    |          description: Hakukohteen koulutuksen alkamiskausi, jos ei käytetän haun alkamiskautta
@@ -63,8 +61,7 @@
    |        jarjestyspaikka:
    |          type: object
    |          description: Se organisaatio, jossa järjestetään koulutus, johon hakukohteessa voi hakea
-   |          allOf:
-   |            - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        hakulomaketyyppi:
    |          type: string
    |          description: Hakulomakkeen tyyppi. Kertoo, käytetäänkö Atarun (hakemuspalvelun) hakulomaketta, muuta hakulomaketta
@@ -77,13 +74,11 @@
    |        hakulomakeKuvaus:
    |          type: object
    |          description: Hakulomakkeen kuvausteksti eri kielillä. Kielet on määritetty haun kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        hakulomakeLinkki:
    |          type: object
    |          description: Hakulomakkeen linkki eri kielillä. Kielet on määritetty haun kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'
+   |          $ref: '#/components/schemas/Linkki'
    |        kaytetaanHaunHakulomaketta:
    |          type: boolean
    |          description: Käytetäänkö haun hakulomaketta vai onko hakukohteelle määritelty oma hakulomake?
@@ -103,13 +98,11 @@
    |        muuPohjakoulutusvaatimus:
    |          type: object
    |          description: Hakukohteen muiden pohjakoulutusvaatimusten kuvaus eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        pohjakoulutusvaatimusTarkenne:
    |          type: object
    |          description: Pohjakoulutusvaatimusten tarkempi kuvaus eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        toinenAsteOnkoKaksoistutkinto:
    |          type: boolean
    |          description: Onko hakukohteen toisen asteen koulutuksessa mahdollista suorittaa kaksoistutkinto?
@@ -124,8 +117,7 @@
    |        valintaperustekuvaus:
    |          type: object
    |          description: Hakukohteeseen liittyvä valintaperustekuvaus
-   |          allOf:
-   |            - $ref: '#/components/schemas/Valintaperustekuvaus'
+   |          $ref: '#/components/schemas/Valintaperustekuvaus'
    |        liitteetOnkoSamaToimitusaika:
    |          type: boolean
    |          description: Onko kaikilla hakukohteen liitteillä sama toimitusaika?
@@ -148,8 +140,7 @@
    |        liitteidenToimitusosoite:
    |          type: object
    |          description: Jos liitteillä on sama toimitusosoite, se ilmoitetaan tässä
-   |          allOf:
-   |            - $ref: '#/components/schemas/LiitteenToimitusosoite'
+   |          $ref: '#/components/schemas/LiitteenToimitusosoite'
    |        liitteet:
    |          type: array
    |          description: Hakukohteen liitteet
@@ -171,8 +162,7 @@
    |        organisaatio:
    |          type: object
    |          description: Hakukohteen luonut organisaatio
-   |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |          type: string
    |          format: date-time
@@ -213,6 +203,7 @@
    :liitteet                                       [Liite]
    :valintakokeet                                  [Valintakoe]
    :kielivalinta                                   [Kieli]
+   (s/->OptionalKey :valintaperustekuvaus)         Valintaperustekuvaus
    (s/->OptionalKey :metadata)                     HakukohdeMetadata
    :organisaatio                                   Organisaatio
    :modified                                       Datetime

@@ -40,12 +40,11 @@
    |        nimi:
    |          type: object
    |          description: Toteutuksen näytettävä nimi eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        metadata:
    |          type: object
    |          oneOf:
-   |            - $ref: '#/components/schemas/AmmToteutusMetadata'
+   |            - $ref: '#/components/schemas/AmmatillinenToteutusMetadata'
    |          example:
    |            tyyppi: amm
    |            kuvaus:
@@ -81,11 +80,10 @@
    |                fi: Maksullisuuden suomenkielinen kuvaus
    |                sv: Maksullisuuden ruotsinkielinen kuvaus
    |              maksunMaara: 200.50
-   |              alkamiskausiKoodiUri: kausi_k#1
-   |              alkamisvuosi : 2020
-   |              alkamisaikaKuvaus:
-   |                fi: Alkamisajan suomenkielinen kuvaus
-   |                sv: Alkamisajan ruotsinkielinen kuvaus
+   |              koulutuksenAlkamiskausiUUSI:
+   |                - alkamiskausityyppi : 'tarkka alkamisajankohta'
+   |                - koulutuksenAlkamispaivamaara: 2019-11-20T12:00
+   |                - koulutuksenPaattymispaivamaara: 2019-12-20T12:00
    |              lisatiedot:
    |                - otsikkoKoodiUri: koulutuksenlisatiedot_03#1
    |                  teksti:
@@ -134,8 +132,7 @@
    |        organisaatio:
    |          type: object
    |          description: Toteutuksen luonut organisaatio
-   |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        teemakuva:
    |          type: string
    |          description: Toteutuksen teemakuvan URL.

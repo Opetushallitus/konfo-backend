@@ -18,8 +18,7 @@
    |        opetuskieletKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen opetuskieliä tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        opetusaika:
    |          type: array
    |          description: Lista koulutuksen toteutuksen opetusajoista
@@ -29,8 +28,7 @@
    |        opetusaikaKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen opetusaikoja tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        opetustapa:
    |          type: array
    |          description: Lista koulutuksen toteutuksen opetustavoista
@@ -40,20 +38,22 @@
    |        opetustapaKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen opetustapoja tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        onkoMaksullinen:
    |          type: boolean
    |          decription: Onko koulutus maksullinen?
    |        maksullisuusKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen maksullisuutta tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        maksunMaara:
    |          type: double
    |          description: Koulutuksen toteutuksen maksun määrä euroissa?
    |          example: 220.50
+   |        koulutuksenAlkamiskausiUUSI:
+   |          type: object
+   |          description: Koulutuksen alkamiskausi
+   |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        koulutuksenTarkkaAlkamisaika:
    |          type: boolean
    |          description: Jos alkamisaika on tiedossa niin alkamis- ja päättymispäivämäärä on pakollinen. Muussa tapauksessa kausi ja vuosi on pakollisia tietoja.
@@ -90,8 +90,7 @@
    |        stipendinKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen stipendiä tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        suunniteltuKestoVuodet:
    |          type: integer
    |          description: Koulutuksen suunniteltu kesto vuosina
@@ -103,8 +102,7 @@
    |        suunniteltuKestoKuvaus:
    |          type: object
    |          description: Koulutuksen suunnitellun keston kuvaus eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'")
 
 (def Opetus
   {:opetuskieli                                      [(->Koodi OpetuskieliKoodi)]
@@ -116,6 +114,7 @@
    :onkoMaksullinen                                  s/Bool
    (s/->OptionalKey :maksullisuusKuvaus)             Kielistetty
    (s/->OptionalKey :maksunMaara)                    s/Num
+   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI)    (s/maybe KoulutuksenAlkamiskausi)
    :koulutuksenTarkkaAlkamisaika                     s/Bool
    (s/->OptionalKey :koulutuksenAlkamispaivamaara)   Datetime
    (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
@@ -136,23 +135,19 @@
    |        nimi:
    |          type: object
    |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. nimi
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        kuvaus:
    |          type: object
    |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. kuvaus
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        linkki:
    |          type: object
    |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. linkki
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'
+   |          $ref: '#/components/schemas/Linkki'
    |        otsikko:
    |          type: object
    |          description: Korkeakoulututkinnon erikoistumisalan, opintosuunnan, pääaineen tms. linkin otsikko
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KorkeakouluOsaamisala
   {:nimi    Kielistetty
@@ -167,8 +162,7 @@
    |        kuvaus:
    |          type: object
    |          description: Toteutuksen kuvausteksti eri kielillä. Kielet on määritetty toteutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        opetus:
    |          type: object
    |          $ref: '#/components/schemas/Opetus'
@@ -242,18 +236,15 @@
    |          nimi:
    |            type: object
    |            description: Osaamisalan nimi eri kielillä
-   |            allOf:
-   |              - $ref: '#/components/schemas/Nimi'
+   |            $ref: '#/components/schemas/Nimi'
    |        linkki:
    |          type: object
    |          description: Osaamisalan linkki ePerusteisiin
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'
+   |          $ref: '#/components/schemas/Linkki'
    |        otsikko:
    |          type: object
    |          description: Osaamisalan linkin otsikko eri kielillä
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def AmmOsaamisala
   {:koodi   (->Koodi #"osaamisala_\d+(#\d{1,2})?$")
@@ -263,13 +254,13 @@
 (def amm-toteutus-metadata-schema
   "|    AmmatillinenToteutusMetadata:
    |      allOf:
-   |        - $ref: '#/components/schemas/KoulutusMetadata'
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
    |        - type: object
    |          properties:
    |            osaamisalat:
    |              type: array
    |              items:
-   |                $ref: '#/components/schemas/Osaamisala'
+   |                $ref: '#/components/schemas/AmmOsaamisala'
    |              description: Lista ammatillisen koulutuksen osaamisalojen kuvauksia
    |            koulutustyyppi:
    |              type: string
@@ -285,8 +276,7 @@
    |        kieli:
    |          type: string
    |          desciption: Asiasanan kieli
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kieli'
+   |          $ref: '#/components/schemas/Kieli'
    |          example: fi
    |        arvo:
    |          type: string
@@ -300,8 +290,7 @@
    |        kieli:
    |          type: string
    |          desciption: Ammattinimikkeen kieli
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kieli'
+   |          $ref: '#/components/schemas/Kieli'
    |          example: fi
    |        arvo:
    |          type: string

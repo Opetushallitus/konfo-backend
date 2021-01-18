@@ -12,8 +12,7 @@
    |          type: object
    |          description: Kunnan nimi eri kielillä.
    |          example: {\"fi\": \"Helsinki\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KuntaKoodi    #"^kunta_\d+")
 
@@ -29,8 +28,7 @@
    |          type: object
    |          description: Maakunnan nimi eri kielillä.
    |          example: {\"fi\": \"Uusimaa\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def MaakuntaKoodi    #"^maakunta_\d+")
 
@@ -46,8 +44,7 @@
    |          type: object
    |          description: Koulutuksen nimi eri kielillä.
    |          example: {\"fi\": \"IB-tutkinto\", \"sv\": \"IB-examen\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KoulutusKoodi #"^koulutus_\d{6}(#\d{1,2})?$")
 
@@ -63,8 +60,7 @@
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def Koulutusala1Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso1_\d+(#\d{1,2})?$")
 
@@ -80,8 +76,7 @@
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def Koulutusala2Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso2_\d+(#\d{1,2})?$")
 
@@ -97,8 +92,7 @@
    |          type: object
    |          description: Koulutuksen lisatiedon otsikko eri kielillä.
    |          example: {\"fi\": \"Otsikko suomeksi\", \"sv\": \"Otsikko på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KoulutusLisatietoKoodi #"koulutuksenlisatiedot_\d+(#\d{1,2})?$")
 
@@ -114,8 +108,7 @@
    |          type: object
    |          description: Tutkintonimikkeem nimi eri kielillä.
    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def TutkintonimikeKoodi #"tutkintonimikkeet_\d+(#\d{1,2})?$")
 
@@ -131,8 +124,7 @@
    |          type: object
    |          description: Tutkintonimikkeem nimi eri kielillä.
    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def TutkintonimikeKkKoodi #"tutkintonimikekk_\d+(#\d{1,2})?$")
 
@@ -148,8 +140,7 @@
    |          type: object
    |          description: Tutkinnon laajuuden eri kielillä.
    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OpintojenLaajuusKoodi #"opintojenlaajuus_\d+(#\d{1,2})?$")
 
@@ -165,8 +156,7 @@
    |          type: object
    |          description: Tutkinnon laajuuden eri kielillä.
    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OpintojenLaajuusyksikkoKoodi #"opintojenlaajuusyksikko_\d+(#\d{1,2})?$")
 
@@ -182,8 +172,7 @@
    |          type: object
    |          description: Opetuskieli eri kielillä.
    |          example: {\"fi\": \"suomi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OpetuskieliKoodi #"oppilaitoksenopetuskieli_\d+(#\d{1,2})?$")
 
@@ -199,8 +188,7 @@
    |          type: object
    |          description: Kieli eri kielillä.
    |          example: {\"fi\": \"englanti\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KielitaitovaatimusKieliKoodi #"kieli_\w+(#\d{1,2})?$")
 
@@ -216,8 +204,7 @@
    |          type: object
    |          description: Kielitaidon osoittaminen eri kielillä.
    |          example: {\"fi\": \"englanti\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KielitaidonOsoitteminenKoodi #"kielitaidonosoittaminen_\d+(#\d{1,2})?$")
 
@@ -233,8 +220,7 @@
    |          type: object
    |          description: Kielitaitovaatimuksen tyyppi eri kielillä.
    |          example: {\"fi\": \"kielitaitovaatimustyyppi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KielitaitovaatimusTyyppiKoodi #"kielitaitovaatimustyypit_\d+(#\d{1,2})?$")
 
@@ -250,8 +236,7 @@
    |          type: object
    |          description: Kielitaitovaatimuksen kuvaus eri kielillä.
    |          example: {\"fi\": \"kielitaitovaatimustyypin kuvausteksti\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KielitaitovaatimusTyypinKuvausKoodi #"kielitaitovaatimustyypitkuvaus_\d+(#\d{1,2})?$")
 
@@ -267,8 +252,7 @@
    |          type: object
    |          description: Opetusaika eri kielillä.
    |          example: {\"fi\": \"suomi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OpetusaikaKoodi #"opetusaikakk_\d+(#\d{1,2})?$")
 
@@ -284,8 +268,7 @@
    |          type: object
    |          description: Opetustapa eri kielillä.
    |          example: {\"fi\": \"suomi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OpetustapaKoodi #"opetuspaikkakk_\d+(#\d{1,2})?$")
 
@@ -301,8 +284,7 @@
    |          type: object
    |          description: Alkamiskausi eri kielillä
    |          example: {\"fi\": \"syksy\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def AlkamiskausiKoodi #"kausi_\w+(#\d{1,2})?$")
 
@@ -318,8 +300,7 @@
    |          type: object
    |          description: Pohjakoulutusvaatimus eri kielillä
    |          example: {\"fi\": \"syksy\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def PohjakoulutusvaatimusKoodi #"pohjakoulutusvaatimustoinenaste_\w+(#\d{1,2})?$")
 
@@ -335,8 +316,7 @@
    |          type: object
    |          description: Postitoimipaikan nimi eri kielillä
    |          example: {\"fi\": \"Kerava\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def PostinumeroKoodi #"posti_\d+(#\d{1,2})?$")
 
@@ -352,8 +332,7 @@
    |          type: object
    |          description: Liitteen tyyppi eri kielillä
    |          example: {\"fi\": \"Todistus\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def LiitteenTyyppiKoodi #"liitetyypitamm_\d+(#\d{1,2})?$")
 
@@ -369,8 +348,7 @@
    |          type: object
    |          description: Valintakokeen tyyppi eri kielillä
    |          example: {\"fi\": \"Kuulustelu\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def ValintakokeenTyyppiKoodi #"valintakokeentyyppi_\d+(#\d{1,2})?$")
 
@@ -386,8 +364,7 @@
    |          type: object
    |          description: Hakutavan nimi eri kielillä
    |          example: {\"fi\": \"Yhteishaku\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def HakutapaKoodi #"hakutapa_\d+(#\d{1,2})?$")
 
@@ -403,8 +380,7 @@
    |          type: object
    |          description: Haun kohdejoukon nimi eri kielillä
    |          example: {\"fi\": \"Kohdejoukko\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def HaunKohdejoukkoKoodi #"haunkohdejoukko_\d+(#\d{1,2})?$")
 
@@ -420,8 +396,7 @@
    |          type: object
    |          description: Haun kohdejoukon tarkenne eri kielillä
    |          example: {\"fi\": \"Kohdejoukon tarkenne\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def HaunKohdejoukonTarkenneKoodi #"haunkohdejoukontarkenne_\d+(#\d{1,2})?$")
 
@@ -437,8 +412,7 @@
    |          type: object
    |          description: Valintatapa eri kielillä
    |          example: {\"fi\": \"Valintatapa suomeksi\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def ValintatapaKoodi #"valintatapajono_\w+(#\d{1,2})?$")
 
@@ -453,8 +427,7 @@
    |        nimi:
    |          type: object
    |          description: Osaamistausta.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def OsaamistaustaKoodi #"osaamistausta_\d+(#\d{1,2})?$")
 

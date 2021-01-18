@@ -13,13 +13,11 @@
    |        osoite:
    |          type: object
    |          description: Liitteen toimitusosoite
-   |          allOf:
-   |            - $ref: '#/components/schemas/Osoite'
+   |          $ref: '#/components/schemas/Osoite'
    |        sahkoposti:
    |          type: object
    |          description: Sähköpostiosoite, johon liite voidaan toimittaa
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def LiitteenToimitusosoite
   {:sahkoposti s/Str
@@ -40,13 +38,11 @@
       |        nimi:
       |          type: object
       |          description: Liitteen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-      |          allOf:
-      |            - $ref: '#/components/schemas/Nimi'
+      |          $ref: '#/components/schemas/Nimi'
       |        kuvaus:
       |          type: object
       |          description: Liitteen Opintopolussa näytettävä kuvaus eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-      |          allOf:
-      |            - $ref: '#/components/schemas/Kuvaus'
+      |          $ref: '#/components/schemas/Kuvaus'
       |        toimitusaika:
       |          type: string
       |          description: Liitteen toimitusaika, jos ei ole sama kuin kaikilla hakukohteen liitteillä
@@ -63,8 +59,7 @@
       |        toimitusosoite:
       |          type: object
       |          description: Liitteen toimitusosoite, jos ei ole sama kuin kaikilla hakukohteen liitteillä
-      |          allOf:
-      |            - $ref: '#/components/schemas/LiitteenToimitusosoite'")
+      |          $ref: '#/components/schemas/LiitteenToimitusosoite'")
 
 (def Liite
   {:id             s/Str                                    ;s/Uuid
