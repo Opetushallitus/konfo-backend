@@ -114,6 +114,10 @@
    |          description: Hakukohteen hakuajat, jos ei käytetä haun hakuaikoja
    |          items:
    |            $ref: '#/components/schemas/Ajanjakso'
+   |        valintaperustekuvaus:
+   |          type: object
+   |          description: Hakukohteeseen liittyvä valintaperustekuvaus
+   |          $ref: '#/components/schemas/Valintaperustekuvaus'
    |        liitteetOnkoSamaToimitusaika:
    |          type: boolean
    |          description: Onko kaikilla hakukohteen liitteillä sama toimitusaika?
@@ -199,6 +203,7 @@
    :liitteet                                       [Liite]
    :valintakokeet                                  [Valintakoe]
    :kielivalinta                                   [Kieli]
+   (s/->OptionalKey :valintaperustekuvaus)         Valintaperustekuvaus
    (s/->OptionalKey :metadata)                     HakukohdeMetadata
    :organisaatio                                   Organisaatio
    :modified                                       Datetime
