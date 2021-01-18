@@ -38,7 +38,7 @@
    |          description: Kielitaitovaatimuksen kieli
    |          $ref: '#/components/schemas/KielitaitovaatimusKieli'
    |        kielitaidonVoiOsoittaa:
-   |         type: array
+   |          type: array
    |          description: Lista tavoista, joilla kielitaidon voi osoittaa
    |          items:
    |            type: object
@@ -96,10 +96,10 @@
    |          type: array
    |          description: Valintatavan sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
    |          items:
-   |          type: object
-   |          oneOf:
-   |            - $ref: '#/components/schemas/ValintatapaSisaltoTeksti'
-   |            - $ref: '#/components/schemas/ValintatapaSisaltoTaulukko'
+   |            type: object
+   |            oneOf:
+   |              - $ref: '#/components/schemas/ValintatapaSisaltoTeksti'
+   |              - $ref: '#/components/schemas/ValintatapaSisaltoTaulukko'
    |        kaytaMuuntotaulukkoa:
    |          type: boolean
    |          description: Käytetäänkö muuntotaulukkoa?
