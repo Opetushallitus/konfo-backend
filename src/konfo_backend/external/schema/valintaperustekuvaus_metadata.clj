@@ -23,13 +23,11 @@
    |        valintakokeidenYleiskuvaus:
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus')
+   |          $ref: '#/components/schemas/Kuvaus'
    |        kuvaus:
    |          type: object
    |          description: Valintaperusteen kuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'")
 
 (def kielitaitovaatimus-schema
   "|    Kielitaitovaatimus:
@@ -90,13 +88,11 @@
    |        nimi:
    |          type: object
    |          description: Valintatapakuvauksen Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        kuvaus:
    |          type: object
    |          description: Valintatavan kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        sisalto:
    |          type: array
    |          description: Valintatavan sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
@@ -111,8 +107,7 @@
    |        kynnysehto:
    |          type: object
    |          description: Kynnysehdon kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        enimmaispisteet:
    |          type: double
    |          description: Valintatavan enimmäispisteet
@@ -125,8 +120,7 @@
 (def amm-valintaperustekuvaus-metadata-schema
   "|    AmmValintaperustekuvausMetadata:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
+   |      $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -138,8 +132,7 @@
 (def korkeakoulutus-valintaperustekuvaus-metadata-schema
   "|    KorkeakoulutusValintaperustekuvausMetadata:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
+   |      $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |      properties:
    |        osaamistaustat:
    |          type: array
@@ -150,14 +143,12 @@
    |        kuvaus:
    |          type: object
    |          description: Valintaperustekuvauksen kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'")
 
 (def yo-valintaperustekuvaus-metadata-schema
   "|    YoValintaperustekuvausMetadata:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
+   |      $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -169,8 +160,7 @@
 (def amk-valintaperustekuvaus-metadata-schema
   "|    AmkValintaperustekuvausMetadata:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
+   |      $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
    |      properties:
    |        tyyppi:
    |          type: string
@@ -193,8 +183,7 @@
    |        data:
    |          type: object
    |          description: Sisältöteksti eri kielillä.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def valintatapa-sisalto-taulukko-schema
   "|    ValintatapaSisaltoTaulukko:
@@ -214,8 +203,7 @@
    |            nimi:
    |              type: object
    |              description: Taulukon Opintopolussa näytettävä nimi eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |              allOf:
-   |                - $ref: '#/components/schemas/Nimi'
+   |              $ref: '#/components/schemas/Nimi'
    |            rows:
    |              type: array
    |              description: Taukon rivit
@@ -241,8 +229,7 @@
    |                          type: object
    |                          description: Sarakkeen Opintopolussa näytettävä teksti eri kielillä.
    |                            Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |                          allOf:
-   |                            - $ref: '#/components/schemas/Teksti'")
+   |                          $ref: '#/components/schemas/Teksti'")
 
 (def schemas
   (str valintatapa-sisalto-teksti-schema "\n"
