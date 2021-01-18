@@ -27,7 +27,15 @@
    |        kuvaus:
    |          type: object
    |          description: Valintaperusteen kuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'
+   |        sisalto:
+   |          type: array
+   |          description: Valintaperusteen kuvauksen sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
+   |          items:
+   |            type: object
+   |            oneOf:
+   |              - $ref: '#/components/schemas/SisaltoTeksti'
+   |              - $ref: '#/components/schemas/SisaltoTaulukko'")
 
 (def kielitaitovaatimus-schema
   "|    Kielitaitovaatimus:
