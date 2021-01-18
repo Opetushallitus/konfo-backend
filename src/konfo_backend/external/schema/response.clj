@@ -16,8 +16,7 @@
 (def koulutus-response-schema
   "|    KoulutusResponse:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/Koulutus'
+   |      $ref: '#/components/schemas/Koulutus'
    |      properties:
    |        toteutukset:
    |          type: array
@@ -45,8 +44,7 @@
 (def toteutus-response-schema
   "|    ToteutusResponse:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/Toteutus'
+   |      $ref: '#/components/schemas/Toteutus'
    |      properties:
    |        toteutukset:
    |          type: object
@@ -73,8 +71,7 @@
 (def hakukohde-response-schema
   "|    HakukohdeResponse:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/Hakukohde'
+   |      $ref: '#/components/schemas/Hakukohde'
    |      properties:
    |        valintaperustekuvaus:
    |          type: object
@@ -105,8 +102,7 @@
 (def haku-response-schema
   "|    HakuResponse:
    |      type: object
-   |      allOf:
-   |        - $ref: '#/components/schemas/Haku'
+   |      $ref: '#/components/schemas/Haku'
    |      properties:
    |        koulutukset:
    |          type: array

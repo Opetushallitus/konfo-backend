@@ -30,8 +30,7 @@
      |        koulutus:
      |          type: object
      |          description: Koulutuksen koodi uri ja nimi
-     |          allOf:
-     |            - $ref: '#/components/schemas/KoulutusKoodi'
+     |          $ref: '#/components/schemas/KoulutusKoodi'
      |        tila:
      |          type: string
      |          example: \"julkaistu\"
@@ -55,8 +54,7 @@
      |        nimi:
      |          type: object
      |          description: Koulutuksen näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-     |          allOf:
-     |            - $ref: '#/components/schemas/Nimi'
+     |          $ref: '#/components/schemas/Nimi'
      |        metadata:
      |          type: object
      |          oneOf:
@@ -96,8 +94,7 @@
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
-     |          allOf:
-     |           - $ref: '#/components/schemas/Organisaatio'
+     |          $ref: '#/components/schemas/Organisaatio'
      |        teemakuva:
      |          type: string
      |          description: Koulutuksen teemakuvan URL.

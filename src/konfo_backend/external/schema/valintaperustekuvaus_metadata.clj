@@ -50,8 +50,7 @@
    |              lisatieto:
    |                type: object
    |                description: Kielitaidon osoittamisen lisätieto eri kielillä.
-   |                allOf:
-   |                  - $ref: '#/components/schemas/Teksti'
+   |                $ref: '#/components/schemas/Teksti'
    |        vaatimukset:
    |          type: array
    |          description: Lista kielitaitovaatimuksista

@@ -119,13 +119,11 @@
    |        paikkakunta:
    |          type: object
    |          description: Organisaation paikkakunta.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kunta'
+   |          $ref: '#/components/schemas/Kunta'
    |        nimi:
    |          type: object
    |          description: Organisaation nimi eri kielillä.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        oid:
    |          type: String
    |          example: 1.2.246.562.10.00000000007
@@ -142,13 +140,11 @@
    |      properties:
    |        otsikko:
    |          type: object
-   |          allOf:
-   |            - $ref: '#/components/schemas/KoulutusLisatietoKoodi'
+   |          $ref: '#/components/schemas/KoulutusLisatietoKoodi'
    |        teksti:
    |          type: object
    |          description: Lisätiedon teksti eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'")
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def KoulutusLisatieto
   {:otsikko (->Koodi KoulutusLisatietoKoodi)
@@ -161,28 +157,23 @@
    |        nimi:
    |          type: object
    |          description: Yhteyshenkilön nimi eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        titteli:
    |          type: object
    |          description: Yhteyshenkilön titteli eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        sahkoposti:
    |          type: object
    |          description: Yhteyshenkilön sähköpostiosoite eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        puhelinnumero:
    |          type: object
    |          description: Yhteyshenkilön puhelinnumero eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        wwwSivu:
    |          type: object
    |          description: Yhteyshenkilön www-sivu eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'")
+   |          $ref: '#/components/schemas/Linkki'")
 
 (def Yhteyshenkilo
   {:nimi          Kielistetty
@@ -259,13 +250,11 @@
    |        osoite:
    |          type: object
    |          description: Osoite eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Teksti'
+   |          $ref: '#/components/schemas/Teksti'
    |        postinumero:
    |          type: object
    |          description: Postinumero ja -toimipaikka
-   |          allOf:
-   |            - $ref: '#/components/schemas/Postinumero'")
+   |          $ref: '#/components/schemas/Postinumero'")
 
 (def Osoite
   {:osoite Kielistetty

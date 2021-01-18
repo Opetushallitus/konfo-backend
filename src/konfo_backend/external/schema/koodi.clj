@@ -12,8 +12,7 @@
    |          type: object
    |          description: Kunnan nimi eri kielillä.
    |          example: {\"fi\": \"Helsinki\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KuntaKoodi    #"^kunta_\d+")
 
@@ -29,8 +28,7 @@
    |          type: object
    |          description: Maakunnan nimi eri kielillä.
    |          example: {\"fi\": \"Uusimaa\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def MaakuntaKoodi    #"^maakunta_\d+")
 
@@ -46,8 +44,7 @@
    |          type: object
    |          description: Koulutuksen nimi eri kielillä.
    |          example: {\"fi\": \"IB-tutkinto\", \"sv\": \"IB-examen\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def KoulutusKoodi #"^koulutus_\d{6}(#\d{1,2})?$")
 
@@ -63,8 +60,7 @@
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def Koulutusala1Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso1_\d+(#\d{1,2})?$")
 
@@ -80,8 +76,7 @@
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'")
+   |          $ref: '#/components/schemas/Nimi'")
 
 (def Koulutusala2Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso2_\d+(#\d{1,2})?$")
 

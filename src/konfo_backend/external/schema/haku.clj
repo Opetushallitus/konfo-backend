@@ -22,8 +22,7 @@
    |        nimi:
    |          type: object
    |          description: Haun nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Nimi'
    |        hakutapa:
    |          type: object
    |          description: Haun hakutapa
@@ -49,13 +48,11 @@
    |        hakulomakeKuvaus:
    |          type: object
    |          description: Hakulomakkeen kuvausteksti eri kielillä. Kielet on määritetty haun kielivalinnassa. Hakukohteella voi olla eri hakulomake kuin haulla.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Kuvaus'
+   |          $ref: '#/components/schemas/Kuvaus'
    |        hakulomakeLinkki:
    |          type: object
    |          description: Hakulomakkeen linkki eri kielillä. Kielet on määritetty haun kielivalinnassa. Hakukohteella voi olla eri hakulomake kuin haulla.
-   |          allOf:
-   |            - $ref: '#/components/schemas/Linkki'
+   |          $ref: '#/components/schemas/Linkki'
    |        hakuajat:
    |          type: array
    |          description: Haun hakuajat. Hakukohteella voi olla omat hakuajat.
@@ -89,8 +86,7 @@
    |        organisaatio:
    |          type: object
    |          description: Haun luonut organisaatio
-   |          allOf:
-   |           - $ref: '#/components/schemas/Organisaatio'
+   |          $ref: '#/components/schemas/Organisaatio'
    |        modified:
    |           type: string
    |           format: date-time

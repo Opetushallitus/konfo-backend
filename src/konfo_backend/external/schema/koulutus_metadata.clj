@@ -18,8 +18,7 @@
     |        kuvaus:
     |          type: object
     |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          allOf:
-    |            - $ref: '#/components/schemas/Kuvaus'
+    |          $ref: '#/components/schemas/Kuvaus'
     |        lisatiedot:
     |          type: array
     |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
@@ -51,8 +50,7 @@
     |        kuvauksenNimi:
     |          type: object
     |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          allOf:
-    |            - $ref: '#/components/schemas/Nimi'
+    |          $ref: '#/components/schemas/Nimi'
     |        tutkintonimike:
     |          type: array
     |          items:
@@ -68,8 +66,7 @@
     |              type: object
     |              description: Tutkinnon laajuuden eri kielillä.
     |              example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-    |              allOf:
-    |                - $ref: '#/components/schemas/Teksti'
+    |              $ref: '#/components/schemas/Teksti'
     |    YliopistoKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
