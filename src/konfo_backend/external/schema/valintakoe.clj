@@ -41,6 +41,10 @@
    |          type: object
    |          description: Tietoa valintakokeesta
    |          $ref: '#/components/schemas/Teksti'
+   |        vahimmaispisteet:
+   |          type: double
+   |          description: Valintakokeen vähimmäispisteet
+   |          example: 10.0
    |        liittyyEnnakkovalmistautumista:
    |          type: boolean
    |          description: Liittyykö valintakokeeseen ennakkovalmistautumista
@@ -58,6 +62,7 @@
 
 (def ValintakoeMetadata
   {(s/->OptionalKey :tietoja)                        Kielistetty
+   (s/->OptionalKey :vahimmaispisteet)               s/Num
    (s/->OptionalKey :liittyyEnnakkovalmistautumista) s/Bool
    (s/->OptionalKey :ohjeetEnnakkovalmistautumiseen) Kielistetty
    (s/->OptionalKey :erityisjarjestelytMahdollisia)  s/Bool
