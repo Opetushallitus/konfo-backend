@@ -16,10 +16,19 @@
    |        valintakokeidenYleiskuvaus:
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
-   |          $ref: '#/components/schemas/Kuvaus'")
+   |          $ref: '#/components/schemas/Kuvaus'
+   |        koulutuksenAlkamiskausi:
+   |          type: object
+   |          description: Koulutuksen alkamiskausi
+   |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
+   |        kaytetaanHaunAlkamiskautta:
+   |          type: boolean
+   |          description: Käytetäänkö haun alkamiskautta vai onko hakukohteelle määritelty oma alkamisajankohta?")
 
 (def HakukohdeMetadata
-  {:valintakokeidenYleiskuvaus Kielistetty})
+  {:valintakokeidenYleiskuvaus Kielistetty
+   :kaytetaanHaunAlkamiskautta (s/maybe s/Bool)
+   :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)})
 
 (def hakukohde-schema
   "|    Hakukohde:
