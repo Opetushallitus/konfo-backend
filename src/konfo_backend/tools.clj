@@ -31,6 +31,11 @@
   [coll]
   (filter julkaistu? coll))
 
+; TODO: draft? as parameter to here
+(defn esikatselu?
+  [e]
+  (and (not (nil? e)) (= "tallennettu" (:tila e)) (:esikatselu e)))
+
 (def kouta-date-time-formatter (format/formatter "yyyy-MM-dd'T'HH:mm"))
 
 (defn ->kouta-date-time-string

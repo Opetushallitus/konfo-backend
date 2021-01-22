@@ -199,6 +199,14 @@
    |          required: true
    |          description: Oppilaitoksen yksilöivä oid
    |          example: 1.2.246.562.10.12345
+   |        - in: query\n
+   |          name: draft\n
+   |          schema:\n
+   |            type: boolean\n
+   |          required: false\n
+   |          description: Näytetäänkö luonnos esikatselua varten\n
+   |          default: false\n
+   |          example: false
    |      responses:
    |        '200':
    |          description: Ok
@@ -222,6 +230,14 @@
    |          required: true
    |          description: Oppilaitoksen osan yksilöivä oid
    |          example: 1.2.246.562.10.12345
+   |        - in: query\n
+   |          name: draft\n
+   |          schema:\n
+   |            type: boolean\n
+   |          required: false\n
+   |          description: Näytetäänkö luonnos esikatselua varten\n
+   |          default: false\n
+   |          example: false
    |      responses:
    |        '200':
    |          description: Ok
@@ -395,14 +411,16 @@
                                         (not-found "Not found"))))
 
     (GET "/oppilaitos/:oid" [:as request]
+         :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
-         (with-access-logging request (if-let [result (oppilaitos/get oid)]
+         (with-access-logging request (if-let [result (oppilaitos/get oid draft)]
                                         (ok result)
                                         (not-found "Not found"))))
 
     (GET "/oppilaitoksen-osa/:oid" [:as request]
+         :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
-         (with-access-logging request (if-let [result (oppilaitos/get-by-osa oid)]
+         (with-access-logging request (if-let [result (oppilaitos/get-by-osa oid draft)]
                                         (ok result)
                                         (not-found "Not found"))))
 

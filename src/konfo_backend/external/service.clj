@@ -27,7 +27,7 @@
 (defn get-hakukohde
   [oid]
   (some-> (hakukohde/get oid false)
-          (dissoc :muokkaaja :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto)))
+          (dissoc :muokkaaja :esikatselu :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto)))
 
 (defn get-haku
   [oid]
@@ -37,7 +37,7 @@
 (defn get-valintaperustekuvaus
   [id]
   (some-> (valintaperuste/get id false)
-          (dissoc :sorakuvausId :muokkaaja :julkinen)
+          (dissoc :sorakuvausId :muokkaaja :esikatselu :julkinen)
           (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
 
 (defn- get-koulutukset-by-oids

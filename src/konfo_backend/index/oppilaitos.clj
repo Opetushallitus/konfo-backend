@@ -1,24 +1,26 @@
 (ns konfo-backend.index.oppilaitos
   (:require
-    [konfo-backend.tools :refer [julkaistu?]]
+    [konfo-backend.tools :refer [julkaistu? esikatselu?]]
     [konfo-backend.elastic-tools :refer [get-source search]]))
 
 (defonce index "oppilaitos-kouta")
 
+; TODO: Unit test for this
 (defn- dissoc-if-not-julkaistu
-  [map key]
-  (cond-> map (not (julkaistu? (key map))) (dissoc key)))
+  [map key draft?]
+  (cond-> map
+          (and (not (and draft? (esikatselu? (key map)))) (not (julkaistu? (key map)))) (dissoc key)))
 
 (defn- dissoc-kouta-data-if-not-julkaistu
-  [oppilaitos]
-  (cond-> (dissoc-if-not-julkaistu oppilaitos :oppilaitos)
+  [draft? oppilaitos]
+  (cond-> (dissoc-if-not-julkaistu oppilaitos :oppilaitos draft?)
           (seq (:osat oppilaitos))
-          (assoc :osat (vec (map #(dissoc-if-not-julkaistu % :oppilaitoksenOsa) (:osat oppilaitos))))))
+          (assoc :osat (vec (map #(dissoc-if-not-julkaistu % :oppilaitoksenOsa draft?) (:osat oppilaitos))))))
 
 (defn get
-  [oid]
+  [oid draft?]
   (some->> (get-source index oid)
-           (dissoc-kouta-data-if-not-julkaistu)))
+           (dissoc-kouta-data-if-not-julkaistu draft?)))
 
 (defn- select-matching-osat
   [oid oppilaitos]
@@ -36,9 +38,9 @@
     oppilaitos))
 
 (defn get-by-osa
-  [oid]
+  [oid draft?]
   (some->> (search index oppilaitos-osa-mapper :query {:term {:osat.oid.keyword oid}})
            (first)
            (select-matching-osat oid)
-           (dissoc-kouta-data-if-not-julkaistu)
+           (dissoc-kouta-data-if-not-julkaistu draft?)
            (swap-osa-and-parent)))

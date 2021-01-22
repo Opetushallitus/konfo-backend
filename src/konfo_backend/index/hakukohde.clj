@@ -1,6 +1,6 @@
 (ns konfo-backend.index.hakukohde
   (:require
-    [konfo-backend.tools :refer [julkaistu?]]
+    [konfo-backend.tools :refer [esikatselu? julkaistu?]]
     [konfo-backend.elastic-tools :refer [get-source get-sources search]]))
 
 (defonce index "hakukohde-kouta")
@@ -8,8 +8,8 @@
 (defn get
   [oid draft?]
   (let [hakukohde (get-source index oid)]
-    (when (or draft? (julkaistu? hakukohde))
-      (if (or draft? (julkaistu? (:valintaperuste hakukohde)))
+    (when (or (and draft? (esikatselu? hakukohde)) (julkaistu? hakukohde))
+      (if (or (and draft? (esikatselu? (:valintaperuste hakukohde))) (julkaistu? (:valintaperuste hakukohde)))
         hakukohde
         (dissoc hakukohde :valintaperuste)))))
 

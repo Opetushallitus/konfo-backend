@@ -8,7 +8,7 @@
 (defn get
   [oid draft?]
   (let [toteutus (get-source index oid)]
-    (when (or draft? (julkaistu? toteutus))
+    (when (or (and draft? (esikatselu? toteutus)) (julkaistu? toteutus))
       toteutus)))
 
 (defn get-many
