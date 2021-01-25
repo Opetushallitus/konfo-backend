@@ -11,3 +11,7 @@ dev-configuration/*.edn
 resources/*.edn
 oph-configuration/*.edn
 config.json
+
+.lsp
+.calva
+.clj-kondo
