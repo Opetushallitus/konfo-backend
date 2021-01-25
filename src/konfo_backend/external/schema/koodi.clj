@@ -294,15 +294,15 @@
    |      properties:
    |        koodiUri:
    |          type: string
-   |          example: pohjakoulutusvaatimustoinenaste_pk
-   |          description: Toisen asteen hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/pohjakoulutusvaatimustoinenaste/1)
+   |          example: pohjakoulutusvaatimuskouta_pk
+   |          description: Hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/pohjakoulutusvaatimuskouta/1)
    |        nimi:
    |          type: object
    |          description: Pohjakoulutusvaatimus eri kielillä
    |          example: {\"fi\": \"syksy\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def PohjakoulutusvaatimusKoodi #"pohjakoulutusvaatimustoinenaste_\w+(#\d{1,2})?$")
+(def PohjakoulutusvaatimusKoodi #"pohjakoulutusvaatimuskouta_\w+(#\d{1,2})?$")
 
 (def postinumero-schema
   "|    Postinumero:
