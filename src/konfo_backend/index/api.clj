@@ -199,13 +199,13 @@
    |          required: true
    |          description: Oppilaitoksen yksilöivä oid
    |          example: 1.2.246.562.10.12345
-   |        - in: query\n
-   |          name: draft\n
-   |          schema:\n
-   |            type: boolean\n
-   |          required: false\n
-   |          description: Näytetäänkö luonnos esikatselua varten\n
-   |          default: false\n
+   |        - in: query
+   |          name: draft
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Näytetäänkö luonnos esikatselua varten
+   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -230,13 +230,13 @@
    |          required: true
    |          description: Oppilaitoksen osan yksilöivä oid
    |          example: 1.2.246.562.10.12345
-   |        - in: query\n
-   |          name: draft\n
-   |          schema:\n
-   |            type: boolean\n
-   |          required: false\n
-   |          description: Näytetäänkö luonnos esikatselua varten\n
-   |          default: false\n
+   |        - in: query
+   |          name: draft
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Näytetäänkö luonnos esikatselua varten
+   |          default: false
    |          example: false
    |      responses:
    |        '200':
