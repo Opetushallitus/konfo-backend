@@ -48,7 +48,7 @@
 (defn- get-toteutukset-by-oids
   [oids]
   (when (seq oids)
-    (->> (toteutus/get-many oids ["hakutiedot" "muokkaaja" "organisaatiot"])
+    (->> (toteutus/get-many oids ["hakutiedot" "muokkaaja" "organisaatiot" "esikatselu"])
          (filter julkaistu?)
          (vec))))
 
@@ -62,14 +62,14 @@
 (defn- get-hakukohteet-by-toteutus-oids
   [toteutusOids]
   (when (seq toteutusOids)
-    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId"])
+    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu"])
          (filter julkaistu?)
          (vec))))
 
 (defn- get-hakukohteet
   [oids]
   (when (seq oids)
-    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId"])
+    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu"])
          (filter julkaistu?)
          (vec))))
 
