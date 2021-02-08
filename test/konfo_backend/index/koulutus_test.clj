@@ -11,7 +11,11 @@
 
 (defn koulutus-url
   [oid]
-  (str "/konfo-backend/koulutus/" oid))
+  (str "/konfo-backend/koulutus/" oid false))
+
+(defn koulutus-draft-url
+  [oid]
+  (str "/konfo-backend/koulutus/" oid true))
 
 (deftest koulutus-test
 
@@ -37,5 +41,5 @@
           (is (= 2 (count (:toteutukset response))))))
       (testing "not found"
         (get-not-found (koulutus-url koulutusOid3)))
-      (testing "not julkaistu"
+      (testing "filter not julkaistu and not draft"
         (get-not-found (koulutus-url koulutusOid2))))))
