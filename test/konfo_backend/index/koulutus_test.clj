@@ -11,11 +11,11 @@
 
 (defn koulutus-url
   [oid]
-  (str "/konfo-backend/koulutus/" oid false))
+  (apply url-with-query-params (str "/konfo-backend/koulutus/" oid) [:draft false]))
 
 (defn koulutus-draft-url
   [oid]
-  (str "/konfo-backend/koulutus/" oid true))
+  (apply url-with-query-params (str "/konfo-backend/koulutus/" oid) [:draft true]))
 
 (deftest koulutus-test
 
