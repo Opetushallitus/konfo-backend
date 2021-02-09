@@ -11,7 +11,7 @@
 
 (defn oppilaitos-url
   [oid]
-  (str "/konfo-backend/oppilaitos/" oid))
+  (apply url-with-query-params (str "/konfo-backend/oppilaitos/" oid) [:draft false]))
 
 (deftest oppilaitos-test
 
@@ -23,8 +23,8 @@
         oppilaitoksenOsaOid3 "1.2.246.562.10.001010101021"
         oppilaitoksenOsaOid4 "1.2.246.562.10.001010101022"]
 
-    (fixture/add-oppilaitos-mock oppilaitosOid1 :tila "julkaistu" :organisaatio oppilaitosOid1)
-    (fixture/add-oppilaitos-mock oppilaitosOid2 :tila "tallennettu" :organisaatio oppilaitosOid2)
+    (fixture/add-oppilaitos-mock oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitosOid1)
+    (fixture/add-oppilaitos-mock oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitosOid2)
 
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid1 oppilaitosOid1 :tila "julkaistu" :organisaatio oppilaitoksenOsaOid1)
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :organisaatio oppilaitoksenOsaOid2)
