@@ -5,7 +5,6 @@
 
 (defonce index "oppilaitos-kouta")
 
-; TODO: Unit test for this
 (defn- dissoc-if-not-julkaistu
   [map key draft?]
   (cond-> map

@@ -32,10 +32,10 @@
     (fixture/add-oppilaitos-mock oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitosOid2)
     (fixture/add-oppilaitos-mock oppilaitosOid4 :tila "tallennettu" :esikatselu "true" :organisaatio oppilaitosOid4)
 
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid1 oppilaitosOid1 :tila "julkaistu" :organisaatio oppilaitoksenOsaOid1)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :organisaatio oppilaitoksenOsaOid2)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid3 oppilaitosOid2 :tila "julkaistu" :organisaatio oppilaitoksenOsaOid3)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :organisaatio oppilaitoksenOsaOid4)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid1 oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid1)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid2)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid3 oppilaitosOid2 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid3)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid4)
 
     (fixture/index-oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid4])
 
