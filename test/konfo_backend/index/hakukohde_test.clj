@@ -54,6 +54,8 @@
           (is (= hakukohdeOid5 (:oid response)))))
       (testing "not allowed to get draft hakukohde when tallennettu and esikatselu false"
         (get-not-found (hakukohde-draft-url hakukohdeOid3)))
+      (testing "not allowd to get hakukohde when tallennettu and esikatselu true"
+        (get-not-found (hakukohde-url hakukohdeOid5)))
       (testing "not filter julkaistu valintaperuste"
         (let [response (get-ok (hakukohde-url hakukohdeOid1))]
           (is (= true (contains? response :valintaperuste)))))
@@ -61,6 +63,4 @@
         (let [response (get-ok (hakukohde-url hakukohdeOid2))]
           (is (= false (contains? response :valintaperuste) ))))
       (testing "not found"
-        (get-not-found (hakukohde-url hakukohdeOid4)))
-      (testing "not julkaistu"
-        (get-not-found (hakukohde-url hakukohdeOid3))))))
+        (get-not-found (hakukohde-url hakukohdeOid4))))))
