@@ -58,7 +58,7 @@
         (get-not-found (hakukohde-url hakukohdeOid5)))
       (testing "not found hakukohde"
         (get-not-found (hakukohde-url hakukohdeOid4)))
-      (testing "not filter julkaistu valintaperuste"
+      (testing "get julkaistu valintaperuste"
         (let [response (get-ok (hakukohde-url hakukohdeOid1))]
           (is (= true (contains? response :valintaperuste)))))
       (testing "filter julkaisematon valintaperuste"
