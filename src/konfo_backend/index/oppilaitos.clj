@@ -1,6 +1,6 @@
 (ns konfo-backend.index.oppilaitos
   (:require
-    [konfo-backend.tools :refer [julkaistu? esikatselu?]]
+    [konfo-backend.tools :refer [draft-view-allowed julkaistu?]]
     [konfo-backend.elastic-tools :refer [get-source search]]))
 
 (defonce index "oppilaitos-kouta")
@@ -8,7 +8,9 @@
 (defn- dissoc-if-not-julkaistu
   [map key draft?]
   (cond-> map
-          (and (not (and draft? (esikatselu? (key map)))) (not (julkaistu? (key map)))) (dissoc key)))
+          (and (not (draft-view-allowed (key map) draft?))
+               (not (julkaistu? (key map))))
+          (dissoc key)))
 
 (defn- dissoc-kouta-data-if-not-julkaistu
   [draft? oppilaitos]
