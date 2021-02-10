@@ -40,5 +40,7 @@
           (is (= valintaperusteId4 (:id response)))))
       (testing "not found"
         (get-not-found (valintaperuste-url valintaperusteId3)))
+      (testing "filter not julkaistu and draft true but esikatselu false"
+        (get-not-found (valintaperuste-draft-url valintaperusteId2)))
       (testing "filter not julkaistu and draft false"
         (get-not-found (valintaperuste-url valintaperusteId2))))))
