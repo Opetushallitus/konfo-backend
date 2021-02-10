@@ -11,7 +11,7 @@
 
 (defn hakukohde-url
   [oid]
-  (str "/konfo-backend/hakukohde/" oid))
+  (apply url-with-query-params (str "/konfo-backend/hakukohde/" oid) [:draft false]))
 
 (deftest hakukohde-test
 
@@ -22,16 +22,16 @@
         valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
         valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
-    (fixture/add-haku-mock "1.2.246.562.29.000001" :tila "julkaistu"   :organisaatio mocks/Oppilaitos1)
+    (fixture/add-haku-mock "1.2.246.562.29.000001" :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
 
     (fixture/add-koulutus-mock "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
 
-    (fixture/add-hakukohde-mock hakukohdeOid1 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid2 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
-    (fixture/add-hakukohde-mock hakukohdeOid3 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid1 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid2 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
+    (fixture/add-hakukohde-mock hakukohdeOid3 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "tallennettu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
 
-    (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
-    (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
+    (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :esikatselu "false")
+    (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :esikatselu "false")
 
     (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000001")
     (fixture/add-koulutus-mock "1.2.246.562.13.000001")
