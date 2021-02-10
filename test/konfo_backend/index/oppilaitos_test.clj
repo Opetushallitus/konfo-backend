@@ -77,10 +77,14 @@
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
           (is (= oppilaitosOid1 (:oid response)))
           (is (false? (contains? (find-osa response oppilaitoksenOsaOid2) :oppilaitoksenOsa)))))
-      (testing "filter draft oppilaitoksen osa when tallennettu but not esikatselu true"
+      (testing "filter draft oppilaitoksen osa when tallennettu but esikatselu false"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
           (is (false? (contains? (find-osa response oppilaitoksenOsaOid5) :oppilaitoksenOsa)))))
+      (testing "filter oppilaitoksen osa that is tallennettu and esikatselu true but draft false"
+        (let [response (get-ok (oppilaitos-url oppilaitosOid2))]
+          (is (= oppilaitosOid2 (:oid response)))
+          (is (false? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa)))))
       (testing "allowed to get draft oppilaitoksen osa when tallennettu and esikatselu true"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
