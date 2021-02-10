@@ -24,6 +24,7 @@
         toteutusOid1  "1.2.246.562.17.000001"
         toteutusOid2  "1.2.246.562.17.000002"
         toteutusOid3  "1.2.246.562.17.000003"
+        toteutusOid4  "1.2.246.562.17.000004"
         hakukohdeOid1 "1.2.246.562.20.000001"
         hakukohdeOid2 "1.2.246.562.20.000002"
         hakukohdeOid3 "1.2.246.562.20.000003"
@@ -36,18 +37,24 @@
 
     (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu"   :nimi "Hauska toteutus"                :esikatselu "false" :organisaatio mocks/Oppilaitos1)
     (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :esikatselu "false" :organisaatio mocks/Oppilaitos2)
+    (fixture/add-toteutus-mock toteutusOid4 koulutusOid1 :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :esikatselu "true" :organisaatio mocks/Oppilaitos2)
 
     (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
     (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
     (fixture/add-hakukohde-mock hakukohdeOid3 toteutusOid1 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
 
-    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1] :toteutukset [toteutusOid1 toteutusOid2]})
+    (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1] :toteutukset [toteutusOid1 toteutusOid2 toteutusOid4]})
 
     (testing "Get toteutus"
-      (let [response (get-ok (toteutus-url toteutusOid1))]
-        (testing "ok"
+      (testing "ok"
+        (let [response (get-ok (toteutus-url toteutusOid1))]
           (is (= toteutusOid1 (:oid response)))))
+      (testing "get draft toteutus when esikatselu true"
+        (let [response (get-ok (toteutus-draft-url toteutusOid4))]
+          (is (= toteutusOid4 (:oid response)))))
       (testing "not found"
         (get-not-found (toteutus-url toteutusOid3)))
+      (testing "filter not julkaistu and draft true but esikatselu false"
+        (get-not-found (toteutus-draft-url toteutusOid2)))
       (testing "filter not julkaistu and draft false"
         (get-not-found (toteutus-url toteutusOid2))))))
