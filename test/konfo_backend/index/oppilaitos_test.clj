@@ -35,7 +35,7 @@
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid1 oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid1)
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid2)
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid3 oppilaitosOid2 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid3)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid4)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :esikatselu "true" :organisaatio oppilaitoksenOsaOid4)
 
     (fixture/index-oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid4])
 
@@ -58,9 +58,8 @@
       (testing "filter not julkaistu and not esikatselu oppilaitos in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
-          (is (false? (contains? response :oppilaitos)))
-          (is (false? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa)))))
-      (testing "filter tallennettu but not esikatselu true oppilaitos in Kouta"
+          (is (false? (contains? response :oppilaitos)))))
+      (testing "filter draft oppilaitos when tallennettu but not esikatselu true"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
           (is (false? (contains? response :oppilaitos)))))
@@ -75,4 +74,8 @@
       (testing "filter not julkaistu and not esikatselu oppilaitoksen osa in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
           (is (= oppilaitosOid1 (:oid response)))
-          (is (false? (contains? (find-osa response oppilaitoksenOsaOid2) :oppilaitoksenOsa))))))))
+          (is (false? (contains? (find-osa response oppilaitoksenOsaOid2) :oppilaitoksenOsa)))))
+      (testing "allowed to get draft oppilaitoksen osa when tallennettu and esikatselu true"
+        (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
+          (is (= oppilaitosOid2 (:oid response)))
+          (is (true? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa))))))))
