@@ -5,23 +5,23 @@
 
 (defonce index "oppilaitos-kouta")
 
-(defn- dissoc-if-not-julkaistu
+(defn- dissoc-if-not-allowed-to-view
   [map key draft?]
   (cond-> map
           (and (not (draft-view-allowed (key map) draft?))
                (not (julkaistu? (key map))))
           (dissoc key)))
 
-(defn- dissoc-kouta-data-if-not-julkaistu
+(defn- dissoc-kouta-data-if-not-allowed-to-view
   [draft? oppilaitos]
-  (cond-> (dissoc-if-not-julkaistu oppilaitos :oppilaitos draft?)
+  (cond-> (dissoc-if-not-allowed-to-view oppilaitos :oppilaitos draft?)
           (seq (:osat oppilaitos))
-          (assoc :osat (vec (map #(dissoc-if-not-julkaistu % :oppilaitoksenOsa draft?) (:osat oppilaitos))))))
+          (assoc :osat (vec (map #(dissoc-if-not-allowed-to-view % :oppilaitoksenOsa draft?) (:osat oppilaitos))))))
 
 (defn get
   [oid draft?]
   (some->> (get-source index oid)
-           (dissoc-kouta-data-if-not-julkaistu draft?)))
+           (dissoc-kouta-data-if-not-allowed-to-view draft?)))
 
 (defn- select-matching-osat
   [oid oppilaitos]
@@ -43,5 +43,5 @@
   (some->> (search index oppilaitos-osa-mapper :query {:term {:osat.oid.keyword oid}})
            (first)
            (select-matching-osat oid)
-           (dissoc-kouta-data-if-not-julkaistu draft?)
+           (dissoc-kouta-data-if-not-allowed-to-view draft?)
            (swap-osa-and-parent)))
