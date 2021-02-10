@@ -46,5 +46,5 @@
           (is (= 2 (count (:toteutukset response))))))
       (testing "not found"
         (get-not-found (koulutus-url koulutusOid3)))
-      (testing "filter not julkaistu and not draft"
-        (get-not-found (koulutus-url koulutusOid2))))))
+      (testing "filter not julkaistu draft when esikatselu false"
+        (get-not-found (koulutus-draft-url koulutusOid2))))))
