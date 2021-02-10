@@ -26,7 +26,8 @@
         oppilaitoksenOsaOid1 "1.2.246.562.10.001010101011"
         oppilaitoksenOsaOid2 "1.2.246.562.10.001010101012"
         oppilaitoksenOsaOid3 "1.2.246.562.10.001010101021"
-        oppilaitoksenOsaOid4 "1.2.246.562.10.001010101022"]
+        oppilaitoksenOsaOid4 "1.2.246.562.10.001010101022"
+        oppilaitoksenOsaOid5 "1.2.246.562.10.001010101023"]
 
     (fixture/add-oppilaitos-mock oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitosOid1)
     (fixture/add-oppilaitos-mock oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitosOid2)
@@ -36,6 +37,7 @@
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid2)
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid3 oppilaitosOid2 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid3)
     (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :esikatselu "true" :organisaatio oppilaitoksenOsaOid4)
+    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid5 oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid5)
 
     (fixture/index-oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid4])
 
@@ -75,6 +77,10 @@
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
           (is (= oppilaitosOid1 (:oid response)))
           (is (false? (contains? (find-osa response oppilaitoksenOsaOid2) :oppilaitoksenOsa)))))
+      (testing "filter draft oppilaitoksen osa when tallennettu but not esikatselu true"
+        (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
+          (is (= oppilaitosOid2 (:oid response)))
+          (is (false? (contains? (find-osa response oppilaitoksenOsaOid5) :oppilaitoksenOsa)))))
       (testing "allowed to get draft oppilaitoksen osa when tallennettu and esikatselu true"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
