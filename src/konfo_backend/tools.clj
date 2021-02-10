@@ -38,6 +38,11 @@
        (= "tallennettu" (:tila entity))
        (:esikatselu entity)))
 
+(defn allowed-to-view
+  [entity draft?]
+  (or (draft-view-allowed entity draft?)
+      (julkaistu? entity)))
+
 (def kouta-date-time-formatter (format/formatter "yyyy-MM-dd'T'HH:mm"))
 
 (defn ->kouta-date-time-string
