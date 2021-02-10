@@ -10,11 +10,11 @@
 
 (defn valintaperuste-url
   [id]
-  (apply url-with-query-params (str "/konfo-backend/valintaperuste/" oid) [:draft false]))
+  (apply url-with-query-params (str "/konfo-backend/valintaperuste/" id) [:draft false]))
 
 (defn valintaperuste-draft-url
   [id]
-  (apply url-with-query-params (str "/konfo-backend/valintaperuste/" oid) [:draft true]))
+  (apply url-with-query-params (str "/konfo-backend/valintaperuste/" id) [:draft true]))
 
 (deftest valintaperuste-test
 
@@ -37,8 +37,8 @@
           (is (= valintaperusteId1 (:id response)))))
       (testing "get draft valintaperuste when esikatselu true"
         (let [response (get-ok (valintaperuste-draft-url valintaperusteId4))]
-          (is (= valintaperusteId4 (:oid response)))))
+          (is (= valintaperusteId4 (:id response)))))
       (testing "not found"
         (get-not-found (valintaperuste-url valintaperusteId3)))
-      (testing "not julkaistu and draft false"
+      (testing "filter not julkaistu and draft false"
         (get-not-found (valintaperuste-url valintaperusteId2))))))
