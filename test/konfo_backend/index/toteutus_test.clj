@@ -11,7 +11,11 @@
 
 (defn toteutus-url
   [oid]
-  (str "/konfo-backend/toteutus/" oid))
+  (apply url-with-query-params (str "/konfo-backend/toteutus/" oid) [:draft false]))
+
+(defn toteutus-draft-url
+  [oid]
+  (apply url-with-query-params (str "/konfo-backend/toteutus/" oid) [:draft true]))
 
 (deftest toteutus-test
 
@@ -30,8 +34,8 @@
 
     (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
 
-    (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu"   :nimi "Hauska toteutus"                :organisaatio mocks/Oppilaitos1)
-    (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :organisaatio mocks/Oppilaitos2)
+    (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu"   :nimi "Hauska toteutus"                :esikatselu "false" :organisaatio mocks/Oppilaitos1)
+    (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu" :nimi "Hupaisa julkaisematon toteutus" :esikatselu "false" :organisaatio mocks/Oppilaitos2)
 
     (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
     (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
@@ -45,5 +49,5 @@
           (is (= toteutusOid1 (:oid response)))))
       (testing "not found"
         (get-not-found (toteutus-url toteutusOid3)))
-      (testing "not julkaistu"
+      (testing "filter not julkaistu and draft false"
         (get-not-found (toteutus-url toteutusOid2))))))
