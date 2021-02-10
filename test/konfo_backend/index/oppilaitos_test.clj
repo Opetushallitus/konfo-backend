@@ -59,7 +59,6 @@
         (let [response (get-ok (oppilaitos-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
           (is (false? (contains? response :oppilaitos)))
-          (is (contains? (find-osa response oppilaitoksenOsaOid3) :oppilaitoksenOsa))
           (is (false? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa)))))
       (testing "filter tallennettu but not esikatselu true oppilaitos in Kouta"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
