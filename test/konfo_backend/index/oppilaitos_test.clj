@@ -49,7 +49,7 @@
           (is (= oppilaitosOid1 (:oid response)))
           (is (contains? response :oppilaitos))
           (is (= 0 (:koulutusohjelmia response)))))
-      (testing "allowed to get oppilaitos when tallennettu and esikatselu true"
+      (testing "allowed to get draft oppilaitos when tallennettu and esikatselu true"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid4))]
           (is (= oppilaitosOid4 (:oid response)))
           (is (true? (contains? response :oppilaitos)))))
