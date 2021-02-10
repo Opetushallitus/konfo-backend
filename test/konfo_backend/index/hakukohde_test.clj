@@ -61,6 +61,6 @@
       (testing "get julkaistu valintaperuste"
         (let [response (get-ok (hakukohde-url hakukohdeOid1))]
           (is (= true (contains? response :valintaperuste)))))
-      (testing "filter julkaisematon valintaperuste"
+      (testing "filter julkaisematon valintaperuste when draft false"
         (let [response (get-ok (hakukohde-url hakukohdeOid2))]
           (is (= false (contains? response :valintaperuste) )))))))
