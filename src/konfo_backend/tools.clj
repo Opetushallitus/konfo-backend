@@ -31,6 +31,13 @@
   [coll]
   (filter julkaistu? coll))
 
+(defn draft-view-allowed
+  [entity draft?]
+  (and draft?
+       (not (nil? entity))
+       (= "tallennettu" (:tila entity))
+       (:esikatselu entity)))
+
 ; TODO: draft? as parameter to here
 (defn esikatselu?
   [e]
