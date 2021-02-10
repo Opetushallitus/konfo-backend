@@ -44,13 +44,13 @@
           (is (= 0 (:koulutusohjelmia response)))))
       (testing "not found"
         (get-not-found (oppilaitos-url oppilaitosOid3)))
-      (testing "filter julkaisematon oppilaitos in Kouta"
+      (testing "filter not julkaistu and not esikatselu oppilaitos in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
           (is (false? (contains? response :oppilaitos)))
           (is (contains? (find-osa response oppilaitoksenOsaOid3) :oppilaitoksenOsa))
           (is (false? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa)))))
-      (testing "filter julkaisematon oppilaitoksen osa in Kouta"
+      (testing "filter not julkaistu and not esikatselu oppilaitoksen osa in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
           (is (= oppilaitosOid1 (:oid response)))
           (is (contains? response :oppilaitos))
