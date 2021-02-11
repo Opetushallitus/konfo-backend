@@ -1,6 +1,6 @@
 (ns konfo-backend.index.valintaperuste
   (:require
-    [konfo-backend.tools :refer [julkaistut julkaistu?]]
+    [konfo-backend.tools :refer [allowed-to-view]]
     [konfo-backend.elastic-tools :refer [get-source]]))
 
 (defonce index "valintaperuste-kouta")
@@ -8,5 +8,5 @@
 (defn get
   [id draft?]
   (let [valintaperuste (get-source index id)]
-    (when (or draft? (julkaistu? valintaperuste))
+    (when (allowed-to-view valintaperuste draft?)
       valintaperuste)))
