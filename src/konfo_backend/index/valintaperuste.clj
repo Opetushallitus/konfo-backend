@@ -1,6 +1,6 @@
 (ns konfo-backend.index.valintaperuste
   (:require
-    [konfo-backend.tools :refer [allowed-to-view julkaistu?]]
+    [konfo-backend.tools :refer [allowed-to-view]]
     [konfo-backend.elastic-tools :refer [get-source]]))
 
 (defonce index "valintaperuste-kouta")

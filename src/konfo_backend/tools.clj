@@ -31,7 +31,7 @@
   [coll]
   (filter julkaistu? coll))
 
-(defn draft-view-allowed
+(defn- draft-view-allowed
   [entity draft?]
   (and draft?
        (not (nil? entity))

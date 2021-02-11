@@ -1,6 +1,6 @@
 (ns konfo-backend.index.koulutus
   (:require
-    [konfo-backend.tools :refer [allowed-to-view julkaistut julkaistu?]]
+    [konfo-backend.tools :refer [allowed-to-view julkaistut]]
     [konfo-backend.elastic-tools :refer [get-source get-sources]]))
 
 (defonce index "koulutus-kouta")
