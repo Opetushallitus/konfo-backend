@@ -16,5 +16,5 @@
 (defn list-koodi-urit
   [koodisto]
   (if (= "koulutustyyppi" koodisto)
-    (vector "koulutustyyppi_1", "koulutustyyppi_11", "koulutustyyppi_12") ;TODO: fixme
+    (vector "koulutustyyppi_1", "koulutustyyppi_4", "koulutustyyppi_11", "koulutustyyppi_12") ;TODO: fixme
     (vec (map :koodiUri (list-koodit koodisto)))))
