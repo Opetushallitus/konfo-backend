@@ -108,7 +108,7 @@
         (testing "not julkaistu"
           (get-not-found (koulutus-url koulutusOid2)))
         (testing "not amm"
-          (get-ok (koulutus-url kkKoulutusOid))))
+          (get-ok-or-print-schema-error (koulutus-url kkKoulutusOid))))
 
       (testing "Get toteutus"
         (testing "ok only toteutus"
@@ -140,7 +140,7 @@
         (testing "not julkaistu"
           (get-not-found (toteutus-url toteutusOid2)))
         (testing "not amm"
-          (get-ok (toteutus-url kkToteutusOid))))
+          (get-ok-or-print-schema-error (toteutus-url kkToteutusOid))))
 
       (testing "Get hakukohde"
         (testing "ok only hakukohde"
