@@ -67,6 +67,9 @@
     |              description: Tutkinnon laajuuden eri kielillä.
     |              example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
     |              $ref: '#/components/schemas/Teksti'
+    |        opintojenLaajuusyksikko:
+    |          type: object
+    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
     |    YliopistoKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
@@ -98,7 +101,8 @@
    :lisatiedot                         [KoulutusLisatieto]
    :koulutusala                        [(->Koodi Koulutusala2Koodi)]
    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
-   (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))})
+   (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   :opintojenLaajuusyksikko             (->Koodi OpintojenLaajuusyksikkoKoodi)})
 
 (def AmmKoulutusMetadata
   {:tyyppi                                    Amm
