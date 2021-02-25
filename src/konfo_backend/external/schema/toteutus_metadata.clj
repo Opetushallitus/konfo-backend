@@ -54,26 +54,6 @@
    |          type: object
    |          description: Koulutuksen alkamiskausi
    |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
-   |        koulutuksenTarkkaAlkamisaika:
-   |          type: boolean
-   |          description: Jos alkamisaika on tiedossa niin alkamis- ja päättymispäivämäärä on pakollinen. Muussa tapauksessa kausi ja vuosi on pakollisia tietoja.
-   |          example: true
-   |        koulutuksenAlkamispaivamaara:
-   |          type: string
-   |          description: Koulutuksen alkamisen päivämäärä
-   |          example: 2019-11-20T12:00
-   |        koulutuksenPaattymispaivamaara:
-   |          type: string
-   |          description: Koulutuksen päättymisen päivämäärä
-   |          example: 2019-12-20T12:00
-   |        koulutuksenAlkamiskausi:
-   |          type: object
-   |          description: Koulutuksen alkamiskausi
-   |          $ref: '#/components/schemas/Alkamiskausi'
-   |        koulutuksenAlkamisvuosi:
-   |          type: string
-   |          description: Koulutuksen alkamisvuosi
-   |          example: 2020
    |        lisatiedot:
    |          type: array
    |          description: Koulutuksen toteutukseen liittyviä lisätietoja, jotka näkyvät oppijalle Opintopolussa
@@ -115,11 +95,6 @@
    (s/->OptionalKey :maksullisuusKuvaus)             Kielistetty
    (s/->OptionalKey :maksunMaara)                    s/Num
    (s/->OptionalKey :koulutuksenAlkamiskausiUUSI)    (s/maybe KoulutuksenAlkamiskausi)
-   :koulutuksenTarkkaAlkamisaika                     s/Bool
-   (s/->OptionalKey :koulutuksenAlkamispaivamaara)   Datetime
-   (s/->OptionalKey :koulutuksenPaattymispaivamaara) Datetime
-   (s/->OptionalKey :koulutuksenAlkamiskausi)        (->Koodi AlkamiskausiKoodi)
-   (s/->OptionalKey :koulutuksenAlkamisvuosi)        s/Num
    :lisatiedot                                       [KoulutusLisatieto]
    :onkoStipendia                                    s/Bool
    (s/->OptionalKey :stipendinMaara)                 s/Num

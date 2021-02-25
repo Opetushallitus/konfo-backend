@@ -56,17 +56,6 @@
    |          type: object
    |          description: Hakukohteen nimi eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
    |          $ref: '#/components/schemas/Nimi'
-   |        alkamiskausi:
-   |          type: object
-   |          description: Hakukohteen koulutuksen alkamiskausi, jos ei käytetän haun alkamiskautta
-   |          $ref: '#/components/schemas/Alkamiskausi'
-   |        alkamisvuosi:
-   |          type: number
-   |          description: Hakukohteen koulutusten alkamisvuosi, jos ei käytetä haun alkamisvuotta
-   |          example: 2020
-   |        kaytetaanHaunAlkamiskautta:
-   |          type: boolean
-   |          description: Käytetäänkö haun alkamiskautta ja -vuotta vai onko hakukohteelle määritelty oma alkamisajankohta?
    |        jarjestyspaikka:
    |          type: object
    |          description: Se organisaatio, jossa järjestetään koulutus, johon hakukohteessa voi hakea
@@ -188,9 +177,6 @@
    :hakuOid                                        HakuOid
    :tila                                           Julkaistu
    :nimi                                           Kielistetty
-   (s/->OptionalKey :alkamiskausi)                 (->Koodi AlkamiskausiKoodi)
-   (s/->OptionalKey :alkamisvuosi)                 s/Str
-   :kaytetaanHaunAlkamiskautta                     s/Bool
    :jarjestyspaikka                                Organisaatio
    :kaytetaanHaunHakulomaketta                     s/Bool
    (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
