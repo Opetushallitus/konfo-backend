@@ -1,9 +1,9 @@
 (ns konfo-backend.external.schema.toteutus-metadata
   (:require
-    [schema.core :as s]
-    [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
-    [schema-tools.core :as st]))
+   [schema.core :as s]
+   [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
+   [schema-tools.core :as st]))
 
 (def opetus-schema
   "|    Opetus:
@@ -60,6 +60,9 @@
    |          items:
    |            type: object
    |            $ref: '#/components/schemas/KoulutusLisatieto'
+   |        ammatillinenPerustutkintoErityisopetuksena:
+   |          type: boolean
+   |          description: Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?
    |        onkoStipendia:
    |          type: boolean
    |          description: Onko koulutukseen stipendiä?
@@ -96,6 +99,7 @@
    (s/->OptionalKey :maksunMaara)                    s/Num
    (s/->OptionalKey :koulutuksenAlkamiskausiUUSI)    (s/maybe KoulutuksenAlkamiskausi)
    :lisatiedot                                       [KoulutusLisatieto]
+   :ammatillinenPerustutkintoErityisopetuksena       s/Bool
    :onkoStipendia                                    s/Bool
    (s/->OptionalKey :stipendinMaara)                 s/Num
    (s/->OptionalKey :stipendinKuvaus)                Kielistetty
@@ -285,25 +289,25 @@
 
 (def KorkeakoulutusToteutusMetadata
   (st/merge
-    {:alemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]
-     :ylemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]}
-    ToteutusMetadata))
+   {:alemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]
+    :ylemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]}
+   ToteutusMetadata))
 
 (def AmmToteutusMetadata
   (st/merge
-  {:tyyppi Amm
-   :osaamisalat [AmmOsaamisala]}
-    ToteutusMetadata))
+   {:tyyppi Amm
+    :osaamisalat [AmmOsaamisala]}
+   ToteutusMetadata))
 
 (def YoToteutusMetadata
   (st/merge
-  {:tyyppi Yo}
-  KorkeakoulutusToteutusMetadata))
+   {:tyyppi Yo}
+   KorkeakoulutusToteutusMetadata))
 
 (def AmkToteutusMetadata
   (st/merge
-    {:tyyppi Amk}
-    KorkeakoulutusToteutusMetadata))
+   {:tyyppi Amk}
+   KorkeakoulutusToteutusMetadata))
 
 (def schemas
   (str opetus-schema "\n"

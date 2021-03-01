@@ -23,7 +23,7 @@
 (defn- beta-koulutustyyppi
   [aggs]
   (let [count (:amm aggs)]
-    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters aggs "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_11 :koulutustyyppi_12])}
+    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters aggs "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
             count (assoc :count count))}))
 
 (defn- beta-koulutustyyppi-muu
