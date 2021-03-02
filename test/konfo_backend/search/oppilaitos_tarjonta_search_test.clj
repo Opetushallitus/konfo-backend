@@ -72,7 +72,6 @@
           (is (= 0 (:total r)))))
       (testing "Can filter by koulutustyyppi"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :koulutustyyppi "yo")]
-          (clojure.pprint/pprint r)
           (is (= 0 (:total r)))))
       (testing "All filterts must match"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_220" :koulutustyyppi "yo")]

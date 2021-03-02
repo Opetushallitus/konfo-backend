@@ -130,6 +130,14 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |          default: nil
+   |        - in: query
+   |          name: valintatapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: valintatapajono_av, valintatapajono_tv
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -500,16 +508,17 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa]
   {:koulutustyyppi (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
    :sijainti (comma-separated-string->vec sijainti)
    :opetuskieli (comma-separated-string->vec opetuskieli)
    :koulutusala (comma-separated-string->vec koulutusala)
-   :opetustapa (comma-separated-string->vec opetustapa)})
+   :opetustapa (comma-separated-string->vec opetustapa)
+   :valintatapa (comma-separated-string->vec valintatapa)})
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa)]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -526,7 +535,7 @@
 
 (defn- ->search-subentities-with-validated-params
   [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa)]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -564,7 +573,8 @@
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}
-                        {opetustapa     :- String nil}]
+                        {opetustapa     :- String nil}
+                        {valintatapa    :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
                                                                       keyword
                                                                       lng
@@ -576,7 +586,8 @@
                                                                       sijainti
                                                                       opetuskieli
                                                                       koulutusala
-                                                                      opetustapa)))
+                                                                      opetustapa
+                                                                      valintatapa)))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
          :path-params [oid :- String]
@@ -613,7 +624,8 @@
                         {sijainti       :- String nil}
                         {opetuskieli    :- String nil}
                         {koulutusala    :- String nil}
-                        {opetustapa     :- String nil}]
+                        {opetustapa     :- String nil}
+                        {valintatapa    :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                       keyword
                                                                       lng
@@ -625,7 +637,8 @@
                                                                       sijainti
                                                                       opetuskieli
                                                                       koulutusala
-                                                                      opetustapa)))
+                                                                      opetustapa
+                                                                      valintatapa)))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
          :path-params [oid :- String]

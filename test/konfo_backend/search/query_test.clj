@@ -37,6 +37,9 @@
                                         :opetustapa            {:filters {:filters {:opetuspaikkakk_01 {:term {:hits.opetustavat.keyword "opetuspaikkakk_01"}}
                                                                                     :opetuspaikkakk_02 {:term {:hits.opetustavat.keyword "opetuspaikkakk_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
+                                        :valintatapa           {:filters {:filters {:valintatapajono_01 {:term {:hits.valintatavat.keyword "valintatapajono_01"}}
+                                                                                    :valintatapajono_02 {:term {:hits.valintatavat.keyword "valintatapajono_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
                                                                                     :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
