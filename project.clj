@@ -47,7 +47,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "1.0.0-SNAPSHOT"]
+                                   [kouta-indeksoija-service "1.1.0-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "1.3.0-SNAPSHOT" :classifier "tests"]
@@ -56,7 +56,7 @@
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (utils/global-docker-elastic-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "1.0.0.-SNAPSHOT"]
+                                      [kouta-indeksoija-service "1.1.0.-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "1.3.0-SNAPSHOT" :classifier "tests"]

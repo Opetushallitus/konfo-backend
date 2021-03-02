@@ -104,6 +104,14 @@
                                                                       {:koodiUri "opetuspaikkakk_02"
                                                                        :versio 1
                                                                        :nimi {:fi "Toinen mahtava opetustapa"}}]}
+    (= "valintatapajono" x)                                 {:id "valintatapajono"
+                                                             :koodisto "valintatapajono"
+                                                             :koodit [{:koodiUri "valintatapajono_av"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Valintatapa yksi"}}
+                                                                      {:koodiUri "valintatapajono_tv"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Valintatapa kaksi"}}]}
     (= "oppilaitoksenopetuskieli" x)                        {:id "oppilaitoksenopetuskieli"
                                                              :koodisto "oppilaitoksenopetuskieli"
                                                              :koodit [{:koodiUri "oppilaitoksenopetuskieli_01"

@@ -20,7 +20,8 @@
           (opetuskieli? constraints)     (conj (->terms-query :hits.opetuskielet.keyword   (:opetuskieli constraints)))
           (sijainti? constraints)        (conj (->terms-query :hits.sijainti.keyword       (:sijainti constraints)))
           (koulutusala? constraints)     (conj (->terms-query :hits.koulutusalat.keyword   (:koulutusala constraints)))
-          (opetustapa? constraints)      (conj (->terms-query :hits.opetustavat.keyword    (:opetustapa constraints)))))
+          (opetustapa? constraints)      (conj (->terms-query :hits.opetustavat.keyword    (:opetustapa constraints)))
+          (valintatapa? constraints)     (conj (->terms-query :hits.valintatavat.keyword   (:valintatapa constraints)))))
 
 (defn- bool
   [keyword lng constraints]
@@ -125,7 +126,8 @@
    :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
    :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
    :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
-   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")})
+   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")
+   :valintatapa         (koodisto-filters :hits.valintatavat.keyword   "valintatapajono")})
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]

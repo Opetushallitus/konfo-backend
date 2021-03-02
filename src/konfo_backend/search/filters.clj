@@ -43,7 +43,8 @@
       :koulutustyyppi     (beta-koulutustyyppi aggs)        ;TODO! Koodisto?
       :koulutustyyppi-muu (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
       :koulutusala        (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
-      :opetustapa     (filters "opetuspaikkakk")}))
+      :opetustapa         (filters "opetuspaikkakk")
+      :valintatapa        (filters "valintatapajono")}))
   ([]
    (hierarkia {})))
 
@@ -51,9 +52,9 @@
   [aggs]
   (let [filters (partial koodisto->filters aggs)]
     {:opetuskieli (filters "oppilaitoksenopetuskieli")
-     :maakunta (filters "maakunta")
-     :kunta (filters "kunta")
-     :opetustapa (filters "opetuspaikkakk")}))
+     :maakunta    (filters "maakunta")
+     :kunta       (filters "kunta")
+     :opetustapa  (filters "opetuspaikkakk")}))
 
 
 (defn filter->obj [suodatin koodi nimi]
