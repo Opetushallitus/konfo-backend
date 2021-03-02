@@ -130,6 +130,14 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |          default: nil
+   |        - in: query
+   |          name: valintatapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: valintatapajono_av, valintatapajono_tv
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
