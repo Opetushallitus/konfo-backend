@@ -32,6 +32,10 @@
   [constraints]
   (constraint? constraints :valintatapa))
 
+(defn hakutapa?
+  [constraints]
+  (constraint? constraints :hakutapa))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
@@ -39,7 +43,8 @@
       (koulutusala? constraints)
       (opetuskieli? constraints)
       (opetustapa? constraints)
-      (valintatapa? constraints)))
+      (valintatapa? constraints)
+      (hakutapa? constraints)))
 
 (defn ->lng-keyword
   [str lng]
