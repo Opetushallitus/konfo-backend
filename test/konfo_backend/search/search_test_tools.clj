@@ -112,6 +112,14 @@
                                                                       {:koodiUri "valintatapajono_tv"
                                                                        :versio 1
                                                                        :nimi {:fi "Valintatapa kaksi"}}]}
+    (= "hakutapa" x)                                        {:id "hakutapa"
+                                                             :koodisto "hakutapa"
+                                                             :koodit [{:koodiUri "hakutapa_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Hakutapa yksi"}}
+                                                                      {:koodiUri "hakutapa_03"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Hakutapa kolme"}}]}
     (= "oppilaitoksenopetuskieli" x)                        {:id "oppilaitoksenopetuskieli"
                                                              :koodisto "oppilaitoksenopetuskieli"
                                                              :koodit [{:koodiUri "oppilaitoksenopetuskieli_01"

@@ -44,7 +44,8 @@
       :koulutustyyppi-muu (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
       :koulutusala        (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa         (filters "opetuspaikkakk")
-      :valintatapa        (filters "valintatapajono")}))
+      :valintatapa        (filters "valintatapajono")
+      :hakutapa           (filters "hakutapa")}))
   ([]
    (hierarkia {})))
 

@@ -40,6 +40,9 @@
                                         :valintatapa           {:filters {:filters {:valintatapajono_01 {:term {:hits.valintatavat.keyword "valintatapajono_01"}}
                                                                                     :valintatapajono_02 {:term {:hits.valintatavat.keyword "valintatapajono_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
+                                        :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
+                                                                                    :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
                                                                                     :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
