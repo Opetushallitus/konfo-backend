@@ -56,10 +56,10 @@
   (fixture/add-toteutus-mock ponitoteutus-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
-  (fixture/add-haku-mock haku-oid :tila "julkaistu" :nimi "Hevoshaku" :muokkaaja "1.2.246.562.24.62301161440" :modified "2019-02-05T09:49")
-  (fixture/add-hakukohde-mock hakukohde-oid ponitoteutus-oid haku-oid :tila "julkaistu" :valintaperuste valintaperuste-id :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440" :modified "2019-02-05T09:49")
-  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus" :muokkaaja "1.2.246.562.24.62301161440" :modified "2019-02-05T09:49")
-  (fixture/add-valintaperuste-mock valintaperuste-id :tila "julkaistu" :nimi "Valintaperuste" :sorakuvaus sorakuvaus-id :muokkaaja "1.2.246.562.24.62301161440" :modified "2019-02-05T09:49")
+  (fixture/add-haku-mock haku-oid :tila "julkaistu" :nimi "Hevoshaku" :muokkaaja "1.2.246.562.24.62301161440")
+  (fixture/add-hakukohde-mock hakukohde-oid ponitoteutus-oid haku-oid :tila "julkaistu" :valintaperuste valintaperuste-id :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440")
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus" :muokkaaja "1.2.246.562.24.62301161440")
+  (fixture/add-valintaperuste-mock valintaperuste-id :tila "julkaistu" :nimi "Valintaperuste" :sorakuvaus sorakuvaus-id :muokkaaja "1.2.246.562.24.62301161440")
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid hevostutkinnon-osa-oid hevososaamisala-oid] :oppilaitokset [punkaharjun-yliopisto]} (fn [x & {:as params}] punkaharju-org))
 
