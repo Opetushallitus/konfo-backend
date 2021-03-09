@@ -47,19 +47,19 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "1.1.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT" :classifier "tests"]
-                                   [fi.oph.kouta/kouta-common "1.3.0-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "2.0.0-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "2.0.0-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "2.0.0-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-common "2.0.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
                                    [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (utils/global-docker-elastic-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "1.1.0.-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "1.5.0-SNAPSHOT" :classifier "tests"]
-                                      [fi.oph.kouta/kouta-common "1.3.0-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "2.0.0-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "2.0.0-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "2.0.0-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-common "2.0.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
                                       [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
