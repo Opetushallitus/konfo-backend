@@ -55,7 +55,7 @@
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
       (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
       (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu")
-      (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/toteutus-metadata.json"))
+      (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/korkeakoulu-toteutus-metadata.json"))
 
       (fixture/add-haku-mock hakuOid1 :tila "julkaistu")
       (fixture/add-haku-mock hakuOid2 :tila "tallennettu")
