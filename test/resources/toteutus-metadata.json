@@ -1,30 +1,28 @@
 {
-  "tyyppi" : "yo",
+  "tyyppi": "yo",
   "kuvaus": {},
-  "osaamisalat": [
-    {
-      "koodiUri": "osaamisala_1#1",
-      "linkki": {
-        "fi": "http://osaamisala.fi/linkki/fi",
-        "sv": "http://osaamisala.fi/linkki/sv"
-      },
-      "otsikko": {
-        "fi": "Katso osaamisalan tarkempi kuvaus t\u00e4st\u00e4",
-        "sv": "Katso osaamisalan tarkempi kuvaus t\u00e4st\u00e4 sv"
-      }
-    }
-  ],
   "opetus": {
     "opetuskieliKoodiUrit": [
       "oppilaitoksenopetuskieli_1#1"
     ],
-    "opetusaikaKoodiUrit": ["opetusaikakk_1#1"],
-    "opetustapaKoodiUrit": ["opetuspaikkakk_1#1"],
+    "opetusaikaKoodiUrit": [
+      "opetusaikakk_1#1"
+    ],
+    "opetustapaKoodiUrit": [
+      "opetuspaikkakk_1#1"
+    ],
     "onkoMaksullinen": true,
     "maksunMaara": 200.5,
-    "koulutuksenTarkkaAlkamisaika" : false,
-    "koulutuksenAlkamiskausi": "kausi_k#1",
-    "koulutuksenAlkamisvuosi": 2023,
+    "onkoApuraha": false,
+    "koulutuksenAlkamiskausi": {
+      "alkamiskausityyppi": "alkamiskausi ja -vuosi",
+      "henkilokohtaisenSuunnitelmanLisatiedot": {
+        "fi": "Jotakin lisätietoa",
+        "sv": "Jotakin lisätietoa sv"
+      },
+      "koulutuksenAlkamiskausiKoodiUri": "kausi_k#1",
+      "koulutuksenAlkamisvuosi": "2021"
+    },
     "kuvaus": {
       "fi": "Kuvaus fi",
       "sv": "Kuvaus sv"
@@ -67,10 +65,6 @@
     },
     {
       "kieli": "fi",
-      "arvo": "hevonen"
-    },
-    {
-      "kieli": "fi",
       "arvo": "psykologia"
     }
   ],
@@ -85,33 +79,29 @@
     },
     {
       "kieli": "fi",
-      "arvo": "muusikko"
-    },
-    {
-      "kieli": "fi",
       "arvo": "psykologi"
-    },
-    {
-      "kieli": "fi",
-      "arvo": "hevonen"
     }
   ],
-  "yhteyshenkilot": [{
-    "nimi": {
-      "fi": "Aku Ankka",
-      "sv": "Aku Ankka"
-    },
-    "titteli": {
-      "fi": "titteli",
-      "sv": "titteli sv"
-    },
-    "sahkoposti": {
-      "fi": "aku.ankka@ankkalinnankoulu.fi",
-      "sv": "aku.ankka@ankkalinnankoulu.fi"
-    },
-    "puhelinnumero": {
-      "fi": "123",
-      "sv": "123"
+  "yhteyshenkilot": [
+    {
+      "nimi": {
+        "fi": "Aku Ankka",
+        "sv": "Aku Ankka"
+      },
+      "titteli": {
+        "fi": "titteli",
+        "sv": "titteli sv"
+      },
+      "sahkoposti": {
+        "fi": "aku.ankka@ankkalinnankoulu.fi",
+        "sv": "aku.ankka@ankkalinnankoulu.fi"
+      },
+      "puhelinnumero": {
+        "fi": "123",
+        "sv": "123"
+      },
+      "wwwSivu": {}
     }
-  }]
+  ],
+  "ylemmanKorkeakoulututkinnonOsaamisalat": []
 }
