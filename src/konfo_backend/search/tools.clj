@@ -36,6 +36,10 @@
   [constraints]
   (constraint? constraints :hakutapa))
 
+(defn pohjakoulutusvaatimus?
+  [constraints]
+  (constraint? constraints :pohjakoulutusvaatimus))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
@@ -44,7 +48,8 @@
       (opetuskieli? constraints)
       (opetustapa? constraints)
       (valintatapa? constraints)
-      (hakutapa? constraints)))
+      (hakutapa? constraints)
+      (pohjakoulutusvaatimus? constraints)))
 
 (defn ->lng-keyword
   [str lng]

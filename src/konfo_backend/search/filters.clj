@@ -37,15 +37,16 @@
 (defn hierarkia
   ([aggs]
    (let [filters (partial koodisto->filters aggs)]
-     {:opetuskieli        (filters "oppilaitoksenopetuskieli")
-      :maakunta           (filters "maakunta")
-      :kunta              (filters "kunta")
-      :koulutustyyppi     (beta-koulutustyyppi aggs)        ;TODO! Koodisto?
-      :koulutustyyppi-muu (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
-      :koulutusala        (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
-      :opetustapa         (filters "opetuspaikkakk")
-      :valintatapa        (filters "valintatapajono")
-      :hakutapa           (filters "hakutapa")}))
+     {:opetuskieli           (filters "oppilaitoksenopetuskieli")
+      :maakunta              (filters "maakunta")
+      :kunta                 (filters "kunta")
+      :koulutustyyppi        (beta-koulutustyyppi aggs)        ;TODO! Koodisto?
+      :koulutustyyppi-muu    (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
+      :koulutusala           (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
+      :opetustapa            (filters "opetuspaikkakk")
+      :valintatapa           (filters "valintatapajono")
+      :hakutapa              (filters "hakutapa")
+      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]
    (hierarkia {})))
 

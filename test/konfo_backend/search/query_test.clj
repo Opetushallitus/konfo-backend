@@ -43,6 +43,9 @@
                                         :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
                                                                                     :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
+                                        :pohjakoulutusvaatimus {:filters {:filters {:pohjakoulutusvaatimuskonfo_01 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_01"}}
+                                                                                    :pohjakoulutusvaatimuskonfo_02 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
                                                                                     :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}

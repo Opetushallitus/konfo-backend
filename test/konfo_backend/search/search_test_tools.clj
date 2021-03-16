@@ -120,6 +120,14 @@
                                                                       {:koodiUri "hakutapa_03"
                                                                        :versio 1
                                                                        :nimi {:fi "Hakutapa kolme"}}]}
+    (= "pohjakoulutusvaatimuskonfo" x)                      {:id "pohjakoulutusvaatimuskonfo"
+                                                             :koodisto "pohjakoulutusvaatimuskonfo"
+                                                             :koodit [{:koodiUri "pohjakoulutusvaatimuskonfo_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Pohjakoulutusvaatimus yksi"}}
+                                                                      {:koodiUri "pohjakoulutusvaatimuskonfo_am"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Pohjakoulutusvaatimus AM"}}]}
     (= "oppilaitoksenopetuskieli" x)                        {:id "oppilaitoksenopetuskieli"
                                                              :koodisto "oppilaitoksenopetuskieli"
                                                              :koodit [{:koodiUri "oppilaitoksenopetuskieli_01"

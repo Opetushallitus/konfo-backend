@@ -146,6 +146,14 @@
    |          description: Pilkulla eroteltu hakutapojen koodeja
    |          example: hakutapa_01, hakutapa_03
    |          default: nil
+   |        - in: query
+   |          name: pohjakoulutusvaatimus
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu hakutapojen koodeja
+   |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -516,18 +524,19 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa]
-  {:koulutustyyppi (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
-   :sijainti       (comma-separated-string->vec sijainti)
-   :opetuskieli    (comma-separated-string->vec opetuskieli)
-   :koulutusala    (comma-separated-string->vec koulutusala)
-   :opetustapa     (comma-separated-string->vec opetustapa)
-   :valintatapa    (comma-separated-string->vec valintatapa)
-   :hakutapa       (comma-separated-string->vec hakutapa)})
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus]
+  {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
+   :sijainti              (comma-separated-string->vec sijainti)
+   :opetuskieli           (comma-separated-string->vec opetuskieli)
+   :koulutusala           (comma-separated-string->vec koulutusala)
+   :opetustapa            (comma-separated-string->vec opetustapa)
+   :valintatapa           (comma-separated-string->vec valintatapa)
+   :hakutapa              (comma-separated-string->vec hakutapa)
+   :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)})
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa)]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -544,7 +553,7 @@
 
 (defn- ->search-subentities-with-validated-params
   [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil nil)]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil nil nil)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -572,19 +581,20 @@
                                      (not-found "Not found"))))
 
     (GET "/koulutukset" [:as request]
-         :query-params [{keyword        :- String nil}
-                        {page           :- Long 1}
-                        {size           :- Long 20}
-                        {lng            :- String "fi"}
-                        {sort           :- String "score"}
-                        {order          :- String "desc"}
-                        {koulutustyyppi :- String nil}
-                        {sijainti       :- String nil}
-                        {opetuskieli    :- String nil}
-                        {koulutusala    :- String nil}
-                        {opetustapa     :- String nil}
-                        {valintatapa    :- String nil}
-                        {hakutapa       :- String nil}]
+         :query-params [{keyword               :- String nil}
+                        {page                  :- Long 1}
+                        {size                  :- Long 20}
+                        {lng                   :- String "fi"}
+                        {sort                  :- String "score"}
+                        {order                 :- String "desc"}
+                        {koulutustyyppi        :- String nil}
+                        {sijainti              :- String nil}
+                        {opetuskieli           :- String nil}
+                        {koulutusala           :- String nil}
+                        {opetustapa            :- String nil}
+                        {valintatapa           :- String nil}
+                        {hakutapa              :- String nil}
+                        {pohjakoulutusvaatimus :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
                                                                       keyword
                                                                       lng
@@ -598,7 +608,8 @@
                                                                       koulutusala
                                                                       opetustapa
                                                                       valintatapa
-                                                                      hakutapa)))
+                                                                      hakutapa
+                                                                      pohjakoulutusvaatimus)))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
          :path-params [oid :- String]
@@ -625,19 +636,20 @@
                                                                                   opetustapa)))
 
     (GET "/oppilaitokset" [:as request]
-         :query-params [{keyword        :- String nil}
-                        {page           :- Long 1}
-                        {size           :- Long 20}
-                        {lng            :- String "fi"}
-                        {sort           :- String "score"}
-                        {order          :- String "desc"}
-                        {koulutustyyppi :- String nil}
-                        {sijainti       :- String nil}
-                        {opetuskieli    :- String nil}
-                        {koulutusala    :- String nil}
-                        {opetustapa     :- String nil}
-                        {valintatapa    :- String nil}
-                        {hakutapa       :- String nil}]
+         :query-params [{keyword               :- String nil}
+                        {page                  :- Long 1}
+                        {size                  :- Long 20}
+                        {lng                   :- String "fi"}
+                        {sort                  :- String "score"}
+                        {order                 :- String "desc"}
+                        {koulutustyyppi        :- String nil}
+                        {sijainti              :- String nil}
+                        {opetuskieli           :- String nil}
+                        {koulutusala           :- String nil}
+                        {opetustapa            :- String nil}
+                        {valintatapa           :- String nil}
+                        {hakutapa              :- String nil}
+                        {pohjakoulutusvaatimus :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                       keyword
                                                                       lng
@@ -651,7 +663,8 @@
                                                                       koulutusala
                                                                       opetustapa
                                                                       valintatapa
-                                                                      hakutapa)))
+                                                                      hakutapa
+                                                                      pohjakoulutusvaatimus)))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
