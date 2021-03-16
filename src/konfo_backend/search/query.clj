@@ -16,13 +16,14 @@
 (defn- filters
   [constraints]
   (cond-> []
-          (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints)))
-          (opetuskieli? constraints)     (conj (->terms-query :hits.opetuskielet.keyword   (:opetuskieli constraints)))
-          (sijainti? constraints)        (conj (->terms-query :hits.sijainti.keyword       (:sijainti constraints)))
-          (koulutusala? constraints)     (conj (->terms-query :hits.koulutusalat.keyword   (:koulutusala constraints)))
-          (opetustapa? constraints)      (conj (->terms-query :hits.opetustavat.keyword    (:opetustapa constraints)))
-          (valintatapa? constraints)     (conj (->terms-query :hits.valintatavat.keyword   (:valintatapa constraints)))
-          (hakutapa? constraints)        (conj (->terms-query :hits.hakutavat.keyword      (:hakutapa constraints)))))
+          (koulutustyyppi? constraints)        (conj (->terms-query :hits.koulutustyypit.keyword           (:koulutustyyppi constraints)))
+          (opetuskieli? constraints)           (conj (->terms-query :hits.opetuskielet.keyword             (:opetuskieli constraints)))
+          (sijainti? constraints)              (conj (->terms-query :hits.sijainti.keyword                 (:sijainti constraints)))
+          (koulutusala? constraints)           (conj (->terms-query :hits.koulutusalat.keyword             (:koulutusala constraints)))
+          (opetustapa? constraints)            (conj (->terms-query :hits.opetustavat.keyword              (:opetustapa constraints)))
+          (valintatapa? constraints)           (conj (->terms-query :hits.valintatavat.keyword             (:valintatapa constraints)))
+          (hakutapa? constraints)              (conj (->terms-query :hits.hakutavat.keyword                (:hakutapa constraints)))
+          (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))))
 
 (defn- bool
   [keyword lng constraints]
@@ -120,16 +121,17 @@
 
 (defn- aggs
   []
-  {:maakunta            (koodisto-filters :hits.sijainti.keyword       "maakunta")
-   :kunta               (koodisto-filters :hits.sijainti.keyword       "kunta")
-   :opetuskieli         (koodisto-filters :hits.opetuskielet.keyword   "oppilaitoksenopetuskieli")
-   :koulutusala         (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso1")
-   :koulutusalataso2    (koodisto-filters :hits.koulutusalat.keyword   "kansallinenkoulutusluokitus2016koulutusalataso2")
-   :koulutustyyppi      (koulutustyyppi-filters :hits.koulutustyypit.keyword)
-   :koulutustyyppitaso2 (koodisto-filters :hits.koulutustyypit.keyword "koulutustyyppi")
-   :opetustapa          (koodisto-filters :hits.opetustavat.keyword    "opetuspaikkakk")
-   :valintatapa         (koodisto-filters :hits.valintatavat.keyword   "valintatapajono")
-   :hakutapa            (koodisto-filters :hits.hakutavat.keyword      "hakutapa")})
+  {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
+   :kunta                 (koodisto-filters :hits.sijainti.keyword                 "kunta")
+   :opetuskieli           (koodisto-filters :hits.opetuskielet.keyword             "oppilaitoksenopetuskieli")
+   :koulutusala           (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso1")
+   :koulutusalataso2      (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso2")
+   :koulutustyyppi        (koulutustyyppi-filters :hits.koulutustyypit.keyword)
+   :koulutustyyppitaso2   (koodisto-filters :hits.koulutustyypit.keyword           "koulutustyyppi")
+   :opetustapa            (koodisto-filters :hits.opetustavat.keyword              "opetuspaikkakk")
+   :valintatapa           (koodisto-filters :hits.valintatavat.keyword             "valintatapajono")
+   :hakutapa              (koodisto-filters :hits.hakutavat.keyword                "hakutapa")
+   :pohjakoulutusvaatimus (koodisto-filters :hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo")})
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]

@@ -91,7 +91,10 @@
         (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
         (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
         (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-        (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+        (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+        ;NOTE: fixturen with-mocked-indexing mäppää pohjakoulutusvaatimuksessa kaikki koutakoodit -> konfo_am koodeiksi
+        (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+        (is (= 2 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"
@@ -114,6 +117,8 @@
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi])))))
 
       (testing "multiple sijainti"
@@ -136,7 +141,9 @@
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "koulutustyyppi amm-osaamisala"
         (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
@@ -154,7 +161,9 @@
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "koulutustyyppi amm-tutkinnon-osa"
         (let [r (search :koulutustyyppi "amm-tutkinnon-osa" :sort "name" :order "asc")]
@@ -172,7 +181,9 @@
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "koulutustyyppi amm-muu"
         (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]
@@ -190,7 +201,9 @@
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "opetuskieli"
         (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
@@ -207,7 +220,9 @@
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "koulutusala"
         (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
@@ -224,7 +239,9 @@
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 2 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "opetustapa"
         (let [r (search :opetustapa "opetuspaikkakk_02" :sort "name" :order "asc")]
@@ -241,7 +258,9 @@
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "valintatapa"
         (let [r (search :valintatapa "valintatapajono_av" :sort "name" :order "asc")]
@@ -258,7 +277,9 @@
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "hakutapa"
         (let [r (search :hakutapa "hakutapa_03" :sort "name" :order "asc")]
@@ -275,7 +296,28 @@
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
-          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count]))))))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count]))))))
+
+      (testing "pohjakoulutusvaatimus"
+        (let [r (search :pohjakoulutusvaatimus "pohjakoulutusvaatimuskonfo_am" :sort "name" :order "asc")]
+          (is (= 2 (count (:hits r))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
+          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
+          (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
+          (is (= 1 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
+          (is (= 0 (get-in r [:filters :hakutapa :hakutapa_01 :count])))
+          (is (= 1 (get-in r [:filters :hakutapa :hakutapa_03 :count])))
+          (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
+          (is (= 2 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "Search koulutukset, get correct result"
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
