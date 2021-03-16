@@ -80,7 +80,7 @@
    |                fi: Maksullisuuden suomenkielinen kuvaus
    |                sv: Maksullisuuden ruotsinkielinen kuvaus
    |              maksunMaara: 200.50
-   |              koulutuksenAlkamiskausiUUSI:
+   |              koulutuksenAlkamiskausi:
    |                - alkamiskausityyppi : 'tarkka alkamisajankohta'
    |                - koulutuksenAlkamispaivamaara: 2019-11-20T12:00
    |                - koulutuksenPaattymispaivamaara: 2019-12-20T12:00

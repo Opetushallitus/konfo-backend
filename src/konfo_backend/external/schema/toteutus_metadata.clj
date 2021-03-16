@@ -82,7 +82,7 @@
    |          type: double
    |          description: Koulutuksen toteutuksen maksun määrä euroissa?
    |          example: 220.50
-   |        koulutuksenAlkamiskausiUUSI:
+   |        koulutuksenAlkamiskausi:
    |          type: object
    |          description: Koulutuksen alkamiskausi
    |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
@@ -125,7 +125,7 @@
    :onkoMaksullinen                               s/Bool
    (s/->OptionalKey :maksullisuusKuvaus)          Kielistetty
    (s/->OptionalKey :maksunMaara)                 s/Num
-   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI) (s/maybe KoulutuksenAlkamiskausi)
+   (s/->OptionalKey :koulutuksenAlkamiskausi)     (s/maybe KoulutuksenAlkamiskausi)
    :lisatiedot                                    [KoulutusLisatieto]
    :ammatillinenPerustutkintoErityisopetuksena    s/Bool
    :onkoApuraha                                   s/Bool
