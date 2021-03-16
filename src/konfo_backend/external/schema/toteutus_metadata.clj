@@ -5,6 +5,38 @@
    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
    [schema-tools.core :as st]))
 
+(def apuraha-schema
+  "|    Apuraha:
+   |      type: object
+   |      properties:
+   |        min:
+   |          type: int
+   |          description: Apurahan minimi euromäärä tai minimi prosenttiosuus lukuvuosimaksusta
+   |          example: 100
+   |        max:
+   |          type: int
+   |          description: Apurahan maksimi euromäärä tai maksimi prosenttiosuus lukuvuosimaksusta
+   |          example: 200
+   |        yksikko:
+   |          type: string
+   |          description: Apurahan yksikkö
+   |          enum:
+   |            - euro
+   |            - prosentti
+   |          example: euro
+   |        kuvaus:
+   |          type: object
+   |          description: Koulutuksen toteutuksen apurahaa tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+   |          $ref: '#/components/schemas/Kuvaus'")
+
+(def ApurahaYksikko (s/enum "euro" "prosentti"))
+
+(def Apuraha
+  {(s/->OptionalKey :min) (s/maybe s/Int)
+   (s/->OptionalKey :max) (s/maybe s/Int)
+   (s/->OptionalKey :yksikko) (s/maybe ApurahaYksikko)
+   (s/->OptionalKey :kuvaus) (s/maybe Kielistetty)})
+
 (def opetus-schema
   "|    Opetus:
    |      type: object
@@ -63,17 +95,13 @@
    |        ammatillinenPerustutkintoErityisopetuksena:
    |          type: boolean
    |          description: Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?
-   |        onkoStipendia:
+   |        onkoApuraha:
    |          type: boolean
-   |          description: Onko koulutukseen stipendiä?
-   |        stipendinMaara:
-   |          type: double
-   |          description: Koulutuksen toteutuksen stipendin määrä.
-   |          example: 10.0
-   |        stipendinKuvaus:
+   |          description: Onko koulutukseen apurahaa?
+   |        apuraha:
    |          type: object
-   |          description: Koulutuksen toteutuksen stipendiä tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-   |          $ref: '#/components/schemas/Kuvaus'
+   |          description: Koulutuksen apurahatiedot
+   |          $ref: '#/components/schemas/Apuraha'
    |        suunniteltuKestoVuodet:
    |          type: integer
    |          description: Koulutuksen suunniteltu kesto vuosina
@@ -88,24 +116,23 @@
    |          $ref: '#/components/schemas/Kuvaus'")
 
 (def Opetus
-  {:opetuskieli                                      [(->Koodi OpetuskieliKoodi)]
-   (s/->OptionalKey :opetuskieletKuvaus)             Kielistetty
-   :opetusaika                                       [(->Koodi OpetusaikaKoodi)]
-   (s/->OptionalKey :opetusaikaKuvaus)               Kielistetty
-   :opetustapa                                       [(->Koodi OpetustapaKoodi)]
-   (s/->OptionalKey :opetustapaKuvaus)               Kielistetty
-   :onkoMaksullinen                                  s/Bool
-   (s/->OptionalKey :maksullisuusKuvaus)             Kielistetty
-   (s/->OptionalKey :maksunMaara)                    s/Num
-   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI)    (s/maybe KoulutuksenAlkamiskausi)
-   :lisatiedot                                       [KoulutusLisatieto]
-   :ammatillinenPerustutkintoErityisopetuksena       s/Bool
-   :onkoStipendia                                    s/Bool
-   (s/->OptionalKey :stipendinMaara)                 s/Num
-   (s/->OptionalKey :stipendinKuvaus)                Kielistetty
-   (s/->OptionalKey :suunniteltuKestoVuodet)         s/Num
-   (s/->OptionalKey :suunniteltuKestoKuukaudet)      s/Num
-   (s/->OptionalKey :suunniteltuKestoKuvaus)         Kielistetty})
+  {:opetuskieli                                   [(->Koodi OpetuskieliKoodi)]
+   (s/->OptionalKey :opetuskieletKuvaus)          Kielistetty
+   :opetusaika                                    [(->Koodi OpetusaikaKoodi)]
+   (s/->OptionalKey :opetusaikaKuvaus)            Kielistetty
+   :opetustapa                                    [(->Koodi OpetustapaKoodi)]
+   (s/->OptionalKey :opetustapaKuvaus)            Kielistetty
+   :onkoMaksullinen                               s/Bool
+   (s/->OptionalKey :maksullisuusKuvaus)          Kielistetty
+   (s/->OptionalKey :maksunMaara)                 s/Num
+   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI) (s/maybe KoulutuksenAlkamiskausi)
+   :lisatiedot                                    [KoulutusLisatieto]
+   :ammatillinenPerustutkintoErityisopetuksena    s/Bool
+   :onkoApuraha                                   s/Bool
+   (s/->OptionalKey :apuraha)                     (s/maybe Apuraha)
+   (s/->OptionalKey :suunniteltuKestoVuodet)      s/Num
+   (s/->OptionalKey :suunniteltuKestoKuukaudet)   s/Num
+   (s/->OptionalKey :suunniteltuKestoKuvaus)      Kielistetty})
 
 (def korkeakoulu-osaamisala-schema
   "|    KorkeakouluOsaamisala:
@@ -310,7 +337,8 @@
    KorkeakoulutusToteutusMetadata))
 
 (def schemas
-  (str opetus-schema "\n"
+  (str apuraha-schema "\n"
+       opetus-schema "\n"
        amm-osaamisala-schema "\n"
        amm-toteutus-metadata-schema "\n"
        asiasana-schema "\n"
