@@ -1,7 +1,8 @@
 (ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
             [konfo-backend.test-tools :refer [debug-pretty]]
-            [konfo-backend.search.query :refer [query aggregations]]))
+            [konfo-backend.search.query :refer [query aggregations]]
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (deftest oppilaitos-query-test
   (testing "Query with keyword"
@@ -13,6 +14,13 @@
            {:nested {:path "hits", :query {:bool {:filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}})))
 
+  (testing "Query with hakukaynnissa filters"
+    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+      (is (= (query nil "fi" {:hakukaynnissa true})
+             {:nested {:path "hits", :query {:bool {:filter [{:nested {:path "hits.hakuajat", :query {:bool {:filter [{:range { :hits.hakuajat.alkaa   { :lte "2020-01-01T01:01" }}}
+                                                                                                                      {:bool  { :should [{ :bool { :must_not { :exists { :field "hits.hakuajat.paattyy" }}}},
+                                                                                                                                         { :range { :hits.hakuajat.paattyy { :gt "2020-01-01T01:01"}}}]}}]}}}}]}}}}))))
+
   (testing "Query with keyword and filters"
     (is (= (query "Hauska" "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
            {:nested {:path "hits", :query {:bool {:must {:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
@@ -21,8 +29,8 @@
 
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"
-    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])]
-      ;(debug-pretty (aggregations))
+    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
                                  :aggs {:maakunta              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
@@ -39,6 +47,10 @@
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :valintatapa           {:filters {:filters {:valintatapajono_01 {:term {:hits.valintatavat.keyword "valintatapajono_01"}}
                                                                                     :valintatapajono_02 {:term {:hits.valintatavat.keyword "valintatapajono_02"}}}}
+                                                                :aggs {:real_hits {:reverse_nested {}}}}
+                                        :hakukaynnissa         {:filters {:filters {:hakukaynnissa {:nested {:path "hits.hakuajat", :query {:bool {:filter [{:range {:hits.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "hits.hakuajat.paattyy"}}}}
+                                                                                                                                                                             {:range {:hits.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
                                                                                     :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}

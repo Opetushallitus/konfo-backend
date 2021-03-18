@@ -24,12 +24,12 @@
 
 (defn- doc_count-by-koodi-uri
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
 (defn- doc_count-by-koodi-uri-for-tarjoajat
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat

@@ -1,8 +1,7 @@
 (ns konfo-backend.search.tools
   (:require
     [konfo-backend.tools :refer [not-blank?]]
-    [clojure.core :refer [keyword] :rename {keyword kw}]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa?]]))
+    [clojure.core :refer [keyword] :rename {keyword kw}]))
 
 (defn- constraint?
   [constraints key]
@@ -40,6 +39,10 @@
   [constraints]
   (constraint? constraints :pohjakoulutusvaatimus))
 
+(defn haku-kaynnissa?
+  [constraints]
+  (true? (:hakukaynnissa constraints)))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
@@ -48,6 +51,7 @@
       (opetuskieli? constraints)
       (opetustapa? constraints)
       (valintatapa? constraints)
+      (haku-kaynnissa? constraints)
       (hakutapa? constraints)
       (pohjakoulutusvaatimus? constraints)))
 

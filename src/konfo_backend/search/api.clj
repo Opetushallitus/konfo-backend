@@ -139,6 +139,13 @@
    |          example: valintatapajono_av, valintatapajono_tv
    |          default: nil
    |        - in: query
+   |          name: hakukaynnissa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on haku käynnissä
+   |          default: false
+   |        - in: query
    |          name: hakutapa
    |          schema:
    |            type: string
@@ -151,7 +158,7 @@
    |          schema:
    |            type: string
    |          required: false
-   |          description: Pilkulla eroteltu hakutapojen koodeja
+   |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
    |          default: nil
    |      responses:
@@ -524,19 +531,20 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus]
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa pohjakoulutusvaatimus]
   {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit))
    :sijainti              (comma-separated-string->vec sijainti)
    :opetuskieli           (comma-separated-string->vec opetuskieli)
    :koulutusala           (comma-separated-string->vec koulutusala)
    :opetustapa            (comma-separated-string->vec opetustapa)
    :valintatapa           (comma-separated-string->vec valintatapa)
+   :hakukaynnissa         hakukaynnissa
    :hakutapa              (comma-separated-string->vec hakutapa)
    :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)})
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa pohjakoulutusvaatimus)]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa pohjakoulutusvaatimus]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa pohjakoulutusvaatimus)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -553,7 +561,7 @@
 
 (defn- ->search-subentities-with-validated-params
   [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil nil nil)]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil nil nil nil)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -593,6 +601,7 @@
                         {koulutusala           :- String nil}
                         {opetustapa            :- String nil}
                         {valintatapa           :- String nil}
+                        {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {pohjakoulutusvaatimus :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
@@ -608,6 +617,7 @@
                                                                       koulutusala
                                                                       opetustapa
                                                                       valintatapa
+                                                                      hakukaynnissa
                                                                       hakutapa
                                                                       pohjakoulutusvaatimus)))
 
@@ -648,6 +658,7 @@
                         {koulutusala           :- String nil}
                         {opetustapa            :- String nil}
                         {valintatapa           :- String nil}
+                        {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {pohjakoulutusvaatimus :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
@@ -663,6 +674,7 @@
                                                                       koulutusala
                                                                       opetustapa
                                                                       valintatapa
+                                                                      hakukaynnissa
                                                                       hakutapa
                                                                       pohjakoulutusvaatimus)))
 
