@@ -15,9 +15,9 @@
 
 (defn- some-hakuaika-kaynnissa
   []
-  {:nested {:path "hits.hakuajat" :query {:bool {:filter [{:range { :hits.hakuajat.alkaa { :lte (current-time-as-kouta-format) }}}
-                                                          {:bool  { :should [{ :bool { :must_not { :exists { :field "hits.hakuajat.paattyy" }}}},
-                                                                             { :range { :hits.hakuajat.paattyy { :gt (current-time-as-kouta-format) }}}]}}]}}}})
+  {:nested {:path "hits.hakuajat" :query {:bool {:filter [{:range {:hits.hakuajat.alkaa {:lte (current-time-as-kouta-format)}}}
+                                                          {:bool  {:should [{:bool {:must_not {:exists {:field "hits.hakuajat.paattyy"}}}},
+                                                                            {:range {:hits.hakuajat.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}}})
 
 (defn- filters
   [constraints]
