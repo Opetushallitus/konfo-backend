@@ -63,12 +63,14 @@
 
 (defn within?
   [gte time lt]
-  (core/within? (core/interval gte lt) time))
+  (if (nil? lt)
+    (core/after? time gte)
+    (core/within? (core/interval gte lt) time)))
 
 (defn hakuaika-kaynnissa?
   [hakuaika]
-  (let [gte (kouta-date-time-string->date-time (or (:gte hakuaika) (:alkaa hakuaika)))
-        lt  (kouta-date-time-string->date-time (or (:lt hakuaika) (:paattyy hakuaika)))]
+  (let [gte (kouta-date-time-string->date-time (:alkaa hakuaika))
+        lt  (if (not (nil? (:paattyy hakuaika))) (kouta-date-time-string->date-time (:paattyy hakuaika)))]
     (within? gte (long->date-time (System/currentTimeMillis)) lt)))
 
 (defn now-in-millis

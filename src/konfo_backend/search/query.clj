@@ -5,7 +5,7 @@
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec]]))
 
 (defn- ->terms-query
   [key coll]
@@ -67,7 +67,7 @@
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
-                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.toteutusNimi", "hits.opetuskielet", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
+                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.toteutusNimi", "hits.opetuskielet", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata" "hits.hakuajat"]
                                           :from from
                                           :size size
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}

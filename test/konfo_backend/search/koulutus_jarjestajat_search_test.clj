@@ -28,12 +28,18 @@
 (def mersukoulu-oid "1.2.246.562.17.000002")
 (def audikoulu-oid "1.2.246.562.17.000003")
 
+(def haku-oid "1.2.246.562.29.00000000000000000001")
+(def hakukohde-oid "1.2.246.562.20.00000000000000000001")
+
 (deftest koulutus-jarjestajat-test
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
   (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock mersukoulu-oid autoala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata amk-toteutus-metatieto)
+
+  (fixture/add-haku-mock haku-oid :tila "julkaistu" :nimi "Hevoshaku" :muokkaaja "1.2.246.562.24.62301161440")
+  (fixture/add-hakukohde-mock hakukohde-oid ponikoulu-oid haku-oid :tila "julkaistu" :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440" :hakuaikaAlkaa "2000-01-01T00:00")
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
@@ -126,7 +132,8 @@
                   :oppilaitosTila nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
-                  :koulutustyyppi "yo"} (first (:hits r))))))
+                  :koulutustyyppi "yo"
+                  :hakukaynnissa true} (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search hevosala-oid :tuleva true)]
@@ -140,7 +147,8 @@
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
-                  :kuvaus {}} (first (:hits r)))))))))
+                  :kuvaus {}
+                  :hakukaynnissa nil} (first (:hits r)))))))))
 
 (deftest koulutus-jarjestajat-test-no-jarjestajia
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat "" :organisaatio "1.2.246.562.10.00000000001" :metadata koulutus-metatieto)

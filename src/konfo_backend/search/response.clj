@@ -1,10 +1,9 @@
 (ns konfo-backend.search.response
   (:require
-    [konfo-backend.tools :refer [log-pretty]]
+    [konfo-backend.tools :refer [hakuaika-kaynnissa? log-pretty reduce-merge-map rename-key]]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.filters :refer [hierarkia hierarkia-for-jarjestajat]]
-    [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-    [konfo-backend.tools :refer [reduce-merge-map rename-key]]))
+    [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
   [response]
@@ -89,6 +88,7 @@
            (-> hit
                (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
                (merge (:metadata hit))
+               (assoc :hakukaynnissa (some hakuaika-kaynnissa? (:hakuajat hit)))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))
