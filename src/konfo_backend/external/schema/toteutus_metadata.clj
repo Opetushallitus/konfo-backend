@@ -82,7 +82,7 @@
    |          type: double
    |          description: Koulutuksen toteutuksen maksun määrä euroissa?
    |          example: 220.50
-   |        koulutuksenAlkamiskausiUUSI:
+   |        koulutuksenAlkamiskausi:
    |          type: object
    |          description: Koulutuksen alkamiskausi
    |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
@@ -92,9 +92,6 @@
    |          items:
    |            type: object
    |            $ref: '#/components/schemas/KoulutusLisatieto'
-   |        ammatillinenPerustutkintoErityisopetuksena:
-   |          type: boolean
-   |          description: Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?
    |        onkoApuraha:
    |          type: boolean
    |          description: Onko koulutukseen apurahaa?
@@ -125,9 +122,8 @@
    :onkoMaksullinen                               s/Bool
    (s/->OptionalKey :maksullisuusKuvaus)          Kielistetty
    (s/->OptionalKey :maksunMaara)                 s/Num
-   (s/->OptionalKey :koulutuksenAlkamiskausiUUSI) (s/maybe KoulutuksenAlkamiskausi)
+   (s/->OptionalKey :koulutuksenAlkamiskausi)     (s/maybe KoulutuksenAlkamiskausi)
    :lisatiedot                                    [KoulutusLisatieto]
-   :ammatillinenPerustutkintoErityisopetuksena    s/Bool
    :onkoApuraha                                   s/Bool
    (s/->OptionalKey :apuraha)                     (s/maybe Apuraha)
    (s/->OptionalKey :suunniteltuKestoVuodet)      s/Num
@@ -268,6 +264,9 @@
    |              items:
    |                $ref: '#/components/schemas/AmmOsaamisala'
    |              description: Lista ammatillisen koulutuksen osaamisalojen kuvauksia
+   |            ammatillinenPerustutkintoErityisopetuksena:
+   |              type: boolean
+   |              description: Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?
    |            koulutustyyppi:
    |              type: string
    |              description: Koulutuksen metatiedon tyyppi
@@ -323,6 +322,7 @@
 (def AmmToteutusMetadata
   (st/merge
    {:tyyppi Amm
+    :ammatillinenPerustutkintoErityisopetuksena s/Bool
     :osaamisalat [AmmOsaamisala]}
    ToteutusMetadata))
 
