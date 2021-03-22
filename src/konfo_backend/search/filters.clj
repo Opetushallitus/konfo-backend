@@ -34,6 +34,10 @@
                          :amm-tutkinnon-osa {:count (:amm-tutkinnon-osa aggs)},
                          :amm-osaamisala {:count (:amm-osaamisala aggs)}}})}))
 
+(defn- hakukaynnissa
+  [aggs]
+  {:count (:hakukaynnissa aggs) })
+
 (defn hierarkia
   ([aggs]
    (let [filters (partial koodisto->filters aggs)]
@@ -45,6 +49,7 @@
       :koulutusala           (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa            (filters "opetuspaikkakk")
       :valintatapa           (filters "valintatapajono")
+      :hakukaynnissa         (hakukaynnissa aggs)
       :hakutapa              (filters "hakutapa")
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]

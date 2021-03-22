@@ -131,7 +131,8 @@
                   :tutkintonimikkeet nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"],
                   :koulutustyyppi "amm",
-                  :kuva "https://example.com/kuva.jpg"} (first (:hits r))))))
+                  :kuva "https://example.com/kuva.jpg"
+                  :hakukaynnissa nil} (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search helsingin-yliopisto :tuleva true)]
@@ -164,7 +165,8 @@
                                       {:koodiUri "tutkintonimikkeet_02",
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
-                  :koulutustyyppi "amm"} (first (:hits r)))))))))
+                  :koulutustyyppi "amm"
+                  :hakukaynnissa nil} (first (:hits r)))))))))
 
 (deftest oppilaitos-tarjonta-test-no-tarjontaa
   (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)

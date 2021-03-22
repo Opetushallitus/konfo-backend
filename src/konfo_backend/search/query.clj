@@ -5,13 +5,19 @@
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format hakuaika-kaynnissa? ->koodi-with-version-wildcard ->lower-case-vec]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec]]))
 
 (defn- ->terms-query
   [key coll]
   (if (= 1 (count coll))
     {:term  {(keyword key) (lower-case (first coll))}}
     {:terms {(keyword key) (->lower-case-vec coll)}}))
+
+(defn- some-hakuaika-kaynnissa
+  []
+  {:nested {:path "hits.hakuajat" :query {:bool {:filter [{:range {:hits.hakuajat.alkaa {:lte (current-time-as-kouta-format)}}}
+                                                          {:bool  {:should [{:bool {:must_not {:exists {:field "hits.hakuajat.paattyy"}}}},
+                                                                            {:range {:hits.hakuajat.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}}})
 
 (defn- filters
   [constraints]
@@ -23,7 +29,8 @@
           (opetustapa? constraints)            (conj (->terms-query :hits.opetustavat.keyword              (:opetustapa constraints)))
           (valintatapa? constraints)           (conj (->terms-query :hits.valintatavat.keyword             (:valintatapa constraints)))
           (hakutapa? constraints)              (conj (->terms-query :hits.hakutavat.keyword                (:hakutapa constraints)))
-          (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))))
+          (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))
+          (haku-kaynnissa? constraints)        (conj (some-hakuaika-kaynnissa))))
 
 (defn- bool
   [keyword lng constraints]
@@ -60,7 +67,7 @@
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
-                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.toteutusNimi", "hits.opetuskielet", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata"]
+                   {:nested {:inner_hits {:_source ["hits.koulutusOid", "hits.toteutusOid", "hits.toteutusNimi", "hits.opetuskielet", "hits.oppilaitosOid", "hits.kuva", "hits.nimi", "hits.metadata" "hits.hakuajat"]
                                           :from from
                                           :size size
                                           :sort {(str "hits.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
@@ -119,6 +126,10 @@
   [field]
   (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
 
+(defn- hakukaynnissa-filter
+  []
+  {:filters {:filters {:hakukaynnissa (some-hakuaika-kaynnissa)}} :aggs {:real_hits {:reverse_nested {}}}})
+
 (defn- aggs
   []
   {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
@@ -130,6 +141,7 @@
    :koulutustyyppitaso2   (koodisto-filters :hits.koulutustyypit.keyword           "koulutustyyppi")
    :opetustapa            (koodisto-filters :hits.opetustavat.keyword              "opetuspaikkakk")
    :valintatapa           (koodisto-filters :hits.valintatavat.keyword             "valintatapajono")
+   :hakukaynnissa         (hakukaynnissa-filter)
    :hakutapa              (koodisto-filters :hits.hakutavat.keyword                "hakutapa")
    :pohjakoulutusvaatimus (koodisto-filters :hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo")})
 
@@ -147,8 +159,6 @@
   ([aggs-generator]
    {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
 
-
-
 (defn- tarjoajat-aggs
   [tuleva? constraints]
   {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
@@ -160,8 +170,6 @@
                            :koulutustyyppi      (koulutustyyppi-filters-for-subentity :hits.koulutustyypit.keyword)
                            :koulutustyyppitaso2 (koodisto-filters-for-subentity :hits.koulutustyypit.keyword "koulutustyyppi")
                            :opetustapa          (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")}}})
-
-
 
 (defn jarjestajat-aggregations
   [tuleva? constraints]

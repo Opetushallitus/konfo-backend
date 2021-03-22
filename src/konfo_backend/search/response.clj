@@ -1,10 +1,9 @@
 (ns konfo-backend.search.response
   (:require
-    [konfo-backend.tools :refer [log-pretty]]
+    [konfo-backend.tools :refer [hakuaika-kaynnissa? log-pretty reduce-merge-map rename-key]]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.filters :refer [hierarkia hierarkia-for-jarjestajat]]
-    [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-    [konfo-backend.tools :refer [reduce-merge-map rename-key]]))
+    [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
   [response]
@@ -24,12 +23,12 @@
 
 (defn- doc_count-by-koodi-uri
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
 (defn- doc_count-by-koodi-uri-for-tarjoajat
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat
@@ -89,6 +88,7 @@
            (-> hit
                (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
                (merge (:metadata hit))
+               (assoc :hakukaynnissa (some hakuaika-kaynnissa? (:hakuajat hit)))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))
