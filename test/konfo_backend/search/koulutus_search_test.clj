@@ -52,7 +52,7 @@
 
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
   (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutusKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
   (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
   (fixture/add-toteutus-mock ponitoteutus-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
@@ -364,9 +364,9 @@
                          :sv "Autoalan koulutus sv"},
                   :oid "1.2.246.562.13.000001",
                   :kielivalinta [ "fi", "sv" ],
-                  :koulutus { :koodiUri  "koulutus_371101#1",
-                              :nimi {:fi "koulutus_371101#1 nimi fi",
-                                     :sv "koulutus_371101#1 nimi sv"}},
+                  :koulutukset [{ :koodiUri  "koulutus_371101#1",
+                                  :nimi {:fi "koulutus_371101#1 nimi fi",
+                                         :sv "koulutus_371101#1 nimi sv"}}],
                   :tutkintonimikkeet [ {:koodiUri  "tutkintonimikkeet_01",
                                         :nimi {:fi "tutkintonimikkeet_01 nimi fi",
                                                :sv "tutkintonimikkeet_01 nimi sv" }},
