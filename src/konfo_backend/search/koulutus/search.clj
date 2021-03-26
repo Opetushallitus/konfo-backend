@@ -23,7 +23,7 @@
       page
       size
       #(-> % parse with-kuvaukset)
-      :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi", "tutkinnonOsat", "osaamisala"]
+      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi", "tutkinnonOsat", "osaamisala"]
       :sort (sorts sort order lng)
       :query query
       :aggs aggs)))
@@ -34,7 +34,7 @@
         aggs (jarjestajat-aggregations tuleva? constraints)]
     (e/search index
               parse-inner-hits-for-jarjestajat
-              :_source ["oid", "koulutus", "nimi"]
+              :_source ["oid", "koulutukset", "nimi"]
               :query query
               :aggs aggs)))
 
@@ -46,6 +46,6 @@
       page
       size
       #(-> % parse-external with-kuvaukset)
-      :_source ["oid", "nimi", "koulutus", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi"]
+      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi"]
       :sort (sorts sort order lng)
       :query query)))
