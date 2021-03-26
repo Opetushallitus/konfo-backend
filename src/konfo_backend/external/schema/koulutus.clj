@@ -27,10 +27,11 @@
      |            - lk
      |            - muu
      |          example: amm
-     |        koulutus:
-     |          type: object
-     |          description: Koulutuksen koodi uri ja nimi
-     |          $ref: '#/components/schemas/KoulutusKoodi'
+     |        koulutukset:
+     |          type: array
+     |          description: Koulutusten koodi URIt ja nimet
+     |          items:
+     |            $ref: '#/components/schemas/KoulutusKoodi
      |        tila:
      |          type: string
      |          example: \"julkaistu\"
@@ -117,7 +118,7 @@
   {:oid                          KoulutusOid
    :johtaaTutkintoon             s/Bool
    :koulutustyyppi               Koulutustyyppi
-   :koulutus                     (->Koodi KoulutusKoodi)
+   :koulutukset                  [(->Koodi KoulutusKoodi)]
    :tila                         Julkaistu
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
