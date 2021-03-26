@@ -43,10 +43,11 @@
    |            - lk
    |            - muu
    |          example: amm
-   |        koulutus:
-   |          type: object
-   |          description: Koulutuksen koodi uri ja nimi
-   |          $ref: '#/components/schemas/KoulutusKoodi'
+   |        koulutukset:
+   |          type: array
+   |          description: Koulutusten koodi URIt ja nimet
+   |          items:
+   |            $ref: '#/components/schemas/KoulutusKoodi
    |        kuvaus:
    |          type: object
    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
@@ -81,7 +82,7 @@
    :nimi                                      Kielistetty
    :kielivalinta                              [Kieli]
    :koulutustyyppi                            Koulutustyyppi
-   :koulutus                                  (->Koodi KoulutusKoodi)
+   :koulutukset                               [(->Koodi KoulutusKoodi)]
    :kuvaus                                    (s/maybe Kielistetty)
    (s/->OptionalKey :ePerusteId)              (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)               (s/maybe Url)
