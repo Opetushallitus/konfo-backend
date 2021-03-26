@@ -30,7 +30,7 @@
    |            $ref: '#/components/schemas/Organisaatio'
    |        oppilaitokset:
    |          type: array
-   |          description: Toteutusta tarjoavient oppilaitosten oidit
+   |          description: Toteutusta tarjoavien oppilaitosten oidit
    |          items:
    |            type: string
    |          example: 1.2.246.562.10.00000000007
