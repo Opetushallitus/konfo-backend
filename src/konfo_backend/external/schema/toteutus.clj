@@ -28,6 +28,12 @@
    |          description: Toteutusta tarjoavat organisaatiot
    |          items:
    |            $ref: '#/components/schemas/Organisaatio'
+   |        oppilaitokset:
+   |          type: array
+   |          description: Toteutusta tarjoavient oppilaitosten oidit
+   |          items:
+   |            type: string
+   |          example: 1.2.246.562.10.00000000007
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille toteutuksen nimi, kuvailutiedot ja muut tekstit on käännetty.
@@ -151,6 +157,7 @@
   {:oid                          ToteutusOid
    :koulutusOid                  KoulutusOid
    :tila                         Julkaistu
+   :oppilaitokset                [OrganisaatioOid]
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
