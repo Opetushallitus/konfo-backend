@@ -124,7 +124,7 @@
                   :opetusajat [],
                   :nimi {:fi "Audikoulutus fi",
                          :sv "Audikoulutus sv"},
-                  :onkoMaksullinen false,
+                  :maksullisuustyyppi nil,
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
