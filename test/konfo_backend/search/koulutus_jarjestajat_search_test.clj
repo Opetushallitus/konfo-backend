@@ -119,7 +119,7 @@
                   :nimi {:fi "Punkaharjun yliopisto",
                          :sv "Punkaharjun yliopisto sv"},
                   :oppilaitosOid "1.2.246.562.10.000002",
-                  :onkoMaksullinen false,
+                  :maksullisuustyyppi nil,
                   :kunnat [{:koodiUri "kunta_220",
                             :nimi {:fi "kunta_220 nimi fi",
                                    :sv "kunta_220 nimi sv"}}],
