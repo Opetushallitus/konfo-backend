@@ -81,7 +81,7 @@
    |              opetustapaKuvaus:
    |                fi: Opetustavan suomenkielinen kuvaus
    |                sv: Opetustavan ruotsinkielinen kuvaus
-   |              onkoMaksullinen: true
+   |              maksullisuustyyppi: maksullinen
    |              maksullisuusKuvaus:
    |                fi: Maksullisuuden suomenkielinen kuvaus
    |                sv: Maksullisuuden ruotsinkielinen kuvaus
