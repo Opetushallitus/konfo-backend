@@ -37,6 +37,8 @@
    (s/->OptionalKey :yksikko) (s/maybe ApurahaYksikko)
    (s/->OptionalKey :kuvaus) (s/maybe Kielistetty)})
 
+(def Maksullisuustyyppi (s/enum "maksullinen" "maksuton" "lukuvuosimaksu"))
+
 (def opetus-schema
   "|    Opetus:
    |      type: object
@@ -71,9 +73,13 @@
    |          type: object
    |          description: Koulutuksen toteutuksen opetustapoja tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
    |          $ref: '#/components/schemas/Kuvaus'
-   |        onkoMaksullinen:
-   |          type: boolean
-   |          decription: Onko koulutus maksullinen?
+   |        maksullisuustyyppi:
+   |          type: string
+   |          description: Maksullisuuden tyyppi
+   |          enum:
+   |            - 'maksullinen'
+   |            - 'maksuton'
+   |            - 'lukuvuosimaksu'
    |        maksullisuusKuvaus:
    |          type: object
    |          description: Koulutuksen toteutuksen maksullisuutta tarkentava kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
@@ -119,7 +125,7 @@
    (s/->OptionalKey :opetusaikaKuvaus)            Kielistetty
    :opetustapa                                    [(->Koodi OpetustapaKoodi)]
    (s/->OptionalKey :opetustapaKuvaus)            Kielistetty
-   :onkoMaksullinen                               s/Bool
+   (s/->OptionalKey :maksullisuustyyppi)          Maksullisuustyyppi
    (s/->OptionalKey :maksullisuusKuvaus)          Kielistetty
    (s/->OptionalKey :maksunMaara)                 s/Num
    (s/->OptionalKey :koulutuksenAlkamiskausi)     (s/maybe KoulutuksenAlkamiskausi)

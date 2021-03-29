@@ -11,7 +11,7 @@
     "opetustapaKoodiUrit": [
       "opetuspaikkakk_1#1"
     ],
-    "onkoMaksullinen": true,
+    "maksullisuustyyppi": "maksullinen",
     "maksunMaara": 200.5,
     "onkoApuraha": false,
     "koulutuksenAlkamiskausi": {
