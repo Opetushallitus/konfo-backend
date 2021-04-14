@@ -9,6 +9,28 @@
     [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintaperustekuvaus  :refer :all :exclude [schemas]]))
 
+(def aloituspaikka-schema
+  "|    Aloituspaikat:
+   |      type: object
+   |      properties:
+   |        lukumaara:
+   |          type: integer
+   |          description: Hakukohteen aloituspaikkojen lukumäärä
+   |          example: 100
+   |        ensikertalaisille:
+   |          type: integer
+   |          description: Hakukohteen ensikertalaisten aloituspaikkojen lukumäärä
+   |          example: 50
+   |        kuvaus:
+   |          type: object
+   |          description: Tarkempi kuvaus aloituspaikoista
+   |          $ref: '#/components/schemas/Kuvaus'")
+
+(def Aloituspaikat
+  {(s/->OptionalKey :lukumaara)         s/Int
+   (s/->OptionalKey :ensikertalaisille) s/Int
+   (s/->OptionalKey :kuvaus)            Kielistetty})
+
 (def hakukohde-metadata-schema
   "|    HakukohdeMetadata:
    |      type: object
@@ -23,12 +45,17 @@
    |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        kaytetaanHaunAlkamiskautta:
    |          type: boolean
-   |          description: Käytetäänkö haun alkamiskautta vai onko hakukohteelle määritelty oma alkamisajankohta?")
+   |          description: Käytetäänkö haun alkamiskautta vai onko hakukohteelle määritelty oma alkamisajankohta?
+   |        aloituspaikat:
+   |          type: object
+   |          description: Hakukohteen aloituspaikkojen tiedot
+   |          $ref: '#/components/schemas/Aloituspaikat'")
 
 (def HakukohdeMetadata
   {:valintakokeidenYleiskuvaus Kielistetty
    :kaytetaanHaunAlkamiskautta (s/maybe s/Bool)
-   :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)})
+   :koulutuksenAlkamiskausi    (s/maybe KoulutuksenAlkamiskausi)
+   :aloituspaikat              (s/maybe Aloituspaikat)})
 
 (def hakukohde-schema
   "|    Hakukohde:
@@ -182,8 +209,6 @@
    (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
    :hakulomakeKuvaus                               Kielistetty
    :hakulomakeLinkki                               Kielistetty
-   (s/->OptionalKey :aloituspaikat)                s/Int
-   (s/->OptionalKey :ensikertalaisenAloituspaikat) s/Int
    :pohjakoulutusvaatimus                          [(->Koodi PohjakoulutusvaatimusKoodi)]
    :pohjakoulutusvaatimusTarkenne                  Kielistetty
    :muuPohjakoulutusvaatimus                       Kielistetty
@@ -206,5 +231,6 @@
 
 (def schemas
   (str
+    aloituspaikka-schema "\n"
     hakukohde-metadata-schema "\n"
     hakukohde-schema "\n"))
