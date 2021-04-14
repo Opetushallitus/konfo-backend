@@ -28,6 +28,14 @@
    |          type: object
    |          description: Valintaperusteen kuvaus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
    |          $ref: '#/components/schemas/Kuvaus'
+   |        hakukelpoisuus:
+   |          type: object
+   |          description: Valintaperustekuvauksen hakukelpoisuus eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          $ref: '#/components/schemas/Kuvaus'
+   |        lisatiedot:
+   |          type: object
+   |          description: Valintaperustekuvauksen lisatiedot eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
+   |          $ref: '#/components/schemas/Kuvaus'
    |        sisalto:
    |          type: array
    |          description: Valintaperusteen kuvauksen sisältö. Voi sisältää sekä teksti- että taulukkoelementtejä.
@@ -280,11 +288,13 @@
    (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
 (def ValintaperusteKuvausMetadata
-   {(s/->OptionalKey :valintatavat)               [Valintatapa]
-    (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
-    (s/->OptionalKey :sisalto)                    [(s/if #(= "taulukko" (:tyyppi %)) SisaltoTaulukko SisaltoTeksti)]
-    (s/->OptionalKey :kuvaus)                     Kielistetty
-    (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty})
+  {(s/->OptionalKey :valintatavat)               [Valintatapa]
+   (s/->OptionalKey :kielitaitovaatimukset)      [Kielitaitovaatimus]
+   (s/->OptionalKey :hakukelpoisuus)             Kielistetty
+   (s/->OptionalKey :lisatiedot)                 Kielistetty
+   (s/->OptionalKey :sisalto)                    [(s/if #(= "taulukko" (:tyyppi %)) SisaltoTaulukko SisaltoTeksti)]
+   (s/->OptionalKey :kuvaus)                     Kielistetty
+   (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty})
 
 (def AmmValintaperustekuvausMetadata
   (st/merge
