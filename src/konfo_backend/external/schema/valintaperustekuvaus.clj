@@ -68,55 +68,6 @@
    |          type: object
    |          oneOf:
    |            - $ref: '#/components/schemas/AmmValintaperustekuvausMetadata'
-   |          example:
-   |            tyyppi: amm
-   |            valintatavat:
-   |              - valintatapaKoodiUri: valintatapajono_tv#1
-   |                kuvaus:
-   |                  fi: Valintatavan suomenkielinen kuvaus
-   |                  sv: Valintatavan ruotsinkielinen kuvaus
-   |                sisalto:
-   |                  - tyyppi: teksti
-   |                    data:
-   |                      fi: Suomenkielinen sisältöteksti
-   |                      sv: Ruotsinkielinen sisältöteksti
-   |                  - tyyppi: taulukko
-   |                    data:
-   |                      nimi:
-   |                        fi: Taulukon nimi suomeksi
-   |                        sv: Taulukon nimi ruotsiksi
-   |                      rows:
-   |                        - index: 0
-   |                          isHeader: true
-   |                          columns:
-   |                            - index: 0
-   |                              text:
-   |                                fi: Otsikko suomeksi
-   |                                sv: Otsikko ruotsiksi
-   |                kaytaMuuntotaulukkoa: true
-   |                kynnysehto:
-   |                  fi: Kynnysehto suomeksi
-   |                  sv: Kynnysehto ruotsiksi
-   |                enimmaispisteet: 18.1
-   |                vahimmaispisteet: 10.1
-   |            kielitaitovaatimukset:
-   |              - kieliKoodiUri: kieli_en#1
-   |                kielitaidonVoiOsoittaa:
-   |                  - kielitaitoKoodiUri: kielitaidonosoittaminen_01#1
-   |                    lisatieto:
-   |                      fi: Lisätieto suomeksi
-   |                      sv: Lisätieto ruotsiksi
-   |                vaatimukset:
-   |                  - kielitaitovaatimusKoodiUri: kielitaitovaatimustyypit_01#1
-   |                    kielitaitovaatimusKuvaukset:
-   |                      kielitaitovaatimusKuvausKoodiUri: kielitaitovaatimustyypitkuvaus_01#1
-   |                      kielitaitovaatimusTaso: A
-   |            koulutusalaKoodiUrit:
-   |              - kansallinenkoulutusluokitus2016koulutusalataso2_054#1
-   |              - kansallinenkoulutusluokitus2016koulutusalataso2_055#1
-   |            kuvaus:
-   |              fi: Suomenkielinen kuvaus
-   |              sv: Ruotsinkielinen kuvaus
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid

@@ -176,70 +176,6 @@
 
 (def OpetuskieliKoodi #"oppilaitoksenopetuskieli_\d+(#\d{1,2})?$")
 
-(def kielitaitovaatimus-kieli-schema
-  "|    KielitaitovaatimusKieli:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kieli_en
-   |          description: Kieli. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kieli/1)
-   |        nimi:
-   |          type: object
-   |          description: Kieli eri kielillä.
-   |          example: {\"fi\": \"englanti\"}
-   |          $ref: '#/components/schemas/Teksti'")
-
-(def KielitaitovaatimusKieliKoodi #"kieli_\w+(#\d{1,2})?$")
-
-(def kielitaidonOsoittaminen-schema
-  "|    KielitaidonOsoittaminen:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kielitaidonosoittaminen_01
-   |          description: Kielitaidon osoittaminen. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaidonosoittaminen/1)
-   |        nimi:
-   |          type: object
-   |          description: Kielitaidon osoittaminen eri kielillä.
-   |          example: {\"fi\": \"englanti\"}
-   |          $ref: '#/components/schemas/Teksti'")
-
-(def KielitaidonOsoitteminenKoodi #"kielitaidonosoittaminen_\d+(#\d{1,2})?$")
-
-(def kielitaitovaatimus-tyyppi-schema
-  "|    KielitaitovaatimusTyyppi:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kielitaitovaatimustyypit_01
-   |          description: Kielitaitovaatimuksen tyyppi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaitovaatimustyypit/1)
-   |        nimi:
-   |          type: object
-   |          description: Kielitaitovaatimuksen tyyppi eri kielillä.
-   |          example: {\"fi\": \"kielitaitovaatimustyyppi\"}
-   |          $ref: '#/components/schemas/Teksti'")
-
-(def KielitaitovaatimusTyyppiKoodi #"kielitaitovaatimustyypit_\d+(#\d{1,2})?$")
-
-(def kielitaitovaatimus-tyyppi-kuvaus-schema
-  "|    KielitaitovaatimusTyypinKuvaus:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kielitaitovaatimustyypitkuvaus_01
-   |          description: Kielitaitovaatimus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kielitaitovaatimustyypitkuvaus/1)
-   |        nimi:
-   |          type: object
-   |          description: Kielitaitovaatimuksen kuvaus eri kielillä.
-   |          example: {\"fi\": \"kielitaitovaatimustyypin kuvausteksti\"}
-   |          $ref: '#/components/schemas/Teksti'")
-
-(def KielitaitovaatimusTyypinKuvausKoodi #"kielitaitovaatimustyypitkuvaus_\d+(#\d{1,2})?$")
-
 (def opetusaika-schema
   "|    Opetusaika:
    |      type: object
@@ -443,10 +379,6 @@
     tutkintonimikekk-schema "\n"
     opintojenlaajuus-schema "\n"
     opintojenlaajuusyksikko-schema "\n"
-    kielitaitovaatimus-kieli-schema "\n"
-    kielitaitovaatimus-tyyppi-schema "\n"
-    kielitaitovaatimus-tyyppi-kuvaus-schema "\n"
-    kielitaidonOsoittaminen-schema "\n"
     opetuskieli-schema "\n"
     opetustapa-schema "\n"
     opetusaika-schema "\n"

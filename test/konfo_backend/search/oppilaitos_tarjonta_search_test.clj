@@ -128,7 +128,7 @@
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
-                  :tutkintonimikkeet nil,
+                  :tutkintonimikkeet [],
                   :opetuskielet ["oppilaitoksenopetuskieli_02"],
                   :koulutustyyppi "amm",
                   :kuva "https://example.com/kuva.jpg"

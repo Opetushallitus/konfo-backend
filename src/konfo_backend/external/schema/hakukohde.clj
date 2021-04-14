@@ -9,6 +9,47 @@
     [konfo-backend.external.schema.liite  :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.valintaperustekuvaus  :refer :all :exclude [schemas]]))
 
+(def aloituspaikka-schema
+  "|    Aloituspaikat:
+   |      type: object
+   |      properties:
+   |        lukumaara:
+   |          type: integer
+   |          description: Hakukohteen aloituspaikkojen lukumäärä
+   |          example: 100
+   |        ensikertalaisille:
+   |          type: integer
+   |          description: Hakukohteen ensikertalaisten aloituspaikkojen lukumäärä
+   |          example: 50
+   |        kuvaus:
+   |          type: object
+   |          description: Tarkempi kuvaus aloituspaikoista
+   |          $ref: '#/components/schemas/Kuvaus'")
+
+(def Aloituspaikat
+  {(s/->OptionalKey :lukumaara)         s/Int
+   (s/->OptionalKey :ensikertalaisille) s/Int
+   (s/->OptionalKey :kuvaus)            Kielistetty})
+
+(def valintaperusteen-valintakokeiden-lisatilaisuudet-schema
+  "|    ValintakokeenLisatilaisuudet:
+   |      type: object
+   |      description: Hakukohteella lisätyt valintakokeen lisätilaisuudet
+   |      properties:
+   |        id:
+   |          type: string
+   |          description: Valintakokeen yksilöivä tunniste. Järjestelmän generoima.
+   |          example: 'ea596a9c-5940-497e-b5b7-aded3a2352a7'
+   |        tilaisuudet:
+   |          type: array
+   |          description: Hakukohteella syötetyt valintaperusteen valintakokeen lisäjärjestämistilaisuudet
+   |          items:
+   |            $ref: '#/components/schemas/Valintakoetilaisuus'")
+
+(def Valintakokeen-lisatilaisuudet
+  {(s/->OptionalKey :id)          s/Uuid
+   (s/->OptionalKey :tilaisuudet) [ValintakoeTilaisuus]})
+
 (def hakukohde-metadata-schema
   "|    HakukohdeMetadata:
    |      type: object
@@ -17,18 +58,34 @@
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
    |          $ref: '#/components/schemas/Kuvaus'
+   |        kynnysehto:
+   |          type: object
+   |          description: Hakukohteen kynnysehto eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
+   |          $ref: '#/components/schemas/Kuvaus'
+   |        valintaperusteenValintakokeidenLisatilaisuudet:
+   |          type: array
+   |          description: Hakukohteeseen liitetyn valintaperusteen valintakokeisiin liitetyt lisätilaisuudet
+   |          items:
+   |            $ref: '#/components/schemas/ValintakokeenLisatilaisuudet'
    |        koulutuksenAlkamiskausi:
    |          type: object
    |          description: Koulutuksen alkamiskausi
    |          $ref: '#/components/schemas/KoulutuksenAlkamiskausi'
    |        kaytetaanHaunAlkamiskautta:
    |          type: boolean
-   |          description: Käytetäänkö haun alkamiskautta vai onko hakukohteelle määritelty oma alkamisajankohta?")
+   |          description: Käytetäänkö haun alkamiskautta vai onko hakukohteelle määritelty oma alkamisajankohta?
+   |        aloituspaikat:
+   |          type: object
+   |          description: Hakukohteen aloituspaikkojen tiedot
+   |          $ref: '#/components/schemas/Aloituspaikat'")
 
 (def HakukohdeMetadata
-  {:valintakokeidenYleiskuvaus Kielistetty
-   :kaytetaanHaunAlkamiskautta (s/maybe s/Bool)
-   :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)})
+  {:valintakokeidenYleiskuvaus                     Kielistetty
+   :kynnysehto                                     Kielistetty
+   :valintaperusteenValintakokeidenLisatilaisuudet [Valintakokeen-lisatilaisuudet]
+   :kaytetaanHaunAlkamiskautta                     (s/maybe s/Bool)
+   :koulutuksenAlkamiskausi                        (s/maybe KoulutuksenAlkamiskausi)
+   :aloituspaikat                                  (s/maybe Aloituspaikat)})
 
 (def hakukohde-schema
   "|    Hakukohde:
@@ -182,8 +239,6 @@
    (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
    :hakulomakeKuvaus                               Kielistetty
    :hakulomakeLinkki                               Kielistetty
-   (s/->OptionalKey :aloituspaikat)                s/Int
-   (s/->OptionalKey :ensikertalaisenAloituspaikat) s/Int
    :pohjakoulutusvaatimus                          [(->Koodi PohjakoulutusvaatimusKoodi)]
    :pohjakoulutusvaatimusTarkenne                  Kielistetty
    :muuPohjakoulutusvaatimus                       Kielistetty
@@ -206,5 +261,7 @@
 
 (def schemas
   (str
+    valintaperusteen-valintakokeiden-lisatilaisuudet-schema "\n"
+    aloituspaikka-schema "\n"
     hakukohde-metadata-schema "\n"
     hakukohde-schema "\n"))
