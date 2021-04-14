@@ -99,18 +99,6 @@
    |                  sv: Kynnysehto ruotsiksi
    |                enimmaispisteet: 18.1
    |                vahimmaispisteet: 10.1
-   |            kielitaitovaatimukset:
-   |              - kieliKoodiUri: kieli_en#1
-   |                kielitaidonVoiOsoittaa:
-   |                  - kielitaitoKoodiUri: kielitaidonosoittaminen_01#1
-   |                    lisatieto:
-   |                      fi: Lisätieto suomeksi
-   |                      sv: Lisätieto ruotsiksi
-   |                vaatimukset:
-   |                  - kielitaitovaatimusKoodiUri: kielitaitovaatimustyypit_01#1
-   |                    kielitaitovaatimusKuvaukset:
-   |                      kielitaitovaatimusKuvausKoodiUri: kielitaitovaatimustyypitkuvaus_01#1
-   |                      kielitaitovaatimusTaso: A
    |            koulutusalaKoodiUrit:
    |              - kansallinenkoulutusluokitus2016koulutusalataso2_054#1
    |              - kansallinenkoulutusluokitus2016koulutusalataso2_055#1
