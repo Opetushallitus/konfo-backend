@@ -31,6 +31,25 @@
    (s/->OptionalKey :ensikertalaisille) s/Int
    (s/->OptionalKey :kuvaus)            Kielistetty})
 
+(def valintaperusteen-valintakokeiden-lisatilaisuudet-schema
+  "|    ValintakokeenLisatilaisuudet:
+   |      type: object
+   |      description: Hakukohteella lisätyt valintakokeen lisätilaisuudet
+   |      properties:
+   |        id:
+   |          type: string
+   |          description: Valintakokeen yksilöivä tunniste. Järjestelmän generoima.
+   |          example: 'ea596a9c-5940-497e-b5b7-aded3a2352a7'
+   |        tilaisuudet:
+   |          type: array
+   |          description: Hakukohteella syötetyt valintaperusteen valintakokeen lisäjärjestämistilaisuudet
+   |          items:
+   |            $ref: '#/components/schemas/Valintakoetilaisuus'")
+
+(def Valintakokeen-lisatilaisuudet
+  {(s/->OptionalKey :id)          s/Uuid
+   (s/->OptionalKey :tilaisuudet) [ValintakoeTilaisuus]})
+
 (def hakukohde-metadata-schema
   "|    HakukohdeMetadata:
    |      type: object
@@ -39,6 +58,15 @@
    |          type: object
    |          description: Valintakokeiden yleiskuvaus eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
    |          $ref: '#/components/schemas/Kuvaus'
+   |        kynnysehto:
+   |          type: object
+   |          description: Hakukohteen kynnysehto eri kielillä. Kielet on määritetty hakukohteen kielivalinnassa.
+   |          $ref: '#/components/schemas/Kuvaus'
+   |        valintaperusteenValintakokeidenLisatilaisuudet:
+   |          type: array
+   |          description: Hakukohteeseen liitetyn valintaperusteen valintakokeisiin liitetyt lisätilaisuudet
+   |          items:
+   |            $ref: '#/components/schemas/ValintakokeenLisatilaisuudet'
    |        koulutuksenAlkamiskausi:
    |          type: object
    |          description: Koulutuksen alkamiskausi
@@ -52,10 +80,12 @@
    |          $ref: '#/components/schemas/Aloituspaikat'")
 
 (def HakukohdeMetadata
-  {:valintakokeidenYleiskuvaus Kielistetty
-   :kaytetaanHaunAlkamiskautta (s/maybe s/Bool)
-   :koulutuksenAlkamiskausi    (s/maybe KoulutuksenAlkamiskausi)
-   :aloituspaikat              (s/maybe Aloituspaikat)})
+  {:valintakokeidenYleiskuvaus                     Kielistetty
+   :kynnysehto                                     Kielistetty
+   :valintaperusteenValintakokeidenLisatilaisuudet [Valintakokeen-lisatilaisuudet]
+   :kaytetaanHaunAlkamiskautta                     (s/maybe s/Bool)
+   :koulutuksenAlkamiskausi                        (s/maybe KoulutuksenAlkamiskausi)
+   :aloituspaikat                                  (s/maybe Aloituspaikat)})
 
 (def hakukohde-schema
   "|    Hakukohde:
@@ -231,6 +261,7 @@
 
 (def schemas
   (str
+    valintaperusteen-valintakokeiden-lisatilaisuudet-schema "\n"
     aloituspaikka-schema "\n"
     hakukohde-metadata-schema "\n"
     hakukohde-schema "\n"))
