@@ -29,6 +29,8 @@
         hakukohdeOid1 "1.2.246.562.20.000001"
         hakukohdeOid2 "1.2.246.562.20.000002"
         hakukohdeOid3 "1.2.246.562.20.000003"
+        hakukohdeOid4 "1.2.246.562.20.000004"
+        hakukohdeOid5 "1.2.246.562.20.000005"
         valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
         valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
@@ -43,17 +45,22 @@
 
     (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
     (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid1 hakuOid1 :tila "julkaistu"   :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
-    (fixture/add-hakukohde-mock hakukohdeOid3 toteutusOid1 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid3 toteutusOid1 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1 :esikatselu "true")
+    (fixture/add-hakukohde-mock hakukohdeOid4 toteutusOid4 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1 :esikatselu "true")
+    (fixture/add-hakukohde-mock hakukohdeOid5 toteutusOid4 hakuOid1 :tila "tallennettu" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
 
     (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1] :toteutukset [toteutusOid1 toteutusOid2 toteutusOid4 toteutusOid5]})
 
     (testing "Get toteutus"
       (testing "ok"
         (let [response (get-ok (toteutus-url toteutusOid1))]
-          (is (= toteutusOid1 (:oid response)))))
-      (testing "get draft toteutus when esikatselu true"
+          (is (= toteutusOid1 (:oid response)))
+          (is (not-any? (fn [hakutieto] (some #(= hakukohdeOid3 (:hakukohdeOid %)) (:hakukohteet hakutieto))) (:hakutiedot response)))))
+      (testing "get draft toteutus and hakutiedon hakukhoteet when esikatselu true"
         (let [response (get-ok (toteutus-draft-url toteutusOid4))]
-          (is (= toteutusOid4 (:oid response)))))
+          (is (= toteutusOid4 (:oid response)))
+          (is (some (fn [hakutieto] (some #(= hakukohdeOid4 (:hakukohdeOid %)) (:hakukohteet hakutieto))) (:hakutiedot response)))
+          (is (not-any? (fn [hakutieto] (some #(= hakukohdeOid5 (:hakukohdeOid %)) (:hakukohteet hakutieto))) (:hakutiedot response)))))
       (testing "not found"
         (get-not-found (toteutus-url toteutusOid3)))
       (testing "filter arkistoitu draft even when esikatselu true"
