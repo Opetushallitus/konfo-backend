@@ -5,11 +5,24 @@
 
 (defonce index "toteutus-kouta")
 
+(defn- filter-unallowed-hakukohteet
+  [hakutieto draft?]
+  (update hakutieto
+          :hakukohteet
+          (fn [hakukohteet] (filter #(allowed-to-view % draft?) hakukohteet))))
+
+(defn- map-allowed-to-view-hakutiedot
+  [toteutus draft?]
+  (update toteutus
+          :hakutiedot
+          (fn [hakutiedot] (map #(filter-unallowed-hakukohteet % draft?) hakutiedot))))
+
 (defn get
   [oid draft?]
   (let [toteutus (get-source index oid)]
     (when (allowed-to-view toteutus draft?)
-      toteutus)))
+      (cond-> toteutus
+              (some? (:hakutiedot toteutus)) (map-allowed-to-view-hakutiedot draft?)))))
 
 (defn get-many
   ([oids excludes]

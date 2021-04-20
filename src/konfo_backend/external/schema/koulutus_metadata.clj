@@ -6,7 +6,22 @@
     [schema-tools.core :as st]))
 
 (def schemas
-  " |    AmmatillinenKoulutusMetadata:
+   "|    Eperuste:
+    |      type: object
+    |      properties:
+    |        id:
+    |          type: integer
+    |          example: 12345
+    |          description: ePerusteen id
+    |        diaarinumero:
+    |          type: string
+    |          example: 1234-OPH-2021
+    |          description: ePerusteen diaarinumero
+    |        voimassaoloLoppuu:
+    |          type: string
+    |          example: ePerusten voimassaolon loppumishetki
+    |          description: 2021-12-12T00:00:00
+    |    AmmatillinenKoulutusMetadata:
     |      type: object
     |      properties:
     |        koulutustyyppi:
@@ -43,6 +58,9 @@
     |        opintojenLaajuusyksikko:
     |          type: object
     |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+    |        eperuste:
+    |          type: object
+    |          $ref: '#/components/schemas/Eperuste'
     |    KorkeakouluMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KoulutusMetadata'
@@ -70,6 +88,9 @@
     |        opintojenLaajuusyksikko:
     |          type: object
     |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+    |        eperuste:
+    |          type: object
+    |          $ref: '#/components/schemas/Eperuste'
     |    YliopistoKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
@@ -95,6 +116,11 @@
     |"
   )
 
+(def Eperuste
+  {(s/->OptionalKey :id) s/Int
+   (s/->OptionalKey :diaarinumero) s/Str
+   (s/->OptionalKey :voimassaoloLoppuu) s/Str })
+
 (def KkMetadata
   {:kuvaus                             Kielistetty
    :kuvauksenNimi                      Kielistetty
@@ -102,7 +128,8 @@
    :koulutusala                        [(->Koodi Koulutusala2Koodi)]
    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
    (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   :opintojenLaajuusyksikko             (->Koodi OpintojenLaajuusyksikkoKoodi)})
+   :opintojenLaajuusyksikko            (->Koodi OpintojenLaajuusyksikkoKoodi)
+   (s/->OptionalKey :eperuste)         (s/maybe Eperuste)})
 
 (def AmmKoulutusMetadata
   {:tyyppi                                    Amm
@@ -112,7 +139,8 @@
    (s/->OptionalKey :tutkintonimike)          [(->Koodi TutkintonimikeKoodi)]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Int)
-   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))})
+   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+   (s/->OptionalKey :eperuste)                (s/maybe Eperuste)})
 
 (def AmkMetadata
   (st/merge
