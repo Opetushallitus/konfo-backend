@@ -56,7 +56,7 @@
         (let [response (get-ok (toteutus-url toteutusOid1))]
           (is (= toteutusOid1 (:oid response)))
           (is (not-any? (fn [hakutieto] (some #(= hakukohdeOid3 (:hakukohdeOid %)) (:hakukohteet hakutieto))) (:hakutiedot response)))))
-      (testing "get draft toteutus and hakutiedon hakukhoteet when esikatselu true"
+      (testing "get draft toteutus and hakutiedon hakukohteet when esikatselu true"
         (let [response (get-ok (toteutus-draft-url toteutusOid4))]
           (is (= toteutusOid4 (:oid response)))
           (is (some (fn [hakutieto] (some #(= hakukohdeOid4 (:hakukohdeOid %)) (:hakukohteet hakutieto))) (:hakutiedot response)))
