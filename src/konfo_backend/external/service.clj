@@ -36,7 +36,7 @@
 (defn get-valintaperustekuvaus
   [id]
   (some-> (valintaperuste/get id false)
-          (dissoc :muokkaaja :esikatselu :julkinen)
+          (dissoc :muokkaaja :esikatselu :julkinen)))
 
 (defn- get-koulutukset-by-oids
   [oids]
