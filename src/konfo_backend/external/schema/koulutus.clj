@@ -3,7 +3,9 @@
     [schema.core :as s]
     [konfo-backend.external.schema.koulutus-metadata :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
+    [konfo-backend.external.schema.sorakuvaus :refer :all :exclude [schemas]]))
+
 
 (def schemas
   (str
@@ -104,6 +106,10 @@
      |          type: number
      |          description: Ammatillisen koulutuksen ePerusteen id.
      |          example: 4804100
+     |        sorakuvausId:
+     |          type: string
+     |          description: Koulutukseen liittyvän SORA-kuvauksen yksilöivä tunniste
+     |          example: ea596a9c-5940-497e-b5b7-aded3a2352a7
      |        modified:
      |          type: string
      |          format: date-time
@@ -129,5 +135,6 @@
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    (s/->OptionalKey :ePerusteId) s/Int
+   (s/->OptionalKey :sorakuvaus)          (s/maybe Sorakuvaus)
    :modified                     Datetime
    :timestamp                    s/Int})
