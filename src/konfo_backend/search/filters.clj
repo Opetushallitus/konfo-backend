@@ -28,11 +28,13 @@
 
 (defn- beta-koulutustyyppi-muu
   [aggs]
-  (let [count (+ (:amm-osaamisala aggs) (:amm-tutkinnon-osa aggs))]
-    {:amm-muu (cond-> {:count count
+  (let [amm-osaamisala-count (get aggs :amm-osaamisala 0)
+        amm-tutkinnon-osa-count (get aggs :amm-tutkinnon-osa 0)
+        total-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)]
+    {:amm-muu (cond-> {:count total-count
                        :alakoodit {
-                         :amm-tutkinnon-osa {:count (:amm-tutkinnon-osa aggs)},
-                         :amm-osaamisala {:count (:amm-osaamisala aggs)}}})}))
+                         :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count},
+                         :amm-osaamisala {:count amm-osaamisala-count}}})}))
 
 (defn- hakukaynnissa
   [aggs]
