@@ -41,7 +41,7 @@
 (defn- get-koulutukset-by-oids
   [oids]
   (when (seq oids)
-    (->> (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset"]))))
+    (->> (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset" "sorakuvausId" "sorakuvaus.muokkaaja"]))))
 
 (defn- get-toteutukset-by-oids
   [oids]
