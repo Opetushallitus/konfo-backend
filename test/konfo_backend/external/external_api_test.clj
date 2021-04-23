@@ -48,9 +48,9 @@
           valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"
           kkValintaperusteId "ffa8c6cf-a962-4bb2-bf61-fe8fc741fabd"]
 
-      (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
-      (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2)
-      (fixture/add-koulutus-mock kkKoulutusOid :tila "julkaistu" :koulutustyyppi "yo" :nimi "YO koulutus" :organisaatio mocks/Oppilaitos2 :metadata yo-koulutus-metatieto)
+      (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
+      (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
+      (fixture/add-koulutus-mock kkKoulutusOid :tila "julkaistu" :koulutustyyppi "yo" :nimi "YO koulutus" :organisaatio mocks/Oppilaitos2 :metadata yo-koulutus-metatieto :sorakuvausId sorakuvausId)
 
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
       (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
@@ -68,8 +68,8 @@
 
       (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
       ;(fixture/add-sorakuvaus-mock kkSorakuvausId :tila "julkaistu" :koulutustyyppi "yo" :metadata "{}")
-      (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :sorakuvaus sorakuvausId)
-      (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :sorakuvaus sorakuvausId)
+      (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
+      (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
       ;(fixture/add-valintaperuste-mock kkValintaperusteId :tila "julkaistu" :koulutustyyppi "yo" :sorakuvaus kkSorakuvausId :metadata "{}")
 
       (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid]

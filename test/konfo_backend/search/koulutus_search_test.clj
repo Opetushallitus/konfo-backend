@@ -61,7 +61,7 @@
   (fixture/add-hakukohde-mock hakukohde-oid-1 ponitoteutus-oid haku-oid :tila "julkaistu" :valintaperuste valintaperuste-id :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440" :hakuaikaAlkaa "2000-01-01T00:00")
   (fixture/add-hakukohde-mock hakukohde-oid-2 poniosatoteutus-oid haku-oid :tila "julkaistu" :valintaperuste valintaperuste-id :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440" :hakuaikaAlkaa "2000-01-01T00:00" :hakuaikaPaattyy "2000-01-02T00:00")
   (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus" :muokkaaja "1.2.246.562.24.62301161440")
-  (fixture/add-valintaperuste-mock valintaperuste-id :tila "julkaistu" :nimi "Valintaperuste" :sorakuvaus sorakuvaus-id :muokkaaja "1.2.246.562.24.62301161440")
+  (fixture/add-valintaperuste-mock valintaperuste-id :tila "julkaistu" :nimi "Valintaperuste" :muokkaaja "1.2.246.562.24.62301161440")
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid hevostutkinnon-osa-oid hevososaamisala-oid] :oppilaitokset [punkaharjun-yliopisto]} (fn [x & {:as params}] punkaharju-org))
 
