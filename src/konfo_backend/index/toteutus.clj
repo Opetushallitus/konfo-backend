@@ -1,4 +1,5 @@
 (ns konfo-backend.index.toteutus
+  (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer :all]
     [konfo-backend.elastic-tools :refer [get-source search get-sources]]))

@@ -31,12 +31,16 @@
 (def haku-oid "1.2.246.562.29.00000000000000000001")
 (def hakukohde-oid "1.2.246.562.20.00000000000000000001")
 
+(def sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f227a")
+
 (deftest koulutus-jarjestajat-test
-  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
+  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
   (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock mersukoulu-oid autoala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata amk-toteutus-metatieto)
+
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
   (fixture/add-haku-mock haku-oid :tila "julkaistu" :nimi "Hevoshaku" :muokkaaja "1.2.246.562.24.62301161440")
   (fixture/add-hakukohde-mock hakukohde-oid ponikoulu-oid haku-oid :tila "julkaistu" :nimi "ponikoulun hakukohde" :muokkaaja "1.2.246.562.24.62301161440" :hakuaikaAlkaa "2000-01-01T00:00")
@@ -151,7 +155,8 @@
                   :hakukaynnissa nil} (first (:hits r)))))))))
 
 (deftest koulutus-jarjestajat-test-no-jarjestajia
-  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat "" :organisaatio "1.2.246.562.10.00000000001" :metadata koulutus-metatieto)
+  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat "" :organisaatio "1.2.246.562.10.00000000001" :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid]}, orgs)
 

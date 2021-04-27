@@ -1,8 +1,6 @@
 (ns konfo-backend.external.service
   (:require
-    [konfo-backend.tools :refer :all]
-    [konfo-backend.koodisto.koodisto :as k]
-    [konfo-backend.tools :refer [reduce-merge-map]]
+    [konfo-backend.tools :refer [julkaistu?]]
     [konfo-backend.index.koulutus :as koulutus]
     [konfo-backend.index.toteutus :as toteutus]
     [konfo-backend.index.hakukohde :as hakukohde]
@@ -17,7 +15,8 @@
 (defn- get-koulutus
   [oid]
   (some-> (koulutus/get oid false)
-          (dissoc :muokkaaja :julkinen :esikatselu :organisaatiot)))
+          (dissoc :muokkaaja :julkinen :esikatselu :organisaatiot :sorakuvausId)
+          (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
 
 (defn get-toteutus
   [oid]
@@ -37,13 +36,12 @@
 (defn get-valintaperustekuvaus
   [id]
   (some-> (valintaperuste/get id false)
-          (dissoc :sorakuvausId :muokkaaja :esikatselu :julkinen)
-          (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
+          (dissoc :muokkaaja :esikatselu :julkinen)))
 
 (defn- get-koulutukset-by-oids
   [oids]
   (when (seq oids)
-    (->> (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset"]))))
+    (->> (koulutus/get-many oids ["esikatselu" "julkinen" "muokkaaja" "organisaatiot" "toteutukset" "sorakuvausId" "sorakuvaus.muokkaaja"]))))
 
 (defn- get-toteutukset-by-oids
   [oids]

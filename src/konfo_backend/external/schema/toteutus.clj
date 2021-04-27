@@ -95,20 +95,6 @@
    |                  teksti:
    |                    fi: Suomenkielinen lisätietoteksti
    |                    sv: Ruotsinkielinen lisätietoteksti
-   |              onkoLukuvuosimaksua: true
-   |              lukuvuosimaksu:
-   |                 fi: 200 lukukaudessa
-   |                 sv: 200 på svenska
-   |              lukuvuosimaksuKuvaus:
-   |                fi: Lukuvuosimaksun suomenkielinen kuvaus
-   |                sv: Lukuvuosimaksun ruotsinkielinen kuvaus
-   |              onkoStipendia: true
-   |              stipendinMaara:
-   |                 fi: 200 lukukaudessa
-   |                 sv: 200 på svenska
-   |              stipendinKuvaus:
-   |                fi: Stipendin suomenkielinen kuvaus
-   |                sv: Stipendin ruotsinkielinen kuvaus
    |            ammattinimikkeet:
    |              - kieli: fi
    |                arvo: insinööri

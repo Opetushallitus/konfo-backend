@@ -43,10 +43,6 @@
    |          type: object
    |          description: Valintaperustekuvaukseen liittyvä kohdejoukon tarkenne
    |          $ref: '#/components/schemas/HaunKohdejoukonTarkenne'
-   |        sorakuvausId:
-   |          type: string
-   |          description: Valintaperustekuvaukseen liittyvän SORA-kuvauksen yksilöivä tunniste
-   |          example: ea596a9c-5940-497e-b5b7-aded3a2352a7
    |        kielivalinta:
    |          type: array
    |          description: Kielet, joille valintaperustekuvauksen nimi, kuvailutiedot ja muut tekstit on käännetty
@@ -98,7 +94,6 @@
    (s/->OptionalKey :metadata)            (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata
                                                          #(= "yo" (:tyyppi %)) YoValintaperusteKuvausMetadata
                                                          #(= "amk" (:tyyppi %)) AmkValintaperusteKuvausMetadata)
-   (s/->OptionalKey :sorakuvaus)          (s/maybe Sorakuvaus)
    :organisaatio                          Organisaatio
    :modified                              Datetime
    :timestamp                             s/Int})

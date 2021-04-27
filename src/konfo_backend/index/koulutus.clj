@@ -1,4 +1,5 @@
 (ns konfo-backend.index.koulutus
+  (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer [allowed-to-view julkaistut]]
     [konfo-backend.elastic-tools :refer [get-source get-sources]]))

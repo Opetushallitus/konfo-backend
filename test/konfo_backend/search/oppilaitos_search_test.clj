@@ -32,17 +32,22 @@
   [& query-params]
   (vec (map :oid (:hits (apply search query-params)))))
 
+(def yo-sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f3333")
+(def sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f227a")
+
 (deftest oppilaitos-search-test
 
-  (fixture/add-koulutus-mock "1.2.246.562.13.000001" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock "1.2.246.562.13.000002" :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock "1.2.246.562.13.000003" :koulutustyyppi "amm-tutkinnon-osa" :koulutusKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
-  (fixture/add-koulutus-mock "1.2.246.562.13.000004" :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
-  (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000002" :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000002" "1.2.246.562.13.000002" :tila "julkaistu" :nimi "Ponikoulu helsingissä" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock "1.2.246.562.17.000003" "1.2.246.562.13.000003" :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid4 :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
+  (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid2 :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :nimi "Ponikoulu helsingissä" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto)
+  (fixture/add-toteutus-mock "1.2.246.562.17.000003" koulutusOid3 :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
-  (fixture/index-oids-without-related-indices {:koulutukset ["1.2.246.562.13.000001" "1.2.246.562.13.000002" "1.2.246.562.13.000003" "1.2.246.562.13.000004"] :oppilaitokset [punkaharjun-yliopisto helsingin-yliopisto]} orgs)
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
+
+  (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4] :oppilaitokset [punkaharjun-yliopisto helsingin-yliopisto]} orgs)
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto]
     (testing "Search oppilaitokset with bad requests:"
@@ -213,13 +218,15 @@
 
 (deftest oppilaitos-paging-and-sorting-test
 
-  (fixture/add-koulutus-mock koulutusOid1 :tarjoajat oppilaitosOid1)
-  (fixture/add-koulutus-mock koulutusOid2 :tarjoajat oppilaitosOid2)
-  (fixture/add-koulutus-mock koulutusOid3 :tarjoajat oppilaitosOid3)
-  (fixture/add-koulutus-mock koulutusOid4 :tarjoajat oppilaitosOid4)
-  (fixture/add-koulutus-mock koulutusOid5 :tarjoajat oppilaitosOid5)
+  (fixture/add-koulutus-mock koulutusOid1 :tarjoajat oppilaitosOid1 :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid2 :tarjoajat oppilaitosOid2 :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid3 :tarjoajat oppilaitosOid3 :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid4 :tarjoajat oppilaitosOid4 :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid5 :tarjoajat oppilaitosOid5 :sorakuvausId sorakuvaus-id)
 
-  (fixture/index-oids-without-related-indices {:koulutukset   [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5 koulutusOid6]
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
+
+  (fixture/index-oids-without-related-indices {:koulutukset   [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5]
                                                :oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid3 oppilaitosOid4 oppilaitosOid5]} aakkos-orgs)
 
   (testing "Oppilaitos search ordering"
@@ -246,12 +253,15 @@
 
 (deftest oppilaitos-keyword-search
 
-  (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid1 :nimi "Lääketieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid2 :nimi "Humanistinen koulutus")
-  (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid3 :nimi "Tietojenkäsittelytieteen koulutus")
-  (fixture/add-koulutus-mock koulutusOid4 :koulutustyyppi "amm" :tila "julkaistu" :tarjoajat oppilaitosOid4 :nimi "Automaatiotekniikka")
-  (fixture/add-koulutus-mock koulutusOid5 :koulutustyyppi "amm" :tila "julkaistu" :tarjoajat oppilaitosOid5 :nimi "Muusikon koulutus")
-  (fixture/add-koulutus-mock koulutusOid6 :koulutustyyppi "amm" :tile "julkaistu" :tarjoajat oppilaitosOid6 :nimi "Sosiaali- ja terveysalan perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid1 :nimi "Lääketieteen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid2 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid2 :nimi "Humanistinen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid3 :koulutustyyppi "yo"  :tila "julkaistu" :tarjoajat oppilaitosOid3 :nimi "Tietojenkäsittelytieteen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid4 :koulutustyyppi "amm" :tila "julkaistu" :tarjoajat oppilaitosOid4 :nimi "Automaatiotekniikka" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid5 :koulutustyyppi "amm" :tila "julkaistu" :tarjoajat oppilaitosOid5 :nimi "Muusikon koulutus" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid6 :koulutustyyppi "amm" :tile "julkaistu" :tarjoajat oppilaitosOid6 :nimi "Sosiaali- ja terveysalan perustutkinto" :sorakuvausId sorakuvaus-id)
+
+  (fixture/add-sorakuvaus-mock yo-sorakuvaus-id :tila "julkaistu" :koulutustyyppi "yo")
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :tarjoajat oppilaitosOid1 :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "lääkäri"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :tarjoajat oppilaitosOid2 :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "psykologi"}]}))
