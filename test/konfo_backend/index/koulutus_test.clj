@@ -19,11 +19,11 @@
 
 (deftest koulutus-test
 
-  (let [sorakuvausId "2ff6700d-087f-4dbf-9e42-7f38948f227a"
-        koulutusOid1 "1.2.246.562.13.000001"
+  (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
         koulutusOid3 "1.2.246.562.13.000003"
-        koulutusOid4 "1.2.246.562.13.000004"]
+        koulutusOid4 "1.2.246.562.13.000004"
+        sorakuvausId "2ff6700d-087f-4dbf-9e42-7f38948f227a"]
 
     (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
     (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :esikatselu "false" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
