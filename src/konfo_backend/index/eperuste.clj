@@ -1,4 +1,5 @@
 (ns konfo-backend.index.eperuste
+  (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer [koodi-uri-no-version]]
     [konfo-backend.elastic-tools :refer [get-source search]]

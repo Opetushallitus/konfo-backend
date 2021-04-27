@@ -1,4 +1,5 @@
 (ns konfo-backend.index.lokalisointi
+  (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.elastic-tools :refer [get-source]]))
 
