@@ -50,10 +50,10 @@
 
 (deftest koulutus-search-test
 
-  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
-  (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
   (fixture/add-toteutus-mock ponitoteutus-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
@@ -382,11 +382,12 @@
 
 (deftest koulutus-paging-and-sorting-test
 
-  (fixture/add-koulutus-mock koulutusOid1 :nimi "Aakkosissa ensimmäinen")
-  (fixture/add-koulutus-mock koulutusOid2 :nimi "Aakkosissa toinen")
-  (fixture/add-koulutus-mock koulutusOid3 :nimi "Aakkosissa vasta kolmas")
-  (fixture/add-koulutus-mock koulutusOid4 :nimi "Aakkosissa vasta neljäs")
-  (fixture/add-koulutus-mock koulutusOid5 :nimi "Aakkosissa viidentenä")
+  (fixture/add-koulutus-mock koulutusOid1 :nimi "Aakkosissa ensimmäinen" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid2 :nimi "Aakkosissa toinen" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid3 :nimi "Aakkosissa vasta kolmas" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid4 :nimi "Aakkosissa vasta neljäs" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid5 :nimi "Aakkosissa viidentenä" :sorakuvausId sorakuvaus-id)
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus")
 
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5]})
 
@@ -414,23 +415,25 @@
 
 (deftest koulutus-keyword-search
 
-  (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus" :metadata yo-koulutus-metatieto)
-  (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus" :metadata yo-koulutus-metatieto)
-  (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus" :metadata yo-koulutus-metatieto)
-  (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka (ylempi AMK)")
-  (fixture/add-koulutus-mock koulutusOid5  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus")
-  (fixture/add-koulutus-mock koulutusOid6  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid7  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Maanmittausalan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid8  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Pintakäsittelyalan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid9  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhtaus- ja kiinteistöpalvelualan ammattitutkinto")
-  (fixture/add-koulutus-mock koulutusOid10 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhevammaisten tulkkauksen erikoisammattitutkinto")
-  (fixture/add-koulutus-mock koulutusOid11 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hius- ja kauneudenhoitoalan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid12 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Autoalan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid13 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Elintarvikealan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid14 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Eläintenhoidon ammattitutkinto")
-  (fixture/add-koulutus-mock koulutusOid15 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Tieto- ja viestintätekniikan ammattitutkinto")
-  (fixture/add-koulutus-mock koulutusOid16 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Tanssialan perustutkinto")
-  (fixture/add-koulutus-mock koulutusOid17 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hevostalouden perustutkinto")
+  (fixture/add-koulutus-mock koulutusOid1  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Lääketieteen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid2  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Humanistinen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid3  :koulutustyyppi "yo"  :tila "julkaistu" :nimi "Tietojenkäsittelytieteen koulutus" :metadata yo-koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid4  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Automaatiotekniikka (ylempi AMK :sorakuvausId sorakuvaus-id)" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid5  :koulutustyyppi "amm" :tila "julkaistu" :nimi "Muusikon koulutus" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid6  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Sosiaali- ja terveysalan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid7  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Maanmittausalan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid8  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Pintakäsittelyalan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid9  :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhtaus- ja kiinteistöpalvelualan ammattitutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid10 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Puhevammaisten tulkkauksen erikoisammattitutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid11 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hius- ja kauneudenhoitoalan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid12 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Autoalan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid13 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Elintarvikealan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid14 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Eläintenhoidon ammattitutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid15 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Tieto- ja viestintätekniikan ammattitutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid16 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Tanssialan perustutkinto" :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock koulutusOid17 :koulutustyyppi "amm" :tile "julkaistu" :nimi "Hevostalouden perustutkinto" :sorakuvausId sorakuvaus-id)
+
+  (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus")
 
   (fixture/add-toteutus-mock "1.2.246.562.17.000001" koulutusOid1 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "lääkäri"}, {:kieli "fi" :arvo "esimies"}]}))
   (fixture/add-toteutus-mock "1.2.246.562.17.000002" koulutusOid2 :tila "julkaistu" :metadata (cheshire/generate-string {:tyyppi "yo" :ammattinimikkeet [{:kieli "fi" :arvo "psykologi"}] :asiasanat [{:kieli "fi" :arvo "ammattikorkeakoulu"}]}))
