@@ -21,10 +21,10 @@
 
 ;TODO! Koodisto
 (defn- beta-koulutustyyppi
-  [aggs]
-  (let [count (:amm aggs)]
-    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters aggs "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
-            count (assoc :count count))}))
+  [filter-counts]
+  (let [ammatillinen-count (:amm filter-counts)]
+    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters filter-counts "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
+            ammatillinen-count (assoc :count ammatillinen-count))}))
 
 (defn- beta-koulutustyyppi-muu
   [aggs]
@@ -41,17 +41,17 @@
   {:count (:hakukaynnissa aggs) })
 
 (defn hierarkia
-  ([aggs]
-   (let [filters (partial koodisto->filters aggs)]
+  ([filter-counts]
+   (let [filters (partial koodisto->filters filter-counts)]
      {:opetuskieli           (filters "oppilaitoksenopetuskieli")
       :maakunta              (filters "maakunta")
       :kunta                 (filters "kunta")
-      :koulutustyyppi        (beta-koulutustyyppi aggs)        ;TODO! Koodisto?
-      :koulutustyyppi-muu    (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
+      :koulutustyyppi        (beta-koulutustyyppi filter-counts)        ;TODO! Koodisto?
+      :koulutustyyppi-muu    (beta-koulutustyyppi-muu filter-counts)    ;TODO! Koodisto?
       :koulutusala           (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa            (filters "opetuspaikkakk")
       :valintatapa           (filters "valintatapajono")
-      :hakukaynnissa         (hakukaynnissa aggs)
+      :hakukaynnissa         (hakukaynnissa filter-counts)
       :hakutapa              (filters "hakutapa")
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]
