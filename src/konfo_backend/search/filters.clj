@@ -19,7 +19,6 @@
   [aggs koodisto]
   (reduce-merge-map #(koodi->filter aggs %) (:koodit (k/get-koodisto koodisto))))
 
-;TODO! Koodisto
 (defn- beta-koulutustyyppi
   [filter-counts]
   (let [ammatillinen-count (:amm filter-counts)]
@@ -46,8 +45,8 @@
      {:opetuskieli           (filters "oppilaitoksenopetuskieli")
       :maakunta              (filters "maakunta")
       :kunta                 (filters "kunta")
-      :koulutustyyppi        (beta-koulutustyyppi filter-counts)        ;TODO! Koodisto?
-      :koulutustyyppi-muu    (beta-koulutustyyppi-muu filter-counts)    ;TODO! Koodisto?
+      :koulutustyyppi        (beta-koulutustyyppi filter-counts)
+      :koulutustyyppi-muu    (beta-koulutustyyppi-muu filter-counts)
       :koulutusala           (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa            (filters "opetuspaikkakk")
       :valintatapa           (filters "valintatapajono")
