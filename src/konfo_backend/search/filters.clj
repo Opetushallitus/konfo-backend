@@ -39,7 +39,7 @@
   [aggs]
   {:count (:hakukaynnissa aggs) })
 
-(defn hierarkia
+(defn generate-filter-counts
   ([filter-counts]
    (let [filters (partial koodisto->filters filter-counts)]
      {:opetuskieli           (filters "oppilaitoksenopetuskieli")
@@ -54,9 +54,9 @@
       :hakutapa              (filters "hakutapa")
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]
-   (hierarkia {})))
+   (generate-filter-counts {})))
 
-(defn hierarkia-for-jarjestajat
+(defn generate-filter-counts-for-jarjestajat
   [aggs]
   (let [filters (partial koodisto->filters aggs)]
     {:opetuskieli (filters "oppilaitoksenopetuskieli")
@@ -70,8 +70,8 @@
    :koodi koodi
    :nimi nimi})
 
-(defn flattened-hierarkia []
-  (if-let [result (hierarkia)]
+(defn flattened-filter-counts []
+  (if-let [result (generate-filter-counts)]
     (reduce-kv (fn [r suodatin m]
                    (concat r (into []
                                    (for [[k v] m] (filter->obj suodatin k (:nimi v)))))

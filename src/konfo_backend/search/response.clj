@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [hakuaika-kaynnissa? log-pretty reduce-merge-map rename-key]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [hierarkia hierarkia-for-jarjestajat]]
+    [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
     [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
@@ -38,15 +38,15 @@
 
 (defn- filters
   [response]
-  (hierarkia (doc_count-by-koodi-uri response)))
+  (generate-filter-counts (doc_count-by-koodi-uri response)))
 
 (defn- filters-for-tarjoajat
   [response]
-  (hierarkia (doc_count-by-koodi-uri-for-tarjoajat response)))
+  (generate-filter-counts (doc_count-by-koodi-uri-for-tarjoajat response)))
 
 (defn- filters-for-jarjestajat
   [response]
-  (hierarkia-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
+  (generate-filter-counts-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
 
 (defn parse
   [response]
