@@ -3,8 +3,14 @@
     :elastic-timeout 120000
 
     :contentful-space-id "{{konfo_contentful_space_id}}"
+    :contentful-environment-id "{{konfo_contentful_environment_id}}"
     :contentful-access-token "{{konfo_contentful_access_token}}"
     :contentful-preview-token "{{konfo_contentful_preview_token}}"
+
+    :contentful-space-id-en "{{konfo_contentful_space_id_en}}"
+    :contentful-environment-id-en "{{konfo_contentful_environment_id_en}}"
+    :contentful-access-token-en "{{konfo_contentful_access_token_en}}"
+    :contentful-preview-token-en "{{konfo_contentful_preview_token_en}}"
 
     :konfo-host "https://{{host_beta}}"
 

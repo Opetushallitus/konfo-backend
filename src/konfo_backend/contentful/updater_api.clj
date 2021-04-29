@@ -15,9 +15,9 @@
 
 (defonce updater-agent (agent nil))
 
-(defn add-content-update-job [client]
+(defn add-content-update-job [clients]
   (log/info "Adding content update job!")
-  (send-off updater-agent (partial contentful->s3 client (System/currentTimeMillis))))
+  (send-off updater-agent (partial contentful->s3 clients (System/currentTimeMillis))))
 
 (defn authenticated? [name pass]
   (and (= name (-> config :contentful-update-username))
@@ -27,7 +27,7 @@
   (-> site
       (wrap-basic-authentication authenticated?)))
 
-(defn konfo-updater-api [client]
+(defn konfo-updater-api [clients]
   (api
     {:swagger {:ui   "/konfo-backend-updater/swagger"
                :spec "/konfo-backend-updater/swagger.json"
@@ -49,5 +49,5 @@
        (POST "/update" [:as request]
          :summary "POST update call"
          (log/info "Contentful update requested!")
-         (add-content-update-job client)
+         (add-content-update-job clients)
          (ok "ok"))))))
