@@ -27,9 +27,9 @@
             ammatillinen-count (assoc :count ammatillinen-count))}))
 
 (defn- beta-koulutustyyppi-muu
-  [aggs]
-  (let [amm-osaamisala-count (get aggs :amm-osaamisala 0)
-        amm-tutkinnon-osa-count (get aggs :amm-tutkinnon-osa 0)
+  [filter-counts]
+  (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
+        amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         total-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)]
     {:amm-muu (cond-> {:count total-count
                        :alakoodit {
