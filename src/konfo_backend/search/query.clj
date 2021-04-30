@@ -120,7 +120,7 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala" "amk" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori"]))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
