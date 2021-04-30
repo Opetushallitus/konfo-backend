@@ -36,7 +36,7 @@
   (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
-(defn- filters
+(defn- filter-counts
   [response]
   (generate-filter-counts (doc_count-by-koodi-uri response)))
 
@@ -53,7 +53,7 @@
   (log-pretty response)
   {:total   (get-in response [:hits :total])
    :hits    (hits response)
-   :filters (filters response)})
+   :filters (filter-counts response)})
 
 (defn- inner-hit->toteutus-hit
   [inner-hit]
@@ -95,7 +95,7 @@
 
 (defn parse-inner-hits
   ([response]
-   (parse-inner-hits response filters))
+   (parse-inner-hits response filter-counts))
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)
          total-inner-hits (:total inner-hits)]
