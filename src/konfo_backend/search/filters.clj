@@ -21,8 +21,9 @@
 
 (defn- beta-koulutustyyppi
   [filter-counts]
-  (let [ammatillinen-count (:amm filter-counts)]
-    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters filter-counts "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
+  (let [ammatillinen-count (:amm filter-counts)
+        koulutustyyppi-info-and-counts (koodisto->filters filter-counts "koulutustyyppi")]
+    {:amm (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
             ammatillinen-count (assoc :count ammatillinen-count))}))
 
 (defn- beta-koulutustyyppi-muu
