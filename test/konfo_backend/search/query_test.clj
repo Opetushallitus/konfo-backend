@@ -66,7 +66,13 @@
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutustyyppi        {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}},
                                                                                     :amm-tutkinnon-osa {:term {:hits.koulutustyypit.keyword "amm-tutkinnon-osa"}},
-                                                                                    :amm-osaamisala {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}}}
+                                                                                    :amm-osaamisala {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}
+                                                                                    :amk {:term {:hits.koulutustyypit.keyword "amk"}}
+                                                                                    :amk-ylempi {:term {:hits.koulutustyypit.keyword "amk-ylempi"}}
+                                                                                    :kandi {:term {:hits.koulutustyypit.keyword "kandi"}}
+                                                                                    :kandi-ja-maisteri {:term {:hits.koulutustyypit.keyword "kandi-ja-maisteri"}}
+                                                                                    :maisteri {:term {:hits.koulutustyypit.keyword "maisteri"}}
+                                                                                    :tohtori {:term {:hits.koulutustyypit.keyword "tohtori"}}}}
                                                                 :aggs {:real_hits {:reverse_nested {}}}}
                                         :koulutustyyppitaso2   {:filters {:filters {:koulutustyyppi_01 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_01"}}
                                                                                     :koulutustyyppi_02 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_02"}}}}
