@@ -33,7 +33,7 @@
      |          type: array
      |          description: Koulutusten koodi URIt ja nimet
      |          items:
-     |            $ref: '#/components/schemas/KoulutusKoodi
+     |            $ref: '#/components/schemas/KoulutusKoodi'
      |        tila:
      |          type: string
      |          example: \"julkaistu\"

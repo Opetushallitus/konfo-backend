@@ -47,7 +47,7 @@
    |          type: array
    |          description: Koulutusten koodi URIt ja nimet
    |          items:
-   |            $ref: '#/components/schemas/KoulutusKoodi
+   |            $ref: '#/components/schemas/KoulutusKoodi'
    |        kuvaus:
    |          type: object
    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
