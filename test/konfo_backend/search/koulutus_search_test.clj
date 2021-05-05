@@ -222,6 +222,11 @@
           (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
           (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
+      (testing "koulutustyyppi korkeakoulutus"
+        (let [r (search :koulutustyyppi "korkeakoulutus" :sort "name" :order "asc")]
+          (is (= 1 (count (:hits r))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :korkeakoulutus :count])))))
+
       (testing "opetuskieli"
         (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
           (is (= 0 (count (:hits r))))
