@@ -30,7 +30,8 @@
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])
-                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
+                  konfo-backend.index.haku/list-yhteishaut (fn [] ["1.2.246.562.29.00000000000000000001"])]
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
                                  :aggs   {:maakunta              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
@@ -55,6 +56,8 @@
                                           :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
                                                                                       :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}
                                                                   :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :yhteishaku            {:filters {:filters {:1.2.246.562.29.00000000000000000001 {:term {:hits.yhteishaut.keyword "1.2.246.562.29.00000000000000000001"}}}}
+                                                                  :aggs {:real_hits {:reverse_nested {}}}}
                                           :pohjakoulutusvaatimus {:filters {:filters {:pohjakoulutusvaatimuskonfo_01 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_01"}}
                                                                                       :pohjakoulutusvaatimuskonfo_02 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_02"}}}}
                                                                   :aggs    {:real_hits {:reverse_nested {}}}}

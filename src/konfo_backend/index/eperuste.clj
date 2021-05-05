@@ -20,7 +20,7 @@
                  :koulutukset.koulutuskoodiUri
                  :id,
                  :kuvaus.fi
-                 :kuvaus.en
+                 :kuvaus.en ;TODO Tarvisteeko näitä kieliä oikeasti eritellä? kts. nimi
                  :kuvaus.sv
                  :tyotehtavatJoissaVoiToimia.fi
                  :tyotehtavatJoissaVoiToimia.en

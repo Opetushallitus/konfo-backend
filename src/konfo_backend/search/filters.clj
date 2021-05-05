@@ -1,6 +1,7 @@
 (ns konfo-backend.search.filters
   (:require
     [konfo-backend.koodisto.koodisto :as k]
+    [konfo-backend.index.haku :refer [get-yhteishaut]]
     [konfo-backend.tools :refer [reduce-merge-map]]))
 
 (defn- koodi->filter
@@ -54,6 +55,18 @@
   [aggs]
   {:count (:hakukaynnissa aggs) })
 
+(defn- yhteishaku
+  [aggs]
+  (let [yhteishaut (get-yhteishaut)]
+    (reduce
+      (fn [ret-val yhteishaku]
+        (let [yhteishakuKey (keyword (:oid yhteishaku))]
+          (assoc ret-val yhteishakuKey (-> yhteishaku
+                                           (dissoc :oid)
+                                           (assoc :count (yhteishakuKey aggs))))))
+      {}
+      yhteishaut)))
+
 (defn generate-filter-counts
   ([filter-counts]
    (let [filters (partial koodisto->filters filter-counts)]
@@ -67,6 +80,7 @@
       :valintatapa           (filters "valintatapajono")
       :hakukaynnissa         (hakukaynnissa filter-counts)
       :hakutapa              (filters "hakutapa")
+      :yhteishaku            (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]
    (generate-filter-counts {})))
@@ -80,7 +94,7 @@
      :opetustapa  (filters "opetuspaikkakk")}))
 
 
-(defn filter->obj [suodatin koodi nimi]
+(defn- filter->obj [suodatin koodi nimi]
   {:suodatin suodatin
    :koodi koodi
    :nimi nimi})
