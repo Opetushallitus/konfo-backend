@@ -579,12 +579,12 @@
   (context "/search" []
 
     (GET "/filters" [:as request]
-      (with-access-logging request (if-let [result (filters/hierarkia)]
+      (with-access-logging request (if-let [result (filters/generate-filter-counts)]
                                      (ok result)
                                      (not-found "Not found"))))
 
     (GET "/filters_as_array" [:as request]
-      (with-access-logging request (if-let [result (filters/flattened-hierarkia)]
+      (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
                                      (ok result)
                                      (not-found "Not found"))))
 

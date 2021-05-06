@@ -38,6 +38,7 @@
 (def hevosala-oid "1.2.246.562.13.000002")
 (def hevostutkinnon-osa-oid "1.2.246.562.13.000003")
 (def hevososaamisala-oid "1.2.246.562.13.000004")
+(def korkeakoulutus-oid "1.2.246.562.13.000005")
 
 (def ponitoteutus-oid "1.2.246.562.17.000001")
 (def poniosatoteutus-oid "1.2.246.562.17.000002")
@@ -48,12 +49,20 @@
 (def valintaperuste-id "a5e88367-555b-4d9e-aa43-0904e5ea0a13")
 (def sorakuvaus-id "ffa8c6cf-a962-4bb2-bf61-fe8fc741fabd")
 
+(def yo-metadata
+  (generate-string
+    {:tyyppi               "yo"
+     :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1"
+                            "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]
+     :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+
 (deftest koulutus-search-test
 
-  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id :sorakuvausId sorakuvaus-id)
-  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id :sorakuvausId sorakuvaus-id)
-  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
-  (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool) :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
+  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock korkeakoulutus-oid :koulutustyyppi "yo" :tila "julkaistu" :nimi "Arkkitehti" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata yo-metadata)
   (fixture/add-toteutus-mock ponitoteutus-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
   (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
@@ -63,7 +72,7 @@
   (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu" :nimi "Sorakuvaus" :muokkaaja "1.2.246.562.24.62301161440")
   (fixture/add-valintaperuste-mock valintaperuste-id :tila "julkaistu" :nimi "Valintaperuste" :muokkaaja "1.2.246.562.24.62301161440")
 
-  (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid hevostutkinnon-osa-oid hevososaamisala-oid] :oppilaitokset [punkaharjun-yliopisto]} (fn [x & {:as params}] punkaharju-org))
+  (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid hevostutkinnon-osa-oid hevososaamisala-oid korkeakoulutus-oid] :oppilaitokset [punkaharjun-yliopisto]} (fn [x & {:as params}] punkaharju-org))
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto
                 konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
@@ -77,19 +86,19 @@
 
     (testing "Search all koulutukset"
       (let [r (search :sort "name" :order "asc")]
-        (is (= 4 (count (:hits r))))
+        (is (= 5 (count (:hits r))))
         (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 2 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :amm-muu :alakoodit :amm-osaamisala :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :amm-muu :alakoodit :amm-tutkinnon-osa :count])))
         (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-        (is (= 4 (get-in r [:filters :maakunta :maakunta_01 :count])))
+        (is (= 5 (get-in r [:filters :maakunta :maakunta_01 :count])))
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-        (is (= 4 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-        (is (= 4 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
+        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
         (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
         (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
         (is (= 1 (get-in r [:filters :hakukaynnissa :count])))
@@ -102,20 +111,20 @@
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
-          (is (= 2 (count (:hits r))))
-          (is (= "1.2.246.562.13.000001" (:oid (first (:hits r)))))
+          (is (= 3 (count (:hits r))))
+          (is (= "1.2.246.562.13.000005" (:oid (first (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :amm-muu :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :amm-muu :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-          (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 3 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
+          (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 0 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 0 (get-in r [:filters :hakukaynnissa :count])))
@@ -127,7 +136,7 @@
 
       (testing "multiple sijainti"
         (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
-          (is (= 4 (count (:hits r))))))
+          (is (= 5 (count (:hits r))))))
 
       (testing "koulutustyyppi amm"
         (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
@@ -213,6 +222,12 @@
           (is (= 0 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_01 :count])))
           (is (= 1 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
+      ;TODO ENABLOI!!!
+      ;(testing "koulutustyyppi korkeakoulutus"
+      ;  (let [r (search :koulutustyyppi "korkeakoulutus" :sort "name" :order "asc")]
+      ;    (is (= 1 (count (:hits r))))
+      ;    (is (= 1 (get-in r [:filters :koulutustyyppi :korkeakoulutus :count])))))
+
       (testing "opetuskieli"
         (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
           (is (= 0 (count (:hits r))))
@@ -235,16 +250,16 @@
 
       (testing "koulutusala"
         (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
-          (is (= 4 (count (:hits r))))
+          (is (= 5 (count (:hits r))))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-          (is (= 4 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 5 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
           (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-          (is (= 4 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-          (is (= 4 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
+          (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))
           (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
           (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
           (is (= 1 (get-in r [:filters :hakukaynnissa :count])))
@@ -354,7 +369,7 @@
           (is (= 2 (get-in r [:filters :pohjakoulutusvaatimus :pohjakoulutusvaatimuskonfo_am :count])))))
 
       (testing "Search koulutukset, get correct result"
-        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
+        (let [r (search :sijainti "kunta_618" :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= {:opintojenLaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
                                             :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                     :sv "opintojenlaajuusyksikko_6 nimi sv"}},

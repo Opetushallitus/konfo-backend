@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [hakuaika-kaynnissa? log-pretty reduce-merge-map rename-key]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [hierarkia hierarkia-for-jarjestajat]]
+    [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
     [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
@@ -36,24 +36,24 @@
   (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
-(defn- filters
+(defn- filter-counts
   [response]
-  (hierarkia (doc_count-by-koodi-uri response)))
+  (generate-filter-counts (doc_count-by-koodi-uri response)))
 
 (defn- filters-for-tarjoajat
   [response]
-  (hierarkia (doc_count-by-koodi-uri-for-tarjoajat response)))
+  (generate-filter-counts (doc_count-by-koodi-uri-for-tarjoajat response)))
 
 (defn- filters-for-jarjestajat
   [response]
-  (hierarkia-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
+  (generate-filter-counts-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
 
 (defn parse
   [response]
   (log-pretty response)
   {:total   (get-in response [:hits :total])
    :hits    (hits response)
-   :filters (filters response)})
+   :filters (filter-counts response)})
 
 (defn- inner-hit->toteutus-hit
   [inner-hit]
@@ -95,7 +95,7 @@
 
 (defn parse-inner-hits
   ([response]
-   (parse-inner-hits response filters))
+   (parse-inner-hits response filter-counts))
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)
          total-inner-hits (:total inner-hits)]

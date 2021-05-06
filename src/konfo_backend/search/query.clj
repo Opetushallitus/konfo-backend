@@ -120,7 +120,7 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+  (->filters-aggregation field '["amm" "amm-tutkinnon-osa" "amm-osaamisala" "korkeakoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori"]))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
@@ -130,7 +130,7 @@
   []
   {:filters {:filters {:hakukaynnissa (some-hakuaika-kaynnissa)}} :aggs {:real_hits {:reverse_nested {}}}})
 
-(defn- aggs
+(defn- generate-default-aggs
   []
   {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
    :kunta                 (koodisto-filters :hits.sijainti.keyword                 "kunta")
@@ -155,7 +155,7 @@
 
 (defn aggregations
   ([]
-   (aggregations aggs))
+   (aggregations generate-default-aggs))
   ([aggs-generator]
    {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}}))
 

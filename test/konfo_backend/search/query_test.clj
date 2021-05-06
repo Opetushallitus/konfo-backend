@@ -33,41 +33,48 @@
                   konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is (= (aggregations)
              {:hits_aggregation {:nested {:path "hits"}
-                                 :aggs {:maakunta              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
-                                                                                    :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :kunta                 {:filters {:filters {:kunta_01 {:term {:hits.sijainti.keyword "kunta_01"}}
-                                                                                    :kunta_02 {:term {:hits.sijainti.keyword "kunta_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :opetuskieli           {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
-                                                                                    :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :opetustapa            {:filters {:filters {:opetuspaikkakk_01 {:term {:hits.opetustavat.keyword "opetuspaikkakk_01"}}
-                                                                                    :opetuspaikkakk_02 {:term {:hits.opetustavat.keyword "opetuspaikkakk_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :valintatapa           {:filters {:filters {:valintatapajono_01 {:term {:hits.valintatavat.keyword "valintatapajono_01"}}
-                                                                                    :valintatapajono_02 {:term {:hits.valintatavat.keyword "valintatapajono_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :hakukaynnissa         {:filters {:filters {:hakukaynnissa {:nested {:path "hits.hakuajat", :query {:bool {:filter [{:range {:hits.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
-                                                                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "hits.hakuajat.paattyy"}}}}
-                                                                                                                                                                             {:range {:hits.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
-                                                                                    :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :pohjakoulutusvaatimus {:filters {:filters {:pohjakoulutusvaatimuskonfo_01 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_01"}}
-                                                                                    :pohjakoulutusvaatimuskonfo_02 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
-                                                                                    :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutusalataso2      {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
-                                                                                    :kansallinenkoulutusluokitus2016koulutusalataso2_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutustyyppi        {:filters {:filters {:amm {:term {:hits.koulutustyypit.keyword "amm"}},
-                                                                                    :amm-tutkinnon-osa {:term {:hits.koulutustyypit.keyword "amm-tutkinnon-osa"}},
-                                                                                    :amm-osaamisala {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}
-                                        :koulutustyyppitaso2   {:filters {:filters {:koulutustyyppi_01 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_01"}}
-                                                                                    :koulutustyyppi_02 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_02"}}}}
-                                                                :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+                                 :aggs   {:maakunta              {:filters {:filters {:maakunta_01 {:term {:hits.sijainti.keyword "maakunta_01"}}
+                                                                                      :maakunta_02 {:term {:hits.sijainti.keyword "maakunta_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :kunta                 {:filters {:filters {:kunta_01 {:term {:hits.sijainti.keyword "kunta_01"}}
+                                                                                      :kunta_02 {:term {:hits.sijainti.keyword "kunta_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :opetuskieli           {:filters {:filters {:oppilaitoksenopetuskieli_01 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
+                                                                                      :oppilaitoksenopetuskieli_02 {:term {:hits.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :opetustapa            {:filters {:filters {:opetuspaikkakk_01 {:term {:hits.opetustavat.keyword "opetuspaikkakk_01"}}
+                                                                                      :opetuspaikkakk_02 {:term {:hits.opetustavat.keyword "opetuspaikkakk_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :valintatapa           {:filters {:filters {:valintatapajono_01 {:term {:hits.valintatavat.keyword "valintatapajono_01"}}
+                                                                                      :valintatapajono_02 {:term {:hits.valintatavat.keyword "valintatapajono_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :hakukaynnissa         {:filters {:filters {:hakukaynnissa {:nested {:path "hits.hakuajat", :query {:bool {:filter [{:range {:hits.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                                                              {:bool {:should [{:bool {:must_not {:exists {:field "hits.hakuajat.paattyy"}}}}
+                                                                                                                                                                               {:range {:hits.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :hakutapa              {:filters {:filters {:hakutapa_01 {:term {:hits.hakutavat.keyword "hakutapa_01"}}
+                                                                                      :hakutapa_02 {:term {:hits.hakutavat.keyword "hakutapa_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :pohjakoulutusvaatimus {:filters {:filters {:pohjakoulutusvaatimuskonfo_01 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_01"}}
+                                                                                      :pohjakoulutusvaatimuskonfo_02 {:term {:hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :koulutusala           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
+                                                                                      :kansallinenkoulutusluokitus2016koulutusalataso1_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :koulutusalataso2      {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
+                                                                                      :kansallinenkoulutusluokitus2016koulutusalataso2_02 {:term {:hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :koulutustyyppi        {:filters {:filters {:amm               {:term {:hits.koulutustyypit.keyword "amm"}},
+                                                                                      :amm-tutkinnon-osa {:term {:hits.koulutustyypit.keyword "amm-tutkinnon-osa"}},
+                                                                                      :amm-osaamisala    {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}
+                                                                                      :korkeakoulutus    {:term {:hits.koulutustyypit.keyword "korkeakoulutus"}}
+                                                                                      :amk-alempi        {:term {:hits.koulutustyypit.keyword "amk-alempi"}}
+                                                                                      :amk-ylempi        {:term {:hits.koulutustyypit.keyword "amk-ylempi"}}
+                                                                                      :kandi             {:term {:hits.koulutustyypit.keyword "kandi"}}
+                                                                                      :kandi-ja-maisteri {:term {:hits.koulutustyypit.keyword "kandi-ja-maisteri"}}
+                                                                                      :maisteri          {:term {:hits.koulutustyypit.keyword "maisteri"}}
+                                                                                      :tohtori           {:term {:hits.koulutustyypit.keyword "tohtori"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}
+                                          :koulutustyyppitaso2   {:filters {:filters {:koulutustyyppi_01 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_01"}}
+                                                                                      :koulutustyyppi_02 {:term {:hits.koulutustyypit.keyword "koulutustyyppi_02"}}}}
+                                                                  :aggs    {:real_hits {:reverse_nested {}}}}}}})))))

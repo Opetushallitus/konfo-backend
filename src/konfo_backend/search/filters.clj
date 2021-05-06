@@ -19,17 +19,31 @@
   [aggs koodisto]
   (reduce-merge-map #(koodi->filter aggs %) (:koodit (k/get-koodisto koodisto))))
 
-;TODO! Koodisto
 (defn- beta-koulutustyyppi
-  [aggs]
-  (let [count (:amm aggs)]
-    {:amm (cond-> {:alakoodit (select-keys (koodisto->filters aggs "koulutustyyppi") [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
-            count (assoc :count count))}))
+  [filter-counts]
+  (let [ammatillinen-count (get filter-counts :amm 0)
+        koulutustyyppi-info-and-counts (koodisto->filters filter-counts "koulutustyyppi")
+        korkeakoulu-count (get filter-counts :korkeakoulutus 0)
+        amk-count (get filter-counts :amk-alempi 0)
+        amk-ylempi-count (get filter-counts :amk-ylempi 0)
+        kandi-count (get filter-counts :kandi 0)
+        kandi-ja-maisteri-count (get filter-counts :kandi-ja-maisteri 0)
+        maisteri-count (get filter-counts :maisteri 0)
+        tohtori-count (get filter-counts :tohtori 0)]
+    {:amm            (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
+                             ammatillinen-count (assoc :count ammatillinen-count))
+     :korkeakoulutus (cond-> {:alakoodit {:amk-alempi        {:count amk-count}
+                                          :amk-ylempi        {:count amk-ylempi-count}
+                                          :kandi             {:count kandi-count}
+                                          :kandi-ja-maisteri {:count kandi-ja-maisteri-count}
+                                          :maisteri          {:count maisteri-count}
+                                          :tohtori           {:count tohtori-count}}}
+                             korkeakoulu-count (assoc :count korkeakoulu-count))}))
 
 (defn- beta-koulutustyyppi-muu
-  [aggs]
-  (let [amm-osaamisala-count (get aggs :amm-osaamisala 0)
-        amm-tutkinnon-osa-count (get aggs :amm-tutkinnon-osa 0)
+  [filter-counts]
+  (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
+        amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         total-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)]
     {:amm-muu (cond-> {:count total-count
                        :alakoodit {
@@ -40,24 +54,24 @@
   [aggs]
   {:count (:hakukaynnissa aggs) })
 
-(defn hierarkia
-  ([aggs]
-   (let [filters (partial koodisto->filters aggs)]
+(defn generate-filter-counts
+  ([filter-counts]
+   (let [filters (partial koodisto->filters filter-counts)]
      {:opetuskieli           (filters "oppilaitoksenopetuskieli")
       :maakunta              (filters "maakunta")
       :kunta                 (filters "kunta")
-      :koulutustyyppi        (beta-koulutustyyppi aggs)        ;TODO! Koodisto?
-      :koulutustyyppi-muu    (beta-koulutustyyppi-muu aggs)    ;TODO! Koodisto?
+      :koulutustyyppi        (beta-koulutustyyppi filter-counts)
+      :koulutustyyppi-muu    (beta-koulutustyyppi-muu filter-counts)
       :koulutusala           (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa            (filters "opetuspaikkakk")
       :valintatapa           (filters "valintatapajono")
-      :hakukaynnissa         (hakukaynnissa aggs)
+      :hakukaynnissa         (hakukaynnissa filter-counts)
       :hakutapa              (filters "hakutapa")
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([]
-   (hierarkia {})))
+   (generate-filter-counts {})))
 
-(defn hierarkia-for-jarjestajat
+(defn generate-filter-counts-for-jarjestajat
   [aggs]
   (let [filters (partial koodisto->filters aggs)]
     {:opetuskieli (filters "oppilaitoksenopetuskieli")
@@ -71,8 +85,8 @@
    :koodi koodi
    :nimi nimi})
 
-(defn flattened-hierarkia []
-  (if-let [result (hierarkia)]
+(defn flattened-filter-counts []
+  (if-let [result (generate-filter-counts)]
     (reduce-kv (fn [r suodatin m]
                    (concat r (into []
                                    (for [[k v] m] (filter->obj suodatin k (:nimi v)))))
