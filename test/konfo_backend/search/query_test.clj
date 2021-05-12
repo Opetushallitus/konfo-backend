@@ -70,6 +70,7 @@
                                           :koulutustyyppi        {:filters {:filters {:amm               {:term {:hits.koulutustyypit.keyword "amm"}},
                                                                                       :amm-tutkinnon-osa {:term {:hits.koulutustyypit.keyword "amm-tutkinnon-osa"}},
                                                                                       :amm-osaamisala    {:term {:hits.koulutustyypit.keyword "amm-osaamisala"}}
+                                                                                      :lk                {:term {:hits.koulutustyypit.keyword "lk"}}
                                                                                       :amk               {:term {:hits.koulutustyypit.keyword "amk"}}
                                                                                       :yo                {:term {:hits.koulutustyypit.keyword "yo"}}
                                                                                       :amk-alempi        {:term {:hits.koulutustyypit.keyword "amk-alempi"}}
