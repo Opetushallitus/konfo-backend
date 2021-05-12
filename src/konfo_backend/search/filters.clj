@@ -24,22 +24,24 @@
   [filter-counts]
   (let [ammatillinen-count (get filter-counts :amm 0)
         koulutustyyppi-info-and-counts (koodisto->filters filter-counts "koulutustyyppi")
-        korkeakoulu-count (get filter-counts :korkeakoulutus 0)
-        amk-count (get filter-counts :amk-alempi 0)
+        amk-count (get filter-counts :amk 0)
+        yo-count (get filter-counts :yo 0)
+        amk-alempi-count (get filter-counts :amk-alempi 0)
         amk-ylempi-count (get filter-counts :amk-ylempi 0)
         kandi-count (get filter-counts :kandi 0)
         kandi-ja-maisteri-count (get filter-counts :kandi-ja-maisteri 0)
         maisteri-count (get filter-counts :maisteri 0)
         tohtori-count (get filter-counts :tohtori 0)]
-    {:amm            (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
-                             ammatillinen-count (assoc :count ammatillinen-count))
-     :korkeakoulutus (cond-> {:alakoodit {:amk-alempi        {:count amk-count}
-                                          :amk-ylempi        {:count amk-ylempi-count}
-                                          :kandi             {:count kandi-count}
-                                          :kandi-ja-maisteri {:count kandi-ja-maisteri-count}
-                                          :maisteri          {:count maisteri-count}
-                                          :tohtori           {:count tohtori-count}}}
-                             korkeakoulu-count (assoc :count korkeakoulu-count))}))
+    {:amm (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
+                  ammatillinen-count (assoc :count ammatillinen-count))
+     :amk (cond-> {:alakoodit {:amk-alempi        {:count amk-alempi-count}
+                               :amk-ylempi        {:count amk-ylempi-count}}}
+                  amk-count (assoc :count amk-count))
+     :yo (cond-> {:alakoodit {:kandi             {:count kandi-count}
+                              :kandi-ja-maisteri {:count kandi-ja-maisteri-count}
+                              :maisteri          {:count maisteri-count}
+                              :tohtori           {:count tohtori-count}}}
+                 yo-count (assoc :count yo-count))}))
 
 (defn- beta-koulutustyyppi-muu
   [filter-counts]
