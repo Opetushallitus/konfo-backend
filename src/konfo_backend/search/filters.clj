@@ -5,20 +5,20 @@
     [konfo-backend.tools :refer [reduce-merge-map]]))
 
 (defn- koodi->filter
-  [aggs koodi]
+  [filter-counts koodi]
   (let [koodiUri  (keyword (:koodiUri koodi))
         nimi      (get-in koodi [:nimi])
-        count     (koodiUri aggs)
+        count     (koodiUri filter-counts)
         alakoodit (when (contains? koodi :alakoodit)
-                    (reduce-merge-map #(koodi->filter aggs %) (:alakoodit koodi)))]
+                    (reduce-merge-map #(koodi->filter filter-counts %) (:alakoodit koodi)))]
 
     {koodiUri (cond->     {:nimi nimi}
                 count     (assoc :count count)
                 alakoodit (assoc :alakoodit alakoodit))}))
 
 (defn- koodisto->filters
-  [aggs koodisto]
-  (reduce-merge-map #(koodi->filter aggs %) (:koodit (k/get-koodisto koodisto))))
+  [filter-counts koodisto]
+  (reduce-merge-map #(koodi->filter filter-counts %) (:koodit (k/get-koodisto koodisto))))
 
 (defn- beta-koulutustyyppi
   [filter-counts]
