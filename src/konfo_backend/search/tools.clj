@@ -43,6 +43,10 @@
   [constraints]
   (true? (:hakukaynnissa constraints)))
 
+(defn yhteishaku?
+  [constraints]
+  (constraint? constraints :yhteishaku))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
@@ -53,6 +57,7 @@
       (valintatapa? constraints)
       (haku-kaynnissa? constraints)
       (hakutapa? constraints)
+      (yhteishaku? constraints)
       (pohjakoulutusvaatimus? constraints)))
 
 (defn ->lng-keyword

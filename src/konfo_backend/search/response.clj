@@ -21,14 +21,14 @@
         mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
-(defn- doc_count-by-koodi-uri
+(defn- doc_count-by-filter
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
-(defn- doc_count-by-koodi-uri-for-tarjoajat
+(defn- doc_count-by-filter-for-tarjoajat
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat
@@ -38,11 +38,11 @@
 
 (defn- filter-counts
   [response]
-  (generate-filter-counts (doc_count-by-koodi-uri response)))
+  (generate-filter-counts (doc_count-by-filter response)))
 
 (defn- filters-for-tarjoajat
   [response]
-  (generate-filter-counts (doc_count-by-koodi-uri-for-tarjoajat response)))
+  (generate-filter-counts (doc_count-by-filter-for-tarjoajat response)))
 
 (defn- filters-for-jarjestajat
   [response]

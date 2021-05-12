@@ -161,7 +161,7 @@
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
-                  :opetuskielet [],
+                  :opetuskielet ["oppilaitoksenopetuskieli_1" "oppilaitoksenopetuskieli_2"],
                   :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
                                        :nimi {:fi "tutkintonimikkeet_01 nimi fi",
                                               :sv "tutkintonimikkeet_01 nimi sv"}},

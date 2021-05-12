@@ -1,6 +1,7 @@
 (ns konfo-backend.search.query
   (:require
     [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
+    [konfo-backend.index.haku :refer [list-yhteishaut]]
     [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
@@ -29,8 +30,9 @@
           (opetustapa? constraints)            (conj (->terms-query :hits.opetustavat.keyword              (:opetustapa constraints)))
           (valintatapa? constraints)           (conj (->terms-query :hits.valintatavat.keyword             (:valintatapa constraints)))
           (hakutapa? constraints)              (conj (->terms-query :hits.hakutavat.keyword                (:hakutapa constraints)))
-          (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))
-          (haku-kaynnissa? constraints)        (conj (some-hakuaika-kaynnissa))))
+          (haku-kaynnissa? constraints)        (conj (some-hakuaika-kaynnissa))
+          (yhteishaku? constraints)            (conj (->terms-query :hits.yhteishaut.keyword               (:yhteishaku constraints)))
+          (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))))
 
 (defn- bool
   [keyword lng constraints]
@@ -130,6 +132,10 @@
   []
   {:filters {:filters {:hakukaynnissa (some-hakuaika-kaynnissa)}} :aggs {:real_hits {:reverse_nested {}}}})
 
+(defn- yhteishaku-filter
+  []
+  (->filters-aggregation :hits.yhteishaut.keyword (list-yhteishaut)))
+
 (defn- generate-default-aggs
   []
   {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
@@ -143,6 +149,7 @@
    :valintatapa           (koodisto-filters :hits.valintatavat.keyword             "valintatapajono")
    :hakukaynnissa         (hakukaynnissa-filter)
    :hakutapa              (koodisto-filters :hits.hakutavat.keyword                "hakutapa")
+   :yhteishaku            (yhteishaku-filter)
    :pohjakoulutusvaatimus (koodisto-filters :hits.pohjakoulutusvaatimukset.keyword "pohjakoulutusvaatimuskonfo")})
 
 (defn- jarjestajat-aggs
