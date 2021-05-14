@@ -44,7 +44,6 @@
     (fixture/add-valintaperuste-mock valintaperusteId3 :tila "tallennettu" :esikatselu "true")
 
     (fixture/add-toteutus-mock toteutus-oid koulutus-oid)
-    (fixture/add-koulutus-mock koulutus-oid :sorakuvausId sorakuvaus-id)
     (fixture/add-haku-mock "1.2.246.562.29.000001")
     (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
