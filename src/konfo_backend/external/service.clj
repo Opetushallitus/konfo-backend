@@ -60,14 +60,14 @@
 (defn- get-hakukohteet-by-toteutus-oids
   [toteutusOids]
   (when (seq toteutusOids)
-    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu"])
+    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora"])
          (filter julkaistu?)
          (vec))))
 
 (defn- get-hakukohteet
   [oids]
   (when (seq oids)
-    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu"])
+    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora"])
          (filter julkaistu?)
          (vec))))
 

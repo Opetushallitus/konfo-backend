@@ -7,10 +7,12 @@
     [clojure.tools.logging :as log]))
 
 (defn get-source
-  [index id]
-  (let [result (e/get-document index id)]
-    (when (:found result)
-      (:_source result))))
+  ([index id excludes]
+   (let [result (e/get-document index id :_source_excludes (clojure.string/join "," excludes))]
+     (when (:found result)
+       (:_source result))))
+  ([index id]
+   (get-source index id [])))
 
 (defn get-sources
   [index ids excludes]

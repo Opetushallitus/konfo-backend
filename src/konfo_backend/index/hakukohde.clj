@@ -8,7 +8,8 @@
 
 (defn get
   [oid draft?]
-  (let [hakukohde (get-source index oid)]
+  (let [excludes ["koulutustyypit" "sora"]
+        hakukohde (get-source index oid excludes)]
     (when (allowed-to-view hakukohde draft?)
       (if (allowed-to-view (:valintaperuste hakukohde) draft?)
         hakukohde
