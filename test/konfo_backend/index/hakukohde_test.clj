@@ -28,23 +28,23 @@
         valintaperusteId3 "45d2ae02-9a5f-42ef-8148-47d07737927b"
         sorakuvaus-id "8a52fbda-74bb-459b-a963-3403ba6e185b"
         toteutus-oid "1.2.246.562.17.000001"
-        koulutus-oid "1.2.246.562.13.000001"]
+        koulutus-oid "1.2.246.562.13.000001"
+        haku-oid "1.2.246.562.29.000001"]
 
-    (fixture/add-haku-mock "1.2.246.562.29.000001" :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
+    (fixture/add-haku-mock haku-oid :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
 
     (fixture/add-koulutus-mock koulutus-oid :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvaus-id)
 
-    (fixture/add-hakukohde-mock hakukohdeOid1 toteutus-oid "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid2 toteutus-oid "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
-    (fixture/add-hakukohde-mock hakukohdeOid3 toteutus-oid "1.2.246.562.29.000001" :tila "tallennettu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid5 toteutus-oid "1.2.246.562.29.000001" :tila "tallennettu" :esikatselu "true" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId3)
+    (fixture/add-hakukohde-mock hakukohdeOid1 toteutus-oid haku-oid :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid2 toteutus-oid haku-oid :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
+    (fixture/add-hakukohde-mock hakukohdeOid3 toteutus-oid haku-oid :tila "tallennettu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid5 toteutus-oid haku-oid :tila "tallennettu" :esikatselu "true" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId3)
 
     (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :esikatselu "false")
     (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :esikatselu "false")
     (fixture/add-valintaperuste-mock valintaperusteId3 :tila "tallennettu" :esikatselu "true")
 
     (fixture/add-toteutus-mock toteutus-oid koulutus-oid)
-    (fixture/add-haku-mock "1.2.246.562.29.000001")
     (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
     (fixture/index-oids-without-related-indices {:hakukohteet [hakukohdeOid1 hakukohdeOid2 hakukohdeOid3 hakukohdeOid5]})
