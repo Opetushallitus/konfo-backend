@@ -143,10 +143,21 @@
                                                                        :nimi {:fi "Kiva koulutusala"}
                                                                        :alakoodit [{:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_01"
                                                                                     :versio 1
-                                                                                    :nimi {:fi "Kiva alakoulutusala"}}]}
+                                                                                    :nimi {:fi "Kiva alakoulutusala1"}}]}
                                                                       {:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso1_02"
                                                                        :versio 1
-                                                                       :nimi {:fi "Toinen kiva koulutusala"}}]}
+                                                                       :nimi {:fi "Toinen kiva koulutusala"}
+                                                                       :alakoodit [{:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_02"
+                                                                                    :versio 1
+                                                                                    :nimi {:fi "Kiva alakoulutusala2"}}]}]}
+    (= "kansallinenkoulutusluokitus2016koulutusalataso2" x) {:id "kansallinenkoulutusluokitus2016koulutusalataso2"
+                                                             :koodisto "kansallinenkoulutusluokitus2016koulutusalataso2"
+                                                             :koodit [{:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Kiva taso2 koulutusala"}}
+                                                                      {:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Toinen kiva taso2 koulutusala"}}]}
     :else []))
 
 (def punkaharjun-yliopisto    "1.2.246.562.10.000002")
