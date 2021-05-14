@@ -42,11 +42,9 @@
           hakuOid1       "1.2.246.562.29.000001"
           hakuOid2       "1.2.246.562.29.000002"
           kkHakuOid      "1.2.246.562.29.000099"
-          kkSorakuvausId     "2ff6700d-087f-4dbf-9e42-7f38948f227a"
           sorakuvausId       "a5e88367-555b-4d9e-aa43-0904e5ea0a13"
           valintaperusteId1  "2d0651b7-cdd3-463b-80d9-303a60d9616c"
-          valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"
-          kkValintaperusteId "ffa8c6cf-a962-4bb2-bf61-fe8fc741fabd"]
+          valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
       (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
       (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
@@ -67,10 +65,8 @@
       (fixture/add-hakukohde-mock kkHakukohdeOid kkToteutusOid kkHakuOid :tila "julkaistu" :valintaperuste valintaperusteId2)
 
       (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
-      ;(fixture/add-sorakuvaus-mock kkSorakuvausId :tila "julkaistu" :koulutustyyppi "yo" :metadata "{}")
       (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
       (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
-      ;(fixture/add-valintaperuste-mock kkValintaperusteId :tila "julkaistu" :koulutustyyppi "yo" :sorakuvaus kkSorakuvausId :metadata "{}")
 
       (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid]
                                                    :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid]
