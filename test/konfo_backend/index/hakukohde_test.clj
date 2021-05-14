@@ -18,7 +18,6 @@
   (apply url-with-query-params (str "/konfo-backend/hakukohde/" oid) [:draft true]))
 
 (deftest hakukohde-test
-
   (let [hakukohdeOid1 "1.2.246.562.20.000001"
         hakukohdeOid2 "1.2.246.562.20.000002"
         hakukohdeOid3 "1.2.246.562.20.000003"
@@ -33,7 +32,7 @@
 
     (fixture/add-haku-mock "1.2.246.562.29.000001" :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
 
-    (fixture/add-koulutus-mock koulutus-oid :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
+    (fixture/add-koulutus-mock koulutus-oid :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvaus-id)
 
     (fixture/add-hakukohde-mock hakukohdeOid1 toteutus-oid "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
     (fixture/add-hakukohde-mock hakukohdeOid2 toteutus-oid "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
@@ -45,7 +44,7 @@
     (fixture/add-valintaperuste-mock valintaperusteId3 :tila "tallennettu" :esikatselu "true")
 
     (fixture/add-toteutus-mock toteutus-oid koulutus-oid)
-    (fixture/add-koulutus-mock koulutus-oid)
+    (fixture/add-koulutus-mock koulutus-oid :sorakuvausId sorakuvaus-id)
     (fixture/add-haku-mock "1.2.246.562.29.000001")
     (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
