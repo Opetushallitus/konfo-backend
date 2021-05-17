@@ -62,9 +62,18 @@
     |          type: object
     |          $ref: '#/components/schemas/Eperuste'
     |    KorkeakouluMetadata:
-    |      allOf:
-    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      type: object
     |      properties:
+    |        kuvaus:
+    |          type: object
+    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          $ref: '#/components/schemas/Kuvaus'
+    |        lisatiedot:
+    |          type: array
+    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/KoulutusLisatieto'
     |        kuvauksenNimi:
     |          type: object
     |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
