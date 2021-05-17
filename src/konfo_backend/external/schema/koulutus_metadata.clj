@@ -113,6 +113,43 @@
     |              example: amk
     |              enum:
     |                - amk
+    |    LukioKoulutusMetadata:
+    |      type: object
+    |      properties:
+    |        koulutustyyppi:
+    |          type: string
+    |          description: Koulutuksen metatiedon tyyppi
+    |          example: lk
+    |          enum:
+    |            - lk
+    |        kuvaus:
+    |          type: object
+    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          $ref: '#/components/schemas/Kuvaus'
+    |        lisatiedot:
+    |          type: array
+    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/KoulutusLisatieto'
+    |        koulutusala:
+    |          type: array
+    |          description: Lista koulutuksen koulutusaloista
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/Koulutusala1'
+    |        opintojenLaajuus:
+    |          type: object
+    |          $ref: '#/components/schemas/OpintojenLaajuus'
+    |        opintojenLaajuusyksikko:
+    |          type: object
+    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+    |        tutkintonimike:
+    |          type: array
+    |          description: Lista koulutuksen tutkintonimikkeistä
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/Tutkintonimike'
     |"
   )
 
