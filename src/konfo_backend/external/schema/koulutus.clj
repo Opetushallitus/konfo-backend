@@ -131,7 +131,8 @@
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
                                                 #(= "yo" (:tyyppi %)) YoMetadata
-                                                #(= "amk" (:tyyppi %)) AmkMetadata)
+                                                #(= "amk" (:tyyppi %)) AmkMetadata
+                                                #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    (s/->OptionalKey :ePerusteId) s/Int

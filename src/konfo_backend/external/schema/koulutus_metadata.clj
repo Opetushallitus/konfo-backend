@@ -151,3 +151,12 @@
   (st/merge
     {:tyyppi Yo}
     KkMetadata))
+
+(def LukioKoulutusMetadata
+  {:tyyppi                                    Lk
+   :kuvaus                                    Kielistetty
+   :lisatiedot                                [KoulutusLisatieto]
+   :koulutusala                               [(->Koodi Koulutusala1Koodi)]
+   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
+   :tutkintonimike                            (->Koodi TutkintonimikeKoodi)})
