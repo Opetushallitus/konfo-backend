@@ -5,7 +5,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.search-test-tools :refer [yo-koulutus-metatieto yo-toteutus-metatieto]]))
+            [konfo-backend.search.search-test-tools :refer [yo-koulutus-metatieto lukio-koulutus-metatieto yo-toteutus-metatieto]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -31,6 +31,7 @@
   (testing "Testing external apis"
     (let [koulutusOid1   "1.2.246.562.13.000001"
           koulutusOid2   "1.2.246.562.13.000002"
+          lukio-Oid      "1.2.246.562.13.000003"
           kkKoulutusOid  "1.2.246.562.13.000099"
           toteutusOid1   "1.2.246.562.17.000001"
           toteutusOid2   "1.2.246.562.17.000002"
@@ -48,6 +49,7 @@
 
       (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
       (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
+      (fixture/add-koulutus-mock lukio-Oid :tila "julkaistu" :koulutustyyppi "lk" :nimi "Lukio koulutus" :organisaatio mocks/Oppilaitos2 :metadata lukio-koulutus-metatieto :sorakuvausId sorakuvausId :ePerusteId nil)
       (fixture/add-koulutus-mock kkKoulutusOid :tila "julkaistu" :koulutustyyppi "yo" :nimi "YO koulutus" :organisaatio mocks/Oppilaitos2 :metadata yo-koulutus-metatieto :sorakuvausId sorakuvausId)
 
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
@@ -68,7 +70,7 @@
       (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
       (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
 
-      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid]
+      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid lukio-Oid]
                                                    :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid]
                                                    :haut [hakuOid1 hakuOid2 kkHakuOid]
                                                    :hakukohteet [hakukohdeOid1 hakukohdeOid2 kkHakukohdeOid]
@@ -78,6 +80,12 @@
         (testing "ok only koulutus"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1))]
             (is (= koulutusOid1 (:oid response)))
+            (is (false? (contains? response :toteutukset)))
+            (is (false? (contains? response :hakukohteet)))
+            (is (false? (contains? response :haut)))))
+        (testing "only lukio koulutus"
+          (let [response (get-ok-or-print-schema-error (koulutus-url lukio-Oid))]
+            (is (= lukio-Oid (:oid response)))
             (is (false? (contains? response :toteutukset)))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
