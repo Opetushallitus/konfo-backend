@@ -40,14 +40,14 @@
        (map (fn [language] {:match {(->lng-keyword "hits.terms.%s" language) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}))))
 
 (defn- bool
-  [keyword lng constraints]
+  [keyword constraints]
   (cond-> {}
           (not-blank? keyword)       (assoc :should (generate-keyword-query keyword))
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
-  [keyword lng constraints]
-  {:nested {:path "hits", :query {:bool (bool keyword lng constraints)}}})
+  [keyword constraints]
+  {:nested {:path "hits", :query {:bool (bool keyword constraints)}}})
 
 (defn match-all-query
   []

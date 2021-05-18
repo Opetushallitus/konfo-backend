@@ -15,7 +15,7 @@
   [keyword lng page size sort order constraints]
   (let [query (if (match-all? keyword constraints)
                 (match-all-query)
-                (query keyword lng constraints))
+                (query keyword constraints))
         aggs (aggregations)]
     (log-pretty query)
     (log-pretty aggs)

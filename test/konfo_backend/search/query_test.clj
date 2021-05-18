@@ -6,25 +6,25 @@
 
 (deftest oppilaitos-query-test
   (testing "Query with keyword"
-    (is (= (query "Hauska" "fi" {})
+    (is (= (query "Hauska" {})
            {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
                                                            {:match {:hits.terms.sv {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
                                                            {:match {:hits.terms.en {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]}}}})))
 
   (testing "Query with filters"
-    (is (= (query nil "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
+    (is (= (query nil {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
            {:nested {:path "hits", :query {:bool {:filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}})))
 
   (testing "Query with hakukaynnissa filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
-      (is (= (query nil "fi" {:hakukaynnissa true})
+      (is (= (query nil {:hakukaynnissa true})
              {:nested {:path "hits", :query {:bool {:filter [{:nested {:path "hits.hakuajat", :query {:bool {:filter [{:range { :hits.hakuajat.alkaa   { :lte "2020-01-01T01:01" }}}
                                                                                                                       {:bool  { :should [{ :bool { :must_not { :exists { :field "hits.hakuajat.paattyy" }}}},
                                                                                                                                          { :range { :hits.hakuajat.paattyy { :gt "2020-01-01T01:01"}}}]}}]}}}}]}}}}))))
 
   (testing "Query with keyword and filters"
-    (is (= (query "Hauska" "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
+    (is (= (query "Hauska" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
            {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
                                                            {:match {:hits.terms.sv { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
                                                            {:match {:hits.terms.en { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]
