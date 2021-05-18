@@ -18,7 +18,6 @@
   (apply url-with-query-params (str "/konfo-backend/hakukohde/" oid) [:draft true]))
 
 (deftest hakukohde-test
-
   (let [hakukohdeOid1 "1.2.246.562.20.000001"
         hakukohdeOid2 "1.2.246.562.20.000002"
         hakukohdeOid3 "1.2.246.562.20.000003"
@@ -26,24 +25,27 @@
         hakukohdeOid5 "1.2.246.562.20.000005"
         valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
         valintaperusteId2 "3456ae02-9a5f-42ef-8148-47d077373333"
-        valintaperusteId3 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
+        valintaperusteId3 "45d2ae02-9a5f-42ef-8148-47d07737927b"
+        sorakuvaus-id "8a52fbda-74bb-459b-a963-3403ba6e185b"
+        toteutus-oid "1.2.246.562.17.000001"
+        koulutus-oid "1.2.246.562.13.000001"
+        haku-oid "1.2.246.562.29.000001"]
 
-    (fixture/add-haku-mock "1.2.246.562.29.000001" :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
+    (fixture/add-haku-mock haku-oid :tila "julkaistu" :organisaatio mocks/Oppilaitos1)
 
-    (fixture/add-koulutus-mock "1.2.246.562.13.000001" :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1)
+    (fixture/add-koulutus-mock koulutus-oid :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvaus-id)
 
-    (fixture/add-hakukohde-mock hakukohdeOid1 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid2 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
-    (fixture/add-hakukohde-mock hakukohdeOid3 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "tallennettu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
-    (fixture/add-hakukohde-mock hakukohdeOid5 "1.2.246.562.17.000001" "1.2.246.562.29.000001" :tila "tallennettu" :esikatselu "true" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId3)
+    (fixture/add-hakukohde-mock hakukohdeOid1 toteutus-oid haku-oid :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid2 toteutus-oid haku-oid :tila "julkaistu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId2)
+    (fixture/add-hakukohde-mock hakukohdeOid3 toteutus-oid haku-oid :tila "tallennettu" :esikatselu "false" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId1)
+    (fixture/add-hakukohde-mock hakukohdeOid5 toteutus-oid haku-oid :tila "tallennettu" :esikatselu "true" :organisaatio mocks/Oppilaitos1 :valintaperuste valintaperusteId3)
 
     (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :esikatselu "false")
     (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :esikatselu "false")
     (fixture/add-valintaperuste-mock valintaperusteId3 :tila "tallennettu" :esikatselu "true")
 
-    (fixture/add-toteutus-mock "1.2.246.562.17.000001" "1.2.246.562.13.000001")
-    (fixture/add-koulutus-mock "1.2.246.562.13.000001")
-    (fixture/add-haku-mock "1.2.246.562.29.000001")
+    (fixture/add-toteutus-mock toteutus-oid koulutus-oid)
+    (fixture/add-sorakuvaus-mock sorakuvaus-id :tila "julkaistu")
 
     (fixture/index-oids-without-related-indices {:hakukohteet [hakukohdeOid1 hakukohdeOid2 hakukohdeOid3 hakukohdeOid5]})
 

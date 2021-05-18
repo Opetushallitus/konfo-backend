@@ -5,7 +5,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.search-test-tools :refer [yo-koulutus-metatieto yo-toteutus-metatieto]]))
+            [konfo-backend.search.search-test-tools :refer [yo-koulutus-metatieto lukio-koulutus-metatieto yo-toteutus-metatieto]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -31,6 +31,7 @@
   (testing "Testing external apis"
     (let [koulutusOid1   "1.2.246.562.13.000001"
           koulutusOid2   "1.2.246.562.13.000002"
+          lukio-Oid      "1.2.246.562.13.000003"
           kkKoulutusOid  "1.2.246.562.13.000099"
           toteutusOid1   "1.2.246.562.17.000001"
           toteutusOid2   "1.2.246.562.17.000002"
@@ -42,14 +43,13 @@
           hakuOid1       "1.2.246.562.29.000001"
           hakuOid2       "1.2.246.562.29.000002"
           kkHakuOid      "1.2.246.562.29.000099"
-          kkSorakuvausId     "2ff6700d-087f-4dbf-9e42-7f38948f227a"
           sorakuvausId       "a5e88367-555b-4d9e-aa43-0904e5ea0a13"
           valintaperusteId1  "2d0651b7-cdd3-463b-80d9-303a60d9616c"
-          valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"
-          kkValintaperusteId "ffa8c6cf-a962-4bb2-bf61-fe8fc741fabd"]
+          valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
       (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
       (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
+      (fixture/add-koulutus-mock lukio-Oid :tila "julkaistu" :koulutustyyppi "lk" :nimi "Lukio koulutus" :organisaatio mocks/Oppilaitos2 :metadata lukio-koulutus-metatieto :sorakuvausId sorakuvausId :ePerusteId nil)
       (fixture/add-koulutus-mock kkKoulutusOid :tila "julkaistu" :koulutustyyppi "yo" :nimi "YO koulutus" :organisaatio mocks/Oppilaitos2 :metadata yo-koulutus-metatieto :sorakuvausId sorakuvausId)
 
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
@@ -67,12 +67,10 @@
       (fixture/add-hakukohde-mock kkHakukohdeOid kkToteutusOid kkHakuOid :tila "julkaistu" :valintaperuste valintaperusteId2)
 
       (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
-      ;(fixture/add-sorakuvaus-mock kkSorakuvausId :tila "julkaistu" :koulutustyyppi "yo" :metadata "{}")
       (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
       (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
-      ;(fixture/add-valintaperuste-mock kkValintaperusteId :tila "julkaistu" :koulutustyyppi "yo" :sorakuvaus kkSorakuvausId :metadata "{}")
 
-      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid]
+      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid lukio-Oid]
                                                    :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid]
                                                    :haut [hakuOid1 hakuOid2 kkHakuOid]
                                                    :hakukohteet [hakukohdeOid1 hakukohdeOid2 kkHakukohdeOid]
@@ -82,6 +80,12 @@
         (testing "ok only koulutus"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1))]
             (is (= koulutusOid1 (:oid response)))
+            (is (false? (contains? response :toteutukset)))
+            (is (false? (contains? response :hakukohteet)))
+            (is (false? (contains? response :haut)))))
+        (testing "only lukio koulutus"
+          (let [response (get-ok-or-print-schema-error (koulutus-url lukio-Oid))]
+            (is (= lukio-Oid (:oid response)))
             (is (false? (contains? response :toteutukset)))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))

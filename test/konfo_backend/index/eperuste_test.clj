@@ -56,14 +56,14 @@
 
 (deftest eperuste-test
   (testing "Get eperuste-kuvaus"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] mocked-response-voimassa)]
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y & z] mocked-response-voimassa)]
       (let [response (get-ok (kuvaus-url "3536456"))]
         (is (= response {:id 3536456,
                          :tyotehtavatJoissaVoiToimia  {:fi "työtehtävät fi" :sv "työtehtävät sv"},
                          :suorittaneenOsaaminen {:fi "osaaminen fi" :sv "osaaminen sv"}})))))
 
   (testing "Get eperuste-kuvaus with osaamisalakuvaukset"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] mocked-response-voimassa)
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y & z] mocked-response-voimassa)
                   clj-elasticsearch.elastic-connect/search (fn [i y & z] mocked-osaamisala-response)]
       (let [response (get-ok (str (kuvaus-url "3536456") "?osaamisalakuvaukset=true"))]
         (is (= response {:id 3536456,
@@ -150,5 +150,5 @@
                           :tila "valmis"}])))))
 
   (testing "Don't get not valmis eperuste"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] {:found true :_source {:id 3536456 :tila "luonnos" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y & z] {:found true :_source {:id 3536456 :tila "luonnos" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
       (get-not-found (eperuste-url 3536456)))))

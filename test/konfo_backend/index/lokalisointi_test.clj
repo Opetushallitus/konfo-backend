@@ -7,9 +7,9 @@
 
 (deftest lokalisointi-test
   (testing "Get lokalisointi"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y] {:found true,
-                                                                            :_source {:lng y
-                                                                                      :tyyppi "lokalisointi"
-                                                                                      :translation {:moi "moi"}}})]
+    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y & z] {:found   true,
+                                                                                :_source {:lng         y
+                                                                                          :tyyppi      "lokalisointi"
+                                                                                          :translation {:moi "moi"}}})]
       (let [response (get-ok "/konfo-backend/translation/fi")]
         (is (= response {:moi "moi"}))))))

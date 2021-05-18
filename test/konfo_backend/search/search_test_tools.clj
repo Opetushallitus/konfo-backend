@@ -38,6 +38,12 @@
      :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1",
                             "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]}))
 
+(defonce lukio-koulutus-metatieto
+         (cheshire/generate-string
+           {:tyyppi               "lk"
+            :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1"]
+            :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+
 (defonce yo-koulutus-metatieto
   (cheshire/generate-string
     {:tyyppi               "yo"
