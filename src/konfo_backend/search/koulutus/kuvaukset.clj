@@ -1,13 +1,9 @@
 (ns konfo-backend.search.koulutus.kuvaukset
   (:require
-    [konfo-backend.tools :refer [not-blank? ammatillinen? koodi-uri-no-version amm-osaamisala? amm-tutkinnon-osa?]]
+    [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa?]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query match-all-query aggregations inner-hits-query sorts external-query]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits parse-external]]
-    [konfo-backend.elastic-tools :as e]
     [konfo-backend.index.eperuste :as eperuste]
-    [konfo-backend.index.osaamisalakuvaus :as osaamisala]
-    [konfo-backend.tools :refer [log-pretty]]))
+    [konfo-backend.index.osaamisalakuvaus :as osaamisala]))
 
 (defn- select-amm-kuvaus
   [eperuste]
