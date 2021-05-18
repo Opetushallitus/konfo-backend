@@ -7,7 +7,9 @@
 (deftest oppilaitos-query-test
   (testing "Query with keyword"
     (is (= (query "Hauska" "fi" {})
-           {:nested {:path "hits", :query {:bool {:must {:match {:hits.terms.fi {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}}}}})))
+           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.terms.sv {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.terms.en {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]}}}})))
 
   (testing "Query with filters"
     (is (= (query nil "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
@@ -23,7 +25,9 @@
 
   (testing "Query with keyword and filters"
     (is (= (query "Hauska" "fi" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
-           {:nested {:path "hits", :query {:bool {:must {:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
+           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.terms.sv { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.terms.en { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]
                                                   :filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}}))))
 
