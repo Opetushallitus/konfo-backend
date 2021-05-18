@@ -13,7 +13,7 @@
 (defn search
   [keyword lng page size sort order constraints]
   (when (do-search? keyword constraints)
-    (let [query (query keyword lng constraints)
+    (let [query (query keyword constraints)
           aggs (aggregations)]
       (log-pretty query)
       (log-pretty aggs)
