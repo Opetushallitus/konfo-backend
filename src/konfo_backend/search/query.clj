@@ -34,10 +34,15 @@
           (yhteishaku? constraints)            (conj (->terms-query :hits.yhteishaut.keyword               (:yhteishaku constraints)))
           (pohjakoulutusvaatimus? constraints) (conj (->terms-query :hits.pohjakoulutusvaatimukset.keyword (:pohjakoulutusvaatimus constraints)))))
 
+(defn- generate-keyword-query
+  [keyword]
+  (->> ["fi" "sv" "en"]
+       (map (fn [language] {:match {(->lng-keyword "hits.terms.%s" language) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}))))
+
 (defn- bool
   [keyword lng constraints]
   (cond-> {}
-          (not-blank? keyword)       (assoc :must {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}})
+          (not-blank? keyword)       (assoc :should (generate-keyword-query keyword))
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
