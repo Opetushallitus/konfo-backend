@@ -40,11 +40,12 @@
 
 (defn fetch->image [image-url allow-fail?]
   (try
-    (let [image   (client/get (str "https:" image-url) {:as :byte-array})
+    (let [url     (str "https:" image-url)
+          image   (client/get url {:as :byte-array})
           headers (:headers image)]
       [(:body image) (get headers "Content-Type")])
     (catch Exception e
-      (log/error (str "Error while fetching image: " (.getMessage e)))
+      (log/error (str "Error while fetching image " url ": " (.getMessage e)))
       (if allow-fail?
         [(create-fake-image) "image/jpeg"]
         (throw e)))))
