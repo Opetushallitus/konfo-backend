@@ -36,6 +36,7 @@
           toteutusOid1 "1.2.246.562.17.000001"
           toteutusOid2 "1.2.246.562.17.000002"
           toteutusOid3 "1.2.246.562.17.000003"
+          lukio-toteutus-oid "1.2.246.562.17.000004"
           kkToteutusOid "1.2.246.562.17.000099"
           hakukohdeOid1 "1.2.246.562.20.000001"
           hakukohdeOid2 "1.2.246.562.20.000002"
@@ -55,6 +56,7 @@
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
       (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
       (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu")
+      (fixture/add-toteutus-mock lukio-toteutus-oid lukio-Oid :tila "julkaistu" :metadata (slurp "test/resources/lukio-toteutus-metadata.json"))
       (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/korkeakoulu-toteutus-metadata.json"))
 
       (fixture/add-haku-mock hakuOid1 :tila "julkaistu")
@@ -71,7 +73,7 @@
       (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
 
       (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid lukio-Oid]
-                                                   :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid]
+                                                   :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid lukio-toteutus-oid]
                                                    :haut [hakuOid1 hakuOid2 kkHakuOid]
                                                    :hakukohteet [hakukohdeOid1 hakukohdeOid2 kkHakukohdeOid]
                                                    :valintaperusteet [valintaperusteId1 valintaperusteId2]})
@@ -121,6 +123,9 @@
             (is (false? (contains? response :koulutus)))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
+        (testing "only lukio toteutus"
+          (let [response (get-ok-or-print-schema-error (toteutus-url lukio-toteutus-oid))]
+            (is (= lukio-toteutus-oid (:oid response)))))
         (testing "ok toteutus with koulutus"
           (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3 :koulutus true))]
             (is (= toteutusOid3 (:oid response)))
