@@ -205,4 +205,4 @@
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
-   :tutkintonimike                            (->Koodi TutkintonimikeKoodi)})
+   :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]})
