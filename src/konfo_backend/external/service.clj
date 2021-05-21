@@ -21,7 +21,8 @@
 (defn get-toteutus
   [oid]
   (some-> (toteutus/get oid false)
-          (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)))
+          (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)
+          (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat)))
 
 (defn get-hakukohde
   [oid]
