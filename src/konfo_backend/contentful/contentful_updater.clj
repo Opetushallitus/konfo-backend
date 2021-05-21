@@ -39,16 +39,16 @@
     (.toByteArray buffer)))
 
 (defn fetch->image [image-url allow-fail?]
-  (try
-    (let [url     (str "https:" image-url)
-          image   (client/get url {:as :byte-array})
-          headers (:headers image)]
-      [(:body image) (get headers "Content-Type")])
-    (catch Exception e
-      (log/error (str "Error while fetching image " url ": " (.getMessage e)))
-      (if allow-fail?
-        [(create-fake-image) "image/jpeg"]
-        (throw e)))))
+  (let [url (str "https:" image-url)]
+    (try
+      (let [image (client/get url {:as :byte-array})
+            headers (:headers image)]
+        [(:body image) (get headers "Content-Type")])
+      (catch Exception e
+        (log/error (str "Error while fetching image " url ": " (.getMessage e)))
+        (if allow-fail?
+          [(create-fake-image) "image/jpeg"]
+          (throw e))))))
 
 (defn add-query-params-to-uri [uri params]
   (reduce-kv (fn [u k v]
