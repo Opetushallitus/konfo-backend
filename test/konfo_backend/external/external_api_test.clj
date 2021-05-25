@@ -29,23 +29,24 @@
 
 (deftest external-api-test
   (testing "Testing external apis"
-    (let [koulutusOid1   "1.2.246.562.13.000001"
-          koulutusOid2   "1.2.246.562.13.000002"
-          lukio-Oid      "1.2.246.562.13.000003"
-          kkKoulutusOid  "1.2.246.562.13.000099"
-          toteutusOid1   "1.2.246.562.17.000001"
-          toteutusOid2   "1.2.246.562.17.000002"
-          toteutusOid3   "1.2.246.562.17.000003"
-          kkToteutusOid  "1.2.246.562.17.000099"
-          hakukohdeOid1  "1.2.246.562.20.000001"
-          hakukohdeOid2  "1.2.246.562.20.000002"
+    (let [koulutusOid1 "1.2.246.562.13.000001"
+          koulutusOid2 "1.2.246.562.13.000002"
+          lukio-Oid "1.2.246.562.13.000003"
+          kkKoulutusOid "1.2.246.562.13.000099"
+          toteutusOid1 "1.2.246.562.17.000001"
+          toteutusOid2 "1.2.246.562.17.000002"
+          toteutusOid3 "1.2.246.562.17.000003"
+          lukio-toteutus-oid "1.2.246.562.17.000004"
+          kkToteutusOid "1.2.246.562.17.000099"
+          hakukohdeOid1 "1.2.246.562.20.000001"
+          hakukohdeOid2 "1.2.246.562.20.000002"
           kkHakukohdeOid "1.2.246.562.20.000099"
-          hakuOid1       "1.2.246.562.29.000001"
-          hakuOid2       "1.2.246.562.29.000002"
-          kkHakuOid      "1.2.246.562.29.000099"
-          sorakuvausId       "a5e88367-555b-4d9e-aa43-0904e5ea0a13"
-          valintaperusteId1  "2d0651b7-cdd3-463b-80d9-303a60d9616c"
-          valintaperusteId2  "45d2ae02-9a5f-42ef-8148-47d07737927b"]
+          hakuOid1 "1.2.246.562.29.000001"
+          hakuOid2 "1.2.246.562.29.000002"
+          kkHakuOid "1.2.246.562.29.000099"
+          sorakuvausId "a5e88367-555b-4d9e-aa43-0904e5ea0a13"
+          valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
+          valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
 
       (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
       (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
@@ -55,6 +56,7 @@
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
       (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
       (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu")
+      (fixture/add-toteutus-mock lukio-toteutus-oid lukio-Oid :tila "julkaistu" :metadata (slurp "test/resources/lukio-toteutus-metadata.json"))
       (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/korkeakoulu-toteutus-metadata.json"))
 
       (fixture/add-haku-mock hakuOid1 :tila "julkaistu")
@@ -71,7 +73,7 @@
       (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
 
       (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid lukio-Oid]
-                                                   :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid]
+                                                   :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid lukio-toteutus-oid]
                                                    :haut [hakuOid1 hakuOid2 kkHakuOid]
                                                    :hakukohteet [hakukohdeOid1 hakukohdeOid2 kkHakukohdeOid]
                                                    :valintaperusteet [valintaperusteId1 valintaperusteId2]})
@@ -121,6 +123,9 @@
             (is (false? (contains? response :koulutus)))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
+        (testing "only lukio toteutus"
+          (let [response (get-ok-or-print-schema-error (toteutus-url lukio-toteutus-oid))]
+            (is (= lukio-toteutus-oid (:oid response)))))
         (testing "ok toteutus with koulutus"
           (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3 :koulutus true))]
             (is (= toteutusOid3 (:oid response)))

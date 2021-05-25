@@ -232,6 +232,19 @@
    |              enum:
    |                - amk")
 
+(def lukio-toteutus-metadata-schema
+  "|    LukioToteutusMetadata:
+   |      allOf:
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
+   |        - type: object
+   |          properties:
+   |            koulutustyyppi:
+   |              type: string
+   |              description: Koulutuksen metatiedon tyyppi
+   |              example: lk
+   |              enum:
+   |                - lk")
+
 (def amm-osaamisala-schema
   "|    AmmOsaamisala:
    |      type: object
@@ -337,6 +350,11 @@
    {:tyyppi Yo}
    KorkeakoulutusToteutusMetadata))
 
+(def LukioToteutusMetadata
+  (st/merge
+    {:tyyppi Lk}
+    ToteutusMetadata))
+
 (def AmkToteutusMetadata
   (st/merge
    {:tyyppi Amk}
@@ -351,6 +369,7 @@
        ammattinimike-schema "\n"
        korkeakoulu-osaamisala-schema "\n"
        toteutus-metadata-schema "\n"
+       lukio-toteutus-metadata-schema "\n"
        korkeakoulu-toteutus-metadata-schema "\n"
        yliopisto-toteutus-metadata-schema "\n"
        ammattikorkea-toteutus-metadata-schema))

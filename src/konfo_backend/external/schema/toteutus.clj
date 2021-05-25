@@ -149,7 +149,8 @@
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmToteutusMetadata
                                                 #(= "yo" (:tyyppi %)) YoToteutusMetadata
-                                                #(= "amk" (:tyyppi %)) AmkToteutusMetadata)
+                                                #(= "amk" (:tyyppi %)) AmkToteutusMetadata
+                                                #(= "lk" (:tyyppi %)) LukioToteutusMetadata)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    :modified                     Datetime
