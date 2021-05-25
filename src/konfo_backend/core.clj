@@ -121,15 +121,18 @@
       (wrap-exception-handling)))
 
 (defn -main [& args]
+      (log/info "Running app")
   (if (= (System/getProperty "mode") "updater")
-    (do
-      (def updater-app (wrap-cors (konfo-updater-api (contentful/create-contentful-client false)) :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post]))
-      (log/info "Starting Konfo-backend-updater!")
-      (run-jetty (wrap-reload #'updater-app)
-                 {:port (Integer/valueOf
-                          (or (System/getenv "port")
-                              (System/getProperty "port")
-                              "8080"))}))
+      (do
+        (log/info "Starting Konfo-backend-updater!")
+        (let [clients (contentful/create-contentful-clients false)
+            updater-app (wrap-cors (konfo-updater-api clients) :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post])]
+           (log/info "Using clients for langs " (keys clients))
+           (run-jetty (wrap-reload updater-app)
+                      {:port (Integer/valueOf
+                               (or (System/getenv "port")
+                                   (System/getProperty "port")
+                                   "8080"))})))
     (do
       (log/info "Starting Konfo-backend!")
       (init)

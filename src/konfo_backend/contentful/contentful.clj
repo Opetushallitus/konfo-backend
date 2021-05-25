@@ -6,17 +6,26 @@
 
 (defonce include-level 2)
 
-(defn create-contentful-client
-  [preview?]
-  (let [space-id     (:contentful-space-id config)
-        access-token (if preview?
-                       (:contentful-preview-token config)
-                       (:contentful-access-token config))]
-    (-> (CDAClient/builder)
-        (.setSpace space-id)
-        (.setToken access-token)
-        (.setEndpoint (when preview? "https://preview.contentful.com"))
-        (.build))))
+(defn create-contentful-clients
+      [preview?]
+      (let [access-token (if preview?
+                             (:contentful-preview-token config)
+                             (:contentful-access-token config))
+            access-token-en (if preview?
+                             (:contentful-preview-token-en config)
+                             (:contentful-access-token-en config))]
+           {:fisv (-> (CDAClient/builder)
+                      (.setSpace (:contentful-space-id config))
+                      (.setEnvironment (:contentful-environment-id config))
+                      (.setToken access-token)
+                      (.setEndpoint (when preview? "https://preview.contentful.com"))
+                      (.build))
+            :en   (-> (CDAClient/builder)
+                      (.setSpace (:contentful-space-id-en config))
+                      (.setEnvironment (:contentful-environment-id-en config))
+                      (.setToken access-token-en)
+                      (.setEndpoint (when preview? "https://preview.contentful.com"))
+                      (.build))}))
 
 (defn get-entries-raw [client content-type locale]
   (let [query (doto

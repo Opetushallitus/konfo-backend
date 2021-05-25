@@ -225,54 +225,74 @@
         key)
       existing-url)))
 
-(defn contentful->s3 [client started-timestamp & args]
-  (let [s3-client     (s3/create-client)]
+(defn process-client-data [old-manifest update-id client s3-client langs]
+      (log/info "Processing contentful data for langs" langs)
+      (let [content-types    (get-content-type-with-field-types client)
+            url-cache        (atom {})
+            gson             (create-gson-serializer s3-client url-cache content-types)
+            resources        (concat (map (fn [lang] ["asset" lang asset-store-handler]) langs)
+                                     (for [[t _] content-types
+                                           l langs]
+                                          [t l content-store-handler]))]
+           (reduce
+             (fn [r [content-type locale store-latest-fn]]
+                 (let [existing-url (get-in old-manifest [content-type locale] nil)
+                       base-url     (str update-id "/" locale "/")
+                       latest-url   (store-latest-fn
+                                      client
+                                      s3-client
+                                      gson
+                                      url-cache
+                                      content-type
+                                      locale
+                                      base-url
+                                      existing-url)]
+                      (assoc-in r [content-type locale]
+                                (if (= existing-url latest-url)
+                                    existing-url
+                                    latest-url))))
+             {}
+             resources)))
+
+(defn deep-merge [v & vs]
+      (letfn [(rec-merge [v1 v2]
+                (if (and (map? v1) (map? v2))
+                    (merge-with deep-merge v1 v2)
+                    v2))]
+             (if (some identity vs)
+                 (reduce #(rec-merge %1 %2) v vs)
+                 (last vs))))
+
+(defn contentful->s3 [clients started-timestamp & args]
+  (let [s3-client     (s3/create-client)
+        client (:fisv clients)
+        client-en (:en clients)]
     (try
       (log/info (str "timestamp: " started-timestamp ", args=" args))
       (let [update-id        started-timestamp
-            content-types    (get-content-type-with-field-types client)
-            url-cache        (atom {})
-            gson             (create-gson-serializer s3-client url-cache content-types)
             store->s3        (fn [ttl content-type key obj]
                                  (log/info (str "Putting " key " with ttl " ttl " (hours)"))
                                  (when s3-client
                                        (s3/put-object ttl s3-client key obj content-type)
                                        (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
-            manifest-str     (s3/get-object s3-client "manifest.json")
-            manifest         (some-> manifest-str
+            old-manifest-str     (s3/get-object s3-client "manifest.json")
+            old-manifest         (some-> old-manifest-str
                                      (cheshire/parse-string))
-            locales          ["fi" "sv"]
-            resources        (concat
-                              [["asset" "fi" asset-store-handler]
-                               ["asset" "sv" asset-store-handler]]
-                              (for [[t _] content-types
-                                    l locales]
-                                [t l content-store-handler]))
-            new-manifest     (reduce
-                              (fn [r [content-type locale store-latest-fn]]
-                                  (let [existing-url (get-in manifest [content-type locale] nil)
-                                        base-url     (str update-id "/" locale "/")
-                                        latest-url   (store-latest-fn
-                                                       client
-                                                       s3-client
-                                                       gson
-                                                       url-cache
-                                                       content-type
-                                                       locale
-                                                       base-url
-                                                       existing-url)]
-                                    (assoc-in r [content-type locale]
-                                      (if (= existing-url latest-url)
-                                        existing-url
-                                        latest-url))))
-                              {}
-                              resources)
-            new-manifest-str (cheshire/generate-string new-manifest)]
-        (if (= manifest-str new-manifest-str)
+            new-manifest-fisv (process-client-data old-manifest update-id client s3-client ["fi" "sv"])
+            new-manifest-en (process-client-data old-manifest update-id client-en s3-client ["en"])
+            new-manifest-str (cheshire/generate-string new-manifest-fisv)
+            new-manifest-str-en (cheshire/generate-string new-manifest-en)
+            new-manifest-combined (deep-merge new-manifest-fisv new-manifest-en)
+            new-manifest-combined-str (cheshire/generate-string new-manifest-combined)]
+           (log/info "old manifest " old-manifest-str)
+           (log/info (str "new manifest fisv " new-manifest-str))
+           (log/info (str "new manifest en " new-manifest-str-en))
+           (log/info (str "merged manifest " (cheshire/generate-string new-manifest-combined)))
+           (if (= old-manifest-str new-manifest-combined-str)
           (log/info "No new updates found in manifest!")
           (do
             (log/info "New updates found in manifest!")
-            (store->s3 ttl-manifest "application/json; charset=utf-8" "manifest.json" (.getBytes new-manifest-str)))))
+            (store->s3 ttl-manifest "application/json; charset=utf-8" "manifest.json" (.getBytes new-manifest-combined-str)))))
       (catch Exception e
         (.printStackTrace e)
         (log/error (str "Contentful updated halted due to exception: " e)))
