@@ -4,7 +4,7 @@
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.search-test-tools :refer :all]))
+            [konfo-backend.search-test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 

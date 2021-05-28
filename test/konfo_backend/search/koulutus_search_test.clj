@@ -4,7 +4,7 @@
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
             [cheshire.core :as cheshire]
-            [konfo-backend.search.search-test-tools :refer :all]
+            [konfo-backend.search-test-tools :refer :all]
             [cheshire.core :refer [generate-string]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
