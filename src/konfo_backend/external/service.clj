@@ -17,7 +17,7 @@
   [oid]
   (some-> (toteutus/get oid false)
           (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)
-          (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat)))
+          (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat :kielivalikoima)))
 
 (defn get-hakukohde
   [oid]
