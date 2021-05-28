@@ -5,7 +5,10 @@
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
-            [cheshire.core :as cheshire]))
+            [cheshire.core :as cheshire])
+  (:import (fi.oph.kouta.external KoutaFixtureTool$)))
+
+(defonce KoutaFixtureTool KoutaFixtureTool$/MODULE$)
 
 (def koulutusOid1 "1.2.246.562.13.000001")
 (def koulutusOid2 "1.2.246.562.13.000002")
@@ -85,6 +88,8 @@
                :opetustapaKoodiUrit ["opetuspaikkakk_01"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
+
+(defonce lukio-toteutus-metatieto (.lukioToteutusMedatada KoutaFixtureTool))
 
 (defn mock-get-koodisto
   [x]
