@@ -61,6 +61,10 @@
                              "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
       :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
+(defonce amm-tutkinnon-osa-koulutus-metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
+
+(defonce amm-osaamisala-koulutus-metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+
 (defonce toteutus-metatieto
   (cheshire/generate-string
     {:tyyppi           "amm"
@@ -88,6 +92,8 @@
                :opetustapaKoodiUrit ["opetuspaikkakk_01"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
+
+(defonce amm-tutkinnon-osa-toteutus-metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
 (defonce lukio-toteutus-metatieto (.lukioToteutusMedatada KoutaFixtureTool))
 

@@ -5,12 +5,9 @@
             [konfo-backend.search.koulutus.search :refer [index]]
             [cheshire.core :as cheshire]
             [konfo-backend.search.search-test-tools :refer :all]
-            [cheshire.core :refer [generate-string]])
-  (:import (fi.oph.kouta.external KoutaFixtureTool$)))
+            [cheshire.core :refer [generate-string]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
-
-(defonce KoutaFixtureTool KoutaFixtureTool$/MODULE$)
 
 (use-fixtures :each fixture/mock-indexing-fixture)
 
@@ -77,14 +74,14 @@
 
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
   (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat punkaharjun-yliopisto :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
-  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
-  (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+  (fixture/add-koulutus-mock hevostutkinnon-osa-oid :koulutustyyppi "amm-tutkinnon-osa" :koulutuksetKoodiUri nil :ePerusteId nil :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan tutkinnon osa koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata amm-tutkinnon-osa-koulutus-metadata)
+    (fixture/add-koulutus-mock hevososaamisala-oid :koulutustyyppi "amm-osaamisala" :tila "julkaistu" :johtaaTutkintoon "false" :nimi "Hevosalan osaamisala koulutus" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata amm-osaamisala-koulutus-metadata)
   (fixture/add-koulutus-mock yo-oid :koulutustyyppi "yo" :tila "julkaistu" :nimi "Arkkitehti" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata yo-metadata)
   (fixture/add-koulutus-mock amk-oid :koulutustyyppi "amk" :tila "julkaistu" :nimi "Artenomi" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata amk-metadata)
   (fixture/add-koulutus-mock lukio-oid :koulutustyyppi "lk" :tila "julkaistu" :nimi "Lukio" :tarjoajat punkaharjun-yliopisto :sorakuvausId sorakuvaus-id :metadata lukio-metadata)
 
   (fixture/add-toteutus-mock ponitoteutus-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
+  (fixture/add-toteutus-mock poniosatoteutus-oid hevostutkinnon-osa-oid :tila "julkaistu" :nimi "Ponikoulu tutkinnon osa" :tarjoajat punkaharjun-toimipiste-2 :metadata amm-tutkinnon-osa-toteutus-metadata)
 
   (fixture/add-haku-mock haku-oid-1 :tila "julkaistu" :nimi "Hevoshaku" :muokkaaja "1.2.246.562.24.62301161440" :hakutapaKoodiUri "hakutapa_03#1")
   (fixture/add-haku-mock haku-oid-2 :tila "julkaistu" :nimi "Yhteishaku" :muokkaaja "1.2.246.562.24.62301161440" :hakutapaKoodiUri "hakutapa_01#1")
