@@ -7,11 +7,6 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.valintaperuste :as valintaperuste]))
 
-(defn- when-satisfy
-  [e pred]
-  (when (pred e)
-    e))
-
 (defn- get-koulutus
   [oid]
   (some-> (koulutus/get oid false)
