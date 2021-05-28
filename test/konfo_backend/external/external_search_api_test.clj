@@ -3,7 +3,6 @@
             [konfo-backend.external.schema.koulutus :as k]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-            [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.search-test-tools :refer :all]))
 
