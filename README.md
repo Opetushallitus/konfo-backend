@@ -71,9 +71,26 @@ Suositeltava kehitysympäristö on [IntelliJ IDEA](https://www.jetbrains.com/ide
 mutta sovelluksen ja testien ajamisen kannalta nämä eivät ole välttämättömiä. Jos et tee paljon clojure-kehitystä, myöskään cursive ei
 ole välttämätön.
 
-## 4. Ympäristöt
+## 4. Hakurajaimet
 
-### 4.1. Testiympäristöt
+### 4.1 Hakutietorajaimet
+
+Koulutus- ja oppilaitos-search hitteihin tallentuu rakenteista hakutiedot-dataa, jossa tärkeimpänä sisältönä on voimassaoloaika. Nämä rajaimet vaativat paljon kompleksisempaa käsittely kuin muut rajaimet, sillä niissä täytyy ottaa mahdollisesti huomioon halutaanko nähdä vain sellaista dataa, jonka haku on käynnissä.
+
+Asiaa pystyy parhaiten lähestymään käytännön esimerkillä:
+* Koulutus (hit), jolla on toteutus, jolla on kaksi hakukohdetta
+* Ensimmäisen hakukohteen hakuaika on käynnissä ja sillä on pohjakoulutusvaatimus X
+* Toisen hakukohteen hakuaika ei ole vielä alkanut ja sillä on pohjakoulutusvaatimus Y
+* Käyttäjä hakee rajauksella X + haku käynnissä -> pitää saada tulos
+* Käyttäjä hakee rajauksella Y + haku käynnissä -> ei pidä saada tuloksia
+
+Ym. tarpeen vuoksi hakutietokohtaiset rajaimet on toteutettu toimimaan yhdessä haku-käynnissä rajaimen kanssa niin että elastic käsittelee nämä yhteisinä ehtoina (per rajain). Käytännön tasolla siis tyyliin:
+
+* Haku-käynnissä + pohjakoulutusvaatimus = "Koulutus-search-hitillä täytyy olla jokin hakutieto joka täyttää kaksi ehtoa - haku-käynnissä + tietty pohjakoulutusvaatimus"
+
+## 5. Ympäristöt
+
+### 5.1. Testiympäristöt
 
 Testiympäristöjen swaggerit löytyvät seuraavista osoitteista:
 
@@ -81,22 +98,22 @@ Testiympäristöjen swaggerit löytyvät seuraavista osoitteista:
 - [hahtuva](https://beta.hahtuvaopintopolku.fi/konfo-backend/swagger)
 - [QA eli pallero](https://beta.testiopintopolku.fi/konfo-backend/swagger)
 
-### 4.2. Asennus
+### 5.2. Asennus
 
 Asennus hoituu samoilla työkaluilla kuin muidenkin OPH:n palvelujen. 
 [Cloud-basen dokumentaatiosta](https://github.com/Opetushallitus/cloud-base/tree/master/docs)
 ja ylläpidolta löytyy apuja.
 
-### 4.3. Lokit
+### 5.3. Lokit
 
 Konfo-backendin lokit löytyvät AWS:n cloudwatchista log groupista <testiympäristö>-app-konfo-backend, 
 esim. hahtuva-app-konfo-backend. Lisäohjeita ylläpidolta.
 
-### 4.4. Continuous integration
+### 5.4. Continuous integration
 
 https://travis-ci.com/github/Opetushallitus/konfo-backend
 
-## 5. Lisätietoa
+## 6. Lisätietoa
 
 Vanhan README:n sisältöä jonka paikkansapitävyyttä ei ole selvitetty:
 

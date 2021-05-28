@@ -21,8 +21,6 @@
   ([oids]
    (get-many oids [])))
 
-(defonce source [:oid :nimi])
-
 (defn- ->hakutyyppi-query
   [hakutyypit]
   (let [terms (if (= 1 (count hakutyypit))
@@ -36,10 +34,11 @@
        (map :_source)
        (map #(select-keys % [:oid :nimi]))))
 
+; TODO Tämä palauttaa atm. kaikki yhteishaut, pitäisi tehdä rajausta että palautetaan vain ne joilla on jokin hakuaika käynnissä / päättynyt 6kk sisään - hakuajat on tallennettuna hauille ja hakukohteille
 (defn get-yhteishaut
   []
   (haku-search parse-results
-               :_source source
+               :_source [:oid :nimi]
                :query (->hakutyyppi-query [yhteishaku-koodi-uri])))
 
 (defn list-yhteishaut
