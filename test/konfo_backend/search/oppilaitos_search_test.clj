@@ -6,7 +6,7 @@
             [konfo-backend.test-tools :refer [debug-pretty]]
             [konfo-backend.search.koulutus.search :refer [index]]
             [cheshire.core :as cheshire]
-            [konfo-backend.search-test-tools :refer :all]))
+            [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 

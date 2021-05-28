@@ -5,7 +5,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search-test-tools :refer [yo-koulutus-metatieto lukio-koulutus-metatieto lukio-toteutus-metatieto yo-toteutus-metatieto]]))
+            [konfo-backend.test-mock-data :refer [yo-koulutus-metatieto lukio-koulutus-metatieto lukio-toteutus-metatieto yo-toteutus-metatieto]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 

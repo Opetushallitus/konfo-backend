@@ -1,4 +1,4 @@
-(ns konfo-backend.search-test-tools
+(ns konfo-backend.test-mock-data
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
