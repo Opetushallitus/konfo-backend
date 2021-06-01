@@ -1,11 +1,13 @@
-(ns konfo-backend.search.search-test-tools
+(ns konfo-backend.test-mock-data
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
-            [cheshire.core :as cheshire]))
+            [cheshire.core :as cheshire])
+  (:import (fi.oph.kouta.external KoutaFixtureTool$)))
+
+(defonce KoutaFixtureTool KoutaFixtureTool$/MODULE$)
 
 (def koulutusOid1 "1.2.246.562.13.000001")
 (def koulutusOid2 "1.2.246.562.13.000002")
@@ -58,6 +60,10 @@
                              "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
       :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
+(defonce amm-tutkinnon-osa-koulutus-metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
+
+(defonce amm-osaamisala-koulutus-metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+
 (defonce toteutus-metatieto
   (cheshire/generate-string
     {:tyyppi           "amm"
@@ -85,6 +91,10 @@
                :opetustapaKoodiUrit ["opetuspaikkakk_01"]
                :koulutuksenTarkkaAlkamisaika true
                :koulutuksenAlkamisvuosi 2019}}))
+
+(defonce amm-tutkinnon-osa-toteutus-metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
+
+(defonce lukio-toteutus-metatieto (.lukioToteutusMedatada KoutaFixtureTool))
 
 (defn mock-get-koodisto
   [x]

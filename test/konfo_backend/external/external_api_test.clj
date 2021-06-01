@@ -5,7 +5,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.search-test-tools :refer [yo-koulutus-metatieto lukio-koulutus-metatieto yo-toteutus-metatieto]]))
+            [konfo-backend.test-mock-data :refer [yo-koulutus-metatieto lukio-koulutus-metatieto lukio-toteutus-metatieto yo-toteutus-metatieto]]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -56,7 +56,7 @@
       (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
       (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
       (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu")
-      (fixture/add-toteutus-mock lukio-toteutus-oid lukio-Oid :tila "julkaistu" :metadata (slurp "test/resources/lukio-toteutus-metadata.json"))
+      (fixture/add-toteutus-mock lukio-toteutus-oid lukio-Oid :tila "julkaistu" :metadata lukio-toteutus-metatieto)
       (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/korkeakoulu-toteutus-metadata.json"))
 
       (fixture/add-haku-mock hakuOid1 :tila "julkaistu")

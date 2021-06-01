@@ -3,7 +3,7 @@
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
-            [konfo-backend.search.search-test-tools :refer :all]))
+            [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 

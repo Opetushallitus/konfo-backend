@@ -7,11 +7,6 @@
     [konfo-backend.index.haku :as haku]
     [konfo-backend.index.valintaperuste :as valintaperuste]))
 
-(defn- when-satisfy
-  [e pred]
-  (when (pred e)
-    e))
-
 (defn- get-koulutus
   [oid]
   (some-> (koulutus/get oid false)
@@ -22,7 +17,7 @@
   [oid]
   (some-> (toteutus/get oid false)
           (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)
-          (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat)))
+          (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat :kielivalikoima)))
 
 (defn get-hakukohde
   [oid]
