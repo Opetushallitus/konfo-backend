@@ -19,7 +19,7 @@
         aggs (hakutulos-aggregations constraints)]
     (log-pretty query)
     (log-pretty aggs)
-     (koulutus-kouta-search
+    (koulutus-kouta-search
       page
       size
       #(-> % parse with-kuvaukset)
