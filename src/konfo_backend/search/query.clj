@@ -39,7 +39,7 @@
                                          (some-past-hakuaika-still-viable))
                                        inner-query] }}}}))
 
-(defn- is-haku-kaynnissa-not-already-included
+(defn- haku-kaynnissa-not-already-included?
   [constraints]
   (every? false? [(hakutapa? constraints)
                   (pohjakoulutusvaatimus? constraints)
@@ -50,8 +50,8 @@
   [constraints]
   (let [haku-kaynnissa (haku-kaynnissa? constraints)
         ; NOTE haku-käynnissä rajainta halutaan käyttää vain jos jotain muuta hakutietorajainta ei ole käytössä (koska se sisältyy niihin jos ne on käytössä)
-        use-haku-kaynnissa (every? true? [haku-kaynnissa
-                                          (is-haku-kaynnissa-not-already-included constraints)])]
+        use-haku-kaynnissa (and haku-kaynnissa
+                                (haku-kaynnissa-not-already-included? constraints))]
 
     (cond-> []
             (koulutustyyppi? constraints)        (conj (->terms-query :hits.koulutustyypit.keyword           (:koulutustyyppi constraints)))
@@ -60,7 +60,7 @@
             (koulutusala? constraints)           (conj (->terms-query :hits.koulutusalat.keyword             (:koulutusala constraints)))
             (opetustapa? constraints)            (conj (->terms-query :hits.opetustavat.keyword              (:opetustapa constraints)))
 
-            ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska rivit käyttäytyvät OR ehtoina)
+            ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
             use-haku-kaynnissa                   (conj (hakutieto-query (some-hakuaika-kaynnissa)))
             (hakutapa? constraints)              (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.hakutapa                 (:hakutapa constraints))))
             (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
@@ -202,7 +202,7 @@
 
 (defn- generate-default-aggs
   [constraints]
-  (let [no-other-hakutieto-filters-used (is-haku-kaynnissa-not-already-included constraints)
+  (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
         haku-kaynnissa (haku-kaynnissa? constraints)]
       {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
        :kunta                 (koodisto-filters :hits.sijainti.keyword                 "kunta")
