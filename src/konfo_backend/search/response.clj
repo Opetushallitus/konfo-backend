@@ -88,7 +88,7 @@
            (-> hit
                (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
                (merge (:metadata hit))
-               (assoc :hakukaynnissa (some hakuaika-kaynnissa? (:hakuajat hit)))
+               (assoc :hakukaynnissa (some hakuaika-kaynnissa? (flatten (map :hakuajat (:hakutiedot hit)))))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))

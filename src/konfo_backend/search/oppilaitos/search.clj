@@ -2,7 +2,7 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query aggregations tarjoajat-aggregations inner-hits-query inner-hits-query-osat sorts]]
+    [konfo-backend.search.query :refer [query hakutulos-aggregations tarjoajat-aggregations inner-hits-query inner-hits-query-osat sorts]]
     [konfo-backend.search.response :refer [parse parse-inner-hits parse-inner-hits-for-tarjoajat]]
     [konfo-backend.elastic-tools :as e]))
 
@@ -14,7 +14,7 @@
   [keyword lng page size sort order constraints]
   (when (do-search? keyword constraints)
     (let [query (query keyword constraints)
-          aggs (aggregations)]
+          aggs (hakutulos-aggregations constraints)]
       (log-pretty query)
       (log-pretty aggs)
       (oppilaitos-kouta-search

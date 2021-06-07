@@ -61,6 +61,13 @@
   []
   (->kouta-date-time-string (long->date-time (System/currentTimeMillis))))
 
+(defn half-year-past-as-kouta-format
+  []
+  (-> (System/currentTimeMillis)
+      (long->date-time)
+      (time/minus (time/months 6))
+      (->kouta-date-time-string)))
+
 (defn within?
   [gte time lt]
   (if (nil? lt)
