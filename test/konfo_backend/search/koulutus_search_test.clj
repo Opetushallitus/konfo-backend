@@ -97,7 +97,7 @@
      :haut [haku-oid-1 haku-oid-2]
      } (fn [x & {:as params}] punkaharju-org))
 
-  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto
+  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto
                 konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
     (testing "Search koulutukset with bad requests:"
       (testing "Invalid lng"
