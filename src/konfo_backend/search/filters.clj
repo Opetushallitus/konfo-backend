@@ -18,7 +18,7 @@
 
 (defn- koodisto->filters
   [filter-counts koodisto]
-  (reduce-merge-map #(koodi->filter filter-counts %) (:koodit (k/get-koodisto koodisto))))
+  (reduce-merge-map #(koodi->filter filter-counts %) (:koodit (k/get-koodisto-with-cache koodisto))))
 
 (defn- beta-koulutustyyppi
   [filter-counts]

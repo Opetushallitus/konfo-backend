@@ -6,7 +6,7 @@
 
 (defonce index-name "koodisto")
 
-(defn get-koodisto
+(defn- get-koodisto
   [koodisto]
   (get-source index-name koodisto))
 
@@ -15,7 +15,7 @@
 
 (defn- list-koodit
   [koodisto]
-  (vec (:koodit (get-koodisto koodisto))))
+  (vec (:koodit (get-koodisto-with-cache koodisto))))
 
 (defn list-koodi-urit
   [koodisto]
