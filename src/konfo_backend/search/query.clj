@@ -221,11 +221,19 @@
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]
-  {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
-                     :aggs {:maakunta (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
-                            :kunta (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
-                            :opetuskieli (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                            :opetustapa (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")}}})
+  (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
+        haku-kaynnissa (haku-kaynnissa? constraints)]
+    {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
+                       :aggs {:maakunta (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
+                              :kunta (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
+                              :opetuskieli (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                              :opetustapa (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")
+
+                              :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
+                              :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
+                              :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
+                              :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
+                              :yhteishaku            (yhteishaku-filter haku-kaynnissa)}}}))
 
 (defn- aggregations
   [aggs-generator]
@@ -233,15 +241,23 @@
 
 (defn- tarjoajat-aggs
   [tuleva? constraints]
-  {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
-                    :aggs {:maakunta            (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
-                           :kunta               (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
-                           :opetuskieli         (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                           :koulutusala         (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
-                           :koulutusalataso2    (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
-                           :koulutustyyppi      (koulutustyyppi-filters-for-subentity :hits.koulutustyypit.keyword)
-                           :koulutustyyppitaso2 (koodisto-filters-for-subentity :hits.koulutustyypit.keyword "koulutustyyppi")
-                           :opetustapa          (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")}}})
+  (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
+        haku-kaynnissa (haku-kaynnissa? constraints)]
+    {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
+                      :aggs {:maakunta            (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
+                             :kunta               (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
+                             :opetuskieli         (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                             :koulutusala         (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
+                             :koulutusalataso2    (koodisto-filters-for-subentity :hits.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
+                             :koulutustyyppi      (koulutustyyppi-filters-for-subentity :hits.koulutustyypit.keyword)
+                             :koulutustyyppitaso2 (koodisto-filters-for-subentity :hits.koulutustyypit.keyword "koulutustyyppi")
+                             :opetustapa          (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")
+
+                             :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
+                             :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
+                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
+                             :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
+                             :yhteishaku            (yhteishaku-filter haku-kaynnissa)}}}))
 
 (defn hakutulos-aggregations
   [constraints]

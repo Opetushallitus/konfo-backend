@@ -569,8 +569,8 @@
                                                   constraints)))))
 
 (defn- ->search-subentities-with-validated-params
-  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa nil nil nil nil nil)]
+  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -634,15 +634,20 @@
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
          :path-params [oid :- String]
-         :query-params [{tuleva         :- Boolean false}
-                        {page           :- Long 1}
-                        {size           :- Long 20}
-                        {lng            :- String "fi"}
-                        {order          :- String "asc"}
-                        {sijainti       :- String nil}
-                        {opetuskieli    :- String nil}
-                        {koulutusala    :- String nil}
-                        {opetustapa     :- String nil}]
+         :query-params [{tuleva                :- Boolean false}
+                        {page                  :- Long 1}
+                        {size                  :- Long 20}
+                        {lng                   :- String "fi"}
+                        {order                 :- String "asc"}
+                        {sijainti              :- String nil}
+                        {opetuskieli           :- String nil}
+                        {koulutusala           :- String nil}
+                        {opetustapa            :- String nil}
+                        {valintatapa           :- String nil}
+                        {hakukaynnissa         :- Boolean false}
+                        {hakutapa              :- String nil}
+                        {yhteishaku            :- String nil}
+                        {pohjakoulutusvaatimus :- String nil}]
          (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
                                                                                   oid
                                                                                   lng
@@ -654,7 +659,12 @@
                                                                                   sijainti
                                                                                   opetuskieli
                                                                                   koulutusala
-                                                                                  opetustapa)))
+                                                                                  opetustapa
+                                                                                  valintatapa
+                                                                                  hakukaynnissa
+                                                                                  hakutapa
+                                                                                  yhteishaku
+                                                                                  pohjakoulutusvaatimus)))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword               :- String nil}
@@ -714,7 +724,12 @@
                                                                                   sijainti
                                                                                   opetuskieli
                                                                                   koulutusala
-                                                                                  opetustapa)))
+                                                                                  opetustapa
+                                                                                  nil
+                                                                                  nil
+                                                                                  nil
+                                                                                  nil
+                                                                                  nil)))
 
     (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
