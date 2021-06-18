@@ -9,6 +9,7 @@
   :managed-dependencies [[org.flatland/ordered "1.5.7"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [clj-time "0.15.0"]
+                 [org.clojure/core.memoize "1.0.236"]
                  ; Rest + server
                  [metosin/compojure-api "2.0.0-alpha31"]
                  [metosin/ring-swagger-ui "3.25.3"]

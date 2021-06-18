@@ -47,7 +47,7 @@
 
   (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
-  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto]
+  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search koulutuksen järjestäjät with bad requests:"
       (testing "Invalid lng"
         (is (= "Virheellinen kieli") (->bad-request-body autoala-oid :lng "foo")))

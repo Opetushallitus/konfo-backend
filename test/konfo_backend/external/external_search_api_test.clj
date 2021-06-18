@@ -47,7 +47,7 @@
 
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
-  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto mock-get-koodisto]
+  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search toteutukset"
       (let [r (search :keyword "hevonen" :koulutustyyppi "amm")]
         (is (= 2 (:total r)))

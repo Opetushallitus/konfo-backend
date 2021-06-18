@@ -1,17 +1,21 @@
 (ns konfo-backend.koodisto.koodisto
   (:require
     [konfo-backend.tools :refer [koodi-uri-no-version]]
-    [konfo-backend.elastic-tools :refer [get-source search]]))
+    [konfo-backend.elastic-tools :refer [get-source search]]
+    [clojure.core.memoize :as memo]))
 
 (defonce index-name "koodisto")
 
-(defn get-koodisto
+(defn- get-koodisto
   [koodisto]
   (get-source index-name koodisto))
 
-(defn list-koodit
+(def get-koodisto-with-cache
+  (memo/ttl get-koodisto {} :ttl/threshold (* 1000 60 5))) ;5 minuutin cache
+
+(defn- list-koodit
   [koodisto]
-  (vec (:koodit (get-koodisto koodisto))))
+  (vec (:koodit (get-koodisto-with-cache koodisto))))
 
 (defn list-koodi-urit
   [koodisto]
