@@ -4,7 +4,7 @@
    [konfo-backend.contentful.json :refer [gson]])
   (:import (com.contentful.java.cda CDAContentType CDAClient CDAEntry CDAAsset)))
 
-(defonce include-level 2)
+(defonce include-level 3)
 
 (defn create-contentful-clients
       [preview?]
