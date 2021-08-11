@@ -1,7 +1,9 @@
 (ns konfo-backend.external.api
   (:require
     [compojure.api.core :as c :refer [GET POST context]]
+    [compojure.api.exception :as ex]
     [ring.util.http-response :refer :all]
+    [compojure.api.sweet :refer [api]]
     [konfo-backend.external.schema.common :as common]
     [konfo-backend.external.schema.koodi :as koodi]
     [konfo-backend.external.schema.koulutus :as koulutus]
@@ -299,7 +301,11 @@
        response/schemas))
 
 (def routes
-  (context "/external" []
+  (api
+    {:exceptions
+     {:handlers
+      {::ex/response-validation (ex/with-logging ex/response-validation-handler :error)}}}
+     (context "/external" []
            :tags ["external"]
 
     (GET "/koulutus/:oid" [:as request]
@@ -343,7 +349,8 @@
                                      (ok result)
                                      (not-found "Not found"))))
 
-    (GET "/search/toteutukset-koulutuksittain" [:as request]
+
+     (GET "/search/toteutukset-koulutuksittain" [:as request]
          :query-params [{keyword        :- String nil}
                         {page           :- Long 1}
                         {size           :- Long 20}
@@ -368,4 +375,4 @@
                                                                       nil
                                                                       nil
                                                                       nil
-                                                                      nil)))))
+                                                                      nil))))))
