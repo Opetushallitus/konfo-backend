@@ -80,8 +80,9 @@
 
 (defn query
   [keyword constraints]
-  {:nested {:path "hits", :query {:bool (bool keyword constraints)
-                                  :minimum_should_match "90%"}}})
+  {:nested {:path "hits", :query (merge {:bool (bool keyword constraints)}
+                                        (when (not-blank? keyword)
+                                          {:minimum_should_match "90%"}))}})
 
 (defn match-all-query
   []
