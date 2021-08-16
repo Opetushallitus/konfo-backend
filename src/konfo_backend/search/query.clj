@@ -81,7 +81,7 @@
 (defn query
   [keyword constraints]
   {:nested {:path "hits", :query {:bool (bool keyword constraints)
-                                  :minimum_should_match "75%"}}})
+                                  :minimum_should_match "90%"}}})
 
 (defn match-all-query
   []
