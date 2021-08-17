@@ -18,6 +18,10 @@
   [& query-params]
   (get-ok-or-print-schema-error (apply search-url query-params)))
 
+(defn search-failed
+  [& query-params]
+  (get-internal-error (apply search-url query-params)))
+
 (deftest external-search-api-test
   (let [koulutusOid1 "1.2.246.562.13.000001"
         koulutusOid2 "1.2.246.562.13.000002"
@@ -106,4 +110,7 @@
         (is (= [toteutusOid6] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Nothing found"
       (is (= {:total 0,
-              :hits []} (search :keyword "mummo")))))))
+              :hits []} (search :keyword "mummo"))))
+    (testing "Erroneous schema"
+    ( with-redefs-fn {#'konfo-backend.search.response/parse-external (fn [response] {:hits {:hits {:huuhaa "hiihaa"}}})}
+      #(search-failed :keyword "Virheellinen" :koulutustyyppi "tuva"))))))
