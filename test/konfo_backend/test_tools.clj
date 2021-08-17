@@ -49,6 +49,10 @@
   [url]
   (get-and-check-status url 400))
 
+(defn get-internal-error
+  [url]
+  (get-and-check-status url 500))
+
 (defn debug-pretty
   [json]
   (println (cheshire/generate-string json {:pretty true})))
