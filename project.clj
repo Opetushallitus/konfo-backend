@@ -53,7 +53,7 @@
                                    [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (utils/global-docker-elastic-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
@@ -62,7 +62,7 @@
                                       [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                                      [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                     (utils/global-docker-elastic-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
