@@ -182,7 +182,7 @@
    :kuvaus                                    Kielistetty
    :lisatiedot                                [KoulutusLisatieto]
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
-   (s/->OptionalKey :tutkintonimike)          [(->Koodi TutkintonimikeKoodi)]
+   (s/->OptionalKey :tutkintonimike)          [s/Any]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Any)
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
@@ -205,4 +205,4 @@
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
-   :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]})
+   :tutkintonimike                            [s/Any]})
