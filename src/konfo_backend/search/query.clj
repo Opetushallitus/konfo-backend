@@ -128,13 +128,11 @@
 
 (defn external-query
   [keyword lng constraints]
-  (let [query {:nested {:path "hits",
-                        :inner_hits {},
-                        :query {:bool {:filter (cond-> [{:term {"hits.onkoTuleva" false}}]
-                                                       (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}}]
-    (if (not-blank? keyword)
-      (assoc-in query [:nested :query :bool :must :match (->lng-keyword "hits.terms.%s" lng)] {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"})
-      query)))
+  {:nested {:path "hits",
+            :inner_hits {},
+            :query {:bool {:must   {:match {(->lng-keyword "hits.terms.%s" lng) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}
+                           :filter (cond-> [{:term {"hits.onkoTuleva" false}}]
+                                           (koulutustyyppi? constraints)  (conj (->terms-query :hits.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}})
 
 (defn- ->term-filter
   [field term]
