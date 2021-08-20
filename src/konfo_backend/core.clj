@@ -100,6 +100,23 @@
               external/schemas
               ))))
 
+      (GET "/redoc/index.html" request
+        :no-doc true
+        (ok
+          (strip-margin
+            (str
+              "
+              | <html>
+              |   <head>
+              |     <titleKonfo-backend: API Documentation</title>
+              |   </head>
+              |   <body>
+              |     <redoc spec-url=\"/konfo-backend/swagger.yaml\"></redoc>
+              |     <script src=\"https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js\"></script>
+              |   </body>
+              | </html>
+              "))))
+
       default/routes
       index/routes
       search/routes
