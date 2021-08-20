@@ -110,7 +110,7 @@
    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def TutkintonimikeKoodi #"tutkintonimikkeet_\d+(#\d{1,2})?$")
+(def TutkintonimikeKoodi #"(tutkintonimikkeet|tutkintonimikekk)_\d+(#\d{1,2})?$")
 
 (def tutkintonimikekk-schema
   "|    TutkintonimikeKk:
