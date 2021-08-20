@@ -1,4 +1,5 @@
-(ns konfo-backend.external.schema.koodi)
+(ns konfo-backend.external.schema.koodi
+  (:require [schema.core :as s]))
 
 (def kunta-schema
   "|    Kunta:
@@ -110,7 +111,7 @@
    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def TutkintonimikeKoodi #"tutkintonimikkeet_\d+(#\d{1,2})?$")
+(def TutkintonimikeKoodi s/Any)
 
 (def tutkintonimikekk-schema
   "|    TutkintonimikeKk:
