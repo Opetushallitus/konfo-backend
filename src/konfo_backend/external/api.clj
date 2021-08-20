@@ -272,6 +272,77 @@
    |          description: Pilkulla eroteltu koulutustyypit. 'amm, 'yo' tai 'amk'
    |          default: nil
    |          example: amk
+   |        - in: query
+   |          name: sijainti
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
+   |          example: kunta_091,maakunta_01,maakunta_03
+   |          default: nil
+   |        - in: query
+   |          name: opetuskieli
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
+   |          default: nil
+   |        - in: query
+   |          name: koulutusala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
+   |          default: nil
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2
+   |          default: nil
+   |        - in: query
+   |          name: valintatapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu valintatapojen koodeja
+   |          example: valintatapajono_av, valintatapajono_tv
+   |          default: nil
+   |        - in: query
+   |          name: hakukaynnissa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on haku käynnissä
+   |          default: false
+   |        - in: query
+   |          name: hakutapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu hakutapojen koodeja
+   |          example: hakutapa_01, hakutapa_03
+   |          default: nil
+   |        - in: query
+   |          name: yhteishaku
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu lista yhteishakujen oideja
+   |          example: 1.2.246.562.29.00000000000000000800
+   |          default: nil
+   |        - in: query
+   |          name: pohjakoulutusvaatimus
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
+   |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -383,13 +454,22 @@
 
 
              (GET "/search/toteutukset-koulutuksittain" [:as request]
-                  :query-params [{keyword :- String nil}
-                                 {page :- Long 1}
-                                 {size :- Long 20}
-                                 {lng :- String "fi"}
-                                 {sort :- String "score"}
-                                 {order :- String "desc"}
-                                 {koulutustyyppi :- String nil}]
+                  :query-params [{keyword               :- String nil}
+                                 {page                  :- Long 1}
+                                 {size                  :- Long 20}
+                                 {lng                   :- String "fi"}
+                                 {sort                  :- String "score"}
+                                 {order                 :- String "desc"}
+                                 {koulutustyyppi        :- String nil}
+                                 {sijainti              :- String nil}
+                                 {opetuskieli           :- String nil}
+                                 {koulutusala           :- String nil}
+                                 {opetustapa            :- String nil}
+                                 {valintatapa           :- String nil}
+                                 {hakukaynnissa         :- Boolean false}
+                                 {hakutapa              :- String nil}
+                                 {yhteishaku            :- String nil}
+                                 {pohjakoulutusvaatimus :- String nil}]
                   :return response/KoulutusToteutusSearchResponse
                   (with-access-logging request (->search-with-validated-params external-search
                                                                                keyword
@@ -399,15 +479,15 @@
                                                                                sort
                                                                                order
                                                                                koulutustyyppi
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil
-                                                                               nil)))
+                                                                               sijainti
+                                                                               opetuskieli
+                                                                               koulutusala
+                                                                               opetustapa
+                                                                               valintatapa
+                                                                               hakukaynnissa
+                                                                               hakutapa
+                                                                               yhteishaku
+                                                                               pohjakoulutusvaatimus)))
              (GET "/search/filters" [:as request]
                   (with-access-logging request (if-let [result (filters/generate-filter-counts)]
                                                  (ok result)
