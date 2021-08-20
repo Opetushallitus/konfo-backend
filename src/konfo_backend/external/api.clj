@@ -20,6 +20,7 @@
     [konfo-backend.external.schema.liite :as liite]
     [konfo-backend.external.schema.search :as search]
     [konfo-backend.external.service :as service]
+    [konfo-backend.search.filters :as filters]
     [clj-log.access-log :refer [with-access-logging]]
     [konfo-backend.search.api :refer [->search-with-validated-params]]
     [konfo-backend.search.koulutus.search :refer [external-search]]))
@@ -281,7 +282,38 @@
    |        '404':
    |          description: Not found
    |        '400':
-   |          description: Bad request")
+   |          description: Bad request
+   |  /external/search/filters:
+   |    get:
+   |      tags:
+   |        - External
+   |      summary: Hae hakurajaimet
+   |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
+   |  /external/search/filters_as_array:
+   |    get:
+   |      tags:
+   |        - External
+   |      summary: Hae hakurajaimet taulukkomuodossa
+   |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
+   ")
 
 (def schemas
   (str common/schemas "\n"
@@ -305,74 +337,83 @@
     {:exceptions
      {:handlers
       {::ex/response-validation (ex/with-logging ex/response-validation-handler :error)}}}
-     (context "/external" []
-           :tags ["external"]
+    (context "/external" []
+             :tags ["external"]
 
-    (GET "/koulutus/:oid" [:as request]
-         :path-params [oid :- String]
-         :query-params [{toteutukset :- Boolean false}
-                        {hakukohteet :- Boolean false}
-                        {haut        :- Boolean false}]
-         :return response/KoulutusResponse
-      (with-access-logging request (if-let [result (service/koulutus oid toteutukset hakukohteet haut)]
-                                     (ok result)
-                                     (not-found "Not found"))))
+             (GET "/koulutus/:oid" [:as request]
+                  :path-params [oid :- String]
+                  :query-params [{toteutukset :- Boolean false}
+                                 {hakukohteet :- Boolean false}
+                                 {haut :- Boolean false}]
+                  :return response/KoulutusResponse
+                  (with-access-logging request (if-let [result (service/koulutus oid toteutukset hakukohteet haut)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))
 
-    (GET "/toteutus/:oid" [:as request]
-        :path-params [oid :- String]
-        :query-params [{koulutus    :- Boolean false}
-                       {hakukohteet :- Boolean false}
-                       {haut        :- Boolean false}]
-        :return response/ToteutusResponse
-        (with-access-logging request (if-let [result (service/toteutus oid koulutus hakukohteet haut)]
-                                       (ok result)
-                                       (not-found "Not found"))))
+             (GET "/toteutus/:oid" [:as request]
+                  :path-params [oid :- String]
+                  :query-params [{koulutus :- Boolean false}
+                                 {hakukohteet :- Boolean false}
+                                 {haut :- Boolean false}]
+                  :return response/ToteutusResponse
+                  (with-access-logging request (if-let [result (service/toteutus oid koulutus hakukohteet haut)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))
 
-    (GET "/hakukohde/:oid" [:as request]
-         :path-params [oid :- String]
-         :query-params [{koulutus             :- Boolean false}
-                        {toteutus             :- Boolean false}
-                        {valintaperustekuvaus :- Boolean false}
-                        {haku                 :- Boolean false}]
-         :return response/HakukohdeResponse
-      (with-access-logging request (if-let [result (service/hakukohde oid koulutus toteutus valintaperustekuvaus haku)]
-                                     (ok result)
-                                     (not-found "Not found"))))
+             (GET "/hakukohde/:oid" [:as request]
+                  :path-params [oid :- String]
+                  :query-params [{koulutus :- Boolean false}
+                                 {toteutus :- Boolean false}
+                                 {valintaperustekuvaus :- Boolean false}
+                                 {haku :- Boolean false}]
+                  :return response/HakukohdeResponse
+                  (with-access-logging request (if-let [result (service/hakukohde oid koulutus toteutus valintaperustekuvaus haku)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))
 
-    (GET "/haku/:oid" [:as request]
-         :path-params [oid :- String]
-         :query-params [{koulutukset    :- Boolean false}
-                        {toteutukset    :- Boolean false}
-                        {hakukohteet    :- Boolean false}]
-         :return response/HakuResponse
-      (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
-                                     (ok result)
-                                     (not-found "Not found"))))
+             (GET "/haku/:oid" [:as request]
+                  :path-params [oid :- String]
+                  :query-params [{koulutukset :- Boolean false}
+                                 {toteutukset :- Boolean false}
+                                 {hakukohteet :- Boolean false}]
+                  :return response/HakuResponse
+                  (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))
 
 
-     (GET "/search/toteutukset-koulutuksittain" [:as request]
-         :query-params [{keyword        :- String nil}
-                        {page           :- Long 1}
-                        {size           :- Long 20}
-                        {lng            :- String "fi"}
-                        {sort           :- String "score"}
-                        {order          :- String "desc"}
-                        {koulutustyyppi :- String nil}]
-         :return response/KoulutusToteutusSearchResponse
-         (with-access-logging request (->search-with-validated-params external-search
-                                                                      keyword
-                                                                      lng
-                                                                      page
-                                                                      size
-                                                                      sort
-                                                                      order
-                                                                      koulutustyyppi
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil
-                                                                      nil))))))
+             (GET "/search/toteutukset-koulutuksittain" [:as request]
+                  :query-params [{keyword :- String nil}
+                                 {page :- Long 1}
+                                 {size :- Long 20}
+                                 {lng :- String "fi"}
+                                 {sort :- String "score"}
+                                 {order :- String "desc"}
+                                 {koulutustyyppi :- String nil}]
+                  :return response/KoulutusToteutusSearchResponse
+                  (with-access-logging request (->search-with-validated-params external-search
+                                                                               keyword
+                                                                               lng
+                                                                               page
+                                                                               size
+                                                                               sort
+                                                                               order
+                                                                               koulutustyyppi
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil
+                                                                               nil)))
+             (GET "/search/filters" [:as request]
+                  (with-access-logging request (if-let [result (filters/generate-filter-counts)]
+                                                 (ok result)
+                                                 (not-found "Not found"))))
+
+             (GET "/search/filters_as_array" [:as request]
+                  (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
+                                                 (ok result)
+                                                 (not-found "Not found")))))))
