@@ -68,19 +68,22 @@
             (yhteishaku? constraints)            (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.yhteishakuOid            (:yhteishaku constraints)))))))
 
 (defn- generate-keyword-query
-  [keyword]
+  [keyword user-lng]
   (->> ["fi" "sv" "en"]
-       (map (fn [language] {:match {(->lng-keyword "hits.terms.%s" language) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}))))
+       (map (fn [language] (let [query (if (= user-lng language)
+                                         {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12" :boost 100}
+                                         {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"})]
+                             {:match {(->lng-keyword "hits.terms.%s" language) query}})))))
 
 (defn- bool
-  [keyword constraints]
+  [keyword constraints user-lng]
   (cond-> {}
-          (not-blank? keyword)       (assoc :should (generate-keyword-query keyword))
+          (not-blank? keyword)       (assoc :should (generate-keyword-query keyword user-lng))
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
-  [keyword constraints]
-  {:nested {:path "hits", :query {:bool (bool keyword constraints)}}})
+  [keyword constraints user-lng]
+  {:nested {:path "hits", :query {:bool (bool keyword constraints user-lng)}}})
 
 (defn match-all-query
   []
