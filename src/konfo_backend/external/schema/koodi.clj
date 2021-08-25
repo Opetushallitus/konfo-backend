@@ -368,6 +368,8 @@
 
 (def OsaamistaustaKoodi #"osaamistausta_\d+(#\d{1,2})?$")
 
+(def LukioDiplomiKoodi s/Str)
+
 (def schemas
   (str
     kunta-schema "\n"

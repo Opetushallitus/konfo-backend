@@ -141,7 +141,7 @@
    |            $ref: '#/components/schemas/KoulutusToteutusHit'")
 
 (def KoulutusToteutusSearchResponse
-  {:total s/Int
+  {:total {:value s/Int :relation s/Str}
    :hits  [KoulutusHit]})
 
 (def schemas

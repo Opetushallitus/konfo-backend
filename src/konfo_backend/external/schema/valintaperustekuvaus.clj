@@ -83,6 +83,7 @@
 
 (def Valintaperustekuvaus
   {:id                                    s/Str
+   (s/->OptionalKey :externalId)          s/Str
    :tila                                  Julkaistu
    :koulutustyyppi                        Koulutustyyppi
    :hakutapa                              (->Koodi HakutapaKoodi)

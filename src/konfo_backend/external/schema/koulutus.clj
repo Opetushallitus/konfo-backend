@@ -122,6 +122,7 @@
 
 (s/defschema Koulutus
   {:oid                          KoulutusOid
+   (s/->OptionalKey :externalId) s/Str
    :johtaaTutkintoon             s/Bool
    :koulutustyyppi               Koulutustyyppi
    :koulutukset                  [(->Koodi KoulutusKoodi)]

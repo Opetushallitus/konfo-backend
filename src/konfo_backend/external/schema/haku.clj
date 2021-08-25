@@ -95,6 +95,7 @@
 
 (def Haku
   {:oid                            HakuOid
+   (s/->OptionalKey :externalId)   s/Str
    :tila                           Julkaistu
    :nimi                           Kielistetty
    :hakutapa                       (->Koodi HakutapaKoodi)
