@@ -152,7 +152,8 @@
 
 (defn- koodisto-filters
   [field koodisto]
-  (->filters-aggregation field (list-koodi-urit koodisto)))
+  (if-let [list (seq (list-koodi-urit koodisto))]
+    (->filters-aggregation field list)))
 
 (defn- koodisto-filters-for-subentity
   [field koodisto]
@@ -188,6 +189,9 @@
   []
   {:filters {:filters {:hakukaynnissa (hakutieto-query (some-hakuaika-kaynnissa))}} :aggs {:real_hits {:reverse_nested {}}}})
 
+(defn- remove-nils [record]
+  (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
+
 (defn- deduct-hakukaynnissa-aggs-from-other-filters
   [constraints]
   {:filters {:filters {:hakukaynnissa { :bool { :filter (cond-> []
@@ -206,43 +210,40 @@
   [constraints]
   (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
         haku-kaynnissa (haku-kaynnissa? constraints)]
-      {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
-       :kunta                 (koodisto-filters :hits.sijainti.keyword                 "kunta")
-       :opetuskieli           (koodisto-filters :hits.opetuskielet.keyword             "oppilaitoksenopetuskieli")
-       :koulutusala           (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso1")
-       :koulutusalataso2      (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso2")
-       :koulutustyyppi        (koulutustyyppi-filters :hits.koulutustyypit.keyword)
-       :koulutustyyppitaso2   (koodisto-filters :hits.koulutustyypit.keyword           "koulutustyyppi")
-       :opetustapa            (koodisto-filters :hits.opetustavat.keyword              "opetuspaikkakk")
+    (remove-nils  {:maakunta              (koodisto-filters :hits.sijainti.keyword                 "maakunta")
+                   :kunta                 (koodisto-filters :hits.sijainti.keyword                 "kunta")
+                   :opetuskieli           (koodisto-filters :hits.opetuskielet.keyword             "oppilaitoksenopetuskieli")
+                   :koulutusala           (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso1")
+                   :koulutusalataso2      (koodisto-filters :hits.koulutusalat.keyword             "kansallinenkoulutusluokitus2016koulutusalataso2")
+                   :koulutustyyppi        (koulutustyyppi-filters :hits.koulutustyypit.keyword)
+                   :koulutustyyppitaso2   (koodisto-filters :hits.koulutustyypit.keyword           "koulutustyyppi")
+                   :opetustapa            (koodisto-filters :hits.opetustavat.keyword              "opetuspaikkakk")
 
-       :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
-       :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
-       :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
-       :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
-       :yhteishaku            (yhteishaku-filter haku-kaynnissa)}))
+                   :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
+                   :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
+                   :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
+                   :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
+                   :yhteishaku            (yhteishaku-filter haku-kaynnissa)})))
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]
   (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
         haku-kaynnissa (haku-kaynnissa? constraints)]
     {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
-                       :aggs {:maakunta (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
-                              :kunta (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
-                              :opetuskieli (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                              :opetustapa (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")
+                       :aggs (remove-nils  {:maakunta (koodisto-filters-for-subentity :hits.sijainti.keyword "maakunta")
+                                            :kunta (koodisto-filters-for-subentity :hits.sijainti.keyword "kunta")
+                                            :opetuskieli (koodisto-filters-for-subentity :hits.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                                            :opetustapa (koodisto-filters-for-subentity :hits.opetustavat.keyword "opetuspaikkakk")
 
-                              :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
-                              :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
-                              :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
-                              :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
-                              :yhteishaku            (yhteishaku-filter haku-kaynnissa)}}}))
+                                            :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
+                                            :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.hakutapa     "hakutapa")
+                                            :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
+                                            :valintatapa           (hakutieto-koodisto-filters haku-kaynnissa :hits.hakutiedot.valintatavat "valintatapajono")
+                                            :yhteishaku            (yhteishaku-filter haku-kaynnissa)})}}))
 
 (defn- aggregations
   [aggs-generator]
   {:hits_aggregation {:nested {:path "hits"}, :aggs (aggs-generator)}})
-
-(defn- remove-nils [record]
-  (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
 
 (defn- tarjoajat-aggs
   [tuleva? constraints]
