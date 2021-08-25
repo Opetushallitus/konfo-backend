@@ -183,7 +183,8 @@
 
 (defn- hakutieto-koodisto-filters
   [haku-kaynnissa field koodisto]
-  (->hakutieto-filters-aggregation haku-kaynnissa field (list-koodi-urit koodisto)))
+  (if-let [list (seq  (list-koodi-urit koodisto))]
+    (->hakutieto-filters-aggregation haku-kaynnissa field list)))
 
 (defn- hakukaynnissa-filter
   []
