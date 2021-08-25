@@ -232,6 +232,15 @@
    |              enum:
    |                - amk")
 
+(def LukiodiplomiTieto
+  {:koodi             (->Koodi LukioDiplomiKoodi)
+   :linkki            Kielistetty
+   :linkinAltTeksti   Kielistetty
+   :sisallot          [Kielistetty]
+   :tavoitteetKohde   Kielistetty
+   :tavoitteet        [Kielistetty]}
+)
+
 (def lukio-toteutus-metadata-schema
   "|    LukioToteutusMetadata:
    |      allOf:
@@ -352,7 +361,10 @@
 
 (def LukioToteutusMetadata
   (st/merge
-    {:tyyppi Lk}
+    {:tyyppi     Lk
+     :yleislinja s/Bool
+     :diplomit   [LukiodiplomiTieto]
+     }
     ToteutusMetadata))
 
 (def AmkToteutusMetadata

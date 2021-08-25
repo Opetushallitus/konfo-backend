@@ -38,7 +38,7 @@
                  [com.contentful.java/java-sdk "10.4.1"]
                  [commons-codec/commons-codec "1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.3.2-SNAPSHOT"]]
+                 [oph/clj-elasticsearch "0.3.3-SNAPSHOT"]]
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
@@ -48,21 +48,21 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "8.0.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
-                                   [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.12.0-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.12.0-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-common "2.3.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (utils/global-docker-elastic-fixture)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "8.0.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
-                                      [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.12.0-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.12.0-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-common "2.3.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                                      [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                        :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                     (utils/global-docker-elastic-fixture)]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}

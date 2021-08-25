@@ -141,6 +141,7 @@
 
 (s/defschema Toteutus
   {:oid                          ToteutusOid
+   (s/->OptionalKey :externalId) s/Str
    :koulutusOid                  KoulutusOid
    :tila                         Julkaistu
    :oppilaitokset                [OrganisaatioOid]
