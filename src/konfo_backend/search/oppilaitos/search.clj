@@ -17,7 +17,6 @@
           aggs (hakutulos-aggregations constraints)]
       (log-pretty query)
       (log-pretty aggs)
-      (clojure.pprint/pprint query)
       (oppilaitos-kouta-search
         page
         size
