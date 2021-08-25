@@ -505,7 +505,7 @@
     (testing "returns last page"
       (is (= [koulutusOid5] (search-and-get-oids :keyword "aakkosissa" :sort "name" :order "asc" :size 2 :page 3))))
     (testing "returns correct total count"
-      (is (= 5 (:total (get-ok (koulutus-search-url :keyword "aakkosissa" :sort "name" :order "asc" :size 2))))))))
+      (is (= 5 (:value (:total (get-ok (koulutus-search-url :keyword "aakkosissa" :sort "name" :order "asc" :size 2)))))))))
 
 (deftest koulutus-keyword-search
 

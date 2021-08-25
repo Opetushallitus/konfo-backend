@@ -78,7 +78,7 @@
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
       (testing "All filterts must match"
         (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220" :opetuskieli "oppilaitoksenopetuskieli_03")]
-          (is (= 0 (:value (:total r))))))
+          (is (= 0 (:total r)))))
       (testing "Can filter by opetuskieli"
         (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
           (is (= 1 (:value (:total r))))
@@ -111,7 +111,7 @@
     (testing "Get koulutuksen järjestäjät"
       (testing "no järjestäjiä"
         (let [r (search "1.2.246.562.13.000009")]
-          (is (= 0 (:value (:total r))))
+          (is (= 0 (:total r)))
           (is (= [] (:hits r)))))
       (testing "nykyiset"
         (let [r (search hevosala-oid :tuleva false)]
@@ -163,5 +163,5 @@
   (testing "Get koulutuksen järjestäjät"
     (testing "no järjestäjiä"
       (let [r (search autoala-oid)]
-        (is (= 0 (:value (:total r))))
+        (is (= 0 (:total r)))
         (is (= [] (:hits r)))))))
