@@ -20,6 +20,7 @@
     [konfo-backend.palaute.api :as palaute]
     [konfo-backend.external.api :as external]
     [clojure.string]
+    [ring.util.response :as resp]
     [ring.swagger.swagger-ui :as ui])
   (:gen-class))
 
@@ -99,6 +100,26 @@
               default/schemas "\n"
               external/schemas
               ))))
+
+      (GET "/redoc/index.html" request
+        :no-doc true
+        (let [html (strip-margin
+                     (str
+                       "
+                       | <html>
+                       |   <head>
+                       |     <titleKonfo-backend: API Documentation</title>
+                       |   </head>
+                       |   <body>
+                       |     <redoc spec-url=\"/konfo-backend/swagger.yaml\"></redoc>
+                       |     <script src=\"https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js\"></script>
+                       |   </body>
+                       | </html>
+                       "))
+              res (-> (resp/response html)
+                       (resp/status 200)
+                       (resp/header "Content-Type" "text/html"))]
+          res))
 
       default/routes
       index/routes
