@@ -7,9 +7,12 @@
 (deftest oppilaitos-query-test
   (testing "Query with keyword"
     (is (= (query "Hauska" {} "fi")
-           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi {:query "hauska" :operator "and" :fuzziness "AUTO:8,12" :boost 100}}}
-                                                           {:match {:hits.terms.sv {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.en {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]}}}})))
+           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.koulutusnimi.fi {:query "hauska", :operator "and", :fuzziness "AUTO:8,12", :boost 100}}}
+                                                           {:match {:hits.tutkintotyyppi.fi {:query "hauska", :operator "and", :fuzziness "AUTO:8,12", :boost 30}}}
+                                                           {:match {:hits.koulutusnimi.sv {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.tutkintotyyppi.sv {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.koulutusnimi.en {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.tutkintotyyppi.en {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}]}}}})))
 
   (testing "Query with filters"
     (is (= (query nil {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]} "fi")
@@ -26,9 +29,12 @@
 
   (testing "Query with keyword and filters"
     (is (= (query "Hauska" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]} "fi")
-           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12" :boost 100}}}
-                                                           {:match {:hits.terms.sv { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.en { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]
+           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.koulutusnimi.fi {:query "hauska", :operator "and", :fuzziness "AUTO:8,12", :boost 100}}}
+                                                           {:match {:hits.tutkintotyyppi.fi {:query "hauska", :operator "and", :fuzziness "AUTO:8,12", :boost 30}}}
+                                                           {:match {:hits.koulutusnimi.sv {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.tutkintotyyppi.sv {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.koulutusnimi.en {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}
+                                                           {:match {:hits.tutkintotyyppi.en {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}]
                                                   :filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}}))))
 

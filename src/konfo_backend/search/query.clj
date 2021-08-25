@@ -67,18 +67,23 @@
             (valintatapa? constraints)           (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.valintatavat             (:valintatapa constraints))))
             (yhteishaku? constraints)            (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.yhteishakuOid            (:yhteishaku constraints)))))))
 
+(defn create-keyword-query-with-boost
+  [keyword user-lng language boost]
+  (if (= user-lng language)
+    {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12" :boost boost}
+    {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}))
+
 (defn- generate-keyword-query
   [keyword user-lng]
   (->> ["fi" "sv" "en"]
-       (map (fn [language] (let [query (if (= user-lng language)
-                                         {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12" :boost 100}
-                                         {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"})]
-                             {:match {(->lng-keyword "hits.terms.%s" language) query}})))))
+       (map (fn [language]
+              [{:match {(->lng-keyword "hits.koulutusnimi.%s" language) (create-keyword-query-with-boost keyword user-lng language 100)}}
+               {:match {(->lng-keyword "hits.tutkintotyyppi.%s" language) (create-keyword-query-with-boost keyword user-lng language 30)}}]))))
 
 (defn- bool
   [keyword constraints user-lng]
   (cond-> {}
-          (not-blank? keyword)       (assoc :should (generate-keyword-query keyword user-lng))
+          (not-blank? keyword)       (assoc :should (vec (flatten (generate-keyword-query keyword user-lng))))
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
