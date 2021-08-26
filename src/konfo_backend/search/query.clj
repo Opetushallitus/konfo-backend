@@ -77,8 +77,8 @@
   [keyword user-lng]
   (->> ["fi" "sv" "en"]
        (map (fn [language]
-              [{:match {(->lng-keyword "hits.koulutusnimi.%s" language) (create-keyword-query-with-boost keyword user-lng language 100)}}
-               {:match {(->lng-keyword "hits.tutkintotyyppi.%s" language) (create-keyword-query-with-boost keyword user-lng language 30)}}]))))
+              [{:match {(->lng-keyword "hits.koulutusnimi.%s" language) (create-keyword-query-with-boost keyword user-lng language 5)}}
+               {:match {(->lng-keyword "hits.tutkintonimike.%s" language) (create-keyword-query-with-boost keyword user-lng language 3)}}]))))
 
 (defn- bool
   [keyword constraints user-lng]
