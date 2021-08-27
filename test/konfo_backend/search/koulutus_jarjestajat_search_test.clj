@@ -57,41 +57,41 @@
     (testing "Sorting and paging järjestäjät"
       (testing "asc order"
         (let [r (search autoala-oid :tuleva false :order "asc")]
-          (is (= 2 (:value (:total r))))
+          (is (= 2 (:total r)))
           (is (= audikoulu-oid (:toteutusOid (first (:hits r)))))
           (is (= mersukoulu-oid (:toteutusOid (second (:hits r)))))))
       (testing "desc order"
         (let [r (search autoala-oid :tuleva false :order "desc")]
-          (is (= 2 (:value (:total r))))
+          (is (= 2 (:total r)))
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))
           (is (= audikoulu-oid (:toteutusOid (second (:hits r)))))))
       (testing "paging"
         (let [r (search autoala-oid :tuleva false :page 2 :size 1)]
-          (is (= 2 (:value (:total r))))
+          (is (= 2 (:total r)))
           (is (= 1 (count (:hits r))))
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r))))))))
 
     (testing "Filtering järjestäjät"
       (testing "Can filter by sijainti"
         (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220")]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
       (testing "All filterts must match"
         (let [r (search autoala-oid :tuleva false :order "asc" :sijainti "kunta_220" :opetuskieli "oppilaitoksenopetuskieli_03")]
           (is (= 0 (:total r)))))
       (testing "Can filter by opetuskieli"
         (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= audikoulu-oid (:toteutusOid (first (:hits r)))))))
       (testing "Can filter by opetustapa"
         (let [r (search autoala-oid :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= audikoulu-oid (:toteutusOid (first (:hits r))))))))
 
     (testing "Filter counts"
       (testing "Without any filters"
         (let [r (search autoala-oid :tuleva false :order "asc")]
-          (is (= 2 (:value (:total r))))
+          (is (= 2 (:total r)))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
@@ -100,7 +100,7 @@
           (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))))
       (testing "Filtering reduces counts"
         (let [r (search autoala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))
@@ -115,7 +115,7 @@
           (is (= [] (:hits r)))))
       (testing "nykyiset"
         (let [r (search hevosala-oid :tuleva false)]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= {:maksunMaara nil,
                   :kuvaus {},
                   :toteutusOid ponikoulu-oid,
@@ -141,7 +141,7 @@
 
       (testing "tulevat"
         (let [r (search hevosala-oid :tuleva true)]
-          (is (= 1 (:value (:total r))))
+          (is (= 1 (:total r)))
           (is (= {:oppilaitosOid "1.2.246.562.10.000005",
                   :nimi {:fi "Helsingin yliopisto",
                          :sv "Helsingin yliopisto sv"},
