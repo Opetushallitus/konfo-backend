@@ -75,7 +75,8 @@
 (defn- bool
   [keyword constraints]
   (cond-> {}
-          (not-blank? keyword)       (assoc :should (generate-keyword-query keyword))
+          (not-blank? keyword)       (-> (assoc :should (generate-keyword-query keyword))
+                                         (assoc :minimum_should_match "90%"))
           (constraints? constraints) (assoc :filter (filters constraints))))
 
 (defn query
