@@ -72,12 +72,19 @@
   (->> ["fi" "sv" "en"]
        (map (fn [language] {:match {(->lng-keyword "hits.terms.%s" language) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}))))
 
+(defn- assoc-if [m k v p?]
+  (if p?
+    (assoc m k v)
+    m))
+
 (defn- bool
   [keyword constraints]
-  (cond-> {}
-          (not-blank? keyword)       (-> (assoc :should (generate-keyword-query keyword))
-                                         (assoc :minimum_should_match "90%"))
-          (constraints? constraints) (assoc :filter (filters constraints))))
+  (let [should? (not-blank? keyword)
+        filter? (constraints? constraints)]
+    (cond-> {}
+            should? (-> (assoc :should (generate-keyword-query keyword))
+                        (assoc-if :minimum_should_match "90%" filter?))
+            filter? (assoc :filter (filters constraints)))))
 
 (defn query
   [keyword constraints]
