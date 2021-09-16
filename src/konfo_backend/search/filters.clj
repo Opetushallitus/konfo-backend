@@ -49,11 +49,20 @@
   [filter-counts]
   (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
-        total-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)]
-    {:amm-muu (cond-> {:count total-count
-                       :alakoodit {
-                         :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count},
-                         :amm-osaamisala {:count amm-osaamisala-count}}})}))
+        total-amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)
+        vapaa-sivistystyo-opistovuosi-count (get filter-counts :vapaa-sivistystyo-opistovuosi 0)
+        vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
+        total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count vapaa-sivistystyo-muu-count)
+        telma-count (get filter-counts :telma 0)
+        tuva-count (get filter-counts :tuva 0)]
+    {:amm-muu (cond-> {:count total-amm-muu-count
+                       :alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
+                                   :amm-osaamisala {:count amm-osaamisala-count}}})
+     :tuva {:count tuva-count}
+     :telma {:count telma-count}
+     :vapaa-sivistystyo (cond-> {:count total-vapaa-sivistystyo-count
+                                 :alakoodit {:vapaa-sivistystyo-opistovuosi {:count vapaa-sivistystyo-opistovuosi-count}
+                                             :vapaa-sivistystyo-muu {:count vapaa-sivistystyo-muu-count}}})}))
 
 (defn- hakukaynnissa
   [aggs]
