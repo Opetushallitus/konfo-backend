@@ -67,10 +67,18 @@
             (valintatapa? constraints)           (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.valintatavat             (:valintatapa constraints))))
             (yhteishaku? constraints)            (conj (hakutieto-query haku-kaynnissa (->terms-query :hits.hakutiedot.yhteishakuOid            (:yhteishaku constraints)))))))
 
+(defn create-keyword-query-with-boost
+  [keyword user-lng language boost]
+  (if (= user-lng language)
+    {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12" :boost boost}
+    {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}))
+
 (defn- generate-keyword-query
-  [keyword]
+  [keyword user-lng]
   (->> ["fi" "sv" "en"]
-       (map (fn [language] {:match {(->lng-keyword "hits.terms.%s" language) {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}}}))))
+       (map (fn [language]
+              [{:match {(->lng-keyword "hits.koulutusnimi.%s" language) (create-keyword-query-with-boost keyword user-lng language 5)}}
+               {:match {(->lng-keyword "hits.tutkintonimike.%s" language) (create-keyword-query-with-boost keyword user-lng language 3)}}]))))
 
 (defn- assoc-if [m k v p?]
   (if p?
@@ -78,17 +86,17 @@
     m))
 
 (defn- bool
-  [keyword constraints]
+  [keyword constraints user-lng]
   (let [should? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            should? (-> (assoc :should (generate-keyword-query keyword))
+            should? (-> (assoc :should (generate-keyword-query keyword user-lng))
                         (assoc-if :minimum_should_match "90%" filter?))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
-  [keyword constraints]
-  {:nested {:path "hits", :query {:bool (bool keyword constraints)}}})
+  [keyword constraints user-lng]
+  {:nested {:path "hits", :query {:bool (bool keyword constraints user-lng)}}})
 
 (defn match-all-query
   []

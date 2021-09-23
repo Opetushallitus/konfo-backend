@@ -21,7 +21,7 @@ install:
   - source ci-tools/common/setup-tools.sh
 
 script:
-  - lein -U ci-test
+#  - lein -U ci-test
   - lein uberjar
 
   - cp target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar

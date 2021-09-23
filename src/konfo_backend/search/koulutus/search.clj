@@ -15,7 +15,7 @@
   [keyword lng page size sort order constraints]
   (let [query (if (match-all? keyword constraints)
                 (match-all-query)
-                (query keyword constraints))
+                (query keyword constraints lng))
         aggs (hakutulos-aggregations constraints)]
     (log-pretty query)
     (log-pretty aggs)
