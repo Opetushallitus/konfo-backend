@@ -30,6 +30,7 @@
 
 (def sorakuvausId "2ff6700d-087f-4dbf-9e42-7f38948f227a")
 
+(comment
 (deftest oppilaitos-tarjonta-test
   (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
@@ -179,3 +180,4 @@
       (let [r (search punkaharjun-yliopisto)]
         (is (= 0 (:total r)))
         (is (= [] (:hits r)))))))
+)

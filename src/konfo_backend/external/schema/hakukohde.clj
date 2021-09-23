@@ -233,6 +233,7 @@
 
 (s/defschema Hakukohde
   {:oid                                            HakukohdeOid
+   (s/->OptionalKey :externalId)                   s/Str
    :toteutusOid                                    ToteutusOid
    :hakuOid                                        HakuOid
    :tila                                           Julkaistu

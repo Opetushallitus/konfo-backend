@@ -37,6 +37,7 @@
                                                            {:match {:hits.tutkintotyyppi.en {:query "hauska", :operator "and", :fuzziness "AUTO:8,12"}}}]
                                                   :filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:hits.sijainti.keyword "kunta_091"}}]}}}}))))
+                                                                                                                                                                                                            {:range {:hits.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}}}]}}}})))))
 
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"
