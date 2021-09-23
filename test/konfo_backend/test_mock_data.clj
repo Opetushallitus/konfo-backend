@@ -94,7 +94,7 @@
 
 (defonce amm-tutkinnon-osa-toteutus-metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
 
-(defonce lukio-toteutus-metatieto (.lukioToteutusMedatada KoutaFixtureTool))
+(defonce lukio-toteutus-metatieto (.lukioToteutusMetadata KoutaFixtureTool))
 
 (defn mock-get-koodisto
   [x]
