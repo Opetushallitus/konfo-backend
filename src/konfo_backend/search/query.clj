@@ -90,7 +90,7 @@
   (let [should? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            should? (-> (assoc :should (generate-keyword-query keyword user-lng))
+            should? (-> (assoc :should (vec (flatten (generate-keyword-query keyword user-lng))))
                         (assoc-if :minimum_should_match "90%" filter?))
             filter? (assoc :filter (filters constraints)))))
 
