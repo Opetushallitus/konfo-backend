@@ -51,11 +51,13 @@
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)
         tuva-count (get filter-counts :tuva 0)
+        telma-count (get filter-counts :telma 0)
         ]
     {:amm-muu (cond-> {:count amm-muu-count
                        :alakoodit {
                          :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count},
-                         :amm-osaamisala {:count amm-osaamisala-count}}})
+                         :amm-osaamisala {:count amm-osaamisala-count}
+                         :telma {:count telma-count}}})
      :tuva {:count tuva-count}
      }))
 
