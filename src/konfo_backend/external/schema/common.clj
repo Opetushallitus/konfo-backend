@@ -1,7 +1,7 @@
 (ns konfo-backend.external.schema.common
   (:require
-    [schema.core :as s]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+   [schema.core :as s]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def kieli-schema
   "|    Kieli:
@@ -16,7 +16,7 @@
 (def Kielistetty
   {(s/->OptionalKey :fi) s/Str
    (s/->OptionalKey :sv) s/Str
-   (s/->OptionalKey :en) s/Str })
+   (s/->OptionalKey :en) s/Str})
 
 (def kuvaus-schema
   "|    Kuvaus:
@@ -95,12 +95,16 @@
 
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
-(def Koulutustyyppi (s/enum "amm" "yo" "amk" "lk" "muu"))
+(def Koulutustyyppi (s/enum "amm" "yo" "amk" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu"))
 (def Amm            (s/eq "amm"))
 (def Yo             (s/eq "yo"))
 (def Amk            (s/eq "amk"))
 (def Lk             (s/eq "lk"))
-(def Muu            (s/eq "muu"))
+(def Tuva           (s/eq "tuva"))
+(def Telma           (s/eq "telma"))
+(def VapaaSivistystyoOpistovuosi  (s/eq "vapaa-sivistystyo-opistovuosi"))
+(def VapaaSivistystyoMuu          (s/eq "vapaa-sivistystyo-muu"))
+(def Muu                          (s/eq "muu"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 

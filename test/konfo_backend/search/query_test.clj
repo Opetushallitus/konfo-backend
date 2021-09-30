@@ -78,4 +78,7 @@
                                                                                                      :amk-alempi {:term {:hits.koulutustyypit.keyword "amk-alempi"}},
                                                                                                      :kandi-ja-maisteri {:term {:hits.koulutustyypit.keyword "kandi-ja-maisteri"}},
                                                                                                      :yo {:term {:hits.koulutustyypit.keyword "yo"}},
-                                                                                                     :amm {:term {:hits.koulutustyypit.keyword "amm"}}}}, :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+                                                                                                     :amm {:term {:hits.koulutustyypit.keyword "amm"}}
+                                                                                                     :tuva {:term {:hits.koulutustyypit.keyword "tuva"}}
+                                                                                                     :telma {:term {:hits.koulutustyypit.keyword "telma"}}
+                                                                                                     }}, :aggs {:real_hits {:reverse_nested {}}}}}}})))))
