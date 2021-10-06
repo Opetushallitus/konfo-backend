@@ -258,6 +258,7 @@
    :liitteet                                       [Liite]
    :valintakokeet                                  [Valintakoe]
    :kielivalinta                                   [Kieli]
+   :jarjestaaUrheilijanAmmKoulutusta               s/Bool
    (s/->OptionalKey :valintaperustekuvaus)         Valintaperustekuvaus
    (s/->OptionalKey :metadata)                     HakukohdeMetadata
    :organisaatio                                   Organisaatio

@@ -133,10 +133,12 @@
                                       {:koodiUri "tutkintonimikkeet_02",
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
+                  :tuvaErityisopetuksena nil,
+                  :ammatillinenPerustutkintoErityisopetuksena false,
                   :oppilaitosTila nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
-                  :koulutustyyppi "yo"
+                  :koulutustyyppi "amm"
                   :hakukaynnissa true} (first (:hits r))))))
 
       (testing "tulevat"
