@@ -5,11 +5,6 @@
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (deftest oppilaitos-query-test
-  (testing "Query with keyword"
-    (is (= (query "Hauska" {})
-           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.sv {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.en {:query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]}}}})))
 
   (testing "Query with filters"
     (is (= (query nil {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
@@ -22,15 +17,7 @@
       (is (= (query nil {:hakukaynnissa true})
              {:nested {:path "hits", :query {:bool {:filter [{:nested {:path "hits.hakutiedot", :query {:bool {:filter {:nested {:path "hits.hakutiedot.hakuajat", :query {:bool {:filter [{:range {:hits.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "hits.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                                                                                            {:range {:hits.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}}}]}}}}))))
-
-  (testing "Query with keyword and filters"
-    (is (= (query "Hauska" {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]})
-           {:nested {:path "hits", :query {:bool {:should [{:match {:hits.terms.fi { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.sv { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}
-                                                           {:match {:hits.terms.en { :query "hauska" :operator "and" :fuzziness "AUTO:8,12"}}}]
-                                                  :filter [{:terms {:hits.koulutustyypit.keyword ["amm", "kk"]}}
-                                                           {:term {:hits.sijainti.keyword "kunta_091"}}]}}}}))))
+                                                                                                                                                                                                            {:range {:hits.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}}}]}}}})))))
 
 (deftest oppilaitos-aggregations-test
   (testing "Aggregations"

@@ -1,5 +1,5 @@
 {
-    :elastic-url "{{konfo_backend_elastic_url}}"
+    :elastic-url "{{konfo_backend_elastic7_url}}"
     :elastic-timeout 120000
 
     :contentful-space-id "{{konfo_contentful_space_id}}"

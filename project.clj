@@ -2,7 +2,7 @@
 (cemerick.pomegranate.aether/register-wagon-factory!
   "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
 
-(defproject konfo-backend "0.1.1-SNAPSHOT"
+(defproject konfo-backend "0.2.0-SNAPSHOT"
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
@@ -38,33 +38,37 @@
                  [com.contentful.java/java-sdk "10.4.1"]
                  [commons-codec/commons-codec "1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.3.2-SNAPSHOT"]]
+                 [oph/clj-elasticsearch "0.3.3-SNAPSHOT"]]
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
-  :plugins [[lein-environ "1.1.0"]]
+  :plugins [[lein-environ "1.1.0"]
+            [com.jakemccrary/lein-test-refresh "0.24.1"]]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "8.0.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
-                                   [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
+                                   [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-common "2.5.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
+                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
-                                 (utils/global-docker-elastic-fixture)]}
+                                 (require '[clj-elasticsearch.elastic-utils :as eutils])
+                                 (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
+                                   (do
+                                     (prn "Using Elastic from port " elasticPort)
+                                     (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
+                                   (utils/global-docker-elastic-fixture))]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "8.0.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.6.0-SNAPSHOT" :classifier "tests"]
-                                      [fi.oph.kouta/kouta-common "2.2.0-SNAPSHOT" :classifier "tests"]
+                                      [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-common "2.5.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.2.8-SNAPSHOT"]]
-                       :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
-                                    (utils/global-docker-elastic-fixture)]
+                                      [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
@@ -74,4 +78,5 @@
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
             "ci-test" ["with-profile" "+ci-test" "test"]
+            "test-reload" ["with-profile" "+ci-test" "test-refresh"]
             "cloverage" ["with-profile" "+test" "cloverage"]})
