@@ -49,11 +49,15 @@
   [filter-counts]
   (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
-        total-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)]
-    {:amm-muu (cond-> {:count total-count
+        amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count)
+        tuva-count (get filter-counts :tuva 0)
+        ]
+    {:amm-muu (cond-> {:count amm-muu-count
                        :alakoodit {
                          :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count},
-                         :amm-osaamisala {:count amm-osaamisala-count}}})}))
+                         :amm-osaamisala {:count amm-osaamisala-count}}})
+     :tuva {:count tuva-count}
+     }))
 
 (defn- hakukaynnissa
   [aggs]
