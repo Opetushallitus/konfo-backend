@@ -54,17 +54,17 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search toteutukset"
       (let [r (search :keyword "hevonen" :koulutustyyppi "amm")]
-        (is (= 2 (:value (:total r))))
+        (is (= 2 (:total r)))
         (is (= [koulutusOid1 koulutusOid2] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid2 toteutusOid3] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Search toteutus"
       (let [r (search :keyword "koira" :koulutustyyppi "amm")]
-        (is (= 1 (:value (:total r))))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid1] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid2] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Get correct result"
       (let [r (search :keyword "kissa" :koulutustyyppi "amm")]
-        (is (= r {:total {:value 1 :relation "eq"},
+        (is (= r {:total 1,
                   :hits [{:opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
                                                     :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                            :sv "opintojenlaajuusyksikko_6 nimi sv"}},
@@ -92,24 +92,24 @@
                            :koulutustyyppi "amm"}]}))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan")]
-        (is (= 2 (:value (:total r))))
+        (is (= 2 (:total r)))
         (is (= [koulutusOid2 koulutusOid4] (vec (map :oid (:hits r)))))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan" :koulutustyyppi "amm")]
-        (is (= 1 (:value (:total r))))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid2] (vec (map :oid (:hits r)))))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan" :koulutustyyppi "yo")]
-        (is (= 1 (:value (:total r))))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid4] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid5] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevonen" :koulutustyyppi "amk")]
-        (is (= 1 (:value (:total r))))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid5] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid6] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Nothing found"
-      (is (= {:total {:value 0 :relation "eq"},
+      (is (= {:total 0,
               :hits []} (search :keyword "mummo"))))
     (testing "Erroneous schema"
     ( with-redefs-fn {#'konfo-backend.search.response/parse-external (fn [response] {:hits {:hits {:huuhaa "hiihaa"}}})}

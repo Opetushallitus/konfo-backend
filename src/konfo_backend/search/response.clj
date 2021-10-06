@@ -51,7 +51,7 @@
 (defn parse
   [response]
   (log-pretty response)
-  {:total   (get-in response [:hits :total])
+  {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
    :filters (filter-counts response)})
 
@@ -76,7 +76,7 @@
 (defn parse-external
   [response]
   (log-pretty response)
-  {:total   (get-in response [:hits :total])
+  {:total   (get-in response [:hits :total :value])
    :hits    (external-hits response)})
 
 (defn- inner-hits-with-kuvaukset
@@ -98,7 +98,7 @@
    (parse-inner-hits response filter-counts))
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)
-         total-inner-hits (:total inner-hits)]
+         total-inner-hits (:value (:total inner-hits))]
      {:total (or total-inner-hits 0)
       :hits (inner-hits-with-kuvaukset inner-hits)
       :filters (filter-generator response)})))
