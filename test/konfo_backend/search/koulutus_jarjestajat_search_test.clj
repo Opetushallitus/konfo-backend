@@ -133,7 +133,7 @@
                                       {:koodiUri "tutkintonimikkeet_02",
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
-                  :tuvaErityisopetuksena nil,
+                  :jarjestetaanErityisopetuksena nil,
                   :ammatillinenPerustutkintoErityisopetuksena false,
                   :oppilaitosTila nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
