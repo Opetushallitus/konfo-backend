@@ -122,6 +122,12 @@
     (-> coll (remove-element "amm-muu") (conj "amm-tutkinnon-osa" "amm-osaamisala"))
     coll))
 
+(defn vapaa-sivistystyo->alatyypit
+  [coll]
+  (if (contains-element? coll "vapaa-sivistystyo")
+    (-> coll (remove-element "vapaa-sivistystyo") (conj "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu"))
+    coll))
+
 (defn ->koodi-with-version-wildcard
   [koodi]
   (str koodi "#*"))
