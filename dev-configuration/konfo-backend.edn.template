@@ -10,4 +10,17 @@
                             :toteutus_organisaationimi 1
                             :language-default 1
                             :default 0.1}
+
+    :contentful-update-username "oph"
+    :contentful-update-password "oph"
+
+    :contentful-space-id "space-id"
+    :contentful-access-token "access-token"
+    :contentful-preview-token "preview-token"
+
+    :dev true
+    :konfo-host "http://localhost"
+
+    :ataru-hakija-url "http://localhost:8351/hakemus/api"
+    :caller-id "1.2.246.562.10.00000000001.konfo.backend"
 }

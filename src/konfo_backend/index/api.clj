@@ -11,7 +11,8 @@
     [compojure.api.core :as c :refer [GET POST]]
     [ring.util.http-response :refer :all]
     [clj-log.access-log :refer [with-access-logging]]
-    [konfo-backend.tools :refer [comma-separated-string->vec]]))
+    [konfo-backend.tools :refer [comma-separated-string->vec]]
+    [konfo-backend.ataru.service :as ataru]))
 
 (def paths
   "|  /translation/{lng}:
@@ -151,6 +152,33 @@
    |            application/json:
    |              schema:
    |                type: json
+   |        '404':
+   |          description: Not found
+   |  /hakukohde/{oid}/demo:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae tieto onko hakukohteen hakulomakkeen demo käytössä
+   |      description: Hae tieto hakukohteen hakulomakkeen demosta annetulla oidilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: oid
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Hakukohteen yksilöivä oid
+   |          example: 1.2.246.562.20.00000000000000000001
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: object
+   |                properties:
+   |                  demoAllowed:
+   |                    type: boolean
+   |                    description: Onko hakukohteen hakulomakkeen demo käytössä?
    |        '404':
    |          description: Not found
    |  /valintaperuste/{id}:
@@ -402,6 +430,11 @@
          (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                         (ok result)
                                         (not-found "Not found"))))
+
+    (GET "/hakukohde/:oid/demo" [:as request]
+      :path-params [oid :- String]
+      (with-access-logging request
+        (ok {"demoAllowed" (ataru/demo-allowed-for-hakukohde? oid)})))
 
     (GET "/valintaperuste/:id" [:as request]
          :query-params [{draft :- Boolean false}]

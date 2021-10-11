@@ -31,4 +31,7 @@
                             :toteutus_organisaationimi {{konfo_backend_search_terms_boost_toteutus_organisaationimi}}
                             :language-default {{konfo_backend_search_terms_boost_language_default}}
                             :default {{konfo_backend_search_terms_boost_default}}}
+
+    :ataru-hakija-url "{{ataru_hakija_url}}"
+    :caller-id "{{konfo_backend_caller_id}}"
 }
