@@ -78,12 +78,12 @@
   [keyword user-lng]
   (for [language ["fi" "sv" "en"]
         search-params [{:term "koulutusnimi" :boost 7}
-                       {:term "toteutusnimi" :boost 6}
+                       {:term "toteutusNimi" :boost 6}
+                       {:term "asiasanat" :boost 5}
+                       {:term "tutkintonimikkeet" :boost 4}
+                       {:term "ammattinimikkeet" :boost 3}
                        {:term "koulutus_organisaationimi" :boost 2}
-                       {:term "toteutus_organisaationimi" :boost 1}
-                       {:term "asiasanat" :boost 3}
-                       {:term "tutkintonimikkeet" :boost 5}
-                       {:term "ammattinimikkeet" :boost 4}]]
+                       {:term "toteutus_organisaationimi" :boost 1}]]
     {:match {(clojure.core/keyword (str "search_terms." (:term search-params) "." language))
              (create-lang-query keyword user-lng language (:boost search-params))}}))
 

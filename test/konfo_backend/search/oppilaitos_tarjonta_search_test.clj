@@ -30,7 +30,6 @@
 
 (def sorakuvausId "2ff6700d-087f-4dbf-9e42-7f38948f227a")
 
-(comment
 (deftest oppilaitos-tarjonta-test
   (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
@@ -67,7 +66,7 @@
 
     (testing "Filtering tarjonta"
       (testing "Can filter by sijainti"
-        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_220")]
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_091")]
           (is (= 2 (:total r)))
           (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))
           (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))))
@@ -121,25 +120,29 @@
       (testing "nykyinen"
         (let [r (search helsingin-yliopisto :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:maksunMaara nil,
+          (is (= {:oppilaitosOid "1.2.246.562.10.000005"
+                  ;:maksunMaara nil,
                   :kuvaus {},
                   :koulutusOid autoala-oid
                   :toteutusOid audikoulu-oid,
                   :opetusajat [],
                   :nimi {:fi "Audikoulutus fi",
                          :sv "Audikoulutus sv"},
-                  :maksullisuustyyppi nil,
+                  ;:maksullisuustyyppi nil,
                   :kunnat [],
                   :tutkintonimikkeet [],
                   :opetuskielet ["oppilaitoksenopetuskieli_02"],
                   :koulutustyyppi "amm",
                   :kuva "https://example.com/kuva.jpg"
-                  :hakukaynnissa nil} (first (:hits r))))))
+                  :hakukaynnissa nil
+                  :toteutusNimi {:fi "Audikoulutus fi",
+                                 :sv "Audikoulutus sv"}} (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search helsingin-yliopisto :tuleva true)]
           (is (= 1 (:total r)))
-          (is (= {:koulutustyypit [{:koodiUri "koulutustyyppi_01",
+          (is (= {:oppilaitosOid "1.2.246.562.10.000005"
+                  :koulutustyypit [{:koodiUri "koulutustyyppi_01",
                                     :nimi {:fi "koulutustyyppi_01 nimi fi",
                                            :sv "koulutustyyppi_01 nimi sv"}},
                                    {:koodiUri "koulutustyyppi_02",
@@ -178,4 +181,3 @@
       (let [r (search punkaharjun-yliopisto)]
         (is (= 0 (:total r)))
         (is (= [] (:hits r)))))))
-)

@@ -51,9 +51,6 @@
 
 (defn parse
   [response]
-  (println "response start")
-  (clojure.pprint/pprint response)
-  (println "response start")
   (log-pretty response)
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
@@ -74,7 +71,7 @@
     (fn [hit]
       (-> (:_source hit)
           (rename-key :eperuste :ePerusteId)
-          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :hits :hits :hits]))))))
+          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :search_terms :hits :hits]))))))
     (get-in response [:hits :hits])))
 
 (defn parse-external
@@ -113,7 +110,4 @@
 
 (defn parse-inner-hits-for-tarjoajat
   [response]
-  (println "response start")
-(clojure.pprint/pprint response)
-  (println "response start")
   (parse-inner-hits response filters-for-tarjoajat))

@@ -116,14 +116,15 @@
       (testing "nykyiset"
         (let [r (search hevosala-oid :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:maksunMaara nil,
+          (is (= {:koulutusOid "1.2.246.562.13.000002"
+                  ;:maksunMaara nil,
                   :kuvaus {},
                   :toteutusOid ponikoulu-oid,
                   :opetusajat [],
                   :nimi {:fi "Punkaharjun yliopisto",
                          :sv "Punkaharjun yliopisto sv"},
                   :oppilaitosOid "1.2.246.562.10.000002",
-                  :maksullisuustyyppi nil,
+                  ;:maksullisuustyyppi nil,
                   :kunnat [{:koodiUri "kunta_220",
                             :nimi {:fi "kunta_220 nimi fi",
                                    :sv "kunta_220 nimi sv"}}],
@@ -133,9 +134,9 @@
                                       {:koodiUri "tutkintonimikkeet_02",
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
-                  :jarjestetaanErityisopetuksena nil,
+                  ;:jarjestetaanErityisopetuksena nil,
                   :ammatillinenPerustutkintoErityisopetuksena false,
-                  :oppilaitosTila nil,
+                  ;:oppilaitosTila nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "amm"
@@ -144,17 +145,19 @@
       (testing "tulevat"
         (let [r (search hevosala-oid :tuleva true)]
           (is (= 1 (:total r)))
-          (is (= {:oppilaitosOid "1.2.246.562.10.000005",
+          (is (= {:koulutusOid "1.2.246.562.13.000002"
+                  :oppilaitosOid "1.2.246.562.10.000005",
                   :nimi {:fi "Helsingin yliopisto",
                          :sv "Helsingin yliopisto sv"},
-                  :oppilaitosTila nil,
+                  ;:oppilaitosTila nil,
                   :koulutustyyppi "yo",
-                  :opetuskielet [],
+                  ;:opetuskielet [],
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
                   :kuvaus {}
-                  :hakukaynnissa nil} (first (:hits r)))))))))
+                  :hakukaynnissa nil
+                  } (first (:hits r)))))))))
 
 (deftest koulutus-jarjestajat-test-no-jarjestajia
   (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat "" :organisaatio "1.2.246.562.10.00000000001" :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
