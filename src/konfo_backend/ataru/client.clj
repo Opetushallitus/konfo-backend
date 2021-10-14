@@ -11,8 +11,7 @@
   (let [url          (str base-url "/hakukohde/" hakukohde-oid)
         query-params {"role" "hakija"}
         headers      {"Caller-Id" caller-id}
-        response     (http/get url {:query-params query-params :headers headers :as :json :throw-exceptions false}
-                       )]
+        response     (http/get url {:query-params query-params :headers headers :as :json :throw-exceptions false})]
     (if (= 200 (:status response))
       (:body response)
       (throw (ex-info
