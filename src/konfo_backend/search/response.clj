@@ -48,8 +48,12 @@
   [response]
   (generate-filter-counts-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
 
+
 (defn parse
   [response]
+  (println "response start")
+  (clojure.pprint/pprint response)
+  (println "response start")
   (log-pretty response)
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
@@ -97,7 +101,7 @@
   ([response]
    (parse-inner-hits response filter-counts))
   ([response filter-generator]
-   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)
+   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
          total-inner-hits (:value (:total inner-hits))]
      {:total (or total-inner-hits 0)
       :hits (inner-hits-with-kuvaukset inner-hits)
@@ -109,4 +113,7 @@
 
 (defn parse-inner-hits-for-tarjoajat
   [response]
+  (println "response start")
+(clojure.pprint/pprint response)
+  (println "response start")
   (parse-inner-hits response filters-for-tarjoajat))
