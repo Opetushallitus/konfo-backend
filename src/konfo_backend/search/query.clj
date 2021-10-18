@@ -6,7 +6,8 @@
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format half-year-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format half-year-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec]]
+    [konfo-backend.config :refer [config]]))
 
 (defn- ->terms-query
   [key coll]
@@ -77,13 +78,13 @@
 (defn- generate-keyword-query
   [keyword user-lng]
   (for [language ["fi" "sv" "en"]
-        search-params [{:term "koulutusnimi" :boost 7}
-                       {:term "toteutusNimi" :boost 6}
-                       {:term "asiasanat" :boost 5}
-                       {:term "tutkintonimikkeet" :boost 4}
-                       {:term "ammattinimikkeet" :boost 3}
-                       {:term "koulutus_organisaationimi" :boost 2}
-                       {:term "toteutus_organisaationimi" :boost 1}]]
+        search-params [{:term "koulutusnimi" :boost (get-in config [:search-terms-boost :koulutusnimi])}
+                       {:term "toteutusNimi" :boost (get-in config [:search-terms-boost :toteutusNimi])}
+                       {:term "asiasanat" :boost (get-in config [:search-terms-boost :asiasanat])}
+                       {:term "tutkintonimikkeet" :boost (get-in config [:search-terms-boost :tutkintonimikkeet])}
+                       {:term "ammattinimikkeet" :boost (get-in config [:search-terms-boost :ammattinimikkeet])}
+                       {:term "koulutus_organisaationimi" :boost (get-in config [:search-terms-boost :koulutus_organisaationimi])}
+                       {:term "toteutus_organisaationimi" :boost (get-in config [:search-terms-boost :toteutus_organisaationimi])}]]
     {:match {(clojure.core/keyword (str "search_terms." (:term search-params) "." language))
              (create-lang-query keyword user-lng language (:boost search-params))}}))
 

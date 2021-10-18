@@ -21,4 +21,12 @@
             :credentials-profile nil
             :feedback-queue      "{{palaute_queue_url}}"
             :bucket-name         "{{konfo_content_s3_bucket}}"}
+
+    :search-terms-boost    {:koulutusnimi {{konfo_backend_search_terms_boost_koulutusnimi}}
+                            :toteutusNimi {{konfo_backend_search_terms_boost_toteutusnimi}}
+                            :asiasanat {{konfo_backend_search_terms_boost_asiasanat}}
+                            :tutkintonimikkeet {{konfo_backend_search_terms_boost_tutkintonimikkeet}}
+                            :ammattinimikkeet {{konfo_backend_search_terms_boost_ammattinimikkeet}}
+                            :koulutus_organisaationimi {{konfo_backend_search_terms_boost_koulutus_organisaationimi}}
+                            :toteutus_organisaationimi {{konfo_backend_search_terms_boost_toteutus_organisaationimi}}}
 }
