@@ -209,7 +209,7 @@
                                          :sv "kunta_618 nimi sv"}},
                                  {:koodiUri "kunta_091",
                                   :nimi {:fi "kunta_091 nimi fi",
-                                         :sv "kunta_091 nimi sv"}} ],
+                                         :sv "kunta_091 nimi sv"}}],
                   :oid "1.2.246.562.10.000002"} (dissoc (first (:hits r)) :_score))))))))
 
 (deftest oppilaitos-paging-and-sorting-test
