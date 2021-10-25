@@ -99,7 +99,7 @@
         filter? (constraints? constraints)]
     (cond-> {}
             should? (-> (assoc :should (generate-keyword-query keyword user-lng))
-                        (assoc-if :minimum_should_match "90%" filter?))
+                        (assoc-if :minimum_should_match "9%" filter?))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
