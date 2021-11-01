@@ -48,6 +48,7 @@
   [response]
   (generate-filter-counts-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response)))
 
+
 (defn parse
   [response]
   (log-pretty response)
@@ -70,7 +71,7 @@
     (fn [hit]
       (-> (:_source hit)
           (rename-key :eperuste :ePerusteId)
-          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :hits :hits :hits]))))))
+          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :search_terms :hits :hits]))))))
     (get-in response [:hits :hits])))
 
 (defn parse-external
@@ -97,7 +98,7 @@
   ([response]
    (parse-inner-hits response filter-counts))
   ([response filter-generator]
-   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :hits :hits)
+   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
          total-inner-hits (:value (:total inner-hits))]
      {:total (or total-inner-hits 0)
       :hits (inner-hits-with-kuvaukset inner-hits)

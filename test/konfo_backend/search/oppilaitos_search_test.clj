@@ -31,7 +31,6 @@
 (def yo-sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f3333")
 (def sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f227a")
 
-(comment
 (deftest oppilaitos-search-test
 
   (fixture/add-koulutus-mock koulutusOid1 :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :metadata koulutus-metatieto :sorakuvausId sorakuvaus-id)
@@ -208,9 +207,9 @@
                   :paikkakunnat [{:koodiUri "kunta_618",
                                   :nimi {:fi "kunta_618 nimi fi",
                                          :sv "kunta_618 nimi sv"}},
-                                 {:koodiUri "kunta_220",
-                                  :nimi {:fi "kunta_220 nimi fi",
-                                         :sv "kunta_220 nimi sv"}} ],
+                                 {:koodiUri "kunta_091",
+                                  :nimi {:fi "kunta_091 nimi fi",
+                                         :sv "kunta_091 nimi sv"}}],
                   :oid "1.2.246.562.10.000002"} (dissoc (first (:hits r)) :_score))))))))
 
 (deftest oppilaitos-paging-and-sorting-test
@@ -273,28 +272,28 @@
       (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääketiede"))))
 
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
-      (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20lääkäriksi"))))
+             (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20lääkäriksi"))))
 
     (comment testing "musiikin opiskelu <-> muusikon koulutus"
-      (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikin%20opiskelu"))))
+             (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikin%20opiskelu"))))
 
     (testing "humanismi <-> humanistinen"
       (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanismi"))))
 
     (comment testing "haluan opiskella psykologiaa <-> psykologi"
-      (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20psykologiaa"))))
+             (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20psykologiaa"))))
 
     (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [oppilaitosOid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaaliala"))))
+             (is (= [oppilaitosOid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaaliala"))))
 
     (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
       (is (= [oppilaitosOid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittelytiede"))))
 
     (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
-             (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikkioppilaitos"))))
+      (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikkioppilaitos"))))
 
     (comment testing "automaatiikka <-> automaatioinsinööri" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-      (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatiikka"))))
+             (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatiikka"))))
 
     (testing "auto"
       (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
@@ -303,4 +302,4 @@
       (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))
 
     (comment testing "insinööri <-> automaatioinsinööri"
-      (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "insinööri")))))))
+             (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "insinööri"))))))

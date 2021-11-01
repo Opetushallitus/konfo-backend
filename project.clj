@@ -43,13 +43,14 @@
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
   :plugins [[lein-environ "1.1.0"]
+            [lein-auto "0.1.3"]
             [com.jakemccrary/lein-test-refresh "0.24.1"]]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                   [kouta-indeksoija-service "9.1.0-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.5.0-SNAPSHOT" :classifier "tests"]
@@ -63,7 +64,7 @@
                                      (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
                                    (utils/global-docker-elastic-fixture))]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "9.0.1-SNAPSHOT"]
+                                      [kouta-indeksoija-service "9.1.0-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.16.0-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "2.5.0-SNAPSHOT" :classifier "tests"]
@@ -78,5 +79,6 @@
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
             "ci-test" ["with-profile" "+ci-test" "test"]
+            "auto-test" ["with-profile" "+ci-test" "auto" "test"]
             "test-reload" ["with-profile" "+ci-test" "test-refresh"]
             "cloverage" ["with-profile" "+test" "cloverage"]})

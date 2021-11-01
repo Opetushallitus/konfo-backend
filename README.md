@@ -40,6 +40,13 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
 
  :dev true
  :konfo-host "http://localhost"
+ :search-terms-boost    {:koulutusnimi 7
+                         :toteutusNimi 6
+                         :asiasanat 5
+                         :tutkintonimikkeet 4
+                         :ammattinimikkeet 3
+                         :koulutus_organisaationimi 2
+                         :toteutus_organisaationimi 1}
  }
 ```
 
@@ -81,9 +88,9 @@ elasticia vasten SSH-porttiohjauksella.
 
 SSH-porttiohjaus onnistuu seuraavilla komennoilla:
 
-- ssh -N -L 9200:konfo.es.untuvaopintopolku.fi:80 testityy@bastion.untuvaopintopolku.fi
-- ssh -N -L 9200:konfo.es.hahtuvaopintopolku.fi:80 testityy@bastion.hahtuvaopintopolku.fi
-- ssh -N -L 9200:konfo.es.testiopintopolku.fi:80 testityy@bastion.testiopintopolku.fi
+- ssh -N -L 9200:konfoes7.es.untuvaopintopolku.fi:80 testityy@bastion.untuvaopintopolku.fi
+- ssh -N -L 9200:konfoes7.es.hahtuvaopintopolku.fi:80 testityy@bastion.hahtuvaopintopolku.fi
+- ssh -N -L 9200:konfoes7.es.testiopintopolku.fi:80 testityy@bastion.testiopintopolku.fi
 
 Missä bastionin edessä oleva käyttäjätunnus muodostuu AWS IAM-tunnuksesi kahdeksasta ensimmäisestä kirjaimesta.
 Esim. `testi.tyyppi@firma.com`: `testityy`
