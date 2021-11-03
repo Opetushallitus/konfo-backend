@@ -5,7 +5,10 @@
     [konfo-backend.util.urls :refer [resolve-url]]
     [konfo-backend.sitemap.elastic-client :as e]
     [clj-time.core :as time]
+    [clojure.core.memoize :as memo]
     [clj-time.format :as f]))
+
+(defonce cache-ttl (* 1000 60 60 3)) ;3 tunnin cache
 
 (defonce sitemap-xml-ins "http://www.sitemaps.org/schemas/sitemap/0.9")
 
@@ -53,14 +56,6 @@
         json (get->json-body url)]
     (map #(->url (->contentful-sivu-link (get % :slug) sivut-linkki)) json)))
 
-(defn get-sivut-urlset
-  []
-  (let [urls (flatten (map #(get-sivut-urls
-                              (str "konfo-content.prod.sivut." %)
-                              (format contentful-page-url-template %))
-                           ["fi" "sv" "en"]))]
-    (->urlset urls)))
-
 (defn- ->urls
   [oid langs url-template]
   (map #(->url (format url-template (name %) oid)) langs))
@@ -74,15 +69,38 @@
   []
   (entities->urlset (e/get-koulutus-entities) koulutus-url-template))
 
+(def get-koulutus-urlset-with-cache
+  (memo/ttl get-koulutus-urlset {} :ttl/threshold cache-ttl))
+
 (defn get-toteutus-urlset
   []
   (entities->urlset (e/get-toteutus-entities) toteutus-url-template))
+
+(def get-toteutus-urlset-with-cache
+  (memo/ttl get-toteutus-urlset {} :ttl/threshold cache-ttl))
 
 (defn get-hakukohde-urlset
   []
   (entities->urlset (e/get-hakukohde-with-valintaperusteet-entities) hakukohde-url-template))
 
+(def get-hakukohde-urlset-with-cache
+  (memo/ttl get-hakukohde-urlset {} :ttl/threshold cache-ttl))
+
+(defn get-sivut-urlset
+  []
+  (let [urls (flatten (map #(get-sivut-urls
+                              (str "konfo-content.prod.sivut." %)
+                              (format contentful-page-url-template %))
+                           ["fi" "sv" "en"]))]
+    (->urlset urls)))
+
+(def get-sivut-urlset-with-cache
+  (memo/ttl get-sivut-urlset {} :ttl/threshold cache-ttl))
+
 (defn get-sitemap
   []
   (->sitemap-index (map #(->sitemap %) sitemap-urls)))
+
+(def get-sitemap-with-cache
+  (memo/ttl get-sitemap {} :ttl/threshold cache-ttl))
 

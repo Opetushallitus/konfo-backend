@@ -78,34 +78,34 @@
   (context "/sitemap" []
            (GET "/sitemap.xml" [:as request]
                 (with-access-logging request
-                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-sitemap)))
+                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-sitemap-with-cache)))
                                                     (resp/status 200)
                                                     (resp/header "Content-type" "application/xml"))]
                                        resp)))
 
            (GET "/sivut-sitemap.xml" [:as request]
                 (with-access-logging request
-                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-sivut-urlset)))
+                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-sivut-urlset-with-cache)))
                                                     (resp/status 200)
                                                     (resp/header "Content-type" "application/xml"))]
                                        resp)))
            (GET "/koulutus-sitemap.xml" [:as request]
                 (with-access-logging request
-                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-koulutus-urlset)))
+                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-koulutus-urlset-with-cache)))
                                                     (resp/status 200)
                                                     (resp/header "Content-type" "application/xml"))]
                                        resp)))
 
            (GET "/toteutus-sitemap.xml" [:as request]
                 (with-access-logging request
-                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-toteutus-urlset)))
+                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-toteutus-urlset-with-cache)))
                                                     (resp/status 200)
                                                     (resp/header "Content-type" "application/xml"))]
                                        resp)))
 
            (GET "/hakukohde-sitemap.xml" [:as request]
                 (with-access-logging request
-                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-hakukohde-urlset)))
+                                     (let [resp (-> (resp/response (xml/indent-str (sitemap/get-hakukohde-urlset-with-cache)))
                                                     (resp/status 200)
                                                     (resp/header "Content-type" "application/xml"))]
                                        resp)))))
