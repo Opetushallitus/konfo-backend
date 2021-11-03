@@ -27,6 +27,12 @@
               query-parts)
        mapper))
 
+(defn count
+  [index & query-parts]
+  (apply e/count
+         index
+         query-parts))
+
 (defn ->size
   [size]
   (if (pos? size) (if (< size 200) size 200) 0))

@@ -19,6 +19,7 @@
     [konfo-backend.search.api :as search]
     [konfo-backend.palaute.api :as palaute]
     [konfo-backend.external.api :as external]
+    [konfo-backend.sitemap.api :as sitemap]
     [clojure.string]
     [ring.util.response :as resp]
     [ring.swagger.swagger-ui :as ui])
@@ -92,7 +93,8 @@
               index/paths "\n"
               search/paths "\n"
               palaute/paths "\n"
-              external/paths
+              external/paths "\n"
+              sitemap/paths
               "
               |components:
               |  schemas:
@@ -125,7 +127,8 @@
       index/routes
       search/routes
       palaute/routes
-      external/routes)))
+      external/routes
+      sitemap/routes)))
 
 (defn wrap-exception-handling
   [handler]

@@ -38,7 +38,9 @@
                  [com.contentful.java/java-sdk "10.4.1"]
                  [commons-codec/commons-codec "1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.3.3-SNAPSHOT"]]
+                 [oph/clj-elasticsearch "0.3.3-SNAPSHOT"]
+                 [mount "0.1.11"]
+                 [org.clojure/data.xml "0.0.8"]]
   :env {:name "konfo-backend"}
   :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
   :target-path "target/%s"
