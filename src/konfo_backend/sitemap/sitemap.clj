@@ -8,7 +8,7 @@
     [clojure.core.memoize :as memo]
     [clj-time.format :as f]))
 
-(defonce cache-ttl (* 1000 60 60 3)) ;3 tunnin cache
+(defonce cache-ttl (* 1000 60 60 3))                        ;3 tunnin cache
 
 (defonce sitemap-xml-ins "http://www.sitemaps.org/schemas/sitemap/0.9")
 
@@ -44,7 +44,7 @@
 (defn- ->url
   [loc]
   (xml/element :url {} [(xml/element :loc {} loc)
-                            (xml/element :lastmod {} (current-date-formatted))]))
+                        (xml/element :lastmod {} (current-date-formatted))]))
 
 (defn ->contentful-sivu-link
   [sivu-nimi sivut-linkki]

@@ -7,7 +7,7 @@
 (defn- load-config
   []
   (let [{:keys [virkailija-internal cas kouta-backend kouta-external ataru-hakija]
-         :or {virkailija-internal "" cas "" kouta-backend "" kouta-external "" ataru-hakija ""}} (:hosts env)]
+         :or   {virkailija-internal "" cas "" kouta-backend "" kouta-external "" ataru-hakija ""}} (:hosts env)]
     (reset! url-properties
             (doto (OphProperties. (into-array String ["/konfo-backend-oph.properties"]))
               ;(.addDefault "host-kouta-backend" kouta-backend)

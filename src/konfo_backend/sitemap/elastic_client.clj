@@ -8,7 +8,7 @@
 
 (defonce entities-query {:term {:tila "julkaistu"}})
 (defonce hakukohde-entities-query {:bool {:must [{:term {:tila "julkaistu"}}
-                                             {:term {:valintaperuste.tila "julkaistu"}}]}})
+                                                 {:term {:valintaperuste.tila "julkaistu"}}]}})
 
 (defn- parse-entities
   [result]
@@ -18,7 +18,7 @@
 (defn- count-docs
   [index query]
   (e/count index :query query)
-)
+  )
 
 (defn- get-entities
   [index query]

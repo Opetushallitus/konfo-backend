@@ -35,18 +35,18 @@
 
 (defn handle-error
   [url method-name response]
-  (let [status   (:status response)
-        body     (walk/keywordize-keys (cheshire/parse-stream (clojure.java.io/reader (:body response))))]
+  (let [status (:status response)
+        body (walk/keywordize-keys (cheshire/parse-stream (clojure.java.io/reader (:body response))))]
     (case status
       200 body
-      404 (do (log/warn  "Got " status " from " method-name ": " url " with body " body) nil)
-      nil (do (log/error  "Got " status " from " method-name ": " url " with error: " (if (instance? Exception response) (.getMessage response) response)) nil)
+      404 (do (log/warn "Got " status " from " method-name ": " url " with body " body) nil)
+      nil (do (log/error "Got " status " from " method-name ": " url " with error: " (if (instance? Exception response) (.getMessage response) response)) nil)
       (do (log/error "Got " status " from " method-name ": " url " with response " response) nil))))
 
 (defn ->json-body-with-error-handling
   [url method opts]
   (let [method-name (upper-case (str method))
-        f           (case method :post post :put put :get get)]
+        f (case method :post post :put put :get get)]
     (log/debug method-name " => " url)
     (let [response (f url (merge opts {:throw-exceptions false :as :stream}))]
       (handle-error url method-name response))))
