@@ -40,26 +40,3 @@
   (let [size (->size size)
         from (->from page size)]
     (apply search index mapper :from from :size size query-parts)))
-
-(defn- virkailija-alias?
-  [alias]
-  (str/ends-with? alias "-virkailija"))
-
-(defn- virkailija-alias->oppija-alias
-  [virkailija-alias]
-  (str/replace virkailija-alias "-virkailija" ""))
-
-(defn- find-virkailija-aliases
-  []
-  (->> (e/list-aliases)
-       (mapcat #(->> (val %) :aliases (map key)))
-       (map name)
-       (filter virkailija-alias?)))
-
-(defn update-aliases-on-startup
-  []
-  (doseq [virkailija-alias (find-virkailija-aliases)
-          :let [oppija-alias (virkailija-alias->oppija-alias virkailija-alias)]]
-    (if-let [new-index (e/move-read-alias-to-write-index virkailija-alias oppija-alias)]
-      (log/info oppija-alias " alias points to index" new-index "!!")
-      (log/warn "Cannot find write index for" virkailija-alias "alias!!"))))

@@ -29,8 +29,7 @@
     (intern 'clj-elasticsearch.elastic-utils 'elastic-host elastic-url)
     (throw (IllegalStateException. "Could not read elastic-url from configuration!")))
   (intern 'clj-log.access-log 'service "konfo-backend")
-  (intern 'clj-log.error-log 'test false)
-  (e/update-aliases-on-startup))
+  (intern 'clj-log.error-log 'test false))
 
 (defn- ->error-response-message
   [message type]
