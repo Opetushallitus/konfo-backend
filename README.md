@@ -118,9 +118,9 @@ Ym. tarpeen vuoksi hakutietokohtaiset rajaimet on toteutettu toimimaan yhdessä 
 
 Testiympäristöjen swaggerit löytyvät seuraavista osoitteista:
 
-- [untuva](https://beta.untuvaopintopolku.fi/konfo-backend/swagger)
-- [hahtuva](https://beta.hahtuvaopintopolku.fi/konfo-backend/swagger)
-- [QA eli pallero](https://beta.testiopintopolku.fi/konfo-backend/swagger)
+- [untuva](https://untuvaopintopolku.fi/konfo-backend/swagger)
+- [hahtuva](https://hahtuvaopintopolku.fi/konfo-backend/swagger)
+- [QA eli pallero](https://testiopintopolku.fi/konfo-backend/swagger)
 
 ### 5.2. Asennus
 
