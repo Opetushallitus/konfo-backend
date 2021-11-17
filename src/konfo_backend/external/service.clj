@@ -22,7 +22,7 @@
 (defn get-hakukohde
   [oid]
   (some-> (hakukohde/get oid false)
-          (dissoc :muokkaaja :esikatselu :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto)))
+          (dissoc :muokkaaja :esikatselu :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto :koulutustyyppikoodi)))
 
 (defn get-haku
   [oid]
@@ -56,14 +56,14 @@
 (defn- get-hakukohteet-by-toteutus-oids
   [toteutusOids]
   (when (seq toteutusOids)
-    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora"])
+    (->> (hakukohde/get-many-by-terms :toteutusOid toteutusOids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora" "koulutustyyppikoodi"])
          (filter julkaistu?)
          (vec))))
 
 (defn- get-hakukohteet
   [oids]
   (when (seq oids)
-    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora"])
+    (->> (hakukohde/get-many oids ["toteutus" "muokkaaja" "yhdenPaikanSaanto" "valintaperuste" "hakulomakeAtaruId" "esikatselu" "koulutustyypit" "sora" "koulutustyyppikoodi"])
          (filter julkaistu?)
          (vec))))
 
