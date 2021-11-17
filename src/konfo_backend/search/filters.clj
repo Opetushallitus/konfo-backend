@@ -34,7 +34,7 @@
         maisteri-count (get filter-counts :maisteri 0)
         tohtori-count (get filter-counts :tohtori 0)]
     {:lk  {:count lukio-count}
-     :amm (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_1 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
+     :amm (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts [:koulutustyyppi_26 :koulutustyyppi_4 :koulutustyyppi_11 :koulutustyyppi_12])}
                   ammatillinen-count (assoc :count ammatillinen-count))
      :amk (cond-> {:alakoodit {:amk-alempi {:count amk-alempi-count}
                                :amk-ylempi {:count amk-ylempi-count}}}
