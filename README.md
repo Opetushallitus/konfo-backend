@@ -40,13 +40,15 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
 
  :dev true
  :konfo-host "http://localhost"
- :search-terms-boost    {:koulutusnimi 7
+ :search-terms-boost    {:koulutusnimi 20
                          :toteutusNimi 6
                          :asiasanat 5
                          :tutkintonimikkeet 4
                          :ammattinimikkeet 3
                          :koulutus_organisaationimi 2
-                         :toteutus_organisaationimi 1}
+                         :toteutus_organisaationimi 1
+                         :language-default 1
+                         :default 0.1}
  }
 ```
 

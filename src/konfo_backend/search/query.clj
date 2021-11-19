@@ -68,15 +68,8 @@
             (valintatapa? constraints)           (conj (hakutieto-query haku-kaynnissa (->terms-query :search_terms.hakutiedot.valintatavat             (:valintatapa constraints))))
             (yhteishaku? constraints)            (conj (hakutieto-query haku-kaynnissa (->terms-query :search_terms.hakutiedot.yhteishakuOid            (:yhteishaku constraints)))))))
 
-(defn- create-lang-query
-  [keyword user-lng lng boost]
-  (let [query {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}]
-    (if (= user-lng lng)
-      (assoc query :boost boost)
-      query)))
-
 (defn- generate-keyword-query
-  [keyword user-lng]
+  [usr-lng suffix]
   (for [language ["fi" "sv" "en"]
         search-params [{:term "koulutusnimi" :boost (get-in config [:search-terms-boost :koulutusnimi])}
                        {:term "toteutusNimi" :boost (get-in config [:search-terms-boost :toteutusNimi])}
@@ -85,26 +78,40 @@
                        {:term "ammattinimikkeet" :boost (get-in config [:search-terms-boost :ammattinimikkeet])}
                        {:term "koulutus_organisaationimi" :boost (get-in config [:search-terms-boost :koulutus_organisaationimi])}
                        {:term "toteutus_organisaationimi" :boost (get-in config [:search-terms-boost :toteutus_organisaationimi])}]]
-    {:match {(clojure.core/keyword (str "search_terms." (:term search-params) "." language))
-             (create-lang-query keyword user-lng language (:boost search-params))}}))
+    (if (= language usr-lng)
+      (do
+        [(str "search_terms." (:term search-params) "." language "." suffix "^" (:boost search-params))
+         (str "search_terms." (:term search-params) "." language "^" (get-in config [:search-terms-boost :language-default]))])
+      (do
+        [(str "search_terms." (:term search-params) "." language "." suffix "^" (get-in config [:search-terms-boost :default]))
+         (str "search_terms." (:term search-params) "." language "^" (get-in config [:search-terms-boost :default]))]))))
 
 (defn- assoc-if [m k v p?]
   (if p?
     (assoc m k v)
     m))
 
-(defn- bool
-  [keyword constraints user-lng]
-  (let [should? (not-blank? keyword)
+(defn- flatten-fields [fields]
+  (if (coll? fields)
+    (mapcat flatten-fields fields)
+    [fields]))
+
+(defn- fields
+  [keyword constraints user-lng suffix]
+  (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            should? (-> (assoc :should (generate-keyword-query keyword user-lng))
-                        (assoc-if :minimum_should_match "9%" filter?))
-            filter? (assoc :filter (filters constraints)))))
+            fields? (-> (assoc-if :multi_match {:query       keyword,
+                                                :fields      (flatten-fields (generate-keyword-query user-lng suffix))
+                                                :tie_breaker 0.9
+                                                :operator    "and"
+                                                :type        "cross_fields"} fields?))
+            filter? (assoc :bool {:filter (filters constraints),
+                                  :minimum_should_match "9%"}))))
 
 (defn query
   [keyword constraints user-lng]
-  {:nested {:path "search_terms", :query {:bool (bool keyword constraints user-lng)}}})
+  {:nested {:path "search_terms", :query (fields keyword constraints user-lng "words")}})
 
 (defn match-all-query
   []
