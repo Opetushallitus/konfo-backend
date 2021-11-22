@@ -101,17 +101,17 @@
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            fields? (-> (assoc-if :multi_match {:query       keyword,
+            fields? (-> (assoc :must {:multi_match {:query       keyword,
                                                 :fields      (flatten-fields (generate-keyword-query user-lng suffix))
                                                 :tie_breaker 0.9
                                                 :operator    "and"
-                                                :type        "cross_fields"} fields?))
-            filter? (assoc :bool {:filter (filters constraints),
-                                  :minimum_should_match "9%"}))))
+                                                :type        "cross_fields"}})
+                        (assoc-if :minimum_should_match "9%" filter?))
+            filter? (assoc :filter (filters constraints)))))
 
 (defn query
   [keyword constraints user-lng]
-  {:nested {:path "search_terms", :query (fields keyword constraints user-lng "words")}})
+  {:nested {:path "search_terms", :query {:bool (fields keyword constraints user-lng "words")}}})
 
 (defn match-all-query
   []
@@ -159,11 +159,14 @@
 
 (defn external-query
   [keyword lng constraints]
-  {:nested {:path       "search_terms",
+  (let [query {:nested {:path "search_terms",
             :inner_hits {},
-            :query      {:bool {:should (when (not-blank? keyword) (generate-keyword-query keyword lng))
-                                :filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
-                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}})
+            :query      {:bool {:filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
+                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))),
+                                :minimum_should_match "9%"}}}}]
+             (when (not-blank? keyword)
+               (update-in query [:nested :query :bool]
+                          (fn [x] (merge x (fields keyword [] lng "words")))))))
 
 (defn- ->term-filter
   [field term]
