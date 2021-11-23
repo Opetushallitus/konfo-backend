@@ -21,7 +21,8 @@
 
 (def LiitteenToimitusosoite
   {:sahkoposti s/Str
-   :osoite     Osoite})
+   :osoite     Osoite
+   :verkkosivu s/Str})
 
 (def liite-schema
   "    Liite:
