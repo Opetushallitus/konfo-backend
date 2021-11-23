@@ -47,6 +47,10 @@
   [constraints]
   (constraint? constraints :yhteishaku))
 
+(defn lukiolinja?
+  [constraints]
+  (constraint? constraints :lukiolinja))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)

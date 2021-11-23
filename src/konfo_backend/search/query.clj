@@ -60,6 +60,7 @@
             (sijainti? constraints)              (conj (->terms-query :search_terms.sijainti.keyword                 (:sijainti constraints)))
             (koulutusala? constraints)           (conj (->terms-query :search_terms.koulutusalat.keyword             (:koulutusala constraints)))
             (opetustapa? constraints)            (conj (->terms-query :search_terms.opetustavat.keyword              (:opetustapa constraints)))
+            (lukiolinja? constraints)            (conj (->terms-query :search_terms.lukiolinjat.keyword              (:lukiolinja constraints)))
 
             ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
             use-haku-kaynnissa                   (conj (hakutieto-query (some-hakuaika-kaynnissa)))

@@ -269,6 +269,14 @@
    |          required: false
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
    |          default: false
+   |        - in: query
+   |          name: lukiolinja
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lukiopainotusten tai lukionlinjaterityinenkoulutustehtava koodeja
+   |          example: lukiopainotukset_0111, lukiolinjaterityinenkoulutustehtava_0103
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -546,7 +554,7 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiolinja]
   {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit) (vapaa-sivistystyo->alatyypit))
    :sijainti              (comma-separated-string->vec sijainti)
    :opetuskieli           (comma-separated-string->vec opetuskieli)
@@ -556,7 +564,8 @@
    :hakukaynnissa         hakukaynnissa
    :hakutapa              (comma-separated-string->vec hakutapa)
    :yhteishaku            (comma-separated-string->vec yhteishaku)
-   :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)})
+   :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)
+   :lukiolinja            (comma-separated-string->vec lukiolinja)})
 
 (defn ->search-with-validated-params
   [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
@@ -576,8 +585,8 @@
                                                   constraints)))))
 
 (defn- ->search-subentities-with-validated-params
-  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus)]
+  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiolinja]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiolinja)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -656,7 +665,8 @@
                         {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {yhteishaku            :- String nil}
-                        {pohjakoulutusvaatimus :- String nil}]
+                        {pohjakoulutusvaatimus :- String nil}
+                        {lukiolinja            :- String nil}]
          (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
                                                                                   oid
                                                                                   lng
@@ -673,7 +683,8 @@
                                                                                   hakukaynnissa
                                                                                   hakutapa
                                                                                   yhteishaku
-                                                                                  pohjakoulutusvaatimus)))
+                                                                                  pohjakoulutusvaatimus
+                                                                                  lukiolinja)))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword               :- String nil}
