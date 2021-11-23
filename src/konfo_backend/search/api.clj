@@ -262,6 +262,13 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |          default: nil
+   |        - in: query
+   |          name: hakukaynnissa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on haku käynnissä
+   |          default: false
    |      responses:
    |        '200':
    |          description: Ok
