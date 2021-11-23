@@ -1,0 +1,24 @@
+{
+    "tyyppi": "amm-tutkinnon-osa",
+    "kuvaus": {
+        "fi": "kuvaus",
+        "sv": "kuvaus sv"
+    },
+    "lisatiedot": [
+        {
+            "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+            "teksti": {
+                "fi": "Opintojen lisätieto ",
+                "sv": "Opintojen lisätieto sv"
+            }
+        }
+    ],
+    "tutkinnonOsat": [
+        {
+            "ePerusteId": 123,
+            "koulutusKoodiUri": "koulutus_371101#1",
+            "tutkinnonosaId": 1234,
+            "tutkinnonosaViite": 122
+        }
+    ]
+}

@@ -1,0 +1,141 @@
+{
+    "tyyppi": "amm-tutkinnon-osa",
+    "kuvaus": {
+        "fi": "Kuvaus",
+        "sv": "Kuvaus sv"
+    },
+    "opetus": {
+        "opetuskieliKoodiUrit": [
+            "oppilaitoksenopetuskieli_1#1"
+        ],
+        "opetuskieletKuvaus": {
+            "fi": "Kielikuvaus fi",
+            "sv": "Kielikuvaus sv"
+        },
+        "opetusaikaKoodiUrit": [
+            "opetusaikakk_1#1"
+        ],
+        "opetusaikaKuvaus": {
+            "fi": "Opetusaikakuvaus fi",
+            "sv": "Opetusaikakuvaus sv"
+        },
+        "opetustapaKoodiUrit": [
+            "opetuspaikkakk_1#1",
+            "opetuspaikkakk_2#1"
+        ],
+        "opetustapaKuvaus": {
+            "fi": "Opetustapakuvaus fi",
+            "sv": "Opetustapakuvaus sv"
+        },
+        "maksullisuustyyppi": "maksullinen",
+        "maksullisuusKuvaus": {
+            "fi": "Maksullisuuskuvaus fi",
+            "sv": "Maksullisuuskuvaus sv"
+        },
+        "maksunMaara": 200.5,
+        "koulutuksenAlkamiskausi": {
+            "alkamiskausityyppi": "alkamiskausi ja -vuosi",
+            "henkilokohtaisenSuunnitelmanLisatiedot": {
+                "fi": "Jotakin lisätietoa",
+                "sv": "Jotakin lisätietoa sv"
+            },
+            "koulutuksenAlkamiskausiKoodiUri": "kausi_k#1",
+            "koulutuksenAlkamisvuosi": "2021"
+        },
+        "lisatiedot": [
+            {
+                "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+                "teksti": {
+                    "fi": "Opintojen rakenteen kuvaus",
+                    "sv": "Rakenne kuvaus sv"
+                }
+            },
+            {
+                "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+                "teksti": {
+                    "fi": "Sisältö kuvaus",
+                    "sv": "Sisältö kuvaus sv"
+                }
+            }
+        ],
+        "onkoApuraha": true,
+        "apuraha": {
+            "min": 100,
+            "max": 200,
+            "yksikko": "euro",
+            "kuvaus": {
+                "fi": "apurahakuvaus fi",
+                "sv": "apurahakuvaus sv"
+            }
+        },
+        "suunniteltuKestoVuodet": 3,
+        "suunniteltuKestoKuukaudet": 10,
+        "suunniteltuKestoKuvaus": {
+            "fi": "Keston kuvaus fi",
+            "sv": "Keston kuvaus sv"
+        }
+    },
+    "asiasanat": [
+        {
+            "kieli": "fi",
+            "arvo": "robotiikka"
+        },
+        {
+            "kieli": "fi",
+            "arvo": "robottiautomatiikka"
+        }
+    ],
+    "ammattinimikkeet": [
+        {
+            "kieli": "fi",
+            "arvo": "insinööri"
+        },
+        {
+            "kieli": "fi",
+            "arvo": "koneinsinööri"
+        }
+    ],
+    "yhteyshenkilot": [
+        {
+            "nimi": {
+                "fi": "Aku Ankka",
+                "sv": "Aku Ankka"
+            },
+            "titteli": {
+                "fi": "titteli",
+                "sv": "titteli sv"
+            },
+            "sahkoposti": {
+                "fi": "aku.ankka@ankkalinnankoulu.fi",
+                "sv": "aku.ankka@ankkalinnankoulu.fi"
+            },
+            "puhelinnumero": {
+                "fi": "123",
+                "sv": "123"
+            },
+            "wwwSivu": {
+                "fi": "http://opintopolku.fi",
+                "sv": "http://studieinfo.fi"
+            }
+        }
+    ],
+    "hakutermi": "hakeutuminen",
+    "hakulomaketyyppi": "muu",
+    "hakulomakeLinkki": {
+        "fi": "http://www.linkki.fi",
+        "sv": "http://www.linkki.se"
+    },
+    "lisatietoaHakeutumisesta": {
+        "fi": "Lisätieto",
+        "sv": "Lisätieto sv"
+    },
+    "lisatietoaValintaperusteista": {
+        "fi": "Lisätieto",
+        "sv": "Lisätieto sv"
+    },
+    "hakuaika": {
+        "alkaa": "2021-11-11T15:49",
+        "paattyy": "2021-11-11T15:58"
+    },
+    "aloituspaikat": 22
+}

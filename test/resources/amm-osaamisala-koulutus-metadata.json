@@ -1,0 +1,17 @@
+{
+    "tyyppi": "amm-osaamisala",
+    "kuvaus": {
+        "fi": "kuvaus",
+        "sv": "kuvaus sv"
+    },
+    "lisatiedot": [
+        {
+            "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+            "teksti": {
+                "fi": "Opintojen lisätieto ",
+                "sv": "Opintojen lisätieto sv"
+            }
+        }
+    ],
+    "osaamisalaKoodiUri": "osaamisala_01"
+}

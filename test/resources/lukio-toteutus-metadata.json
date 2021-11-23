@@ -1,0 +1,161 @@
+{
+    "tyyppi": "lk",
+    "kuvaus": {},
+    "opetus": {
+        "opetuskieliKoodiUrit": [
+            "oppilaitoksenopetuskieli_1#1"
+        ],
+        "opetuskieletKuvaus": {
+            "fi": "Kielikuvaus fi",
+            "sv": "Kielikuvaus sv"
+        },
+        "opetusaikaKoodiUrit": [
+            "opetusaikakk_1#1"
+        ],
+        "opetusaikaKuvaus": {
+            "fi": "Opetusaikakuvaus fi",
+            "sv": "Opetusaikakuvaus sv"
+        },
+        "opetustapaKoodiUrit": [
+            "opetuspaikkakk_1#1",
+            "opetuspaikkakk_2#1"
+        ],
+        "opetustapaKuvaus": {
+            "fi": "Opetustapakuvaus fi",
+            "sv": "Opetustapakuvaus sv"
+        },
+        "maksullisuustyyppi": "maksullinen",
+        "maksullisuusKuvaus": {
+            "fi": "Maksullisuuskuvaus fi",
+            "sv": "Maksullisuuskuvaus sv"
+        },
+        "maksunMaara": 200.5,
+        "koulutuksenAlkamiskausi": {
+            "alkamiskausityyppi": "alkamiskausi ja -vuosi",
+            "henkilokohtaisenSuunnitelmanLisatiedot": {
+                "fi": "Jotakin lisätietoa",
+                "sv": "Jotakin lisätietoa sv"
+            },
+            "koulutuksenAlkamiskausiKoodiUri": "kausi_k#1",
+            "koulutuksenAlkamisvuosi": "2021"
+        },
+        "lisatiedot": [
+            {
+                "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+                "teksti": {
+                    "fi": "Opintojen rakenteen kuvaus",
+                    "sv": "Rakenne kuvaus sv"
+                }
+            },
+            {
+                "otsikkoKoodiUri": "koulutuksenlisatiedot_03#1",
+                "teksti": {
+                    "fi": "Sisältö kuvaus",
+                    "sv": "Sisältö kuvaus sv"
+                }
+            }
+        ],
+        "onkoApuraha": true,
+        "apuraha": {
+            "min": 100,
+            "max": 200,
+            "yksikko": "euro",
+            "kuvaus": {
+                "fi": "apurahakuvaus fi",
+                "sv": "apurahakuvaus sv"
+            }
+        },
+        "suunniteltuKestoVuodet": 3,
+        "suunniteltuKestoKuukaudet": 10,
+        "suunniteltuKestoKuvaus": {
+            "fi": "Keston kuvaus fi",
+            "sv": "Keston kuvaus sv"
+        }
+    },
+    "asiasanat": [
+        {
+            "kieli": "fi",
+            "arvo": "tutkija"
+        }
+    ],
+    "ammattinimikkeet": [],
+    "yhteyshenkilot": [
+        {
+            "nimi": {
+                "fi": "Aku Ankka",
+                "sv": "Aku Ankka"
+            },
+            "titteli": {
+                "fi": "titteli",
+                "sv": "titteli sv"
+            },
+            "sahkoposti": {
+                "fi": "aku.ankka@ankkalinnankoulu.fi",
+                "sv": "aku.ankka@ankkalinnankoulu.fi"
+            },
+            "puhelinnumero": {
+                "fi": "123",
+                "sv": "123"
+            },
+            "wwwSivu": {
+                "fi": "http://opintopolku.fi",
+                "sv": "http://studieinfo.fi"
+            }
+        }
+    ],
+    "kielivalikoima": {
+        "A1Kielet": [
+            "kieli_EN#1"
+        ],
+        "A2Kielet": [
+            "kieli_DE#1"
+        ],
+        "B1Kielet": [
+            "kieli_SV#1"
+        ],
+        "B2Kielet": [
+            "kieli_FR#1"
+        ],
+        "B3Kielet": [
+            "kieli_ES#1"
+        ],
+        "aidinkielet": [
+            "kieli_FI#1"
+        ],
+        "muutKielet": [
+            "kieli_ET#1"
+        ]
+    },
+    "yleislinja": true,
+    "painotukset": [
+        {
+            "koodiUri": "lukiopainotukset_1#1",
+            "kuvaus": {
+                "fi": "painotus 1 kuvaus",
+                "sv": "painotus 1 kuvaus sv"
+            }
+        }
+    ],
+    "erityisetKoulutustehtavat": [
+        {
+            "koodiUri": "lukiolinjaterityinenkoulutustehtava_1#1",
+            "kuvaus": {
+                "fi": "erityinen koulutustehtava 1 kuvaus",
+                "sv": "erityinen koulutustehtava 1 kuvaus sv"
+            }
+        }
+    ],
+    "diplomit": [
+        {
+            "koodiUri": "moduulikoodistolops2021_kald3#1",
+            "linkki": {
+                "fi": "http://linkki.fi",
+                "sv": "http://link.se"
+            },
+            "linkinAltTeksti": {
+                "fi": "Suomeksi",
+                "sv": "På svenska"
+            }
+        }
+    ]
+}

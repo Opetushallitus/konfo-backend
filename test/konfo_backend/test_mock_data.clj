@@ -4,10 +4,7 @@
             [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
-            [cheshire.core :as cheshire])
-  (:import (fi.oph.kouta.external KoutaFixtureTool$)))
-
-(defonce KoutaFixtureTool KoutaFixtureTool$/MODULE$)
+            [cheshire.core :as cheshire]))
 
 (def koulutusOid1 "1.2.246.562.13.000001")
 (def koulutusOid2 "1.2.246.562.13.000002")
@@ -36,65 +33,65 @@
 
 (defonce koulutus-metatieto
   (cheshire/generate-string
-    {:tyyppi "amm",
-     :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1",
-                            "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]}))
+   {:tyyppi "amm"
+    :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1"
+                           "kansallinenkoulutusluokitus2016koulutusalataso1_02#1"]}))
 
 (defonce lukio-koulutus-metatieto
-         (cheshire/generate-string
-           {:tyyppi               "lk"
-            :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1"]
-            :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+  (cheshire/generate-string
+   {:tyyppi               "lk"
+    :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso1_01#1"]
+    :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
 (defonce yo-koulutus-metatieto
   (cheshire/generate-string
-    {:tyyppi               "yo"
-     :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso2_01#1",
-                            "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
-     :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+   {:tyyppi               "yo"
+    :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso2_01#1"
+                           "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
+    :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
 (defonce amk-koulutus-metatieto
-   (cheshire/generate-string
-     {:tyyppi               "amk"
-      :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso2_01#1",
-                             "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
-      :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
+  (cheshire/generate-string
+   {:tyyppi               "amk"
+    :koulutusalaKoodiUrit ["kansallinenkoulutusluokitus2016koulutusalataso2_01#1"
+                           "kansallinenkoulutusluokitus2016koulutusalataso2_02#1"]
+    :kuvauksenNimi        {:fi "kuvaus", :sv "kuvaus sv"}}))
 
-(defonce amm-tutkinnon-osa-koulutus-metadata (.ammTutkinnonOsaKoulutusMetadata KoutaFixtureTool))
+(defonce amm-tutkinnon-osa-koulutus-metadata (slurp "test/resources/amm-tutkinnon-osa-koulutus-metadata.json"))
 
-(defonce amm-osaamisala-koulutus-metadata (.ammOsaamisalaKoulutusMetadata KoutaFixtureTool))
+(defonce amm-osaamisala-koulutus-metadata (slurp "test/resources/amm-osaamisala-koulutus-metadata.json"))
 
 (defonce toteutus-metatieto
   (cheshire/generate-string
-    {:tyyppi           "amm"
-     :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
-     :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
-     :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
-              :opetustapaKoodiUrit ["opetuspaikkakk_02"]}}))
+   {:tyyppi           "amm"
+    :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
+    :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
+    :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+             :opetustapaKoodiUrit ["opetuspaikkakk_02"]}}))
 
 (defonce yo-toteutus-metatieto
-   (cheshire/generate-string
-     {:tyyppi           "yo"
-      :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
-      :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
-      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
-               :opetustapaKoodiUrit ["opetuspaikkakk_02"]
-               :koulutuksenTarkkaAlkamisaika false
-               :koulutuksenAlkamisvuosi 2022}}))
+  (cheshire/generate-string
+   {:tyyppi           "yo"
+    :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
+    :ammattinimikkeet [{:kieli "fi" :arvo "ponityttö"}]
+    :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_02"]
+             :opetustapaKoodiUrit ["opetuspaikkakk_02"]
+             :koulutuksenTarkkaAlkamisaika false
+             :koulutuksenAlkamisvuosi 2022}}))
 
 (defonce amk-toteutus-metatieto
-   (cheshire/generate-string
-     {:tyyppi           "amk"
-      :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
-      :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
-      :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_01"]
-               :opetustapaKoodiUrit ["opetuspaikkakk_01"]
-               :koulutuksenTarkkaAlkamisaika true
-               :koulutuksenAlkamisvuosi 2019}}))
+  (cheshire/generate-string
+   {:tyyppi           "amk"
+    :asiasanat        [{:kieli "fi" :arvo "hevonen"}]
+    :ammattinimikkeet [{:kieli "fi" :arvo "ponipoika"}]
+    :opetus {:opetuskieliKoodiUrit ["oppilaitoksenopetuskieli_01"]
+             :opetustapaKoodiUrit ["opetuspaikkakk_01"]
+             :koulutuksenTarkkaAlkamisaika true
+             :koulutuksenAlkamisvuosi 2019}}))
 
-(defonce amm-tutkinnon-osa-toteutus-metadata (.ammTutkinnonOsaToteutusMetadata KoutaFixtureTool))
+(defonce amm-tutkinnon-osa-toteutus-metadata (slurp "test/resources/amm-tutkinnon-osa-toteutus-metadata.json"))
 
-(defonce lukio-toteutus-metatieto (.lukioToteutusMetadata KoutaFixtureTool))
+(defonce lukio-toteutus-metatieto (slurp "test/resources/lukio-toteutus-metadata.json"))
 
 (defn mock-get-koodisto
   [x]
@@ -182,57 +179,57 @@
 
 (defonce punkaharju-org
   (mocks/create-organisaatio-hierarkia
-    {:oid "1.2.246.562.10.000001"
-     :nimi {:fi "Punkaharjun kunta"
-            :sv "Punkaharjun kunta sv"}
+   {:oid "1.2.246.562.10.000001"
+    :nimi {:fi "Punkaharjun kunta"
+           :sv "Punkaharjun kunta sv"}
+    :kotipaikka "kunta_618"
+    :kielet ["oppilaitoksenopetuskieli_1#1"
+             "oppilaitoksenopetuskieli_2#1"]}
+   {:oid punkaharjun-yliopisto
+    :nimi {:fi "Punkaharjun yliopisto"
+           :sv "Punkaharjun yliopisto sv"}
+    :kotipaikka "kunta_618"
+    :kielet ["oppilaitoksenopetuskieli_1#1"
+             "oppilaitoksenopetuskieli_2#1"]}
+   [{:oid punkaharjun-toimipiste-1
+     :nimi {:fi "Punkaharjun yliopiston toimipiste"
+            :sv "Punkaharjun yliopiston toimipiste sv "}
      :kotipaikka "kunta_618"
-     :kielet ["oppilaitoksenopetuskieli_1#1",
-              "oppilaitoksenopetuskieli_2#1" ]}
-    {:oid punkaharjun-yliopisto
-     :nimi {:fi "Punkaharjun yliopisto"
-            :sv "Punkaharjun yliopisto sv"}
-     :kotipaikka "kunta_618"
-     :kielet ["oppilaitoksenopetuskieli_1#1",
-              "oppilaitoksenopetuskieli_2#1" ]}
-    [{:oid punkaharjun-toimipiste-1
-      :nimi {:fi "Punkaharjun yliopiston toimipiste"
-             :sv "Punkaharjun yliopiston toimipiste sv "}
-      :kotipaikka "kunta_618"
-      :kielet ["oppilaitoksenopetuskieli_2#1" ]},
-     {:oid punkaharjun-toimipiste-2
-      :nimi {:fi "Punkaharjun yliopiston Karjaan toimipiste"
-             :sv "Punkaharjun yliopiston Karjaan toimipiste sv "}
-      :kotipaikka "kunta_220"
-      :kielet ["oppilaitoksenopetuskieli_1#1"]}]))
+     :kielet ["oppilaitoksenopetuskieli_2#1"]}
+    {:oid punkaharjun-toimipiste-2
+     :nimi {:fi "Punkaharjun yliopiston Karjaan toimipiste"
+            :sv "Punkaharjun yliopiston Karjaan toimipiste sv "}
+     :kotipaikka "kunta_220"
+     :kielet ["oppilaitoksenopetuskieli_1#1"]}]))
 
 (def helsingin-yliopisto  "1.2.246.562.10.000005")
 (def helsingin-toimipiste "1.2.246.562.10.000006")
 
 (defonce helsinki-org
   (mocks/create-organisaatio-hierarkia
-    {:oid "1.2.246.562.10.000001"
-     :nimi {:fi "Helsingin kunta" :sv "Helsingin kunta sv"}
+   {:oid "1.2.246.562.10.000001"
+    :nimi {:fi "Helsingin kunta" :sv "Helsingin kunta sv"}
+    :kotipaikka "kunta_091"
+    :kielet ["oppilaitoksenopetuskieli_1#1", "oppilaitoksenopetuskieli_2#1"]}
+   {:oid helsingin-yliopisto
+    :nimi {:fi "Helsingin yliopisto" :sv "Helsingin yliopisto sv"}
+    :kotipaikka "kunta_091"
+    :kielet ["oppilaitoksenopetuskieli_1#1", "oppilaitoksenopetuskieli_2#1"]}
+   [{:oid helsingin-toimipiste
+     :nimi {:fi "Helsingin yliopiston toimipiste" :sv "Helsingin yliopiston toimipiste sv "}
      :kotipaikka "kunta_091"
-     :kielet [ "oppilaitoksenopetuskieli_1#1", "oppilaitoksenopetuskieli_2#1" ]}
-    {:oid helsingin-yliopisto
-     :nimi {:fi "Helsingin yliopisto" :sv "Helsingin yliopisto sv"}
-     :kotipaikka "kunta_091"
-     :kielet [ "oppilaitoksenopetuskieli_1#1", "oppilaitoksenopetuskieli_2#1" ]}
-    [{:oid helsingin-toimipiste
-      :nimi {:fi "Helsingin yliopiston toimipiste" :sv "Helsingin yliopiston toimipiste sv "}
-      :kotipaikka "kunta_091"
-      :kielet [ "oppilaitoksenopetuskieli_2#1" ]}]))
+     :kielet ["oppilaitoksenopetuskieli_2#1"]}]))
 
 (defn named-oppilaitos
   [oid nimi]
   (mocks/create-organisaatio-hierarkia
-    {:oid "1.2.246.562.10.000001"
-     :nimi {:fi "Helsingin kunta" :sv "Helsingin kunta sv"}
-     :kotipaikka "kunta_091"}
-    {:oid oid
-     :nimi {:fi nimi :sv (str nimi " sv")}
-     :kotipaikka "kunta_091"}
-    []))
+   {:oid "1.2.246.562.10.000001"
+    :nimi {:fi "Helsingin kunta" :sv "Helsingin kunta sv"}
+    :kotipaikka "kunta_091"}
+   {:oid oid
+    :nimi {:fi nimi :sv (str nimi " sv")}
+    :kotipaikka "kunta_091"}
+   []))
 
 (defn aakkos-orgs
   [x & {:as params}]
