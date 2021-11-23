@@ -17,12 +17,16 @@
    |        sahkoposti:
    |          type: object
    |          description: Sähköpostiosoite, johon liite voidaan toimittaa
+   |          $ref: '#/components/schemas/Teksti'
+   |        verkkosivu:
+   |          type: object
+   |          description: Verkkosivu, jonka kautta liitteet voidaan toimittaa
    |          $ref: '#/components/schemas/Teksti'")
 
 (def LiitteenToimitusosoite
-  {:sahkoposti s/Str
-   :osoite     Osoite
-   :verkkosivu s/Str})
+  {:osoite     Osoite
+   (s/->OptionalKey :sahkoposti) s/Str
+   (s/->OptionalKey :verkkosivu) s/Str})
 
 (def liite-schema
   "    Liite:
