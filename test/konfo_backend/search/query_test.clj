@@ -7,14 +7,14 @@
 (deftest oppilaitos-query-test
 
   (testing "Query with filters"
-    (is (= (query nil {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]} "fi")
+    (is (= (query nil {:sijainti ["kunta_091"] :koulutustyyppi ["amm", "KK"]} "fi" ["words"])
            {:nested {:path "search_terms", :query {:bool {:filter [{:terms {:search_terms.koulutustyypit.keyword ["amm", "kk"]}}
                                                            {:term {:search_terms.sijainti.keyword "kunta_091"}}]}}}})))
 
   (testing "Query with hakukaynnissa filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
                   konfo-backend.tools/half-year-past-as-kouta-format (fn [] "2019-06-01T01:01")]
-      (is (= (query nil {:hakukaynnissa true} "fi")
+      (is (= (query nil {:hakukaynnissa true} "fi" ["words"])
              {:nested {:path "search_terms", :query {:bool {:filter [{:nested {:path "search_terms.hakutiedot", :query {:bool {:filter {:nested {:path "search_terms.hakutiedot.hakuajat", :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                                                                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}}}}}]}}}})))))

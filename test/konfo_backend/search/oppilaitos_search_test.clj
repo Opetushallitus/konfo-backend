@@ -268,8 +268,11 @@
                                                :oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid3 oppilaitosOid4 oppilaitosOid5 oppilaitosOid6]} aakkos-orgs)
 
   (testing "Searching with keyword"
-    (testing "lääketiede <-> lääketieteen"
+    (comment testing "lääketiede <-> lääketieteen" ;Ei toimi enää multi_match-queryllä.
       (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääketiede"))))
+
+    (testing "lääkäri <-> lääketieteen"
+             (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääkäri"))))
 
     (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
              (is (= [oppilaitosOid1] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20lääkäriksi"))))
@@ -277,8 +280,11 @@
     (comment testing "musiikin opiskelu <-> muusikon koulutus"
              (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikin%20opiskelu"))))
 
-    (testing "humanismi <-> humanistinen"
+    (comment testing "humanismi <-> humanistinen" ;Ei toimi enää multi_match-queryllä.
       (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanismi"))))
+
+    (testing "humanisti <-> humanistinen"
+      (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanisti"))))
 
     (comment testing "haluan opiskella psykologiaa <-> psykologi"
              (is (= [oppilaitosOid2] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20psykologiaa"))))
@@ -286,11 +292,17 @@
     (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
              (is (= [oppilaitosOid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaaliala"))))
 
-    (testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen"
+    (comment testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen" ;Ei toimi enää multi_match-queryllä.
       (is (= [oppilaitosOid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittelytiede"))))
 
-    (testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;TODO fix-me
+    (testing "tietojenkäsittely <-> tietojenkäsittelytieteen"
+      (is (= [oppilaitosOid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittely"))))
+
+    (comment testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;Ei toimi enää multi_match-queryllä.
       (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikkioppilaitos"))))
+
+    (testing "musiikki <-> musiikkioppilaitokset"
+      (is (= [oppilaitosOid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikki"))))
 
     (comment testing "automaatiikka <-> automaatioinsinööri" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
              (is (= [oppilaitosOid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatiikka"))))

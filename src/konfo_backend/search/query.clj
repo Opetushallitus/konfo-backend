@@ -68,43 +68,48 @@
             (valintatapa? constraints)           (conj (hakutieto-query haku-kaynnissa (->terms-query :search_terms.hakutiedot.valintatavat             (:valintatapa constraints))))
             (yhteishaku? constraints)            (conj (hakutieto-query haku-kaynnissa (->terms-query :search_terms.hakutiedot.yhteishakuOid            (:yhteishaku constraints)))))))
 
-(defn- create-lang-query
-  [keyword user-lng lng boost]
-  (let [query {:query (lower-case keyword) :operator "and" :fuzziness "AUTO:8,12"}]
-    (if (= user-lng lng)
-      (assoc query :boost boost)
-      query)))
+(defn generate-search-params
+  [suffixes search-params usr-lng]
+  (for [language ["fi" "sv" "en"]
+        suffix (conj suffixes nil)]
+    (if (= language usr-lng)
+        (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :language-default]))
+                                                                                  (str "." suffix "^" (:boost search-params))))
+        (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :default]))
+                                                                                  (str "." suffix "^" (get-in config [:search-terms-boost :default])))))))
 
 (defn- generate-keyword-query
-  [keyword user-lng]
-  (for [language ["fi" "sv" "en"]
-        search-params [{:term "koulutusnimi" :boost (get-in config [:search-terms-boost :koulutusnimi])}
+  [usr-lng suffixes]
+  (for [search-params [{:term "koulutusnimi" :boost (get-in config [:search-terms-boost :koulutusnimi])}
                        {:term "toteutusNimi" :boost (get-in config [:search-terms-boost :toteutusNimi])}
                        {:term "asiasanat" :boost (get-in config [:search-terms-boost :asiasanat])}
                        {:term "tutkintonimikkeet" :boost (get-in config [:search-terms-boost :tutkintonimikkeet])}
                        {:term "ammattinimikkeet" :boost (get-in config [:search-terms-boost :ammattinimikkeet])}
                        {:term "koulutus_organisaationimi" :boost (get-in config [:search-terms-boost :koulutus_organisaationimi])}
                        {:term "toteutus_organisaationimi" :boost (get-in config [:search-terms-boost :toteutus_organisaationimi])}]]
-    {:match {(clojure.core/keyword (str "search_terms." (:term search-params) "." language))
-             (create-lang-query keyword user-lng language (:boost search-params))}}))
+    (generate-search-params suffixes search-params usr-lng)))
 
 (defn- assoc-if [m k v p?]
   (if p?
     (assoc m k v)
     m))
 
-(defn- bool
-  [keyword constraints user-lng]
-  (let [should? (not-blank? keyword)
+(defn- fields
+  [keyword constraints user-lng suffixes]
+  (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            should? (-> (assoc :should (generate-keyword-query keyword user-lng))
+            fields? (-> (assoc :should {:multi_match {:query       keyword,
+                                                      :fields      (flatten (generate-keyword-query user-lng suffixes))
+                                                      :tie_breaker 0.9
+                                                      :operator    "and"
+                                                      :type        "cross_fields"}})
                         (assoc-if :minimum_should_match "9%" filter?))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
-  [keyword constraints user-lng]
-  {:nested {:path "search_terms", :query {:bool (bool keyword constraints user-lng)}}})
+  [keyword constraints user-lng suffixes]
+  {:nested {:path "search_terms", :query {:bool (fields keyword constraints user-lng suffixes)}}})
 
 (defn match-all-query
   []
@@ -151,12 +156,15 @@
                                          {:term {"search_terms.tarjoajat" oid}}]}}}}))
 
 (defn external-query
-  [keyword lng constraints]
-  {:nested {:path       "search_terms",
+  [keyword lng constraints suffixes]
+  (let [query {:nested {:path "search_terms",
             :inner_hits {},
-            :query      {:bool {:should (when (not-blank? keyword) (generate-keyword-query keyword lng))
-                                :filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
-                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints))))}}}})
+            :query      {:bool {:filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
+                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))),
+                                :minimum_should_match "9%"}}}}]
+             (when (not-blank? keyword)
+               (update-in query [:nested :query :bool]
+                          (fn [x] (merge x (fields keyword [] lng suffixes)))))))
 
 (defn- ->term-filter
   [field term]
