@@ -73,12 +73,10 @@
   (for [language ["fi" "sv" "en"]
         suffix (conj suffixes nil)]
     (if (= language usr-lng)
-      (if (not (nil? suffix))
-        (str "search_terms." (:term search-params) "." language "." suffix "^" (:boost search-params))
-        (str "search_terms." (:term search-params) "." language "^" (get-in config [:search-terms-boost :language-default])))
-      (if (not (nil? suffix))
-        (str "search_terms." (:term search-params) "." language "." suffix "^" (get-in config [:search-terms-boost :default]))
-        (str "search_terms." (:term search-params) "." language "^" (get-in config [:search-terms-boost :default]))))))
+        (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :language-default]))
+                                                                                  (str "." suffix "^" (:boost search-params))))
+        (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :default]))
+                                                                                  (str "." suffix "^" (get-in config [:search-terms-boost :default])))))))
 
 (defn- generate-keyword-query
   [usr-lng suffixes]
