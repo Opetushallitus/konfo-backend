@@ -53,8 +53,8 @@
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "9.1.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.20.0-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.20.0-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
                                    [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
@@ -67,8 +67,8 @@
                                    (utils/global-docker-elastic-fixture))]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
                                       [kouta-indeksoija-service "9.1.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.20.0-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.20.0-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
                                       [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
