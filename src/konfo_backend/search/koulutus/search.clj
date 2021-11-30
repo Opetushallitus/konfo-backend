@@ -23,7 +23,7 @@
       page
       size
       #(-> % parse with-kuvaukset)
-      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi", "tutkinnonOsat", "osaamisala"]
+      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat"]
       :sort (sorts sort order lng)
       :query query
       :aggs aggs)))
