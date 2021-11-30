@@ -33,7 +33,7 @@
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
+  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus :lukiopainotukset :lukiolinjaterityinenkoulutustehtava]]
     (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
 
 (defn- filter-counts

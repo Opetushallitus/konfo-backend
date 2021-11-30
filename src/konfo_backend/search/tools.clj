@@ -47,9 +47,13 @@
   [constraints]
   (constraint? constraints :yhteishaku))
 
-(defn lukiolinja?
+(defn lukiopainotukset?
   [constraints]
-  (constraint? constraints :lukiolinja))
+  (constraint? constraints :lukiopainotukset))
+
+(defn lukiolinjaterityinenkoulutustehtava?
+  [constraints]
+  (constraint? constraints :lukiolinjaterityinenkoulutustehtava))
 
 (defn constraints?
   [constraints]

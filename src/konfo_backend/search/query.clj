@@ -60,7 +60,8 @@
             (sijainti? constraints)              (conj (->terms-query :search_terms.sijainti.keyword                 (:sijainti constraints)))
             (koulutusala? constraints)           (conj (->terms-query :search_terms.koulutusalat.keyword             (:koulutusala constraints)))
             (opetustapa? constraints)            (conj (->terms-query :search_terms.opetustavat.keyword              (:opetustapa constraints)))
-            (lukiolinja? constraints)            (conj (->terms-query :search_terms.lukiolinjat.keyword              (:lukiolinja constraints)))
+            (lukiopainotukset? constraints)      (conj (->terms-query :search_terms.lukiopainotukset.keyword         (:lukiopainotukset constraints)))
+            (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query :search_terms.lukiolinjaterityinenkoulutustehtava.keyword (:lukiolinjaterityinenkoulutustehtava constraints)))
 
             ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
             use-haku-kaynnissa                   (conj (hakutieto-query (some-hakuaika-kaynnissa)))
@@ -254,12 +255,16 @@
 (defn- jarjestajat-aggs
   [tuleva? constraints]
   (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
-        haku-kaynnissa (haku-kaynnissa? constraints)]
-    {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
+        haku-kaynnissa (haku-kaynnissa? constraints)
+        lukiopainotukset (koodisto-filters-for-subentity :search_terms.lukiopainotukset.keyword "lukiopainotukset")
+        lukiolinja_er (koodisto-filters-for-subentity :search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava")]
+     {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
                        :aggs (remove-nils  {:maakunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "maakunta")
                                             :kunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "kunta")
                                             :opetuskieli (koodisto-filters-for-subentity :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
                                             :opetustapa (koodisto-filters-for-subentity :search_terms.opetustavat.keyword "opetuspaikkakk")
+                                            :lukiopainotukset lukiopainotukset
+                                            :lukiolinjaterityinenkoulutustehtava lukiolinja_er
 
                                             :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
                                             :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.hakutapa     "hakutapa")
