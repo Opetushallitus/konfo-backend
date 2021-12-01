@@ -113,7 +113,8 @@
      :yhteishaku            (yhteishaku filter-counts)
      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
      :lukiopainotukset      (filters "lukiopainotukset")
-     :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")})
+     :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+     :ammosaamisalat        (filters "osaamisala")})
     )
 
 

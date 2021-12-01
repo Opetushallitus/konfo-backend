@@ -489,6 +489,7 @@
                                                                                yhteishaku
                                                                                pohjakoulutusvaatimus
                                                                                nil
+                                                                               nil
                                                                                nil)))
              (GET "/search/filters" [:as request]
                   (with-access-logging request (if-let [result (filters/generate-filter-counts)]
