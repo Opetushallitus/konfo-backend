@@ -51,20 +51,36 @@
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         telma-count (get filter-counts :telma 0)
         amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count)
-        tuva-count (get filter-counts :tuva 0)
+        tuva-normal-count (get filter-counts :tuva-normal 0)
+        tuva-erityisopetus-count (get filter-counts :tuva-erityisopetus 0)
+        total-tuva-count (+ tuva-normal-count tuva-erityisopetus-count)
         vapaa-sivistystyo-opistovuosi-count (get filter-counts :vapaa-sivistystyo-opistovuosi 0)
         vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count vapaa-sivistystyo-muu-count)
         ]
-    {:amm-muu (cond-> {:count amm-muu-count
+    {:amm-muu (cond-> {
                        :alakoodit {
-                         :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count},
+                         :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                          :amm-osaamisala {:count amm-osaamisala-count}
-                         :telma {:count telma-count}}})
-     :tuva {:count tuva-count}
-     :vapaa-sivistystyo (cond-> {:count total-vapaa-sivistystyo-count
-                                 :alakoodit {:vapaa-sivistystyo-opistovuosi {:count vapaa-sivistystyo-opistovuosi-count}
-                                             :vapaa-sivistystyo-muu {:count vapaa-sivistystyo-muu-count}}})}))
+                         :telma {:count telma-count}
+                                   }
+                       }
+                      amm-muu-count (assoc :count amm-muu-count))
+     :tuva (cond-> {
+            :alakoodit {
+                        :tuva-normal {:count tuva-normal-count}
+                        :tuva-erityisopetus {:count tuva-erityisopetus-count}
+                        }
+            }
+            total-tuva-count (assoc :count total-tuva-count))
+     :vapaa-sivistystyo (cond-> {
+                                 :alakoodit {
+                                             :vapaa-sivistystyo-opistovuosi {:count vapaa-sivistystyo-opistovuosi-count}
+                                             :vapaa-sivistystyo-muu {:count vapaa-sivistystyo-muu-count}
+                                             }
+                                 }
+                                total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))}))
+
 
 (defn- hakukaynnissa
   [aggs]
