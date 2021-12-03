@@ -6,7 +6,7 @@
     [compojure.api.core :refer [GET context]]
     [ring.util.http-response :refer :all]
     [clj-log.access-log :refer [with-access-logging]]
-    [konfo-backend.tools :refer [comma-separated-string->vec amm-muu->alatyypit vapaa-sivistystyo->alatyypit]]))
+    [konfo-backend.tools :refer [comma-separated-string->vec]]))
 
 (def paths
   "|  /search/filters:
@@ -540,7 +540,7 @@
 
 
 (defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
-  {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec) (amm-muu->alatyypit) (vapaa-sivistystyo->alatyypit))
+  {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec))
    :sijainti              (comma-separated-string->vec sijainti)
    :opetuskieli           (comma-separated-string->vec opetuskieli)
    :koulutusala           (comma-separated-string->vec koulutusala)
