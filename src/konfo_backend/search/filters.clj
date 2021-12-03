@@ -53,7 +53,7 @@
         amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count)
         tuva-normal-count (get filter-counts :tuva-normal 0)
         tuva-erityisopetus-count (get filter-counts :tuva-erityisopetus 0)
-        total-tuva-count (+ tuva-normal-count tuva-erityisopetus-count)
+        total-tuva-count (get filter-counts :tuva 0)
         vapaa-sivistystyo-opistovuosi-count (get filter-counts :vapaa-sivistystyo-opistovuosi 0)
         vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count vapaa-sivistystyo-muu-count)
