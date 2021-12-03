@@ -15,7 +15,7 @@
   [keyword lng page size sort order constraints]
   (let [query (if (match-all? keyword constraints)
                 (match-all-query)
-                (query keyword constraints lng))
+                (query keyword constraints lng ["words"]))
         aggs (hakutulos-aggregations constraints)]
     (log-pretty query)
     (log-pretty aggs)
@@ -40,7 +40,7 @@
 
 (defn external-search
   [keyword lng page size sort order constraints]
-  (let [query (external-query keyword lng constraints)]
+  (let [query (external-query keyword lng constraints ["words"])]
     (log-pretty query)
     (koulutus-kouta-search
       page

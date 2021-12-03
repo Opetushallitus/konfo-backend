@@ -189,15 +189,15 @@
    |    get:
    |      tags:
    |        - internal
-   |      summary: Hae oppilaitos
-   |      description: Hae oppilaitoksen tiedot annetulla oidilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      summary: Hae oppilaitos tai oppilaitoksen osa
+   |      description: Hae oppilaitoksen tiedot annetulla oidilla, jos oppilaitosta ei löydy, haetaan oppilaitoksen osaa. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: path
    |          name: oid
    |          schema:
    |            type: string
    |          required: true
-   |          description: Oppilaitoksen yksilöivä oid
+   |          description: Oppilaitoksen tai oppilaitoksen osan yksilöivä oid
    |          example: 1.2.246.562.10.12345
    |        - in: query
    |          name: draft
@@ -415,7 +415,9 @@
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (oppilaitos/get oid draft)]
                                         (ok result)
-                                        (not-found "Not found"))))
+                                        (if-let [osa-result (oppilaitos/get-by-osa oid draft)]
+                                          (ok osa-result)
+                                          (not-found "Not found")))))
 
     (GET "/oppilaitoksen-osa/:oid" [:as request]
          :query-params [{draft :- Boolean false}]

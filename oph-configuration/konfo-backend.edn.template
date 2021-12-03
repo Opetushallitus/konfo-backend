@@ -28,5 +28,7 @@
                             :tutkintonimikkeet {{konfo_backend_search_terms_boost_tutkintonimikkeet}}
                             :ammattinimikkeet {{konfo_backend_search_terms_boost_ammattinimikkeet}}
                             :koulutus_organisaationimi {{konfo_backend_search_terms_boost_koulutus_organisaationimi}}
-                            :toteutus_organisaationimi {{konfo_backend_search_terms_boost_toteutus_organisaationimi}}}
+                            :toteutus_organisaationimi {{konfo_backend_search_terms_boost_toteutus_organisaationimi}}
+                            :language-default {{konfo_backend_search_terms_boost_language_default}}
+                            :default {{konfo_backend_search_terms_boost_default}}}
 }
