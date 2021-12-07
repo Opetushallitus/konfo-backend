@@ -111,7 +111,12 @@
      :hakukaynnissa         (hakukaynnissa filter-counts)
      :hakutapa              (filters "hakutapa")
      :yhteishaku            (yhteishaku filter-counts)
-     :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
+     :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
+     :lukiopainotukset      (filters "lukiopainotukset")
+     :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+     :ammosaamisalat        (filters "osaamisala")})
+    )
+
 
 
 (defn- filter->obj [suodatin koodi nimi]

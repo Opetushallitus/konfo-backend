@@ -47,6 +47,18 @@
   [constraints]
   (constraint? constraints :yhteishaku))
 
+(defn lukiopainotukset?
+  [constraints]
+  (constraint? constraints :lukiopainotukset))
+
+(defn lukiolinjaterityinenkoulutustehtava?
+  [constraints]
+  (constraint? constraints :lukiolinjaterityinenkoulutustehtava))
+
+(defn amm-osaamisalat?
+  [constraints]
+  (constraint? constraints :ammosaamisalat))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
