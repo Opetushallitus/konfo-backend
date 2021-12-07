@@ -60,10 +60,12 @@
                                                                                                      :kandi-ja-maisteri {:term {:search_terms.koulutustyypit.keyword "kandi-ja-maisteri"}}
                                                                                                      :yo {:term {:search_terms.koulutustyypit.keyword "yo"}}
                                                                                                      :amm {:term {:search_terms.koulutustyypit.keyword "amm"}}
+                                                                                                     :amm-muu {:term {:search_terms.koulutustyypit.keyword "amm-muu"}}
                                                                                                      :tuva {:term {:search_terms.koulutustyypit.keyword "tuva"}}
                                                                                                      :tuva-normal {:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
                                                                                                      :tuva-erityisopetus {:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
                                                                                                      :telma {:term {:search_terms.koulutustyypit.keyword "telma"}}
+                                                                                                     :vapaa-sivistystyo {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
                                                                                                      :vapaa-sivistystyo-opistovuosi {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-opistovuosi"}}
                                                                                                      :vapaa-sivistystyo-muu {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-muu"}}
                                                                                                      }}, :aggs {:real_hits {:reverse_nested {}}}}}}})))))
