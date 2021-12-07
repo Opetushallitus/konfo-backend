@@ -61,6 +61,8 @@
                                                                                                      :yo {:term {:search_terms.koulutustyypit.keyword "yo"}}
                                                                                                      :amm {:term {:search_terms.koulutustyypit.keyword "amm"}}
                                                                                                      :tuva {:term {:search_terms.koulutustyypit.keyword "tuva"}}
+                                                                                                     :tuva-normal {:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
+                                                                                                     :tuva-erityisopetus {:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
                                                                                                      :telma {:term {:search_terms.koulutustyypit.keyword "telma"}}
                                                                                                      :vapaa-sivistystyo-opistovuosi {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-opistovuosi"}}
                                                                                                      :vapaa-sivistystyo-muu {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-muu"}}
