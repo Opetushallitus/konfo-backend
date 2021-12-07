@@ -57,7 +57,8 @@
                                    [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
+                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]
+                                   [clj-http-fake "1.0.3"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
                                  (if-let [elasticPort (java.lang.System/getenv "elasticPort")]

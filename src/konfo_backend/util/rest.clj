@@ -4,14 +4,16 @@
             [clojure.string :refer [upper-case]]
             [cheshire.core :as cheshire]
             [clojure.walk :as walk]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [konfo-backend.config :refer [config]]))
+
+(defonce caller-id (:caller-id config))
 
 (defn add-headers [options]
-  (let [caller-id "1.2.246.562.10.00000000001.konfo-backend"]
-    (-> options
-        (assoc-in [:headers "Caller-id"] caller-id)
-        (assoc-in [:headers "CSRF"] caller-id)
-        (assoc-in [:cookies "CSRF"] {:value caller-id :path "/"}))))
+  (-> options
+    (assoc-in [:headers "Caller-id"] caller-id)
+    (assoc-in [:headers "CSRF"] caller-id)
+    (assoc-in [:cookies "CSRF"] {:value caller-id :path "/"})))
 
 (defn get [url opts]
   (let [options (add-headers opts)]
