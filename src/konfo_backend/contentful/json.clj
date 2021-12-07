@@ -1,8 +1,9 @@
 (ns konfo-backend.contentful.json
   (:require
    [konfo-backend.config :refer [config]]
-   [clojure.reflect :as cr]
-   [clojure.pprint :as pp])
+   [clj-time.core :as t]
+   [clojure.tools.logging :as log]
+   [clj-time.format :as f])
   (:import (com.contentful.java.cda CDAEntry CDAAsset)
            (com.google.gson Gson GsonBuilder JsonObject JsonArray JsonSerializer)
            (java.util List)))
@@ -20,10 +21,39 @@
                 (.get "sys")
                 (.get "id"))))))
 
+
+(defn new-formatter [fmt-str]
+  (f/formatter fmt-str (t/time-zone-for-id "Europe/Helsinki")))
+
+(def finnish-format (new-formatter "d.M.yyyy 'klo' HH:mm"))
+(def swedish-format (new-formatter "d.M.yyyy 'kl.' HH:mm"))
+(def english-format (new-formatter "MMM. d, yyyy 'at' hh:mm a z"))
+
+(defn- parse-date-time
+  [s]
+  (when s
+    (let [tz (t/time-zone-for-id "Europe/Helsinki")
+          fmt (f/formatter "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")]
+      (try
+        (t/to-time-zone (f/parse fmt s) tz)
+        (catch Exception e
+          (log/error (str "Unable to parse" s) e))))))
+
 (defn write-timestamps [object entry]
+  (let [created-at (str (.getAttribute entry "createdAt"))
+        updated-at (str (.getAttribute entry "updatedAt"))
+        formatoi   (fn [parsed]
+                     (doto (JsonObject.)
+                       (.addProperty "fi" (str (f/unparse finnish-format parsed)))
+                       (.addProperty "sv" (str (f/unparse swedish-format parsed)))
+                       (.addProperty "en" (str (f/unparse english-format parsed)))))]
   (doto object
-    (.addProperty "created" (str (.getAttribute entry "createdAt")))
-    (.addProperty "updated" (str (.getAttribute entry "updatedAt")))))
+    (.addProperty "created" created-at)
+    (.addProperty "updated" updated-at)
+    (.add "formatoituCreated" (some-> (parse-date-time created-at)
+                                      (formatoi)))
+    (.add "formatoituUpdated" (some-> (parse-date-time updated-at)
+                                      (formatoi))))))
 
 (defn write-array [object field entry]
   (let [array (doto (JsonArray.)
