@@ -46,6 +46,8 @@
   :target-path "target/%s"
   :plugins [[lein-environ "1.1.0"]
             [lein-auto "0.1.3"]
+            [lein-zprint "1.2.0"]
+            [lein-cljfmt "0.8.0"]
             [com.jakemccrary/lein-test-refresh "0.24.1"]]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
@@ -84,4 +86,5 @@
             "ci-test" ["with-profile" "+ci-test" "test"]
             "auto-test" ["with-profile" "+ci-test" "auto" "test"]
             "test-reload" ["with-profile" "+ci-test" "test-refresh"]
-            "cloverage" ["with-profile" "+test" "cloverage"]})
+            "cloverage" ["with-profile" "+test" "cloverage"]}
+  :zprint {:width 100 :old? false :style :community :map {:comma? false}})
