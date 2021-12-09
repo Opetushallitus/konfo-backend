@@ -203,7 +203,8 @@
 
 (def Ajanjakso
   {:alkaa   Datetime
-   (s/->OptionalKey :paattyy) (s/maybe Datetime)})
+   (s/->OptionalKey :paattyy) (s/maybe Datetime)
+   s/Any s/Any})
 
 (def Alkamiskausityyppi (s/enum "henkilokohtainen suunnitelma" "tarkka alkamisajankohta" "alkamiskausi ja -vuosi"))
 

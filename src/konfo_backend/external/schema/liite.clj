@@ -73,7 +73,8 @@
    :kuvaus         Kielistetty
    (s/->OptionalKey :toimitusaika)   Datetime
    (s/->OptionalKey :toimitustapa)   LiitteenToimitustapa
-   (s/->OptionalKey :toimitusosoite) LiitteenToimitusosoite})
+   (s/->OptionalKey :toimitusosoite) LiitteenToimitusosoite
+   s/Any s/Any})
 
 (def schemas
   (str liitteen-toimitusosoite-schema "\n"
