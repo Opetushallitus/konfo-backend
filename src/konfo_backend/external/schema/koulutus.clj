@@ -139,4 +139,5 @@
    (s/->OptionalKey :ePerusteId) s/Int
    (s/->OptionalKey :sorakuvaus) (s/maybe Sorakuvaus)
    :modified                     Datetime
-   :timestamp                    s/Int})
+   :timestamp                    s/Int
+   s/Any s/Any})
