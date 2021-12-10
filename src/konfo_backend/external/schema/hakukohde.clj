@@ -263,7 +263,8 @@
    (s/->OptionalKey :metadata)                     HakukohdeMetadata
    :organisaatio                                   Organisaatio
    :modified                                       Datetime
-   :timestamp                                      s/Int})
+   :timestamp                                      s/Int
+   s/Any s/Any})
 
 (def schemas
   (str

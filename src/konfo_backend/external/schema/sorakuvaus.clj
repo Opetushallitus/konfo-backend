@@ -83,7 +83,8 @@
                                               (->Koodi Koulutusala1Koodi)
                                               (->Koodi Koulutusala2Koodi))}
    :organisaatio Organisaatio
-   :modified Datetime})
+   :modified Datetime
+   s/Any s/Any})
 
 (def schemas
   sorakuvaus-schema)
