@@ -275,12 +275,18 @@
         lukiopainotukset (koodisto-filters-for-subentity :search_terms.lukiopainotukset.keyword "lukiopainotukset")
         lukiolinja_er (koodisto-filters-for-subentity :search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava")
         amm-osaamisalat (koodisto-filters-for-subentity :search_terms.ammosaamisalat.keyword "osaamisala")
-        lukiopainotukset_aggs {:filter {:bool {:must {:term {"search_terms.onkoTuleva" tuleva?}}}} :aggs (if (nil? lukiopainotukset)
-                                                                                                           {}
-                                                                                                           {:lukiopainotukset lukiopainotukset})}
-        lukiolinjat_er_aggs {:filter {:bool {:must {:term {"search_terms.onkoTuleva" tuleva?}}}} :aggs (if (nil? lukiolinja_er)
-                                                                                                         {}
-                                                                                                         {:lukiolinjaterityinenkoulutustehtava lukiolinja_er})}]
+        lukiopainotukset_aggs {:filter {:bool
+                                        {:must {:term {"search_terms.onkoTuleva" tuleva?}}
+                                         :filter (filters constraints)}}
+                               :aggs (if (nil? lukiopainotukset)
+                                       {}
+                                       {:lukiopainotukset lukiopainotukset})}
+        lukiolinjat_er_aggs {:filter {:bool
+                                      {:must {:term {"search_terms.onkoTuleva" tuleva?}}
+                                       :filter (filters constraints)}}
+                             :aggs (if (nil? lukiolinja_er)
+                                     {}
+                                     {:lukiolinjaterityinenkoulutustehtava lukiolinja_er})}]
      {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
                        :aggs (remove-nils  {:maakunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "maakunta")
                                             :kunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "kunta")
