@@ -111,7 +111,8 @@
                                     :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)}
    :organisaatio                   Organisaatio
    :modified                       Datetime
-   :timestamp                      s/Int})
+   :timestamp                      s/Int
+   s/Any s/Any})
 
 (def schemas
   haku-schema)

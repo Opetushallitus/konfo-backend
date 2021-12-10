@@ -155,4 +155,5 @@
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    :modified                     Datetime
-   :timestamp                    s/Int})
+   :timestamp                    s/Int
+   s/Any s/Any})
