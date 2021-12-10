@@ -165,7 +165,7 @@
 (def Eperuste
   {(s/->OptionalKey :id) s/Int
    (s/->OptionalKey :diaarinumero) s/Str
-   (s/->OptionalKey :voimassaoloLoppuu) s/Str })
+   (s/->OptionalKey :voimassaoloLoppuu) (s/maybe s/Str)})
 
 (def KkMetadata
   {:kuvaus                             Kielistetty
