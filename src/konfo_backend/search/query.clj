@@ -172,10 +172,10 @@
             :query      {:bool {:filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
                                                 (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))),
                                 :minimum_should_match "9%"}}}}]
-             (when (not-blank? keyword)
+             (if (not-blank? keyword)
                (update-in query [:nested :query :bool]
-                          (fn [x] (merge x (fields keyword [] lng suffixes)))))
-             query))
+                          (fn [x] (merge x (fields keyword [] lng suffixes))))
+               query)))
 
 (defn- ->term-filter
   [field term]
