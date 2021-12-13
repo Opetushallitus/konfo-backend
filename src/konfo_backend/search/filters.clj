@@ -118,7 +118,7 @@
      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
      :lukiopainotukset      (filters "lukiopainotukset")
      :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
-     :ammosaamisalat        (filters "osaamisala")})
+     :osaamisala            (filters "osaamisala")})
     )
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})

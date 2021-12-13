@@ -65,7 +65,7 @@
             (sijainti? constraints)              (conj (->terms-query :search_terms.sijainti.keyword                 (:sijainti constraints)))
             (koulutusala? constraints)           (conj (->terms-query :search_terms.koulutusalat.keyword             (:koulutusala constraints)))
             (opetustapa? constraints)            (conj (->terms-query :search_terms.opetustavat.keyword              (:opetustapa constraints)))
-            (amm-osaamisalat? constraints)       (conj (->terms-query :search_terms.ammosaamisalat.keyword           (:ammosaamisalat constraints)))
+            (osaamisala? constraints)            (conj (->terms-query :search_terms.ammosaamisalat.keyword           (:osaamisala constraints)))
 
             ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
             use-haku-kaynnissa                   (conj (hakutieto-query (some-hakuaika-kaynnissa)))
@@ -174,7 +174,8 @@
                                 :minimum_should_match "9%"}}}}]
              (when (not-blank? keyword)
                (update-in query [:nested :query :bool]
-                          (fn [x] (merge x (fields keyword [] lng suffixes)))))))
+                          (fn [x] (merge x (fields keyword [] lng suffixes)))))
+             query))
 
 (defn- ->term-filter
   [field term]
@@ -274,7 +275,7 @@
         haku-kaynnissa (haku-kaynnissa? constraints)
         lukiopainotukset (koodisto-filters-for-subentity :search_terms.lukiopainotukset.keyword "lukiopainotukset")
         lukiolinja_er (koodisto-filters-for-subentity :search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava")
-        amm-osaamisalat (koodisto-filters-for-subentity :search_terms.ammosaamisalat.keyword "osaamisala")
+        osaamisala (koodisto-filters-for-subentity :search_terms.ammosaamisalat.keyword "osaamisala")
         lukiopainotukset_aggs {:filter {:bool
                                         {:must {:term {"search_terms.onkoTuleva" tuleva?}}
                                          :filter (filters constraints)}}
@@ -292,7 +293,7 @@
                                             :kunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "kunta")
                                             :opetuskieli (koodisto-filters-for-subentity :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
                                             :opetustapa (koodisto-filters-for-subentity :search_terms.opetustavat.keyword "opetuspaikkakk")
-                                            :ammosaamisalat amm-osaamisalat
+                                            :osaamisala osaamisala
 
                                             :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
                                             :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.hakutapa     "hakutapa")

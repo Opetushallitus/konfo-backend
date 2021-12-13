@@ -39,7 +39,7 @@
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus :ammosaamisalat]
+  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus :osaamisala]
         lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
     (merge
       (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)

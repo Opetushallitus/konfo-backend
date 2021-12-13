@@ -55,9 +55,9 @@
   [constraints]
   (constraint? constraints :lukiolinjaterityinenkoulutustehtava))
 
-(defn amm-osaamisalat?
+(defn osaamisala?
   [constraints]
-  (constraint? constraints :ammosaamisalat))
+  (constraint? constraints :osaamisala))
 
 (defn constraints?
   [constraints]

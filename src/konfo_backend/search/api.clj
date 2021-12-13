@@ -583,7 +583,7 @@
    :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)
    :lukiopainotukset      (comma-separated-string->vec lukiopainotukset)
    :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec lukiolinjaterityinenkoulutustehtava)
-   :ammosaamisalat        (comma-separated-string->vec osaamisala)
+   :osaamisala            (comma-separated-string->vec osaamisala)
    })
 
 (defn ->search-with-validated-params
@@ -653,7 +653,7 @@
                         {pohjakoulutusvaatimus :- String nil}
                         {lukiopainotukset      :- String nil}
                         {lukiolinjaterityinenkoulutustehtava :- String nil}
-                        {osaamisala        :- String nil}]
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
                                                                       keyword
                                                                       lng
@@ -693,7 +693,7 @@
                         {pohjakoulutusvaatimus :- String nil}
                         {lukiopainotukset      :- String nil}
                         {lukiolinjaterityinenkoulutustehtava :- String nil}
-                        {osaamisala        :- String nil}]
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
                                                                                   oid
                                                                                   lng
@@ -734,7 +734,7 @@
                         {pohjakoulutusvaatimus :- String nil}
                         {lukiopainotukset      :- String nil}
                         {lukiolinjaterityinenkoulutustehtava :- String nil}
-                        {osaamisala        :- String nil}]
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                       keyword
                                                                       lng
