@@ -21,7 +21,7 @@
         mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
-(defn- ->doc_count-for-lukiolinjat
+(defn- ->doc_count-for-lukiolinjat-and-osaamisala
   [response agg-key]
   (let [buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs")) (keyword agg-key) :buckets])
         mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
@@ -39,11 +39,12 @@
 
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus :osaamisala]
+  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]
         lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
     (merge
       (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)
-      (reduce-merge-map #(->doc_count-for-lukiolinjat response %) lukio-agg-keys))))
+      (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisala response %) lukio-agg-keys)
+      (->doc_count-for-lukiolinjat-and-osaamisala response "osaamisala"))))
 
 (defn- filter-counts
   [response]
