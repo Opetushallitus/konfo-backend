@@ -12,13 +12,13 @@
 (defn- ->doc_count
   [response agg-key]
   (let [buckets (get-in response [:aggregations :hits_aggregation agg-key :buckets])
-        mapper  (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
+        mapper (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
 (defn- ->doc_count-for-subentity
   [response agg-key]
   (let [buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
-        mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
+        mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
 (defn- doc_count-by-filter
@@ -59,11 +59,15 @@
 (defn- inner-hit->toteutus-hit
   [inner-hit]
   (let [source (:_source inner-hit)]
-    {:toteutusOid         (:toteutusOid source)
-     :toteutusNimi        (:toteutusNimi source)
-     :oppilaitosOid       (:oppilaitosOid source)
-     :oppilaitosNimi      (:nimi source)
-     :kunnat              (get-in source [:metadata :kunnat])}))
+    {:toteutusOid    (:toteutusOid source)
+     :toteutusNimi   (:toteutusNimi source)
+     :oppilaitosOid  (:oppilaitosOid source)
+     :oppilaitosNimi (:nimi source)
+     :kunnat         (get-in source [:metadata :kunnat])}))
+
+(defn- valid-external-inner-hit [hit]
+  (let [source (:_source hit)]
+    (:toteutusOid source)))
 
 (defn- external-hits
   [response]
@@ -71,18 +75,17 @@
     (fn [hit]
       (-> (:_source hit)
           (rename-key :eperuste :ePerusteId)
-          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (get-in hit [:inner_hits :search_terms :hits :hits]))))))
+          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (filter valid-external-inner-hit (get-in hit [:inner_hits :search_terms :hits :hits])))))))
     (get-in response [:hits :hits])))
 
 (defn parse-external
   [response]
-  (log-pretty response)
-  {:total   (get-in response [:hits :total :value])
-   :hits    (external-hits response)})
+  {:total (get-in response [:hits :total :value])
+   :hits  (filter (fn [hit] (not-empty (:toteutukset hit))) (external-hits response))})
 
 (defn- inner-hits-with-kuvaukset
   [inner-hits]
-  (let [hits      (vec (map :_source (:hits inner-hits)))
+  (let [hits (vec (map :_source (:hits inner-hits)))
         kuvaukset (get-kuvaukset (vec (distinct (remove nil? (map :toteutusOid hits)))))]
     (vec (for [hit hits
                :let [toteutusOid (:toteutusOid hit)]]
@@ -100,8 +103,8 @@
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
          total-inner-hits (:value (:total inner-hits))]
-     {:total (or total-inner-hits 0)
-      :hits (inner-hits-with-kuvaukset inner-hits)
+     {:total   (or total-inner-hits 0)
+      :hits    (inner-hits-with-kuvaukset inner-hits)
       :filters (filter-generator response)})))
 
 (defn parse-inner-hits-for-jarjestajat
