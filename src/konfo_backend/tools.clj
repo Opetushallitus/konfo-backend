@@ -128,3 +128,8 @@
   (-> coll
       (assoc new (old coll))
       (dissoc old)))
+
+(defn assoc-if [m k v p?]
+  (if p?
+    (assoc m k v)
+    m))
