@@ -132,8 +132,7 @@
     (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query :search_terms.lukiolinjaterityinenkoulutustehtava.keyword (:lukiolinjaterityinenkoulutustehtava constraints)))))
 
 (defn- osaamisala-filters [constraints]
-  (cond-> []
-    (osaamisala? constraints) (conj (->terms-query :search_terms.osaamisalat.keyword (:osaamisala constraints)))))
+  [(->terms-query :search_terms.osaamisalat.keyword (:osaamisala constraints))])
 
 (defn- inner-hits-filters
   [tuleva? constraints]
