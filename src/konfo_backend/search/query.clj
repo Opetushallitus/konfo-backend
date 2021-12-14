@@ -133,7 +133,7 @@
 
 (defn- osaamisala-filters [constraints]
   (cond-> []
-    (osaamisala? constraints) (conj (->terms-query :search_terms.osaamisala.keyword (:osaamisala constraints)))))
+    (osaamisala? constraints) (conj (->terms-query :search_terms.osaamisalat.keyword (:osaamisala constraints)))))
 
 (defn- inner-hits-filters
   [tuleva? constraints]
@@ -281,19 +281,21 @@
                    :yhteishaku            (yhteishaku-filter haku-kaynnissa)})))
 
 (defn- generate-aggs-for
-  [filter tuleva? constraints]
-  (let [aggs (koodisto-filters-for-subentity (keyword (str "search_terms." filter ".keyword")) filter)]
-    {:filter {:bool
-              {:must {:term {"search_terms.onkoTuleva" tuleva?}}
-               :filter (filters constraints)}}
-     :aggs (if (nil? aggs)
-             {}
-             {(keyword filter) aggs})}))
+  [filter-name filter-aggs tuleva? constraints]
+  {:filter {:bool
+            {:must {:term {"search_terms.onkoTuleva" tuleva?}}
+             :filter (filters constraints)}}
+   :aggs (if (nil? filter-aggs)
+           {}
+           {filter-name filter-aggs})})
 
 (defn- jarjestajat-aggs
   [tuleva? constraints]
   (let [no-other-hakutieto-filters-used (haku-kaynnissa-not-already-included? constraints)
-        haku-kaynnissa (haku-kaynnissa? constraints)]
+        haku-kaynnissa (haku-kaynnissa? constraints)
+        lukiopainotukset-aggs (koodisto-filters-for-subentity :search_terms.lukiopainotukset.keyword "lukiopainotukset")
+        lukiolinjat-er-aggs (koodisto-filters-for-subentity :search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava")
+        osaamisala-aggs (koodisto-filters-for-subentity :search_terms.osaamisalat.keyword "osaamisala")]
     {:inner_hits_agg
      {:filter (inner-hits-filters tuleva? constraints)
       :aggs (remove-nils {:maakunta (koodisto-filters-for-subentity :search_terms.sijainti.keyword "maakunta")
@@ -306,9 +308,9 @@
                           :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
                           :valintatapa (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.valintatavat "valintatapajono")
                           :yhteishaku (yhteishaku-filter haku-kaynnissa)})}
-     :lukiopainotukset_aggs (generate-aggs-for "lukiopainotukset" tuleva? constraints)
-     :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" tuleva? constraints)
-     :osaamisala_aggs (generate-aggs-for "osaamisala" tuleva? constraints)}))
+     :lukiopainotukset_aggs (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints)
+     :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints)
+     :osaamisala_aggs (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints)}))
 
 (defn- aggregations
   [aggs-generator]
