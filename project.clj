@@ -26,9 +26,9 @@
                  [oph/clj-log "0.2.3-SNAPSHOT"]
                  [ring-basic-authentication "1.0.5"]
                  [org.clojure/tools.logging "0.4.1"]
-                 [org.apache.logging.log4j/log4j-api "2.16.0"]
-                 [org.apache.logging.log4j/log4j-core "2.16.0"]
-                 [org.apache.logging.log4j/log4j-slf4j-impl "2.16.0"]
+                 [org.apache.logging.log4j/log4j-api "2.17.0"]
+                 [org.apache.logging.log4j/log4j-core "2.17.0"]
+                 [org.apache.logging.log4j/log4j-slf4j-impl "2.17.0"]
                  [clj-log4j2 "0.3.0"]
                  ; Configuration
                  [fi.vm.sade.java-utils/java-properties "0.1.0-SNAPSHOT"]
