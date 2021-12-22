@@ -107,15 +107,19 @@
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts]
   (let [filters (partial koodisto->filters filter-counts)]
-    {:opetuskieli (filters "oppilaitoksenopetuskieli")
-     :maakunta (filters "maakunta")
-     :kunta (filters "kunta")
-     :opetustapa (filters "opetuspaikkakk")
-     :valintatapa (filters "valintatapajono")
-     :hakukaynnissa (hakukaynnissa filter-counts)
-     :hakutapa (filters "hakutapa")
-     :yhteishaku (yhteishaku filter-counts)
-     :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
+    {:opetuskieli           (filters "oppilaitoksenopetuskieli")
+     :maakunta              (filters "maakunta")
+     :kunta                 (filters "kunta")
+     :opetustapa            (filters "opetuspaikkakk")
+     :valintatapa           (filters "valintatapajono")
+     :hakukaynnissa         (hakukaynnissa filter-counts)
+     :hakutapa              (filters "hakutapa")
+     :yhteishaku            (yhteishaku filter-counts)
+     :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
+     :lukiopainotukset      (filters "lukiopainotukset")
+     :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+     :osaamisala            (filters "osaamisala")})
+    )
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 

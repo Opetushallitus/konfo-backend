@@ -262,6 +262,37 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |          default: nil
+   |        - in: query
+   |          name: hakukaynnissa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on haku käynnissä
+   |          default: false
+   |        - in: query
+   |          name: lukiopainotukset
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lukiopainotusten koodeja
+   |          example: lukiopainotukset_0111, lukiopainotukset_001
+   |          default: nil
+   |        - in: query
+   |          name: lukiolinjaterityinenkoulutustehtava
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja
+   |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126
+   |          default: nil
+   |        - in: query
+   |          name: osaamisala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
+   |          example: osaamisala_1756, osaamisala_3076
+   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -539,7 +570,7 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
+(defn- parse-constraints [koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]
   {:koulutustyyppi        (->> koulutustyyppi (comma-separated-string->vec))
    :sijainti              (comma-separated-string->vec sijainti)
    :opetuskieli           (comma-separated-string->vec opetuskieli)
@@ -549,11 +580,15 @@
    :hakukaynnissa         hakukaynnissa
    :hakutapa              (comma-separated-string->vec hakutapa)
    :yhteishaku            (comma-separated-string->vec yhteishaku)
-   :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)})
+   :pohjakoulutusvaatimus (comma-separated-string->vec pohjakoulutusvaatimus)
+   :lukiopainotukset      (comma-separated-string->vec lukiopainotukset)
+   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec lukiolinjaterityinenkoulutustehtava)
+   :osaamisala            (comma-separated-string->vec osaamisala)
+   })
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus)]
+  [f keyword lng page size sort order koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"]))  (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
       (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -569,8 +604,8 @@
                                                   constraints)))))
 
 (defn- ->search-subentities-with-validated-params
-  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus]
-  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus)]
+  [f oid lng page size order tuleva koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]
+  (let [constraints (parse-constraints koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakukaynnissa hakutapa yhteishaku pohjakoulutusvaatimus lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala)]
     (cond
       (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
       (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -615,7 +650,10 @@
                         {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {yhteishaku            :- String nil}
-                        {pohjakoulutusvaatimus :- String nil}]
+                        {pohjakoulutusvaatimus :- String nil}
+                        {lukiopainotukset      :- String nil}
+                        {lukiolinjaterityinenkoulutustehtava :- String nil}
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-with-validated-params koulutus-search/search
                                                                       keyword
                                                                       lng
@@ -632,7 +670,10 @@
                                                                       hakukaynnissa
                                                                       hakutapa
                                                                       yhteishaku
-                                                                      pohjakoulutusvaatimus)))
+                                                                      pohjakoulutusvaatimus
+                                                                      lukiopainotukset
+                                                                      lukiolinjaterityinenkoulutustehtava
+                                                                      osaamisala)))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
          :path-params [oid :- String]
@@ -649,7 +690,10 @@
                         {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {yhteishaku            :- String nil}
-                        {pohjakoulutusvaatimus :- String nil}]
+                        {pohjakoulutusvaatimus :- String nil}
+                        {lukiopainotukset      :- String nil}
+                        {lukiolinjaterityinenkoulutustehtava :- String nil}
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-subentities-with-validated-params koulutus-search/search-koulutuksen-jarjestajat
                                                                                   oid
                                                                                   lng
@@ -666,7 +710,10 @@
                                                                                   hakukaynnissa
                                                                                   hakutapa
                                                                                   yhteishaku
-                                                                                  pohjakoulutusvaatimus)))
+                                                                                  pohjakoulutusvaatimus
+                                                                                  lukiopainotukset
+                                                                                  lukiolinjaterityinenkoulutustehtava
+                                                                                  osaamisala)))
 
     (GET "/oppilaitokset" [:as request]
          :query-params [{keyword               :- String nil}
@@ -684,7 +731,10 @@
                         {hakukaynnissa         :- Boolean false}
                         {hakutapa              :- String nil}
                         {yhteishaku            :- String nil}
-                        {pohjakoulutusvaatimus :- String nil}]
+                        {pohjakoulutusvaatimus :- String nil}
+                        {lukiopainotukset      :- String nil}
+                        {lukiolinjaterityinenkoulutustehtava :- String nil}
+                        {osaamisala            :- String nil}]
          (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                       keyword
                                                                       lng
@@ -701,7 +751,10 @@
                                                                       hakukaynnissa
                                                                       hakutapa
                                                                       yhteishaku
-                                                                      pohjakoulutusvaatimus)))
+                                                                      pohjakoulutusvaatimus
+                                                                      lukiopainotukset
+                                                                      lukiolinjaterityinenkoulutustehtava
+                                                                      osaamisala)))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
          :path-params [oid :- String]
@@ -727,6 +780,9 @@
                                                                                   opetuskieli
                                                                                   koulutusala
                                                                                   opetustapa
+                                                                                  nil
+                                                                                  nil
+                                                                                  nil
                                                                                   nil
                                                                                   nil
                                                                                   nil

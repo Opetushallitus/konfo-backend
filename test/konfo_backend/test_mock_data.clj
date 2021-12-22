@@ -174,6 +174,22 @@
                                                                       {:koodiUri "kansallinenkoulutusluokitus2016koulutusalataso2_02"
                                                                        :versio 1
                                                                        :nimi {:fi "Toinen kiva taso2 koulutusala"}}]}
+    (= "lukiopainotukset" x)                                {:id "lukiopainotukset"
+                                                             :koodisto "lukiopainotukset"
+                                                             :koodit [{:koodiUri "lukiopainotukset_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Lukiopainotus 1"}}
+                                                                      {:koodiUri "lukiopainotukset_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Lukiopainotus 2"}}]}
+    (= "lukiolinjaterityinenkoulutustehtava" x)             {:id "lukiolinjaterityinenkoulutustehtava"
+                                                             :koodisto "lukiolinjaterityinenkoulutustehtava"
+                                                             :koodit [{:koodiUri "lukiolinjaterityinenkoulutustehtava_01"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Lukiolinja 1 (erityinen koulutustehtava)"}}
+                                                                      {:koodiUri "lukiolinjaterityinenkoulutustehtava_02"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Lukiolinja 2 (erityinen koulutustehtava)"}}]}
     :else []))
 
 (def punkaharjun-yliopisto    "1.2.246.562.10.000002")

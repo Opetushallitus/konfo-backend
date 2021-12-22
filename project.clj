@@ -54,7 +54,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "9.2.0-SNAPSHOT"]
+                                   [kouta-indeksoija-service "9.3.0-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
@@ -69,7 +69,7 @@
                                      (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
                                    (utils/global-docker-elastic-fixture))]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "9.2.0-SNAPSHOT"]
+                                      [kouta-indeksoija-service "9.3.0-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
