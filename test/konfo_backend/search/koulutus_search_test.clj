@@ -457,6 +457,7 @@
                   :nimi {:fi "Autoalan koulutus fi",
                          :sv "Autoalan koulutus sv"},
                   :oid "1.2.246.562.13.000001",
+                  :toteutustenTarjoajat {:nimi nil, :count 0}
                   :kielivalinta [ "fi", "sv" ],
                   :koulutukset [{ :koodiUri  "koulutus_371101#1",
                                   :nimi {:fi "koulutus_371101#1 nimi fi",
