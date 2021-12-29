@@ -1,5 +1,6 @@
 (ns konfo-backend.search.koulutus-jarjestajat-search-test
   (:require [clojure.test :refer :all]
+            [clojure.string :refer [starts-with?]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
@@ -50,9 +51,9 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search koulutuksen järjestäjät with bad requests:"
       (testing "Invalid lng"
-        (is (= "Virheellinen kieli") (->bad-request-body autoala-oid :lng "foo")))
+        (is (starts-with? (->bad-request-body autoala-oid :lng "foo") "Virheellinen kieli")))
       (testing "Invalid order"
-        (is (= "Virheellinen järjestys") (->bad-request-body autoala-oid :order "foo"))))
+        (is (starts-with? (->bad-request-body autoala-oid :order "foo") "Virheellinen järjestys"))))
 
     (testing "Sorting and paging järjestäjät"
       (testing "asc order"

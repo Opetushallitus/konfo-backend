@@ -1,5 +1,6 @@
 (ns konfo-backend.search.koulutus-search-test
   (:require [clojure.test :refer :all]
+            [clojure.string :refer [starts-with?]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
@@ -101,11 +102,11 @@
                 konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
     (testing "Search koulutukset with bad requests:"
       (testing "Invalid lng"
-        (is (= "Virheellinen kieli")      (->bad-request-body :sijainti "kunta_618" :lng "foo")))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :lng "foo") "Virheellinen kieli")))
       (testing "Invalid sort"
-        (is (= "Virheellinen järjestys")  (->bad-request-body :sijainti "kunta_618" :order "foo")))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :order "foo") "Virheellinen järjestys")))
       (testing "Too short keyword"
-        (is (= "Hakusana on liian lyhyt") (->bad-request-body :sijainti "kunta_618" :keyword "fo"))))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :keyword "fo") "Hakusana on liian lyhyt"))))
 
     (testing "Search all koulutukset"
       (let [r (search :sort "name" :order "asc")]
