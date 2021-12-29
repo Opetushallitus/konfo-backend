@@ -1,5 +1,6 @@
 (ns konfo-backend.search.oppilaitos-search-test
   (:require [clojure.test :refer :all]
+            [clojure.string :refer [starts-with?]]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
@@ -48,11 +49,11 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitokset with bad requests:"
       (testing "Invalid lng"
-        (is (= "Virheellinen kieli")      (->bad-request-body :sijainti "kunta_618" :lng "foo")))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :lng "foo") "Virheellinen kieli")))
       (testing "Invalid sort"
-        (is (= "Virheellinen järjestys")  (->bad-request-body :sijainti "kunta_618" :sort "foo")))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :sort "foo") "Virheellinen järjestys")))
       (testing "Too short keyword"
-        (is (= "Hakusana on liian lyhyt") (->bad-request-body :sijainti "kunta_618" :keyword "fo"))))
+        (is (starts-with? (->bad-request-body :sijainti "kunta_618" :keyword "fo") "Hakusana on liian lyhyt"))))
 
     (testing "Search all oppilaitokset"
       (let [r (search :sort "name" :order "asc")]

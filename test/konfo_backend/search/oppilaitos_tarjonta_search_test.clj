@@ -1,5 +1,6 @@
 (ns konfo-backend.search.oppilaitos-tarjonta-search-test
   (:require [clojure.test :refer :all]
+            [clojure.string :refer [starts-with?]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
@@ -43,9 +44,9 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitoksen tarjonta with bad requests:"
       (testing "Invalid lng"
-        (is (= "Virheellinen kieli") (->bad-request-body punkaharjun-yliopisto :lng "foo")))
+        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :lng "foo") "Virheellinen kieli" )))
       (testing "Invalid order"
-        (is (= "Virheellinen järjestys") (->bad-request-body punkaharjun-yliopisto :order "foo"))))
+        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :order "foo") "Virheellinen järjestys"))))
 
     (testing "Sorting and paging tarjonta"
       (testing "asc order"

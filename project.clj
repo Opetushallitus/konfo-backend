@@ -1,6 +1,6 @@
 (require 'cemerick.pomegranate.aether)
 (cemerick.pomegranate.aether/register-wagon-factory!
-  "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
+ "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
 
 (defproject konfo-backend "0.2.0-SNAPSHOT"
   :description "Konfo-backend"
@@ -54,22 +54,25 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "9.3.0-SNAPSHOT"]
+                                   [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
                                    [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                    [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
                                    [oph/clj-test-utils "0.3.0-SNAPSHOT"]
-                                   [clj-http-fake "1.0.3"]]
+                                   [clj-http-fake "1.0.3"]
+                                   [pjstadig/humane-test-output "0.11.0"]]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
                                  (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
                                    (do
                                      (prn "Using Elastic from port " elasticPort)
                                      (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
-                                   (utils/global-docker-elastic-fixture))]}
+                                   (utils/global-docker-elastic-fixture))
+                                 (require 'pjstadig.humane-test-output)
+                                 (pjstadig.humane-test-output/activate!)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "9.3.0-SNAPSHOT"]
+                                      [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
                                       [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
                                       [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
