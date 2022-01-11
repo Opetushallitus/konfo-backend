@@ -59,12 +59,12 @@
         (is (= [toteutusOid2 toteutusOid3] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
     (testing "Search toteutus"
       (let [r (search :keyword "koira" :koulutustyyppi "amm")]
-        (is (= 2 (:total r)))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid1] [(:oid (first (:hits r)))]))
         (is (= [toteutusOid2] [(:toteutusOid (first (:toteutukset (first (:hits r)))))]))))
     (testing "Get correct result"
       (let [r (search :keyword "kissa" :koulutustyyppi "amm")]
-        (is (= r {:total 2,
+        (is (= r {:total 1,
                 :hits [{:kuvaus nil,
                         :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                         :koulutukset [{:koodiUri "koulutus_371101#1",
@@ -81,16 +81,7 @@
                                                         :sv "Helsingin yliopisto sv"},
                                        :kunnat [{:koodiUri "kunta_091",
                                                  :nimi {:fi "kunta_091 nimi fi",
-                                                        :sv "kunta_091 nimi sv"}}]}
-                                      {:toteutusOid "1.2.246.562.17.000002",
-                                       :toteutusNimi {:fi "Koirakoulutus fi",
-                                                      :sv "Koirakoulutus sv"},
-                                       :oppilaitosOid "1.2.246.562.10.000002",
-                                       :oppilaitosNimi {:fi "Punkaharjun yliopisto",
-                                                        :sv "Punkaharjun yliopisto sv"},
-                                       :kunnat [{:koodiUri "kunta_220",
-                                                 :nimi {:fi "kunta_220 nimi fi",
-                                                        :sv "kunta_220 nimi sv"}}]}],
+                                                        :sv "kunta_091 nimi sv"}}]}],
                         :opintojenLaajuusNumero 150,
                         :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
                                            :nimi {:fi "opintojenlaajuus_150 nimi fi",
@@ -106,42 +97,15 @@
                                             {:koodiUri "tutkintonimikkeet_02",
                                              :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                                     :sv "tutkintonimikkeet_02 nimi sv"}}],
-                        :koulutustyyppi "amm"}
-                       {:kuvaus nil,
-                        :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
-                        :koulutukset [{:koodiUri "koulutus_371101#1",
-                                       :nimi {:fi "koulutus_371101#1 nimi fi",
-                                              :sv "koulutus_371101#1 nimi sv"}}],
-                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
-                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
-                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                        :toteutukset [{:toteutusOid "1.2.246.562.17.000001",
-                                       :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
-                                       :oppilaitosOid "1.2.246.562.10.000002",
-                                       :oppilaitosNimi {:fi "Punkaharjun yliopisto", :sv "Punkaharjun yliopisto sv"},
-                                       :kunnat [{:koodiUri "kunta_220", :nimi {:fi "kunta_220 nimi fi", :sv "kunta_220 nimi sv"}}]}],
-                        :opintojenLaajuusNumero 150,
-                        :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
-                                           :nimi {:fi "opintojenlaajuus_150 nimi fi", :sv "opintojenlaajuus_150 nimi sv"}},
-                        :ePerusteId 1234,
-                        :nimi {:fi "Hevosalan koulutus fi", :sv "Hevosalan koulutus sv"},
-                        :oid "1.2.246.562.13.000002",
-                        :kielivalinta ["fi" "sv"],
-                        :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
-                                             :nimi {:fi "tutkintonimikkeet_01 nimi fi",
-                                                    :sv "tutkintonimikkeet_01 nimi sv"}}
-                                            {:koodiUri "tutkintonimikkeet_02",
-                                             :nimi {:fi "tutkintonimikkeet_02 nimi fi",
-                                                    :sv "tutkintonimikkeet_02 nimi sv"}}],
                         :koulutustyyppi "amm"}]}))))
 
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan")]
-        (is (= 4 (:total r)))
-        (is (= [koulutusOid2 koulutusOid4 koulutusOid1 koulutusOid5] (vec (map :oid (:hits r)))))))
+        (is (= 2 (:total r)))
+        (is (= [koulutusOid2 koulutusOid4] (vec (map :oid (:hits r)))))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan" :koulutustyyppi "amm")]
-        (is (= 2 (:total r)))
+        (is (= 1 (:total r)))
         (is (= [koulutusOid2] [(:oid (first (:hits r)))]))))
     (testing "Search toteutus"
       (let [r (search :keyword "Hevosalan" :koulutustyyppi "yo")]
@@ -153,9 +117,8 @@
         (is (= 1 (:total r)))
         (is (= [koulutusOid5] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid6] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
-    ;todo - pitänee tutkia lisää, palauttaa kaikennäköistä. ¯\_(ツ)_/¯
     (testing "Nothing found"
-      (is (= 4 (count (:hits (search :keyword "mummo"))))))
+      (is (= 0 (count (:hits (search :keyword "mummo"))))))
     (testing "Erroneous schema"
     ( with-redefs-fn {#'konfo-backend.search.response/parse-external (fn [response] {:hits {:hits {:huuhaa "hiihaa"}}})}
       #(search-failed :keyword "Virheellinen" :koulutustyyppi "tuva"))))))
