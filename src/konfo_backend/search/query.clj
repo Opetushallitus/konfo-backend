@@ -93,12 +93,11 @@
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            fields? (-> (assoc :should {:multi_match {:query       keyword,
-                                                      :fields      (flatten (generate-keyword-query user-lng suffixes))
-                                                      :tie_breaker 0.9
-                                                      :operator    "and"
-                                                      :type        "cross_fields"}})
-                        (assoc-if :minimum_should_match "9%" filter?))
+            fields? (-> (assoc :must {:multi_match {:query keyword,
+                                                    :fields (flatten (generate-keyword-query user-lng suffixes))
+                                                    :tie_breaker 0.9
+                                                    :operator "and"
+                                                    :type "cross_fields"}}))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
