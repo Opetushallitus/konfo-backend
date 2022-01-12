@@ -8,15 +8,13 @@
 (def ZONE (DateTimeZone/forID "Europe/Helsinki"))
 
 (defn with-is-haku-auki [data]
-  (let [now (DateTime/now)]
+  (let [now (.withZone (DateTime/now) ZONE)]
     (prewalk (fn [x]
                (if-let [alkaa (:alkaa x)]
-                 (let [before-alkaa (.isBefore (.withZone (.parseDateTime DATE_FORMAT alkaa) ZONE) now)]
+                 (let [before-alkaa (.isBefore (.parseDateTime DATE_FORMAT alkaa) now)]
                    (-> x
                        (assoc :haku-auki (boolean (if-let [loppuu (:loppuu x)]
                                                     (and before-alkaa (.isAfter
-                                                                        (.withZone
-                                                                          (.parseDateTime DATE_FORMAT loppuu)
-                                                                          ZONE) now))
+                                                                          (.parseDateTime DATE_FORMAT loppuu) now))
                                                     before-alkaa)))))
                  x)) data)))
