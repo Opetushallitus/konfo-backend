@@ -403,7 +403,7 @@
          (with-access-logging request (if (not (some #{lng} ["fi" "sv" "en"]))
                                         (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
                                         (if-let [result (lokalisointi/get lng)]
-                                          (ok (with-is-haku-auki result))
+                                          (ok result)
                                           (not-found "Not found")))))
 
     (GET "/koulutus/:oid" [:as request]
