@@ -441,54 +441,54 @@
          :query-params [{draft :- Boolean false}]
          :path-params [id :- String]
          (with-access-logging request (if-let [result (valintaperuste/get id draft)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/oppilaitos/:oid" [:as request]
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (oppilaitos/get oid draft)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (if-let [osa-result (oppilaitos/get-by-osa oid draft)]
-                                          (ok (with-is-haku-auki osa-result))
+                                          (ok osa-result)
                                           (not-found "Not found")))))
 
     (GET "/oppilaitoksen-osa/:oid" [:as request]
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (oppilaitos/get-by-osa oid draft)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/eperuste/:id" [:as request]
          :path-params [id :- String]
          (with-access-logging request (if-let [result (eperuste/get-eperuste-by-id id)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/tutkinnonosa/:id" [:as request]
          :path-params [id :- String]
          (with-access-logging request (if-let [result (eperuste/get-tutkinnonosa-by-id id)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/kuvaus/:id" [:as request]
          :path-params [id :- String]
          :query-params [{osaamisalakuvaukset :- Boolean false}]
          (with-access-logging request (if-let [result (eperuste/get-kuvaus-by-eperuste-id id osaamisalakuvaukset)]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/kuvaus/:id/tutkinnonosat" [:as request]
          :path-params [id :- String]
          :query-params [{koodi-urit :- String nil}]
          (with-access-logging request (if-let [result (eperuste/get-tutkinnonosa-kuvaukset id (comma-separated-string->vec koodi-urit))]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))
 
     (GET "/kuvaus/:id/osaamisalat" [:as request]
          :path-params [id :- String]
          :query-params [{koodi-urit :- String nil}]
          (with-access-logging request (if-let [result (eperuste/get-osaamisala-kuvaukset id (comma-separated-string->vec koodi-urit))]
-                                        (ok (with-is-haku-auki result))
+                                        (ok result)
                                         (not-found "Not found"))))))
