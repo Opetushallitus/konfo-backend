@@ -84,8 +84,9 @@
    :kynnysehto                                     Kielistetty
    :valintaperusteenValintakokeidenLisatilaisuudet [Valintakokeen-lisatilaisuudet]
    :kaytetaanHaunAlkamiskautta                     (s/maybe s/Bool)
-   :koulutuksenAlkamiskausi                        (s/maybe KoulutuksenAlkamiskausi)
-   :aloituspaikat                                  (s/maybe Aloituspaikat)})
+   (s/->OptionalKey :koulutuksenAlkamiskausi)      (s/maybe KoulutuksenAlkamiskausi)
+   :aloituspaikat                                  (s/maybe Aloituspaikat)
+   s/Any                                           s/Any})
 
 (def hakukohde-schema
   "|    Hakukohde:
