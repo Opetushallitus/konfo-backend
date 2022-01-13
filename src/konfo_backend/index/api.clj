@@ -8,6 +8,7 @@
     [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.eperuste.eperuste :as eperuste]
     [konfo-backend.index.lokalisointi :as lokalisointi]
+    [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]
     [compojure.api.core :as c :refer [GET POST]]
     [ring.util.http-response :refer :all]
     [clj-log.access-log :refer [with-access-logging]]
@@ -409,26 +410,26 @@
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (koulutus/get oid draft)]
-                                        (ok result)
+                                        (ok (with-is-haku-auki result))
                                         (not-found "Not found"))))
     (GET "/toteutus/:oid" [:as request]
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (toteutus/get oid draft)]
-                                        (ok result)
+                                        (ok (with-is-haku-auki result))
                                         (not-found "Not found"))))
 
     (GET "/haku/:oid" [:as request]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (haku/get oid)]
-                                        (ok result)
+                                        (ok (with-is-haku-auki result))
                                         (not-found "Not found"))))
 
     (GET "/hakukohde/:oid" [:as request]
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (hakukohde/get oid draft)]
-                                        (ok result)
+                                        (ok (with-is-haku-auki result))
                                         (not-found "Not found"))))
 
     (GET "/hakukohde/:oid/demo" [:as request]
