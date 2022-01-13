@@ -4,7 +4,7 @@
     [clj-time.format :as f])
   (:import (org.joda.time DateTime)))
 
-(def FORMATTER (f/formatter "yyyy-MM-dd'T'hh:mm"))
+(def FORMATTER (f/formatter "yyyy-MM-dd'T'HH:mm"))
 
 (defn with-is-haku-auki [data]
   (let [now (DateTime/now)]
