@@ -89,22 +89,16 @@
                        {:term "toteutus_organisaationimi" :boost (get-in config [:search-terms-boost :toteutus_organisaationimi])}]]
     (generate-search-params suffixes search-params usr-lng)))
 
-(defn- assoc-if [m k v p?]
-  (if p?
-    (assoc m k v)
-    m))
-
 (defn- fields
   [keyword constraints user-lng suffixes]
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            fields? (-> (assoc :should {:multi_match {:query       keyword,
-                                                      :fields      (flatten (generate-keyword-query user-lng suffixes))
-                                                      :tie_breaker 0.9
-                                                      :operator    "and"
-                                                      :type        "cross_fields"}})
-                        (assoc-if :minimum_should_match "9%" filter?))
+            fields? (-> (assoc :must {:multi_match {:query keyword,
+                                                    :fields (flatten (generate-keyword-query user-lng suffixes))
+                                                    :tie_breaker 0.9
+                                                    :operator "and"
+                                                    :type "cross_fields"}}))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
