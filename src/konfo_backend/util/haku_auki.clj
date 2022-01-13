@@ -14,7 +14,7 @@
                (if-let [alkaa (some->> (:alkaa x)
                                        (f/parse FORMATTER))]
                  (let [is-alkanut? (on-going? alkaa)]
-                   (assoc x :haku-auki (boolean (if-let [loppuu (some->> (:loppuu x)
+                   (assoc x :haku-auki (boolean (if-let [loppuu (some->> (:paattyy x)
                                                                          (f/parse FORMATTER))]
                                                   (let [is-loppunut? (on-going? loppuu)]
                                                     (and is-alkanut? (not is-loppunut?)))
