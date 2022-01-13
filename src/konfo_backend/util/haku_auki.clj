@@ -8,7 +8,7 @@
 
 (defn with-is-haku-auki [data]
   (let [now (DateTime/now)
-        on-going? (fn [d ^DateTime]
+        on-going? (fn [d]
                     (.isBefore d now))]
     (prewalk (fn [x]
                (if-let [alkaa (some->> (:alkaa x)
