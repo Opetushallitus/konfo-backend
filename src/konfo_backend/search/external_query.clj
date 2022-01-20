@@ -97,18 +97,6 @@
                         (assoc-if :minimum_should_match "9%" filter?))
             filter? (assoc :filter (external-filters constraints)))))
 
-;(defn external-query
-;  [keyword lng constraints suffixes]
-;  (let [query {:nested {:path "search_terms",
-;            :inner_hits {},
-;            :query      {:bool {:filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
-;                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))),
-;                                :minimum_should_match "9%"}}}}]
-;             (if (not-blank? keyword)
-;               (update-in query [:nested :query :bool]
-;                          (fn [x] (merge x (fields keyword [] lng suffixes))))
-;               query)))
-
 (defn external-query
   [keyword constraints lng suffixes]
   {:nested {:path "search_terms",
