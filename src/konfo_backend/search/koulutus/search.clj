@@ -2,7 +2,8 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query match-all-query hakutulos-aggregations jarjestajat-aggregations inner-hits-query sorts external-query]]
+    [konfo-backend.search.query :refer [query match-all-query hakutulos-aggregations jarjestajat-aggregations inner-hits-query sorts]]
+    [konfo-backend.search.external-query :refer [external-query]]
     [konfo-backend.search.response :refer [parse parse-inner-hits-for-jarjestajat parse-external]]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]))
@@ -40,7 +41,7 @@
 
 (defn external-search
   [keyword lng page size sort order constraints]
-  (let [query (external-query keyword lng constraints ["words"])]
+  (let [query (external-query keyword constraints lng ["words"])]
     (log-pretty query)
     (koulutus-kouta-search
       page

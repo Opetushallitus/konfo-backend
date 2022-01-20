@@ -2,11 +2,10 @@
   (:require
     [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
     [konfo-backend.index.haku :refer [list-yhteishaut]]
-    [konfo-backend.tools :refer [not-blank?]]
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format half-year-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec]]
+    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format half-year-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec assoc-if]]
     [konfo-backend.config :refer [config]]))
 
 (defn- ->terms-query
@@ -168,18 +167,6 @@
               :path       "search_terms"
               :query      {:bool {:must [{:term {"search_terms.onkoTuleva" tuleva?}}
                                          {:term {"search_terms.tarjoajat" oid}}]}}}}))
-
-(defn external-query
-  [keyword lng constraints suffixes]
-  (let [query {:nested {:path "search_terms",
-            :inner_hits {},
-            :query      {:bool {:filter (cond-> [{:term {"search_terms.onkoTuleva" false}}]
-                                                (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))),
-                                :minimum_should_match "9%"}}}}]
-             (if (not-blank? keyword)
-               (update-in query [:nested :query :bool]
-                          (fn [x] (merge x (fields keyword [] lng suffixes))))
-               query)))
 
 (defn- ->term-filter
   [field term]

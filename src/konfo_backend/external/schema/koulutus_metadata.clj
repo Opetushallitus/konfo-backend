@@ -175,7 +175,8 @@
    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
    (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko            (->Koodi OpintojenLaajuusyksikkoKoodi)
-   (s/->OptionalKey :eperuste)         (s/maybe Eperuste)})
+   (s/->OptionalKey :eperuste)         (s/maybe Eperuste)
+   s/Any                               s/Any})
 
 (def AmmKoulutusMetadata
   {:tyyppi                                    Amm
@@ -186,7 +187,8 @@
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Any)
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
-   (s/->OptionalKey :eperuste)                (s/maybe Eperuste)})
+   (s/->OptionalKey :eperuste)                (s/maybe Eperuste)
+   s/Any                                      s/Any})
 
 (def AmkMetadata
   (st/merge
@@ -205,4 +207,5 @@
    :koulutusala                               [(->Koodi Koulutusala1Koodi)]
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
-   :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]})
+   :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]
+   s/Any                                      s/Any})

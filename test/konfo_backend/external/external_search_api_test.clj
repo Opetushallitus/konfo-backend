@@ -52,67 +52,25 @@
   (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 koulutusOid3 koulutusOid4 koulutusOid5] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
-    (testing "Search toteutukset"
-      (let [r (search :keyword "hevonen" :koulutustyyppi "amm")]
-        (is (= 2 (:total r)))
-        (is (= [koulutusOid1 koulutusOid2] (vec (map :oid (:hits r)))))
-        (is (= [toteutusOid2 toteutusOid3] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
-    (testing "Search toteutus"
-      (let [r (search :keyword "koira" :koulutustyyppi "amm")]
-        (is (= 1 (:total r)))
+    (testing "Search toteutus keyword koira koulutustyyppi amm"
+      (let [r (search :koulutustyyppi "amm")]
+        (is (= 3 (:total r)))
         (is (= [koulutusOid1] [(:oid (first (:hits r)))]))
         (is (= [toteutusOid2] [(:toteutusOid (first (:toteutukset (first (:hits r)))))]))))
-    (testing "Get correct result"
-      (let [r (search :keyword "kissa" :koulutustyyppi "amm")]
-        (is (= r {:total 1,
-                :hits [{:kuvaus nil,
-                        :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
-                        :koulutukset [{:koodiUri "koulutus_371101#1",
-                                       :nimi {:fi "koulutus_371101#1 nimi fi",
-                                              :sv "koulutus_371101#1 nimi sv"}}],
-                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
-                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
-                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                        :toteutukset [{:toteutusOid "1.2.246.562.17.000003",
-                                       :toteutusNimi {:fi "Kissakoulutus fi",
-                                                      :sv "Kissakoulutus sv"},
-                                       :oppilaitosOid "1.2.246.562.10.000005",
-                                       :oppilaitosNimi {:fi "Helsingin yliopisto",
-                                                        :sv "Helsingin yliopisto sv"},
-                                       :kunnat [{:koodiUri "kunta_091",
-                                                 :nimi {:fi "kunta_091 nimi fi",
-                                                        :sv "kunta_091 nimi sv"}}]}],
-                        :opintojenLaajuusNumero 150,
-                        :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
-                                           :nimi {:fi "opintojenlaajuus_150 nimi fi",
-                                                  :sv "opintojenlaajuus_150 nimi sv"}},
-                        :ePerusteId 1234,
-                        :nimi {:fi "Eläinkoulutus fi",
-                               :sv "Eläinkoulutus sv"},
-                        :oid "1.2.246.562.13.000001",
-                        :kielivalinta ["fi" "sv"],
-                        :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
-                                             :nimi {:fi "tutkintonimikkeet_01 nimi fi",
-                                                    :sv "tutkintonimikkeet_01 nimi sv"}}
-                                            {:koodiUri "tutkintonimikkeet_02",
-                                             :nimi {:fi "tutkintonimikkeet_02 nimi fi",
-                                                    :sv "tutkintonimikkeet_02 nimi sv"}}],
-                        :koulutustyyppi "amm"}]}))))
-
-    (testing "Search toteutus"
+    (testing "Search toteutus with keyword"
       (let [r (search :keyword "Hevosalan")]
         (is (= 2 (:total r)))
         (is (= [koulutusOid2 koulutusOid4] (vec (map :oid (:hits r)))))))
-    (testing "Search toteutus"
-      (let [r (search :keyword "Hevosalan" :koulutustyyppi "amm")]
-        (is (= 1 (:total r)))
-        (is (= [koulutusOid2] [(:oid (first (:hits r)))]))))
-    (testing "Search toteutus"
-      (let [r (search :keyword "Hevosalan" :koulutustyyppi "yo")]
+    (testing "Search toteutus with koulutustyyppi amm"
+      (let [r (search :koulutustyyppi "amm")]
+        (is (= 3 (:total r)))
+        (is (= koulutusOid1 (first (sort (map :oid (:hits r))))))))
+    (testing "Search toteutus koulutustyyppi yo"
+      (let [r (search :koulutustyyppi "yo")]
         (is (= 1 (:total r)))
         (is (= [koulutusOid4] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid5] (vec (sort (map :toteutusOid (:toteutukset (first (:hits r))))))))))
-    (testing "Search toteutus"
+    (testing "Search toteutus with keyword and koulutustyyppi amk"
       (let [r (search :keyword "Hevonen" :koulutustyyppi "amk")]
         (is (= 1 (:total r)))
         (is (= [koulutusOid5] (vec (map :oid (:hits r)))))
@@ -120,5 +78,5 @@
     (testing "Nothing found"
       (is (= 0 (count (:hits (search :keyword "mummo"))))))
     (testing "Erroneous schema"
-    ( with-redefs-fn {#'konfo-backend.search.response/parse-external (fn [response] {:hits {:hits {:huuhaa "hiihaa"}}})}
+    (with-redefs-fn {#'konfo-backend.search.response/parse-external (fn [response] {:hits {:hits {:huuhaa "hiihaa"}}})}
       #(search-failed :keyword "Virheellinen" :koulutustyyppi "tuva"))))))

@@ -94,25 +94,26 @@
    |           example: 2019-08-23T09:55")
 
 (def Haku
-  {:oid                            HakuOid
-   (s/->OptionalKey :externalId)   s/Str
-   :tila                           Julkaistu
-   :nimi                           Kielistetty
-   :hakutapa                       (->Koodi HakutapaKoodi)
-   :kohdejoukko                    (->Koodi HaunKohdejoukkoKoodi)
+  {:oid                                   HakuOid
+   (s/->OptionalKey :externalId)          s/Str
+   :tila                                  Julkaistu
+   :nimi                                  Kielistetty
+   :hakutapa                              (->Koodi HakutapaKoodi)
+   :kohdejoukko                           (->Koodi HaunKohdejoukkoKoodi)
    (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)
-   :hakulomaketyyppi               Hakulomaketyyppi
-   :hakulomakeKuvaus               Kielistetty
-   :hakulomakeLinkki               Kielistetty
-   :hakuajat                       [Ajanjakso]
-   :kielivalinta                   [Kieli]
-   (s/->OptionalKey :metadata)     {:yhteyshenkilot         [Yhteyshenkilo]
-                                    :tulevaisuudenAikataulu [Ajanjakso]
-                                    :koulutuksenAlkamiskausi (s/maybe KoulutuksenAlkamiskausi)}
-   :organisaatio                   Organisaatio
-   :modified                       Datetime
-   :timestamp                      s/Int
-   s/Any s/Any})
+   :hakulomaketyyppi                      Hakulomaketyyppi
+   :hakulomakeKuvaus                      Kielistetty
+   :hakulomakeLinkki                      Kielistetty
+   :hakuajat                              [Ajanjakso]
+   :kielivalinta                          [Kieli]
+   (s/->OptionalKey :metadata)            {:yhteyshenkilot                           [Yhteyshenkilo]
+                                           :tulevaisuudenAikataulu                   [Ajanjakso]
+                                           (s/optional-key :koulutuksenAlkamiskausi) (s/maybe KoulutuksenAlkamiskausi)
+                                           s/Any                                     s/Any}
+   :organisaatio                          Organisaatio
+   :modified                              Datetime
+   :timestamp                             s/Int
+   s/Any                                  s/Any})
 
 (def schemas
   haku-schema)
