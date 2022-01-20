@@ -55,9 +55,9 @@
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
                                    [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
-                                   [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT"]
+                                   [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT" :classifier "tests"]
+                                   [fi.oph.kouta/kouta-common "2.7.0-SNAPSHOT" :classifier "tests"]
                                    [org.mockito/mockito-core "2.28.2"]
                                    [oph/clj-test-utils "0.3.0-SNAPSHOT"]
                                    [clj-http-fake "1.0.3"]
@@ -73,9 +73,9 @@
                                  (pjstadig.humane-test-output/activate!)]}
              :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
                                       [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.20.1-SNAPSHOT" :classifier "tests"]
-                                      [fi.oph.kouta/kouta-common "2.6.0-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT"]
+                                      [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT" :classifier "tests"]
+                                      [fi.oph.kouta/kouta-common "2.7.0-SNAPSHOT" :classifier "tests"]
                                       [org.mockito/mockito-core "2.28.2"]
                                       [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
                        :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
