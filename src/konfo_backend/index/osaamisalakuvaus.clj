@@ -1,10 +1,7 @@
 (ns konfo-backend.index.osaamisalakuvaus
   (:refer-clojure :exclude [get])
   (:require
-    [konfo-backend.tools :refer [koodi-uri-no-version]]
-    [konfo-backend.elastic-tools :refer [get-source search]]))
-
-;TODO tilan pitäisi olla "julkaistu" eikä "valmis"
+   [konfo-backend.elastic-tools :refer [get-source search]]))
 
 (defonce index "osaamisalakuvaus")
 
@@ -12,10 +9,7 @@
 
 (defn get
   [id]
-  (let [osaamisalakuvaus (get-source index id)]
-    (when (some-> osaamisalakuvaus :tila (= "valmis"))
-      osaamisalakuvaus)))
-
+  ((get-source index id)))
 
 (defn- kuvaus-result-mapper
   [result]
@@ -31,8 +25,8 @@
   (osaamisalakuvaus-search kuvaus-result-mapper
                            :_source [:id, :eperuste-oid :suoritustapa :osaamisala.nimi, :osaamisala.uri, :teksti.fi, :teksti.sv, :teksti.en]
                            :size 100
-                           :query {:bool {:must {:term {:eperuste-oid eperuste-id}},
-                                          :filter {:term {:tila "valmis"}}}}))
+                           :query {:bool {:must {:term {:eperuste-oid eperuste-id}}}}))
+
 (defn get-kuvaukset-by-eperuste-ids
   [eperuste-ids]
   (if (= 1 (count eperuste-ids))
@@ -40,5 +34,4 @@
     (osaamisalakuvaus-search kuvaus-result-mapper
                              :_source [:id, :eperuste-oid, :suoritustapa :osaamisala.nimi, :osaamisala.uri, :teksti.fi, :teksti.sv, :teksti.en]
                              :size 1000
-                             :query {:bool {:must {:terms {:eperuste-oid (vec eperuste-ids)}},
-                                            :filter {:term {:tila "valmis"}}}})))
+                             :query {:bool {:must {:terms {:eperuste-oid (vec eperuste-ids)}}}})))
