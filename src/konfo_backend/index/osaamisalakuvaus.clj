@@ -9,7 +9,7 @@
 
 (defn get
   [id]
-  ((get-source index id)))
+  (get-source index id))
 
 (defn- kuvaus-result-mapper
   [result]
