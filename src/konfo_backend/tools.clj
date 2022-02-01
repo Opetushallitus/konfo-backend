@@ -10,6 +10,8 @@
 
 (defonce debug-pretty true)
 
+(defonce timezone-fi (time/time-zone-for-id "Europe/Helsinki"))
+
 (defn log-pretty
   [json]
   (when debug-pretty
@@ -43,7 +45,7 @@
   (or (draft-view-allowed entity draft?)
       (julkaistu? entity)))
 
-(def kouta-date-time-formatter (format/formatter "yyyy-MM-dd'T'HH:mm"))
+(defonce kouta-date-time-formatter (format/with-zone (format/formatter "yyyy-MM-dd'T'HH:mm") timezone-fi))
 
 (defn ->kouta-date-time-string
   [date-time]
