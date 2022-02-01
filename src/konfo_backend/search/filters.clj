@@ -101,7 +101,10 @@
       :hakukaynnissa (hakukaynnissa filter-counts)
       :hakutapa (filters "hakutapa")
       :yhteishaku (yhteishaku filter-counts)
-      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
+      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
+      :osaamisala (filters "osaamisala")
+      :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+      :lukiopainotukset (filters "lukiopainotukset")}))
   ([] (generate-filter-counts {})))
 
 (defn generate-filter-counts-for-jarjestajat
