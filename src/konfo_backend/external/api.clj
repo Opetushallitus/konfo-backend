@@ -343,30 +343,6 @@
    |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
    |          default: nil
-   |        - in: query
-   |          name: lukiopainotukset
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltuna lukiopainotusten koodeja
-   |          example: lukiopainotukset_0111, lukiopainotukset_001
-   |          default: nil
-   |        - in: query
-   |          name: lukiolinjaterityinenkoulutustehtava
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja
-   |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126
-   |          default: nil
-   |        - in: query
-   |          name: osaamisala
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
-   |          example: osaamisala_1756, osaamisala_3076
-   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok
@@ -493,10 +469,7 @@
                                  {hakukaynnissa         :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
-                                 {pohjakoulutusvaatimus :- String nil}
-                                 {lukiopainotukset      :- String nil}
-                                 {lukiolinjaterityinenkoulutustehtava :- String nil}
-                                 {osaamisala            :- String nil}]
+                                 {pohjakoulutusvaatimus :- String nil}]
                   :return response/KoulutusToteutusSearchResponse
                   (with-access-logging request (->search-with-validated-params external-search
                                                                                keyword
@@ -515,9 +488,9 @@
                                                                                hakutapa
                                                                                yhteishaku
                                                                                pohjakoulutusvaatimus
-                                                                               lukiopainotukset
-                                                                               lukiolinjaterityinenkoulutustehtava
-                                                                               osaamisala)))
+                                                                               nil
+                                                                               nil
+                                                                               nil)))
              (GET "/search/filters" [:as request]
                   (with-access-logging request (if-let [result (filters/generate-filter-counts-external)]
                                                  (ok result)
