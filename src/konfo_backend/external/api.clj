@@ -519,11 +519,11 @@
                                                                                lukiolinjaterityinenkoulutustehtava
                                                                                osaamisala)))
              (GET "/search/filters" [:as request]
-                  (with-access-logging request (if-let [result (filters/generate-filter-counts)]
+                  (with-access-logging request (if-let [result (filters/generate-filter-counts-external)]
                                                  (ok result)
                                                  (not-found "Not found"))))
 
              (GET "/search/filters_as_array" [:as request]
-                  (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
+                  (with-access-logging request (if-let [result (filters/flattened-filter-counts true)]
                                                  (ok result)
                                                  (not-found "Not found")))))))

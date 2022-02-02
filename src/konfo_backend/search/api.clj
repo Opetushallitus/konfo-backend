@@ -630,7 +630,7 @@
 
     ;; Jos muokkaat /filters_as_array-rajapintaa varmista ettei externalin vastaava rajapinta muutu samalla
     (GET "/filters_as_array" [:as request]
-      (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
+      (with-access-logging request (if-let [result (filters/flattened-filter-counts false)]
                                      (ok result)
                                      (not-found "Not found"))))
 
