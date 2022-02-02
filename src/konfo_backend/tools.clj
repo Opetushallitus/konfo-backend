@@ -40,10 +40,10 @@
   []
   (->kouta-date-time-string (time/now)))
 
-(defn half-year-past-as-kouta-format
+(defn ten-months-past-as-kouta-format
   []
   (-> (time/now)
-      (time/minus (time/months 6))
+      (time/minus (time/months 10))
       (->kouta-date-time-string)))
 
 (defn within?
