@@ -87,7 +87,7 @@
             {}
             yhteishaut)))
 
-(defn generate-filter-counts
+(defn generate-filter-counts-external
   ([filter-counts]
    (let [filters (partial koodisto->filters filter-counts)]
      {:opetuskieli (filters "oppilaitoksenopetuskieli")
@@ -102,6 +102,26 @@
       :hakutapa (filters "hakutapa")
       :yhteishaku (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
+  ([] (generate-filter-counts-external {})))
+
+(defn generate-filter-counts
+  ([filter-counts]
+   (let [filters (partial koodisto->filters filter-counts)]
+     {:opetuskieli (filters "oppilaitoksenopetuskieli")
+      :maakunta (filters "maakunta")
+      :kunta (filters "kunta")
+      :koulutustyyppi (beta-koulutustyyppi filter-counts)
+      :koulutustyyppi-muu (beta-koulutustyyppi-muu filter-counts)
+      :koulutusala (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
+      :opetustapa (filters "opetuspaikkakk")
+      :valintatapa (filters "valintatapajono")
+      :hakukaynnissa (hakukaynnissa filter-counts)
+      :hakutapa (filters "hakutapa")
+      :yhteishaku (yhteishaku filter-counts)
+      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
+      :osaamisala (filters "osaamisala")
+      :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+      :lukiopainotukset (filters "lukiopainotukset")}))
   ([] (generate-filter-counts {})))
 
 (defn generate-filter-counts-for-jarjestajat
@@ -124,8 +144,8 @@
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
 (defn flattened-filter-counts
-  []
-  (if-let [result (generate-filter-counts)]
+  [for-external?]
+  (if-let [result (if for-external? (generate-filter-counts-external) (generate-filter-counts))]
     (reduce-kv (fn [r suodatin m]
                  (concat r (into [] (for [[k v] m] (filter->obj suodatin k (:nimi v))))))
                []
