@@ -1,12 +1,10 @@
 (ns konfo-backend.tools
-  (:require
-    [cheshire.core :as cheshire]
-    [clojure.tools.logging :as log]
-    [clojure.string :refer [blank? split lower-case trim]]
-    [clj-time.format :as format]
-    [clj-time.coerce :as coerce]
-    [clj-time.core :as core]
-    [clj-time.core :as time]))
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]
+            [clojure.string :refer [blank? split lower-case trim]]
+            [clj-time.format :as format]
+            [clj-time.coerce :as coerce]
+            [clj-time.core :as time]))
 
 (defonce debug-pretty true)
 
@@ -14,50 +12,29 @@
 
 (defn log-pretty
   [json]
-  (when debug-pretty
-    (log/debug (cheshire/generate-string json {:pretty true}))))
+  (when debug-pretty (log/debug (cheshire/generate-string json {:pretty true}))))
 
-(defn reduce-merge-map
-  [f coll]
-  (reduce merge {} (map f coll)))
+(defn reduce-merge-map [f coll] (reduce merge {} (map f coll)))
 
-(defn not-blank?
-  [str]
-  (not (blank? str)))
+(defn not-blank? [str] (not (blank? str)))
 
-(defn julkaistu?
-  [e]
-  (and (not (nil? e)) (= "julkaistu" (:tila e))))
+(defn julkaistu? [e] (and (not (nil? e)) (= "julkaistu" (:tila e))))
 
-(defn julkaistut
-  [coll]
-  (filter julkaistu? coll))
+(defn julkaistut [coll] (filter julkaistu? coll))
 
 (defn- draft-view-allowed
   [entity draft?]
-  (and draft?
-       (not (nil? entity))
-       (= "tallennettu" (:tila entity))
-       (:esikatselu entity)))
+  (and draft? (not (nil? entity)) (= "tallennettu" (:tila entity)) (:esikatselu entity)))
 
-(defn allowed-to-view
-  [entity draft?]
-  (or (draft-view-allowed entity draft?)
-      (julkaistu? entity)))
+(defn allowed-to-view [entity draft?] (or (draft-view-allowed entity draft?) (julkaistu? entity)))
 
 (defonce kouta-date-time-formatter (format/with-zone (format/formatter "yyyy-MM-dd'T'HH:mm") timezone-fi))
 
-(defn ->kouta-date-time-string
-  [date-time]
-  (format/unparse kouta-date-time-formatter date-time))
+(defn ->kouta-date-time-string [date-time] (format/unparse kouta-date-time-formatter date-time))
 
-(defn kouta-date-time-string->date-time
-  [string]
-  (format/parse kouta-date-time-formatter string))
+(defn kouta-date-time-string->date-time [string] (format/parse kouta-date-time-formatter string))
 
-(defn long->date-time
-  [long]
-  (coerce/from-long long))
+(defn long->date-time [long] (coerce/from-long long))
 
 (defn current-time-as-kouta-format
   []
@@ -72,58 +49,66 @@
 
 (defn within?
   [gte time lt]
-  (if (nil? lt)
-    (core/after? time gte)
-    (core/within? (core/interval gte lt) time)))
+  (if (nil? lt) (time/after? time gte) (time/within? (time/interval gte lt) time)))
 
 (defn hakuaika-kaynnissa?
   [hakuaika]
-  (let [gte (kouta-date-time-string->date-time (:alkaa hakuaika))
-        lt  (if (not (nil? (:paattyy hakuaika))) (kouta-date-time-string->date-time (:paattyy hakuaika)))]
-    (within? gte (long->date-time (System/currentTimeMillis)) lt)))
+  (let [gte (when (not (nil? (:alkaa hakuaika)))
+              (kouta-date-time-string->date-time (:alkaa hakuaika)))
+        lt (when (not (nil? (:paattyy hakuaika)))
+             (kouta-date-time-string->date-time (:paattyy hakuaika)))]
+    (if (nil? gte)
+      false
+      (within? gte (long->date-time (System/currentTimeMillis)) lt))))
 
-(defn now-in-millis
-  []
-  (coerce/to-long (time/now)))
+(defn toteutus-haku-kaynnissa?
+  [toteutus]
+  (let [hakutiedot (get-in toteutus [:hakutiedot])
+        toteutuksenHakuaika (get-in toteutus [:metadata :hakuaika])]
+    (if (empty? hakutiedot)
+      (hakuaika-kaynnissa? toteutuksenHakuaika)
+      (some (fn [hakutieto]
+              (some (fn [hakukohde]
+                      (and (julkaistu? hakukohde)
+                           (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohde))))
+                    (:hakukohteet hakutieto)))
+            hakutiedot))))
 
-(defn koodi-uri-no-version
-  [koodi-uri]
-  (first (split koodi-uri #"#")))
+(defn hit-haku-kaynnissa?
+  [toteutus]
+  (let [hakutiedot (get-in toteutus [:hakutiedot])
+        toteutuksenHakuaika (get-in toteutus [:metadata :hakuaika])]
+    (if (empty? hakutiedot)
+      (hakuaika-kaynnissa? toteutuksenHakuaika)
+      (some (fn [hakutieto]
+              (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
+            hakutiedot))))
 
-(defn ammatillinen?
-  [e]
-  (= "amm" (:koulutustyyppi e)))
+(defn now-in-millis [] (coerce/to-long (time/now)))
 
-(defn amm-osaamisala?
-  [e]
-  (= "amm-osaamisala" (:koulutustyyppi e)))
+(defn koodi-uri-no-version [koodi-uri] (first (split koodi-uri #"#")))
 
-(defn amm-tutkinnon-osa?
-  [e]
-  (= "amm-tutkinnon-osa" (:koulutustyyppi e)))
+(defn ammatillinen? [e] (= "amm" (:koulutustyyppi e)))
+
+(defn amm-osaamisala? [e] (= "amm-osaamisala" (:koulutustyyppi e)))
+
+(defn amm-tutkinnon-osa? [e] (= "amm-tutkinnon-osa" (:koulutustyyppi e)))
 
 (defn comma-separated-string->vec
   [s]
-  (->> (some-> s (split #","))
+  (->> (some-> s
+               (split #","))
        (remove blank?)
        (map trim)
        (vec)))
 
-(defn contains-element?
-  [coll e]
-  (some? (first (filter #(= e %) coll))))
+(defn contains-element? [coll e] (some? (first (filter #(= e %) coll))))
 
-(defn remove-element
-  [coll e]
-  (remove #(= e %) coll))
+(defn remove-element [coll e] (remove #(= e %) coll))
 
-(defn ->koodi-with-version-wildcard
-  [koodi]
-  (str koodi "#*"))
+(defn ->koodi-with-version-wildcard [koodi] (str koodi "#*"))
 
-(defn ->lower-case-vec
-  [coll]
-  (vec (map lower-case coll)))
+(defn ->lower-case-vec [coll] (vec (map lower-case coll)))
 
 (defn rename-key
   [coll old new]
@@ -131,7 +116,4 @@
       (assoc new (old coll))
       (dissoc old)))
 
-(defn assoc-if [m k v p?]
-  (if p?
-    (assoc m k v)
-    m))
+(defn assoc-if [m k v p?] (if p? (assoc m k v) m))
