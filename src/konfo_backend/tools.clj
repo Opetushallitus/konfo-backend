@@ -38,12 +38,11 @@
 
 (defn current-time-as-kouta-format
   []
-  (->kouta-date-time-string (long->date-time (System/currentTimeMillis))))
+  (->kouta-date-time-string (time/now)))
 
 (defn half-year-past-as-kouta-format
   []
-  (-> (System/currentTimeMillis)
-      (long->date-time)
+  (-> (time/now)
       (time/minus (time/months 6))
       (->kouta-date-time-string)))
 
@@ -59,7 +58,7 @@
              (kouta-date-time-string->date-time (:paattyy hakuaika)))]
     (if (nil? gte)
       false
-      (within? gte (long->date-time (System/currentTimeMillis)) lt))))
+      (within? gte (time/now) lt))))
 
 (defn toteutus-haku-kaynnissa?
   [toteutus]
