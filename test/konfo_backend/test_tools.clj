@@ -1,18 +1,21 @@
 (ns konfo-backend.test-tools
   (:require
     [clojure.test :refer :all]
+    [clojure.java.shell :refer [sh]]
     [clj-elasticsearch.elastic-connect :as e]
+    [clj-elasticsearch.elastic-utils :as e-utils]
     [ring.mock.request :as mock]
     [konfo-backend.core :refer :all]
-    [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-    [cheshire.core :as cheshire]
+    [cheshire.core :refer [parse-string, generate-string]]
+    [clojure.walk :refer [keywordize-keys]]
     [clj-time.coerce :as coerce]
-    [clj-time.core :as time]))
+    [clj-time.core :as time]
+    [clojure.string :as string]))
 
 (defn ->keywordized-response-body
   [response]
   (try
-    (fixture/->keywordized-json (slurp (:body response)))
+    (keywordize-keys (parse-string (slurp (:body response))))
     (catch Exception e
       (println e)
       (:body response))))
@@ -23,12 +26,12 @@
         status   (:status response)]
     (if (= 200 status)
       (->keywordized-response-body response)
-      (is (= status 200) (cheshire/generate-string (->keywordized-response-body response) {:pretty true})))))
+      (is (= status 200) (generate-string (->keywordized-response-body response) {:pretty true})))))
 
 (defn get-and-check-status
   [url expected-status]
   (let [response (app (mock/request :get url))]
-    (is (= (:status response) expected-status))
+    (is (= expected-status (:status response)))
     response))
 
 (defn post-and-check-status
@@ -55,7 +58,7 @@
 
 (defn debug-pretty
   [json]
-  (println (cheshire/generate-string json {:pretty true})))
+  (println (generate-string json {:pretty true})))
 
 (defn refresh-and-wait
   [indexname timeout]
@@ -79,3 +82,22 @@
 (defn now-in-millis
   []
   (coerce/to-long (time/now)))
+
+(defn elastic-empty? []
+  (let [url (e-utils/elastic-url "_all" "_count")
+        count (:count (e-utils/elastic-get url))]
+    (= count 0)))
+
+(defn prepare-elastic-test-data [& args]
+  (let [e-host (string/replace e-utils/elastic-host #"127\.0\.0\.1|localhost" "host.docker.internal")]
+    (println "Importing elasticsearch data...")
+    (if (elastic-empty?)
+      (let [p (sh "test/resources/load_elastic_dump.sh" e-host (str (if (:no-data args) "" "data,") "mapping,analyzer,alias,settings,template"))]
+        (println (:err p))
+        (println (:out p)))
+      (println "Elasticsearch not empty. Data already imported. Doing nothing."))))
+
+(defn with-elastic-dump
+  [test]
+  (prepare-elastic-test-data)
+  (test))

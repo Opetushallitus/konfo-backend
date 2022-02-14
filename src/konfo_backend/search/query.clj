@@ -93,11 +93,11 @@
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            fields? (-> (assoc :must {:multi_match {:query keyword,
-                                                    :fields (flatten (generate-keyword-query user-lng suffixes))
-                                                    :tie_breaker 0.9
-                                                    :operator "and"
-                                                    :type "cross_fields"}}))
+            fields? (-> (assoc :must {:multi_match {:query        keyword,
+                                                    :fields       (flatten (generate-keyword-query user-lng suffixes))
+                                                    :tie_breaker  0.9
+                                                    :operator     "and"
+                                                    :type         "cross_fields"}}))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
@@ -200,7 +200,7 @@
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
-  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala" "amm-muu"]))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter
