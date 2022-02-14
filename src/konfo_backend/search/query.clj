@@ -208,7 +208,7 @@
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
-  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala" "amm-muu"]))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter

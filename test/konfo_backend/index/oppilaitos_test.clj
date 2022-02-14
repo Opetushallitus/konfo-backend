@@ -1,13 +1,11 @@
 (ns konfo-backend.index.oppilaitos-test
   (:require [clojure.test :refer :all]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-            [kouta-indeksoija-service.fixture.external-services :as mocks]
             [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(use-fixtures :each fixture/mock-indexing-fixture)
+(use-fixtures :once with-elastic-dump)
 
 (defn oppilaitos-url
   [oid]
@@ -19,27 +17,15 @@
 
 (deftest oppilaitos-test
 
-  (let [oppilaitosOid1 "1.2.246.562.10.00101010101"
-        oppilaitosOid2 "1.2.246.562.10.00101010102"
-        oppilaitosOid3 "1.2.246.562.10.00101010103"
-        oppilaitosOid4 "1.2.246.562.10.00101010104"
+  (let [oppilaitosOid1  "1.2.246.562.10.00101010101"
+        oppilaitosOid2  "1.2.246.562.10.00101010102"
+        oppilaitosOid3  "1.2.246.562.10.00101010103"
+        oppilaitosOid4  "1.2.246.562.10.00101010104"
+        oppilaitosOid99 "1.2.246.562.10.00101010199"
         oppilaitoksenOsaOid1 "1.2.246.562.10.001010101011"
         oppilaitoksenOsaOid2 "1.2.246.562.10.001010101012"
-        oppilaitoksenOsaOid3 "1.2.246.562.10.001010101021"
         oppilaitoksenOsaOid4 "1.2.246.562.10.001010101022"
         oppilaitoksenOsaOid5 "1.2.246.562.10.001010101023"]
-
-    (fixture/add-oppilaitos-mock oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitosOid1)
-    (fixture/add-oppilaitos-mock oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitosOid2)
-    (fixture/add-oppilaitos-mock oppilaitosOid4 :tila "tallennettu" :esikatselu "true" :organisaatio oppilaitosOid4)
-
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid1 oppilaitosOid1 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid1)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid2 oppilaitosOid1 :tila "arkistoitu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid2)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid3 oppilaitosOid2 :tila "julkaistu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid3)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid4 oppilaitosOid2 :tila "tallennettu" :esikatselu "true" :organisaatio oppilaitoksenOsaOid4)
-    (fixture/add-oppilaitoksen-osa-mock oppilaitoksenOsaOid5 oppilaitosOid2 :tila "tallennettu" :esikatselu "false" :organisaatio oppilaitoksenOsaOid5)
-
-    (fixture/index-oppilaitokset [oppilaitosOid1 oppilaitosOid2 oppilaitosOid4])
 
     (defn find-osa
       [response oid]
@@ -56,14 +42,14 @@
           (is (= oppilaitosOid4 (:oid response)))
           (is (true? (contains? response :oppilaitos)))))
       (testing "not found"
-        (get-not-found (oppilaitos-url oppilaitosOid3)))
+        (get-not-found (oppilaitos-url oppilaitosOid99)))
       (testing "filter not julkaistu and not esikatselu oppilaitos in Kouta"
-        (let [response (get-ok (oppilaitos-url oppilaitosOid2))]
-          (is (= oppilaitosOid2 (:oid response)))
+        (let [response (get-ok (oppilaitos-url oppilaitosOid3))]
+          (is (= oppilaitosOid3 (:oid response)))
           (is (false? (contains? response :oppilaitos)))))
       (testing "filter draft oppilaitos when tallennettu but not esikatselu true"
-        (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
-          (is (= oppilaitosOid2 (:oid response)))
+        (let [response (get-ok (oppilaitos-draft-url oppilaitosOid3))]
+          (is (= oppilaitosOid3 (:oid response)))
           (is (false? (contains? response :oppilaitos)))))
       (testing "filter tallennettu and esikatselu true but draft false oppilaitos in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid4))]
@@ -72,8 +58,7 @@
       (testing "allowed to get julkaistu and not esikatselu oppilaitoksen osa in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
           (is (= oppilaitosOid1 (:oid response)))
-          ;;TODO alla oleva kommentoitu elastic7 -testauksen yhteydessä. Täytyy kuitenkin myöhemmin selvittää / korjata
-          ;;(is (contains? (find-osa response oppilaitoksenOsaOid1) :oppilaitoksenOsa))
+            (is (contains? (find-osa response oppilaitoksenOsaOid1) :oppilaitoksenOsa))
           ))
       (testing "filter not julkaistu and not esikatselu oppilaitoksen osa in Kouta"
         (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
