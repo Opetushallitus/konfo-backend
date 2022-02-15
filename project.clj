@@ -58,7 +58,7 @@
                                    [org.mockito/mockito-all "1.9.5"]
                                    [clj-http-fake "1.0.3"]
                                    [pjstadig/humane-test-output "0.11.0"]]
-             :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=dev-configuration/konfo-backend.edn"]
+             :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
              :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
                                  (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
