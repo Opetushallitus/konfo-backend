@@ -312,9 +312,6 @@
         (testing "muusikko <-> muusikon koulutus"
           (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikko"))))
 
-        (testing "musiikki <-> musiikkioppilaitokset"
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikki"))))
-
         (testing "musikko <-> muusikko"
           (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikki"))))
 

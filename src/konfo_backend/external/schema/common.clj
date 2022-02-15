@@ -104,6 +104,7 @@
 (def Telma           (s/eq "telma"))
 (def VapaaSivistystyoOpistovuosi  (s/eq "vapaa-sivistystyo-opistovuosi"))
 (def VapaaSivistystyoMuu          (s/eq "vapaa-sivistystyo-muu"))
+(def AikuistenPerusopetus         (s/eq "aikuisten-perusopetus"))
 (def Muu                          (s/eq "muu"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
