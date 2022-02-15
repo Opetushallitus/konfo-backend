@@ -26,7 +26,6 @@
   [& query-params]
   (vec (map :oid (:hits (apply search query-params)))))
 
-(def yo-sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f3333")
 (def sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f227a")
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
 
@@ -42,7 +41,7 @@
 
     (testing "Search all oppilaitokset"
       (let [r (search :sort "name" :order "asc")]
-        (is (= 11 (count (:hits r))))
+        (is (= 12 (count (:hits r))))
         (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
@@ -50,7 +49,7 @@
         (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-        (is (= 10 (get-in r [:filters :maakunta :maakunta_01 :count])))
+        (is (= 11 (get-in r [:filters :maakunta :maakunta_01 :count])))
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
@@ -60,20 +59,20 @@
     (testing "Search oppilaitokset, filter with..."
       (testing "sijainti"
         (let [r (search :sijainti "kunta_091" :sort "name" :order "asc")]
-          (is (= 1 (count (:hits r))))
-          (is (= punkaharjun-yliopisto (:oid (first (:hits r)))))
+          (is (= 2 (count (:hits r))))
+          (is (= punkaharjun-yliopisto (:oid (last (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))
-          (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
       (testing "multiple sijainti"
         (let [r (search :sijainti "%20kunta_618%20,%20kunta_091" :sort "name" :order "asc")]
-          (is (= 10 (count (:hits r))))))
+          (is (= 11 (count (:hits r))))))
 
       (testing "koulutustyyppi amm"
         (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
