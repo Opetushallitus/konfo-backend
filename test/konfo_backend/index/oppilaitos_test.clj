@@ -21,6 +21,7 @@
         oppilaitosOid2  "1.2.246.562.10.00101010102"
         oppilaitosOid3  "1.2.246.562.10.00101010103"
         oppilaitosOid4  "1.2.246.562.10.00101010104"
+        oppilaitosOid7  "1.2.246.562.10.00101010107"
         oppilaitosOid99 "1.2.246.562.10.00101010199"
         oppilaitoksenOsaOid1 "1.2.246.562.10.001010101011"
         oppilaitoksenOsaOid2 "1.2.246.562.10.001010101012"
@@ -33,8 +34,8 @@
 
     (testing "Get oppilaitos"
       (testing "ok"
-        (let [response (get-ok (oppilaitos-url oppilaitosOid1))]
-          (is (= oppilaitosOid1 (:oid response)))
+        (let [response (get-ok (oppilaitos-url oppilaitosOid7))]
+          (is (= oppilaitosOid7 (:oid response)))
           (is (contains? response :oppilaitos))
           (is (= 0 (:koulutusohjelmia response)))))
       (testing "allowed to get draft oppilaitos when tallennettu and esikatselu true"

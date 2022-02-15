@@ -97,7 +97,7 @@
 
     (testing "Get koulutuksen järjestäjät"
       (testing "no järjestäjiä"
-        (let [r (search "1.2.246.562.13.000009")]
+        (let [r (search "1.2.246.562.13.000999")]
           (is (= 0 (:total r)))
           (is (= [] (:hits r)))))
       (testing "nykyiset"

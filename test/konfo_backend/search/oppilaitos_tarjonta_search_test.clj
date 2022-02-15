@@ -25,7 +25,6 @@
 (def helsingin-yliopisto      "1.2.246.562.10.000005")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
-(def hevosala-oid "1.2.246.562.13.000011")
 
 (def ponikoulu-oid "1.2.246.562.17.000010")
 (def valtrakoulu-oid "1.2.246.562.17.000011")
@@ -33,15 +32,6 @@
 (def poniosatoteutus-oid "1.2.246.562.17.000014")
 
 (deftest oppilaitos-tarjonta-test
-  (comment
-    (fixture/add-koulutus-mock traktoriala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
-    (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
-    (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-    (fixture/add-toteutus-mock valtrakoulu-oid traktoriala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata amk-toteutus-metatieto)
-    (fixture/add-toteutus-mock massikkakoulu-oid traktoriala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
-
-    (fixture/index-oids-without-related-indices {:koulutukset [traktoriala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
-    )
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitoksen tarjonta with bad requests:"
       (testing "Invalid lng"
