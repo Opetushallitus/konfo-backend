@@ -1,6 +1,5 @@
 (ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.test-tools :refer [debug-pretty]]
             [konfo-backend.search.query :refer [query hakutulos-aggregations]]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 

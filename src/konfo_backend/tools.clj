@@ -6,13 +6,13 @@
             [clj-time.coerce :as coerce]
             [clj-time.core :as time]))
 
-(defonce debug-pretty true)
+(defonce pretty-logging true)
 
 (defonce timezone-fi (time/time-zone-for-id "Europe/Helsinki"))
 
 (defn log-pretty
   [json]
-  (when debug-pretty (log/debug (cheshire/generate-string json {:pretty true}))))
+  (when pretty-logging (log/debug (cheshire/generate-string json {:pretty true}))))
 
 (defn reduce-merge-map [f coll] (reduce merge {} (map f coll)))
 
@@ -116,3 +116,8 @@
       (dissoc old)))
 
 (defn assoc-if [m k v p?] (if p? (assoc m k v) m))
+
+(defn debug-pretty
+  [json]
+  (println (cheshire/generate-string json {:pretty true})))
+

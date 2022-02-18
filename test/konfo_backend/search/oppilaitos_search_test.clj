@@ -1,11 +1,8 @@
 (ns konfo-backend.search.oppilaitos-search-test
   (:require [clojure.test :refer :all]
             [clojure.string :refer [starts-with?]]
-            [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.test-tools :refer [debug-pretty]]
-            [konfo-backend.search.koulutus.search :refer [index]]
             [cheshire.core :as cheshire]
             [konfo-backend.test-mock-data :refer :all]))
 
