@@ -74,9 +74,9 @@
             hakutiedot))))
 
 (defn hit-haku-kaynnissa?
-  [toteutus]
-  (let [hakutiedot (get-in toteutus [:hakutiedot])
-        toteutuksenHakuaika (get-in toteutus [:metadata :hakuaika])]
+  [hit]
+  (let [hakutiedot (get-in hit [:hakutiedot])
+        toteutuksenHakuaika (:toteutusHakuaika hit)]
     (if (empty? hakutiedot)
       (hakuaika-kaynnissa? toteutuksenHakuaika)
       (some (fn [hakutieto]
