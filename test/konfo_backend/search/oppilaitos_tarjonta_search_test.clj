@@ -135,7 +135,7 @@
                   :opetuskielet ["oppilaitoksenopetuskieli_02"],
                   :koulutustyyppi "amm",
                   :kuva "https://example.com/kuva.jpg"
-                  :hakukaynnissa nil
+                  :hakuAuki false
                   :toteutusNimi {:fi "Audikoulutus fi",
                                  :sv "Audikoulutus sv"}} (first (:hits r))))))
 
@@ -172,7 +172,7 @@
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
                   :koulutustyyppi "amm"
-                  :hakukaynnissa nil} (first (:hits r)))))))))
+                  :hakuAuki false} (first (:hits r)))))))))
 
 (deftest oppilaitos-tarjonta-test-no-tarjontaa
   (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)

@@ -1,9 +1,10 @@
 (ns konfo-backend.search.response
   (:require
-    [konfo-backend.tools :refer [hakuaika-kaynnissa? log-pretty reduce-merge-map rename-key]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
-    [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
+     [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
+     [konfo-backend.search.tools :refer :all]
+     [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
+     [konfo-backend.index.toteutus :refer [get-kuvaukset]]
+     [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
 
 (defn- hits
   [response]
@@ -24,7 +25,7 @@
 (defn- ->doc_count-for-lukiolinjat-and-osaamisalat
   [response agg-key]
   (let [buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs")) (keyword agg-key) :buckets])
-        mapper  (fn [key] {key (get-in (key buckets) [:doc_count])})]
+        mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
 (defn- doc_count-by-filter
@@ -93,6 +94,7 @@
   {:total (get-in response [:hits :total :value])
    :hits  (filter (fn [hit] (not-empty (:toteutukset hit))) (external-hits response))})
 
+; TODO: Välitetään draft tännekin ja käytetään sitä hakutietojen suodatukseen (kts. konfo-backend.index.toteutus)
 (defn- inner-hits-with-kuvaukset
   [inner-hits]
   (let [hits (vec (map :_source (:hits inner-hits)))
@@ -102,7 +104,7 @@
            (-> hit
                (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
                (merge (:metadata hit))
-               (assoc :hakukaynnissa (some hakuaika-kaynnissa? (flatten (map :hakuajat (:hakutiedot hit)))))
+               (assoc :hakuAuki (hit-haku-kaynnissa? hit))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
                                 {})))))))

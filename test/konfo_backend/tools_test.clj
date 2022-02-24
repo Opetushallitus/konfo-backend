@@ -18,20 +18,20 @@
   (testing "haku-auki should be false one second before alkaa"
     (let [hakuajat {:alkaa "2020-01-01T12:00" :paattyy "2020-01-02T12:00"}]
       (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis "2020-01-01T11:59:59"))
-      (is (false? (:haku-auki (with-is-haku-auki hakuajat))))))
+      (is (false? (:hakuAuki (with-is-haku-auki hakuajat))))))
           
   (testing "haku-auki should be true one second after alkaa"
     (let [hakuajat {:alkaa "2020-01-01T12:00" :paattyy "2020-01-02T12:00"}]
       (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis "2020-01-01T12:00:01"))
-      (is (true? (:haku-auki (with-is-haku-auki hakuajat))))))
+      (is (true? (:hakuAuki (with-is-haku-auki hakuajat))))))
   
   (testing "haku-auki should be true one second before paattyy"
     (let [hakuajat {:alkaa "2020-01-01T12:00" :paattyy "2020-01-02T12:00"}]
       (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis "2020-01-02T11:59:59"))
-      (is (true? (:haku-auki (with-is-haku-auki hakuajat))))))
+      (is (true? (:hakuAuki (with-is-haku-auki hakuajat))))))
   
   (testing "haku-auki should be false one second after paattyy"
     (let [hakuajat {:alkaa "2020-01-01T12:00" :paattyy "2020-01-02T12:00"}]
       (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis "2020-01-02T12:00:01"))
-      (is (false? (:haku-auki (with-is-haku-auki hakuajat))))))
+      (is (false? (:hakuAuki (with-is-haku-auki hakuajat))))))
 )

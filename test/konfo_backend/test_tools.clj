@@ -53,10 +53,6 @@
   [url]
   (get-and-check-status url 500))
 
-(defn debug-pretty
-  [json]
-  (println (cheshire/generate-string json {:pretty true})))
-
 (defn refresh-and-wait
   [indexname timeout]
   (e/refresh-index indexname)

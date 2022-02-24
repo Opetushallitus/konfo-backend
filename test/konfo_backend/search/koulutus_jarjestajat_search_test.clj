@@ -141,7 +141,8 @@
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "amm"
-                  :hakukaynnissa true} (first (:hits r))))))
+                  :hakuAuki true
+                  } (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search hevosala-oid :tuleva true)]
@@ -157,7 +158,7 @@
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
                   :kuvaus {}
-                  :hakukaynnissa nil
+                  :hakuAuki false
                   } (first (:hits r)))))))))
 
 (deftest koulutus-jarjestajat-test-no-jarjestajia
