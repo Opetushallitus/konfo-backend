@@ -26,7 +26,7 @@
           (map-allowed-to-view-hakutiedot draft?)
           (as-> t
                 (assoc t :hakuAuki (toteutus-haku-kaynnissa? t))
-            (assoc t :hakutiedot (with-is-haku-auki (:hakutiedot t))))))))
+                (assoc t :hakutiedot (with-is-haku-auki (:hakutiedot t))))))))
 
 (defn get-many ([oids excludes] (get-sources index oids excludes)) ([oids] (get-many oids [])))
 
