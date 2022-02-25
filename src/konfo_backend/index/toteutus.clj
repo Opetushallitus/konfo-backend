@@ -18,11 +18,20 @@
           :hakutiedot
           (fn [hakutiedot] (map #(filter-unallowed-hakukohteet % draft?) hakutiedot))))
 
+(defn- filter-haun-hakukohteet
+  [haku]
+  (assoc haku :hakukohteet (filter #(naytetaan-hakukohde-toteutuksella? %) (:hakukohteet haku))))
+
+(defn- filter-haut
+  [haut]
+  (filter #(> (count (:hakukohteet %)) 0) (map #(filter-haun-hakukohteet %) haut)))
+
 (defn get
   [oid draft?]
-  (let [toteutus (get-source index oid)]
-    (when (allowed-to-view toteutus draft?)
-      (-> toteutus
+  (let [toteutus (get-source index oid)
+        toteutus-filtered (assoc toteutus :hakutiedot (filter-haut (:hakutiedot toteutus)))]
+    (when (allowed-to-view toteutus-filtered draft?)
+      (-> toteutus-filtered
           (map-allowed-to-view-hakutiedot draft?)
           (as-> t
                 (assoc t :hakuAuki (toteutus-haku-kaynnissa? t))

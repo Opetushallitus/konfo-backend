@@ -73,6 +73,12 @@
                     (:hakukohteet hakutieto)))
             hakutiedot))))
 
+(defn naytetaan-hakukohde-toteutuksella?
+  [hakukohde]
+  (let [hakuajat (:hakuajat hakukohde)
+        paattyy-ajat (map #(kouta-date-time-string->date-time (:paattyy %)) hakuajat)]
+    (some #(.isAfter % (kouta-date-time-string->date-time (ten-months-past-as-kouta-format))) paattyy-ajat)))
+
 (defn hit-haku-kaynnissa?
   [hit]
   (let [hakutiedot (get-in hit [:hakutiedot])
