@@ -93,11 +93,11 @@
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-            fields? (-> (assoc :must {:multi_match {:query keyword,
-                                                    :fields (flatten (generate-keyword-query user-lng suffixes))
-                                                    :tie_breaker 0.9
-                                                    :operator "and"
-                                                    :type "cross_fields"}}))
+            fields? (-> (assoc :must {:multi_match {:query        keyword,
+                                                    :fields       (flatten (generate-keyword-query user-lng suffixes))
+                                                    :tie_breaker  0.9
+                                                    :operator     "and"
+                                                    :type         "cross_fields"}}))
             filter? (assoc :filter (filters constraints)))))
 
 (defn query
@@ -196,11 +196,11 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "yo" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu"]))
+  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "yo" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"]))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
-  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala"]))
+  (->filters-aggregation-for-subentity field '["amm" "amm-tutkinnon-osa" "amm-osaamisala" "amm-muu"]))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter
