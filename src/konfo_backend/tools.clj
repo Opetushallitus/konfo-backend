@@ -75,9 +75,9 @@
 
 (defn naytetaan-hakukohde-toteutuksella?
   [hakukohde]
-  (let [hakuajat (:hakuajat hakukohde)
-        paattyy-ajat (map #(kouta-date-time-string->date-time (:paattyy %)) hakuajat)]
-    (some #(.isAfter % (kouta-date-time-string->date-time (ten-months-past-as-kouta-format))) paattyy-ajat)))
+  (let [hakuajat (:hakuajat hakukohde)]
+    (some #(or (nil? (:paattyy %))
+               (.isAfter (kouta-date-time-string->date-time (:paattyy %)) (kouta-date-time-string->date-time (ten-months-past-as-kouta-format)))) hakuajat)))
 
 (defn hit-haku-kaynnissa?
   [hit]
