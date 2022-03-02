@@ -12,7 +12,7 @@
 
   (testing "Query with hakukaynnissa filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.tools/half-year-past-as-kouta-format (fn [] "2019-06-01T01:01")]
+                  konfo-backend.tools/ten-months-past-as-kouta-format (fn [] "2019-06-01T01:01")]
       (is (= (query nil {:hakukaynnissa true} "fi" ["words"])
              {:nested {:path "search_terms", :query {:bool {:filter [{:nested {:path "search_terms.hakutiedot", :query {:bool {:filter {:nested {:path "search_terms.hakutiedot.hakuajat", :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
@@ -22,7 +22,7 @@
   (testing "Aggregations"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01") (str x "_02")])
                   konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.tools/half-year-past-as-kouta-format (fn [] "2019-06-01T01:01")
+                  konfo-backend.tools/ten-months-past-as-kouta-format (fn [] "2019-06-01T01:01")
                   konfo-backend.index.haku/list-yhteishaut (fn [] ["1.2.246.562.29.00000000000000000001"])]
       (is (= (hakutulos-aggregations false)
              {:hits_aggregation {:nested {:path "search_terms"}, :aggs {:koulutusala {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso1_01 {:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}

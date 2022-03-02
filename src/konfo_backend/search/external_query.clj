@@ -2,7 +2,7 @@
   (:require [konfo-backend.search.tools :refer :all]
             [clojure.string :refer [lower-case]]
             [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format
-                                         half-year-past-as-kouta-format ->lower-case-vec assoc-if]]
+                                         ten-months-past-as-kouta-format ->lower-case-vec assoc-if]]
             [konfo-backend.config :refer [config]]))
 
 
@@ -23,7 +23,7 @@
   []
   { :nested {:path "search_terms.hakutiedot.hakuajat"
              :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (half-year-past-as-kouta-format)}}}]}}}})
+                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (ten-months-past-as-kouta-format)}}}]}}}})
 
 (defn- external-hakutieto-query
   ([inner-query]

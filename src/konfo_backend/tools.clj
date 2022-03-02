@@ -40,10 +40,10 @@
   []
   (->kouta-date-time-string (time/now)))
 
-(defn half-year-past-as-kouta-format
+(defn ten-months-past-as-kouta-format
   []
   (-> (time/now)
-      (time/minus (time/months 6))
+      (time/minus (time/months 10))
       (->kouta-date-time-string)))
 
 (defn within?
@@ -72,6 +72,14 @@
                            (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohde))))
                     (:hakukohteet hakutieto)))
             hakutiedot))))
+
+(defn naytetaan-hakukohde-toteutuksella?
+  [hakukohde]
+  (let [hakuajat (:hakuajat hakukohde)]
+    (some #(or (nil? (:paattyy %))
+               (.isAfter
+                 (kouta-date-time-string->date-time (:paattyy %))
+                 (kouta-date-time-string->date-time (ten-months-past-as-kouta-format)))) hakuajat)))
 
 (defn hit-haku-kaynnissa?
   [hit]

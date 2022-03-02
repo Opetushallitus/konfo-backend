@@ -5,7 +5,7 @@
     [konfo-backend.search.tools :refer :all]
     [clojure.string :refer [lower-case]]
     [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format half-year-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec assoc-if]]
+    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format ten-months-past-as-kouta-format ->koodi-with-version-wildcard ->lower-case-vec assoc-if]]
     [konfo-backend.config :refer [config]]))
 
 (defn- ->terms-query
@@ -25,7 +25,7 @@
   []
   { :nested {:path "search_terms.hakutiedot.hakuajat"
              :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (half-year-past-as-kouta-format)}}}]}}}})
+                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (ten-months-past-as-kouta-format)}}}]}}}})
 
 ; NOTE Rajattavat hakutiedot täytyy yhdistää hakuaika-käynnissä rajaukseen poissulkevasti ( AND ) aikarajan perusteella (käynnissä vs 6kk vanhat)
 (defn- hakutieto-query
