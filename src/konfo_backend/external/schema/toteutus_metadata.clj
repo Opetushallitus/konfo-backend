@@ -339,7 +339,8 @@
    :opetus Opetus
    :yhteyshenkilot [Yhteyshenkilo]
    :asiasanat [Keyword]
-   :ammattinimikkeet [Keyword]})
+   :ammattinimikkeet [Keyword]
+   s/Any s/Any})
 
 (def KorkeakoulutusToteutusMetadata
   (st/merge

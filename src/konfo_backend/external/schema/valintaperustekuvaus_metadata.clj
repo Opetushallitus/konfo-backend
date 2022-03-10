@@ -232,7 +232,8 @@
    (s/->OptionalKey :lisatiedot)                 Kielistetty
    (s/->OptionalKey :sisalto)                    [(s/if #(= "taulukko" (:tyyppi %)) SisaltoTaulukko SisaltoTeksti)]
    (s/->OptionalKey :kuvaus)                     Kielistetty
-   (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty})
+   (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty
+   s/Any                                         s/Any})
 
 (def AmmValintaperustekuvausMetadata
   (st/merge
