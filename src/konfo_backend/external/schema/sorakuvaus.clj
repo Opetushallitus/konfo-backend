@@ -1,8 +1,8 @@
 (ns konfo-backend.external.schema.sorakuvaus
   (:require
-    [schema.core :as s]
-    [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+   [schema.core :as s]
+   [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def sorakuvaus-schema
   "|    Sorakuvaus:
@@ -81,7 +81,8 @@
               (s/optional-key :koulutus) [(->Koodi KoulutusKoodi)]
               (s/optional-key :koulutusala) (s/if #(re-matches Koulutusala1Koodi (:koodiUri %))
                                               (->Koodi Koulutusala1Koodi)
-                                              (->Koodi Koulutusala2Koodi))}
+                                              (->Koodi Koulutusala2Koodi))
+              s/Any s/Any}
    :organisaatio Organisaatio
    :modified Datetime
    s/Any s/Any})
