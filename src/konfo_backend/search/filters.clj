@@ -28,6 +28,7 @@
         yo-count (get filter-counts :yo 0)
         amk-alempi-count (get filter-counts :amk-alempi 0)
         amk-ylempi-count (get filter-counts :amk-ylempi 0)
+        amm-ope-erityisope-ja-opo-count (get filter-counts :amm-ope-erityisope-ja-opo 0)
         kandi-count (get filter-counts :kandi 0)
         kandi-ja-maisteri-count (get filter-counts :kandi-ja-maisteri 0)
         maisteri-count (get filter-counts :maisteri 0)
@@ -38,7 +39,8 @@
                                             :koulutustyyppi_12])}
             ammatillinen-count (assoc :count ammatillinen-count))
      :amk (cond-> {:alakoodit {:amk-alempi {:count amk-alempi-count}
-                               :amk-ylempi {:count amk-ylempi-count}}}
+                               :amk-ylempi {:count amk-ylempi-count}
+                               :amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
             amk-count (assoc :count amk-count))
      :yo (cond-> {:alakoodit {:kandi {:count kandi-count}
                               :kandi-ja-maisteri {:count kandi-ja-maisteri-count}
