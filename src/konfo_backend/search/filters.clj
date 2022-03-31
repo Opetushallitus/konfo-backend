@@ -73,7 +73,9 @@
                                                           vapaa-sivistystyo-opistovuosi-count}
                           :vapaa-sivistystyo-muu {:count vapaa-sivistystyo-muu-count}}}
        total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
-     :amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}))
+     :amk-muu
+     (cond-> {:alakoodit {:amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
+       total-amk-muu-count (assoc :count total-amk-muu-count))}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 

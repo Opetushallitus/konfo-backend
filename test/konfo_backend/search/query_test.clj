@@ -292,6 +292,7 @@
              :lk {:term {:search_terms.koulutustyypit.keyword "lk"}}
              :maisteri {:term {:search_terms.koulutustyypit.keyword "maisteri"}}
              :amk {:term {:search_terms.koulutustyypit.keyword "amk"}}
+             :amk-muu {:term {:search_terms.koulutustyypit.keyword "amk-muu"}}
              :amk-alempi {:term {:search_terms.koulutustyypit.keyword "amk-alempi"}}
              :kandi-ja-maisteri {:term {:search_terms.koulutustyypit.keyword "kandi-ja-maisteri"}}
              :yo {:term {:search_terms.koulutustyypit.keyword "yo"}}
