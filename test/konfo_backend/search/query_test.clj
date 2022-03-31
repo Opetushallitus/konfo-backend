@@ -301,6 +301,7 @@
              :tuva-normal {:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
              :tuva-erityisopetus {:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
              :telma {:term {:search_terms.koulutustyypit.keyword "telma"}}
+             :amm-ope-erityisope-ja-opo {:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}
              :vapaa-sivistystyo {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
              :vapaa-sivistystyo-opistovuosi {:term {:search_terms.koulutustyypit.keyword
                                                     "vapaa-sivistystyo-opistovuosi"}}

@@ -28,7 +28,6 @@
         yo-count (get filter-counts :yo 0)
         amk-alempi-count (get filter-counts :amk-alempi 0)
         amk-ylempi-count (get filter-counts :amk-ylempi 0)
-        amm-ope-erityisope-ja-opo-count (get filter-counts :amm-ope-erityisope-ja-opo 0)
         kandi-count (get filter-counts :kandi 0)
         kandi-ja-maisteri-count (get filter-counts :kandi-ja-maisteri 0)
         maisteri-count (get filter-counts :maisteri 0)
@@ -39,8 +38,7 @@
                                             :koulutustyyppi_12])}
             ammatillinen-count (assoc :count ammatillinen-count))
      :amk (cond-> {:alakoodit {:amk-alempi {:count amk-alempi-count}
-                               :amk-ylempi {:count amk-ylempi-count}
-                               :amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
+                               :amk-ylempi {:count amk-ylempi-count}}}
             amk-count (assoc :count amk-count))
      :yo (cond-> {:alakoodit {:kandi {:count kandi-count}
                               :kandi-ja-maisteri {:count kandi-ja-maisteri-count}
@@ -54,6 +52,8 @@
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         telma-count (get filter-counts :telma 0)
         amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count)
+        amm-ope-erityisope-ja-opo-count (get filter-counts :amm-ope-erityisope-ja-opo 0)
+        total-amk-muu-count amm-ope-erityisope-ja-opo-count
         tuva-normal-count (get filter-counts :tuva-normal 0)
         tuva-erityisopetus-count (get filter-counts :tuva-erityisopetus 0)
         total-tuva-count (get filter-counts :tuva 0)
@@ -72,7 +72,8 @@
      (cond-> {:alakoodit {:vapaa-sivistystyo-opistovuosi {:count
                                                           vapaa-sivistystyo-opistovuosi-count}
                           :vapaa-sivistystyo-muu {:count vapaa-sivistystyo-muu-count}}}
-       total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))}))
+       total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
+     :amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
