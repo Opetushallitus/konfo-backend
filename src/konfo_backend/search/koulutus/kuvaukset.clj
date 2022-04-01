@@ -1,17 +1,54 @@
 (ns konfo-backend.search.koulutus.kuvaukset
-  (:require
-    [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa?]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.index.eperuste :as eperuste]
-    [konfo-backend.index.osaamisalakuvaus :as osaamisala]))
+  (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa?]]
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.index.eperuste :as eperuste]
+            [clojure.string :as string]
+            [konfo-backend.index.osaamisalakuvaus :as osaamisala]))
 
 (defn- select-amm-kuvaus
   [eperuste]
   (or (:suorittaneenOsaaminen eperuste) (:tyotehtavatJoissaVoiToimia eperuste) (:kuvaus eperuste)))
 
-(defn- select-amm-tutkinnon-osa-kuvaus
+(defn- trans [obj lang] (get-in obj [lang] ""))
+
+(defn- translate-vaatimukset
+  [kohde lang vaatimukset]
+  (let [vaatimus-items (remove string/blank? (map (fn [v] (trans (:vaatimus v) lang)) vaatimukset))]
+    (if (empty? vaatimus-items)
+      ""
+      (str (trans kohde lang) " " (string/join ", " vaatimus-items) "."))))
+
+(defn- create-ammattitaitovaatimukset-translation
+  [kohde vaatimukset kohdealueet lang]
+  (let [result
+        (string/trim
+         (str (translate-vaatimukset kohde lang vaatimukset)
+              " "
+              (->> kohdealueet
+                   (map (fn [ka]
+                          (let [vaatimukset-translation
+                                (translate-vaatimukset kohde lang (:vaatimukset ka))]
+                            (if (string/blank? vaatimukset-translation)
+                              ""
+                              (str (trans (:kuvaus ka) lang) ": " vaatimukset-translation)))))
+                   (string/join " "))))]
+    (if (string/blank? result) nil result)))
+
+(defn- generate-ammattitaitovaatimukset
   [tutkinnon-osa]
-  (or (:ammattitaitovaatimukset tutkinnon-osa) (:ammattitaidonOsoittamistavat tutkinnon-osa)))
+  (println  tutkinnon-osa)
+  (when (:ammattitaitovaatimukset2019 tutkinnon-osa)
+    (let [kohde (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohde])
+          vaatimukset (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :vaatimukset] [])
+          kohdealueet (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohdealueet] [])]
+      {:fi (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :fi)
+       :sv (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :sv)
+       :en (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :en)})))
+
+(defn select-amm-tutkinnon-osa-kuvaus
+  [tutkinnon-osa]
+  (or (generate-ammattitaitovaatimukset tutkinnon-osa)
+      (:ammattitaidonOsoittamistavat tutkinnon-osa)))
 
 (defn- get-amm-kuvaukset
   [hits]
@@ -58,13 +95,15 @@
 
 (defn- find-amm-tutkinnon-osa-kuvaus
   [kuvaukset tutkinnon-osat]
-  (some (fn [tutkinnon-osa] (some->> kuvaukset
-                                    (filter #(= (:id %) (:eperuste tutkinnon-osa)))
-                                    (first)
-                                    :tutkinnonOsat
-                                    (filter #(= (:koodiUri %) (get-in tutkinnon-osa [:tutkinnonOsat :koodiUri])))
-                                    (first)
-                                    (select-amm-tutkinnon-osa-kuvaus ))) tutkinnon-osat))
+  (some (fn [tutkinnon-osa]
+          (some->> kuvaukset
+                   (filter #(= (:id %) (:eperuste tutkinnon-osa)))
+                   (first)
+                   :tutkinnonOsat
+                   (filter #(= (:koodiUri %) (get-in tutkinnon-osa [:tutkinnonOsat :koodiUri])))
+                   (first)
+                   (select-amm-tutkinnon-osa-kuvaus)))
+        tutkinnon-osat))
 
 (defn with-kuvaukset
   [result]
@@ -72,10 +111,14 @@
         amm-osaamisala-kuvaukset (get-amm-osaamisala-kuvaukset result)
         amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)]
     (->> (for [hit (:hits result)]
-           (cond
-             (ammatillinen? hit)      (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
-             (amm-osaamisala? hit)    (assoc hit :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
-             (amm-tutkinnon-osa? hit) (assoc hit :kuvaus (find-amm-tutkinnon-osa-kuvaus amm-tutkinnon-osa-kuvaukset (:tutkinnonOsat hit)))
-             :else                    hit))
+           (cond (ammatillinen? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
+                 (amm-osaamisala? hit)
+                 (assoc hit :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
+                 (amm-tutkinnon-osa? hit) (assoc hit
+                                                 :kuvaus
+                                                 (find-amm-tutkinnon-osa-kuvaus
+                                                  amm-tutkinnon-osa-kuvaukset
+                                                  (:tutkinnonOsat hit)))
+                 :else hit))
          (vec)
          (assoc result :hits))))

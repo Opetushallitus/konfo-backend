@@ -1,0 +1,833 @@
+{
+    "tila": "valmis",
+    "osanTyyppi": "tutkinnonosa",
+    "osaAlueet": [],
+    "opintoluokitus": null,
+    "geneerinenArviointiasteikko": {
+        "id": 6783341,
+        "nimi": {
+            "_id": "6873071",
+            "_tunniste": "639cea8d-aa09-41be-bf33-377e0e3cffc0",
+            "fi": "Ammatillisten perustutkintojen arviointiasteikko 1.8.2020 alkaen"
+        },
+        "kohde": {
+            "_id": "6783235",
+            "_tunniste": "1024a6ca-125b-4bd2-9364-8c445ff504a7",
+            "fi": "Opiskelija",
+            "sv": "Den studerande"
+        },
+        "_arviointiAsteikko": "3",
+        "julkaistu": true,
+        "valittavissa": true,
+        "koulutustyypit": [],
+        "osaamistasonKriteerit": [
+            {
+                "_osaamistaso": "5",
+                "kriteerit": [
+                    {
+                        "_id": "7460127",
+                        "_tunniste": "e7c0325e-10e4-4d54-84df-517c8fa2cabe",
+                        "en": "carry out a set of tasks following instructions",
+                        "fi": "toteuttaa työn ohjeiden mukaisesti",
+                        "sv": "genomför arbetet enligt instruktioner"
+                    },
+                    {
+                        "_id": "7460128",
+                        "_tunniste": "5b0e2a15-8504-4a14-b7a2-25ff7ef81578",
+                        "en": "work cooperatively",
+                        "fi": "toimii yhteistyökykyisesti",
+                        "sv": "arbetar på ett samarbetsvilligt sätt"
+                    },
+                    {
+                        "_id": "7460129",
+                        "_tunniste": "c2fbc512-04f7-4c45-aae3-aeca4e709ecb",
+                        "en": "need additional instructions in some situations",
+                        "fi": "tarvitsee joissakin tilanteissa lisäohjeita",
+                        "sv": "behöver i vissa situationer ytterligare instruktioner"
+                    },
+                    {
+                        "_id": "7460430",
+                        "_tunniste": "875153e9-2aa0-4061-9cde-bc067e7c490c",
+                        "en": "draw on the underpinning knowledge required in a set of tasks",
+                        "fi": "hyödyntää työssä tarvittavaa perustietoa",
+                        "sv": "använder grundläggande information som behövs i arbetet"
+                    },
+                    {
+                        "_id": "7460431",
+                        "_tunniste": "ba65406a-3c30-4fc4-b7cf-c25fef797f31",
+                        "en": "modify their actions based on the feedback they receive",
+                        "fi": "muuttaa toimintaansa saamansa palautteen mukaisesti",
+                        "sv": "ändrar sitt arbete utgående från respons"
+                    }
+                ]
+            },
+            {
+                "_osaamistaso": "6",
+                "kriteerit": [
+                    {
+                        "_id": "7460432",
+                        "_tunniste": "549e4c8f-7127-45e3-9509-0bb1e146e89f",
+                        "en": "carry out a set of tasks with initiative and following instructions",
+                        "fi": "toteuttaa työn oma-aloitteisesti ja ohjeiden mukaisesti",
+                        "sv": "genomför arbetet på eget initiativ och enligt instruktioner"
+                    },
+                    {
+                        "_id": "7460433",
+                        "_tunniste": "cfad0355-2cca-48ae-a881-8b4d00cd6e7b",
+                        "en": "work cooperatively and interactively",
+                        "fi": "toimii yhteistyökykyisesti ja vuorovaikutteisesti",
+                        "sv": "arbetar på ett samarbetsvilligt och interaktivt sätt"
+                    },
+                    {
+                        "_id": "7460434",
+                        "_tunniste": "d682e84e-db2b-4b60-9737-10001aadc671",
+                        "en": "rarely need additional instructions",
+                        "fi": "tarvitsee vain harvoissa tilanteissa lisäohjeita",
+                        "sv": "behöver endast i ett fåtal situationer ytterligare instruktioner"
+                    },
+                    {
+                        "_id": "7460435",
+                        "_tunniste": "7193b3d0-366e-4218-905b-e266531c45a7",
+                        "en": "use the knowledge needed in their set of tasks appropriately",
+                        "fi": "hyödyntää työssä tarvittavaa tietoa tarkoituksenmukaisesti",
+                        "sv": "använder information som behövs i arbetet på ett ändamålsenligt sätt"
+                    },
+                    {
+                        "_id": "7460436",
+                        "_tunniste": "a1aee310-49ca-4c86-8b05-56950fb6cf1a",
+                        "en": "modify their actions based on the feedback they receive and their personal observations",
+                        "fi": "muuttaa toimintaansa saamansa palautteen ja omien havaintojen mukaisesti",
+                        "sv": "ändrar sitt arbete utgående från respons och egna observationer"
+                    }
+                ]
+            },
+            {
+                "_osaamistaso": "7",
+                "kriteerit": [
+                    {
+                        "_id": "7460442",
+                        "_tunniste": "42210f85-e59c-4365-bba3-2db10a807c84",
+                        "en": "carry out a work process independently",
+                        "fi": "toteuttaa työkokonaisuuden itsenäisesti",
+                        "sv": "genomför arbetshelheten på ett självständigt sätt"
+                    },
+                    {
+                        "_id": "7460443",
+                        "_tunniste": "ceeff2a8-d1d4-4ab3-9b00-a6292d277481",
+                        "en": "work cooperatively and show initiative in interactive situations",
+                        "fi": "toimii yhteistyökykyisesti ja aloitteellisesti vuorovaikutustilanteissa",
+                        "sv": "arbetar på ett samarbetsvilligt sätt och tar initiativ i interaktionssituationer"
+                    },
+                    {
+                        "_id": "7460444",
+                        "_tunniste": "7724b6d8-8f11-46a4-b3be-5a5a0af190e3",
+                        "en": "cope with ordinary problem-solving situations",
+                        "fi": "selviytyy tavanomaisista ongelmanratkaisutilanteista",
+                        "sv": "hanterar vanliga problemlösningssituationer"
+                    },
+                    {
+                        "_id": "7460445",
+                        "_tunniste": "8907cff8-c72b-4f38-b049-c54dbf4ef2f3",
+                        "en": "draw diversely on the knowledge required in their set of tasks",
+                        "fi": "hyödyntää työssä tarvittavaa tietoa monipuolisesti",
+                        "sv": "använder information som behövs i arbetet på ett mångsidigt sätt"
+                    },
+                    {
+                        "_id": "7460446",
+                        "_tunniste": "07ee179d-681c-47c2-9d44-c58a7a93c896",
+                        "en": "assess their performance realistically",
+                        "fi": "arvioi suoriutumistaan realistisesti",
+                        "sv": "utvärderar sin prestation på ett realistiskt sätt"
+                    }
+                ]
+            },
+            {
+                "_osaamistaso": "8",
+                "kriteerit": [
+                    {
+                        "_id": "7460437",
+                        "_tunniste": "16fb640e-296f-4fb7-8477-53bdfe12eb41",
+                        "en": "plan and carry out a work process independently",
+                        "fi": "suunnittelee ja toteuttaa työkokonaisuuden itsenäisesti",
+                        "sv": "planerar och genomför arbetshelheten på ett självständigt sätt"
+                    },
+                    {
+                        "_id": "7460438",
+                        "_tunniste": "2e7dfb71-5eef-483d-9dfb-983fe0653a9b",
+                        "en": "work cooperatively and constructively in interactive situations",
+                        "fi": "toimii yhteistyökykyisesti ja rakentavasti vuorovaikutustilanteissa",
+                        "sv": "arbetar på ett samarbetsvilligt och konstruktivt sätt i interaktionssituationer"
+                    },
+                    {
+                        "_id": "7460439",
+                        "_tunniste": "2f648a95-b3b4-4eba-b348-b00f2b36d939",
+                        "en": "manage problem-solving situations, drawing on diverse methods",
+                        "fi": "selviytyy ongelmanratkaisutilanteista hyödyntäen monipuolisia ratkaisutapoja",
+                        "sv": "hanterar problemlösningssituationer genom att använda mångsidiga problemlösningsmetoder"
+                    },
+                    {
+                        "_id": "7460440",
+                        "_tunniste": "86bcf78e-eeee-4125-ac19-50aa9b8e4619",
+                        "en": "apply the knowledge required in their set of tasks diversely and with justifications",
+                        "fi": "soveltaa työssä tarvittavaa tietoa monipuolisesti ja perustellusti",
+                        "sv": "tillämpar information som behövs i arbetet på ett mångsidigt och välgrundat sätt"
+                    },
+                    {
+                        "_id": "7460441",
+                        "_tunniste": "a913266c-a1d1-4000-b7a2-13b16cf298ec",
+                        "en": "assess their performance realistically and recognise their strengths and development areas",
+                        "fi": "arvioi suoriutumistaan realistisesti sekä tunnistaa vahvuuksiaan ja kehittämisen kohteitaan",
+                        "sv": "utvärderar sin prestation på ett realistiskt sätt samt identifierar sina styrkor och utvecklingsområden"
+                    }
+                ]
+            },
+            {
+                "_osaamistaso": "9",
+                "kriteerit": [
+                    {
+                        "_id": "7460447",
+                        "_tunniste": "395415d1-8ed7-4118-899a-f62adeae4022",
+                        "en": "plan and carry out a work process independently, taking other actors into consideration",
+                        "fi": "suunnittelee ja toteuttaa työkokonaisuuden itsenäisesti ottaen huomioon muut toimijat",
+                        "sv": "planerar och genomför arbetshelheten på ett självständigt sätt med beaktande av övriga aktörer"
+                    },
+                    {
+                        "_id": "7460448",
+                        "_tunniste": "7cabcfbd-c5eb-4a85-8589-a9aeda35faaf",
+                        "en": "work cooperatively and constructively, also in challenging interactive situations",
+                        "fi": "toimii yhteistyökykyisesti ja rakentavasti haastavissakin vuorovaikutustilanteissa",
+                        "sv": "arbetar på ett samarbetsvilligt och konstruktivt sätt även i utmanande interaktionssituationer"
+                    },
+                    {
+                        "_id": "7460449",
+                        "_tunniste": "42179dbd-eeb9-4b11-9f51-31e8b7f76a4b",
+                        "en": "apply the knowledge required in their set of tasks to problem-solving situations diversely and critically",
+                        "fi": "soveltaa työssä tarvittavaa tietoa ongelmanratkaisutilanteissa monipuolisesti ja kriittisesti",
+                        "sv": "tillämpar information som behövs i arbetet i problemlösningssituationer på ett mångsidigt och kritiskt sätt"
+                    },
+                    {
+                        "_id": "7460450",
+                        "_tunniste": "b7212185-ca9b-4215-99fe-47dd2369278e",
+                        "en": "make justified development proposals related to their set of tasks and operating environment",
+                        "fi": "esittää työhön ja toimintaympäristöön liittyviä perusteltuja kehittämisehdotuksia",
+                        "sv": "presenterar motiverade utvecklingsförslag gällande arbetet och verksamhetsmiljön"
+                    },
+                    {
+                        "_id": "7460451",
+                        "_tunniste": "312e2b0b-7d11-4291-b6f1-90b52ca95bc4",
+                        "en": "assess their performance realistically and suggest justified solutions for developing their competence",
+                        "fi": "arvioi suoriutumistaan realistisesti ja esittää perusteltuja ratkaisuja osaamisensa kehittämiseen",
+                        "sv": "utvärderar sin prestation på ett realistiskt sätt och presenterar motiverade lösningar för utvecklingen av sitt kunnande"
+                    },
+                    {
+                        "_id": "7460452",
+                        "_tunniste": "5a13da31-6d72-4e03-bf13-83d8295add5f",
+                        "en": "understand the importance of their work as part of a larger process",
+                        "fi": "ymmärtää oman työnsä merkityksen osana laajempaa kokonaisuutta",
+                        "sv": "förstår betydelsen av sitt eget arbete som en del av en större helhet."
+                    }
+                ]
+            }
+        ]
+    },
+    "koodiArvo": "106512",
+    "kuvaus": null,
+    "luotu": 1575466143865,
+    "ammattitaitovaatimukset": {
+        "en": "<dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl>",
+        "fi": "<dl><dt><i>Opiskelija</i></dt></dl><b>Rakentamisen piirustukset ja työohjeet</b><dl><dt><i>Opiskelija</i></dt><dd style=\"display: list-item;\">lukee rakenne- tai rakennuspiirustuksia</dd><dd style=\"display: list-item;\">tunnistaa rakentamisen yleisimmät piirrosmerkinnät</dd><dd style=\"display: list-item;\">tulkitsee työselityksiä</dd><dd style=\"display: list-item;\">etsii työohjeista ja käyttöturvallisuustiedoitteista tarvittavia tietoja</dd></dl><b>Työskentely rakennustyömaalla</b><dl><dt><i>Opiskelija</i></dt><dd style=\"display: list-item;\">vastaanottaa, siirtää ja varastoi työmaalla käytettäviä materiaaleja</dd><dd style=\"display: list-item;\">toimii työmaan avustavissa tehtävissä</dd><dd style=\"display: list-item;\">käyttää työmaahan ja -vaiheeseen liittyviä tavanomaisia työkaluja</dd><dd style=\"display: list-item;\">toimii ryhmässä ja yhteistyössä työmaan muiden osapuolien kanssa</dd><dd style=\"display: list-item;\">kehittää omia vahvuuksiaan tuottavaan toimintaan hyödyntäen työyhteisön asiantuntemusta</dd></dl><b>Rakennustyömaan työyhteisössä toimiminen</b><dl><dt><i>Opiskelija</i></dt><dd style=\"display: list-item;\">työskentelee osana ryhmää</dd><dd style=\"display: list-item;\">huomioi muut ryhmän jäsenet omassa toiminnassaan</dd><dd style=\"display: list-item;\">toimii työmaan ohjeiden ja määräysten mukaan</dd><dd style=\"display: list-item;\">etsii ja kysyy lisätietoja</dd><dd style=\"display: list-item;\">pitää kiinni sovituista asioista</dd><dd style=\"display: list-item;\">suorittaa työnsä loppuun asti</dd><dd style=\"display: list-item;\">viestii ja vuorovaikuttaa työyhteisössä</dd><dd style=\"display: list-item;\">noudattaa työaikoja</dd><dd style=\"display: list-item;\">toimii työntekijänä oikeuksiensa, etujensa ja velvollisuuksiensa mukaisesti</dd><dd style=\"display: list-item;\">osaa asiakaspalvelun perusteet</dd><dd style=\"display: list-item;\">tunnistaa rakennushankkeen toimijoiden, rakennuttajan, päätoteuttajan, urakoitsijan ja itsenäisen työsuorittajan vastuut ja tehtävät</dd><dd style=\"display: list-item;\">tunnistaa työmaan työturvallisuus- ja luottamusmiesorganisaation</dd></dl><b>Ympäristö ja turvallisuus</b><dl><dt><i>Opiskelija</i></dt><dd style=\"display: list-item;\">tunnistaa ja lajittelee työmaalla syntyvät jätteet</dd><dd style=\"display: list-item;\">toimii vettä, energiaa ja materiaaleja säästävästi työssään</dd><dd style=\"display: list-item;\">käyttää henkilökohtaisia suojaimia</dd><dd style=\"display: list-item;\">työskentelee turvallisesti yhteisellä työpaikalla</dd><dd style=\"display: list-item;\">osaa toimia hätätilanteessa ja antaa ensiapua tarvittaessa</dd><dd style=\"display: list-item;\">varmistaa ennen työn aloitusta, että omaa työssä tarvittavat luvat ja pätevyydet</dd><dd style=\"display: list-item;\">varmistaa ennen työtehtävän aloitusta, että töiden aloittaminen on turvallista</dd></dl>",
+        "ru": "<dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl>",
+        "se": "<dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl><dl><dt><i>opiskelija</i></dt></dl>",
+        "sv": "<dl><dt><i>Studenten</i></dt></dl><b>Byggritningar och arbetsanvisningar</b><dl><dt><i>Studenten</i></dt><dd style=\"display: list-item;\">läser konstruktions- eller byggritningar</dd><dd style=\"display: list-item;\">känner igen de vanligaste ritningssymbolerna som används inom byggverksamhet</dd><dd style=\"display: list-item;\">tolkar arbetsbeskrivningar</dd><dd style=\"display: list-item;\">söker nödvändig information i arbetsanvisningar och säkerhetsdatablad</dd></dl><b>Arbete på en byggarbetsplats</b><dl><dt><i>Studenten</i></dt><dd style=\"display: list-item;\">tar emot, flyttar och lagrar material som används på arbetsplatsen</dd><dd style=\"display: list-item;\">arbetar med assisterande uppgifter på arbetsplatsen</dd><dd style=\"display: list-item;\">använder verktyg som är vanligt förekommande på en byggarbetsplats och i arbetsskeden</dd><dd style=\"display: list-item;\">arbetar i grupp och samarbetar med övriga på arbetsplatsen</dd><dd style=\"display: list-item;\">utvecklar de egna starka sidorna för produktiv verksamhet genom att använda sakkännedomen i arbetsgemenskapen</dd></dl><b>Att vara en del av arbetsgemenskapen på en byggarbetsplats</b><dl><dt><i>Studenten</i></dt><dd style=\"display: list-item;\">arbetar som en del av gruppen</dd><dd style=\"display: list-item;\">tar i sin egen verksamhet de andra medlemmarna i gruppen i beaktande</dd><dd style=\"display: list-item;\">följer arbetsplatsens anvisningar och bestämmelser</dd><dd style=\"display: list-item;\">söker och frågar efter mera information</dd><dd style=\"display: list-item;\">håller fast vid överenskommelser</dd><dd style=\"display: list-item;\">slutför sitt arbete</dd><dd style=\"display: list-item;\">kommunicerar och växelverkar i arbetsgemenskapen</dd><dd style=\"display: list-item;\">håller arbetstider</dd><dd style=\"display: list-item;\">handlar i enlighet med sina rättigheter, intressen och skyldigheter som anställd</dd><dd style=\"display: list-item;\">behärskar grunderna i kundservice</dd><dd style=\"display: list-item;\">känner till vilka uppgifter och vilket ansvar aktörerna i byggprojektet, byggherren, huvudentreprenören, entreprenören och ensamföretagaren har</dd><dd style=\"display: list-item;\">känner till arbetsplatsens arbetarskydds- och förtroendemannaorganisation</dd></dl><b>Miljö och säkerhet</b><dl><dt><i>Studenten</i></dt><dd style=\"display: list-item;\">identifierar och sorterar avfall som uppkommer på arbetsplatsen</dd><dd style=\"display: list-item;\">sparar vatten, energi och material i sitt arbete</dd><dd style=\"display: list-item;\">använder personlig skyddsutrustning</dd><dd style=\"display: list-item;\">utför sitt arbete på ett säkert sätt på en gemensam arbetsplats</dd><dd style=\"display: list-item;\">kan fungera i en nödsituation och vid behov ge första hjälpen</dd><dd style=\"display: list-item;\">säkerställer innan arbetet inleds att hen har de tillstånd och behörigheter som behövs i arbetet</dd><dd style=\"display: list-item;\">ser innan arbetsuppgifterna påbörjas till att det är säkert att inleda arbetet</dd></dl>"
+    },
+    "ammattitaidonOsoittamistavat": {
+        "_id": "7442756",
+        "_tunniste": "71ff3443-4c1b-4cd9-ac2a-8b7cac5a8e53",
+        "fi": "<p>Opiskelija osoittaa ammattitaitonsa näytössä tekemällä avustavia rakennustöitä työmaalla tai kivialan tuotantoympäristössä ja hoitamalla työmaan tai kivialan tuotantoympäristön logistisia töitä yksin tai työryhmässä. Siltä osin kuin tutkinnon osassa vaadittua ammattitaitoa ei voida arvioida näytön perusteella, ammattitaidon osoittamista täydennetään yksilöllisesti muilla tavoin.</p>",
+        "sv": "<p>Den studerande påvisar sin yrkesskicklighet i ett yrkesprov genom att ensam eller i ett arbetslag utföra assisterande byggnadsarbeten på arbetsplatsen eller i en produktionsmiljö i stenbranschen och sköta logistiska arbeten på arbetsplatsen eller i en produktionsmiljö i stenbranschen. Till de delar som den yrkesskicklighet som krävs i examensdelen inte kan bedömas genom ett yrkesprov kompletteras visandet av yrkesskickligheten individuellt på andra sätt.</p>"
+    },
+    "koodi": {
+        "id": 7482380,
+        "nimi": {
+            "fi": "Rakennustyömaalla toimiminen",
+            "sv": "Att arbeta på en byggarbetsplats"
+        },
+        "arvo": "106512",
+        "uri": "tutkinnonosat_106512",
+        "koodisto": "tutkinnonosat",
+        "versio": 1,
+        "temporary": false
+    },
+    "valmaTelmaSisalto": null,
+    "nimi": {
+        "_id": "7442755",
+        "_tunniste": "f4b2e5d3-b3e5-481a-86ad-a804a6424485",
+        "fi": "Rakennustyömaalla toimiminen",
+        "sv": "Att arbeta på en byggarbetsplats"
+    },
+    "ammattitaitovaatimukset2019": {
+        "id": 7323232,
+        "kohde": {
+            "_id": "7215173",
+            "_tunniste": "58103746-31a8-43dd-9571-a712e64bf749",
+            "en": "opiskelija",
+            "fi": "Opiskelija",
+            "ru": "opiskelija",
+            "se": "opiskelija",
+            "sv": "Studenten"
+        },
+        "vaatimukset": [],
+        "kohdealueet": [
+            {
+                "kuvaus": {
+                    "_id": "7442757",
+                    "_tunniste": "ead43839-48fd-4146-a873-7ab483a699da",
+                    "fi": "Rakentamisen piirustukset ja työohjeet",
+                    "sv": "Byggritningar och arbetsanvisningar"
+                },
+                "vaatimukset": [
+                    {
+                        "koodi": {
+                            "id": 7501463,
+                            "nimi": {
+                                "fi": "lukee rakenne- tai rakennuspiirustuksia",
+                                "sv": "läser konstruktions- eller byggritningar"
+                            },
+                            "arvo": "8667",
+                            "uri": "ammattitaitovaatimukset_8667",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "lukee rakenne- tai rakennuspiirustuksia",
+                            "sv": "läser konstruktions- eller byggritningar"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501465,
+                            "nimi": {
+                                "fi": "tunnistaa rakentamisen yleisimmät piirrosmerkinnät",
+                                "sv": "känner igen de vanligaste ritningssymbolerna som används inom byggverksamhet"
+                            },
+                            "arvo": "8666",
+                            "uri": "ammattitaitovaatimukset_8666",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "tunnistaa rakentamisen yleisimmät piirrosmerkinnät",
+                            "sv": "känner igen de vanligaste ritningssymbolerna som används inom byggverksamhet"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501467,
+                            "nimi": {
+                                "fi": "tulkitsee työselityksiä",
+                                "sv": "tolkar arbetsbeskrivningar"
+                            },
+                            "arvo": "8665",
+                            "uri": "ammattitaitovaatimukset_8665",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "tulkitsee työselityksiä",
+                            "sv": "tolkar arbetsbeskrivningar"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501469,
+                            "nimi": {
+                                "fi": "etsii työohjeista ja käyttöturvallisuustiedoitteista tarvittavia tietoja",
+                                "sv": "söker nödvändig information i arbetsanvisningar och säkerhetsdatablad"
+                            },
+                            "arvo": "8664",
+                            "uri": "ammattitaitovaatimukset_8664",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "etsii työohjeista ja käyttöturvallisuustiedoitteista tarvittavia tietoja",
+                            "sv": "söker nödvändig information i arbetsanvisningar och säkerhetsdatablad"
+                        }
+                    }
+                ]
+            },
+            {
+                "kuvaus": {
+                    "_id": "7442792",
+                    "_tunniste": "da156e9d-54b2-41f9-8e41-3b24bd3c7c50",
+                    "fi": "Työskentely rakennustyömaalla",
+                    "sv": "Arbete på en byggarbetsplats"
+                },
+                "vaatimukset": [
+                    {
+                        "koodi": {
+                            "id": 7501471,
+                            "nimi": {
+                                "fi": "vastaanottaa, siirtää ja varastoi työmaalla käytettäviä materiaaleja",
+                                "sv": "tar emot, flyttar och lagrar material som används på arbetsplatsen"
+                            },
+                            "arvo": "8663",
+                            "uri": "ammattitaitovaatimukset_8663",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "vastaanottaa, siirtää ja varastoi työmaalla käytettäviä materiaaleja",
+                            "sv": "tar emot, flyttar och lagrar material som används på arbetsplatsen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501473,
+                            "nimi": {
+                                "fi": "toimii työmaan avustavissa tehtävissä",
+                                "sv": "arbetar med assisterande uppgifter på arbetsplatsen"
+                            },
+                            "arvo": "8662",
+                            "uri": "ammattitaitovaatimukset_8662",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "toimii työmaan avustavissa tehtävissä",
+                            "sv": "arbetar med assisterande uppgifter på arbetsplatsen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501475,
+                            "nimi": {
+                                "fi": "käyttää työmaahan ja -vaiheeseen liittyviä tavanomaisia työkaluja",
+                                "sv": "använder verktyg som är vanligt förekommande på en byggarbetsplats och i arbetsskeden"
+                            },
+                            "arvo": "8661",
+                            "uri": "ammattitaitovaatimukset_8661",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "käyttää työmaahan ja -vaiheeseen liittyviä tavanomaisia työkaluja",
+                            "sv": "använder verktyg som är vanligt förekommande på en byggarbetsplats och i arbetsskeden"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501477,
+                            "nimi": {
+                                "fi": "toimii ryhmässä ja yhteistyössä työmaan muiden osapuolien kanssa",
+                                "sv": "arbetar i grupp och samarbetar med övriga på arbetsplatsen"
+                            },
+                            "arvo": "8660",
+                            "uri": "ammattitaitovaatimukset_8660",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "toimii ryhmässä ja yhteistyössä työmaan muiden osapuolien kanssa",
+                            "sv": "arbetar i grupp och samarbetar med övriga på arbetsplatsen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501479,
+                            "nimi": {
+                                "fi": "kehittää omia vahvuuksiaan tuottavaan toimintaan hyödyntäen työyhteisön asiantuntemusta",
+                                "sv": "utvecklar de egna starka sidorna för produktiv verksamhet genom att använda sakkännedomen i arbetsgemenskapen"
+                            },
+                            "arvo": "8659",
+                            "uri": "ammattitaitovaatimukset_8659",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "kehittää omia vahvuuksiaan tuottavaan toimintaan hyödyntäen työyhteisön asiantuntemusta",
+                            "sv": "utvecklar de egna starka sidorna för produktiv verksamhet genom att använda sakkännedomen i arbetsgemenskapen"
+                        }
+                    }
+                ]
+            },
+            {
+                "kuvaus": {
+                    "_id": "7442798",
+                    "_tunniste": "9539f5a5-0271-44e2-ad45-145acede129f",
+                    "fi": "Rakennustyömaan työyhteisössä toimiminen",
+                    "sv": "Att vara en del av arbetsgemenskapen på en byggarbetsplats"
+                },
+                "vaatimukset": [
+                    {
+                        "koodi": {
+                            "id": 7501481,
+                            "nimi": {
+                                "fi": "työskentelee osana ryhmää",
+                                "sv": "arbetar som en del av gruppen"
+                            },
+                            "arvo": "8658",
+                            "uri": "ammattitaitovaatimukset_8658",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "työskentelee osana ryhmää",
+                            "sv": "arbetar som en del av gruppen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501483,
+                            "nimi": {
+                                "fi": "huomioi muut ryhmän jäsenet omassa toiminnassaan",
+                                "sv": "tar i sin egen verksamhet de andra medlemmarna i gruppen i beaktande"
+                            },
+                            "arvo": "8657",
+                            "uri": "ammattitaitovaatimukset_8657",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "huomioi muut ryhmän jäsenet omassa toiminnassaan",
+                            "sv": "tar i sin egen verksamhet de andra medlemmarna i gruppen i beaktande"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501485,
+                            "nimi": {
+                                "fi": "toimii työmaan ohjeiden ja määräysten mukaan",
+                                "sv": "följer arbetsplatsens anvisningar och bestämmelser"
+                            },
+                            "arvo": "8656",
+                            "uri": "ammattitaitovaatimukset_8656",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "toimii työmaan ohjeiden ja määräysten mukaan",
+                            "sv": "följer arbetsplatsens anvisningar och bestämmelser"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501487,
+                            "nimi": {
+                                "fi": "etsii ja kysyy lisätietoja",
+                                "sv": "söker och frågar efter mera information"
+                            },
+                            "arvo": "8655",
+                            "uri": "ammattitaitovaatimukset_8655",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "etsii ja kysyy lisätietoja",
+                            "sv": "söker och frågar efter mera information"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501489,
+                            "nimi": {
+                                "fi": "pitää kiinni sovituista asioista",
+                                "sv": "håller fast vid överenskommelser"
+                            },
+                            "arvo": "8654",
+                            "uri": "ammattitaitovaatimukset_8654",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "pitää kiinni sovituista asioista",
+                            "sv": "håller fast vid överenskommelser"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501491,
+                            "nimi": {
+                                "fi": "suorittaa työnsä loppuun asti",
+                                "sv": "slutför sitt arbete"
+                            },
+                            "arvo": "8653",
+                            "uri": "ammattitaitovaatimukset_8653",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "suorittaa työnsä loppuun asti",
+                            "sv": "slutför sitt arbete"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501493,
+                            "nimi": {
+                                "fi": "viestii ja vuorovaikuttaa työyhteisössä",
+                                "sv": "kommunicerar och växelverkar i arbetsgemenskapen"
+                            },
+                            "arvo": "8652",
+                            "uri": "ammattitaitovaatimukset_8652",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "viestii ja vuorovaikuttaa työyhteisössä",
+                            "sv": "kommunicerar och växelverkar i arbetsgemenskapen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501495,
+                            "nimi": {
+                                "fi": "noudattaa työaikoja",
+                                "sv": "håller arbetstider"
+                            },
+                            "arvo": "8651",
+                            "uri": "ammattitaitovaatimukset_8651",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "noudattaa työaikoja",
+                            "sv": "håller arbetstider"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501551,
+                            "nimi": {
+                                "fi": "toimii työntekijänä oikeuksiensa, etujensa ja velvollisuuksiensa mukaisesti",
+                                "sv": "handlar i enlighet med sina rättigheter, intressen och skyldigheter som anställd"
+                            },
+                            "arvo": "8650",
+                            "uri": "ammattitaitovaatimukset_8650",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "toimii työntekijänä oikeuksiensa, etujensa ja velvollisuuksiensa mukaisesti",
+                            "sv": "handlar i enlighet med sina rättigheter, intressen och skyldigheter som anställd"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501553,
+                            "nimi": {
+                                "fi": "osaa asiakaspalvelun perusteet",
+                                "sv": "behärskar grunderna i kundservice"
+                            },
+                            "arvo": "8649",
+                            "uri": "ammattitaitovaatimukset_8649",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "osaa asiakaspalvelun perusteet",
+                            "sv": "behärskar grunderna i kundservice"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501555,
+                            "nimi": {
+                                "fi": "tunnistaa rakennushankkeen toimijoiden, rakennuttajan, päätoteuttajan, urakoitsijan ja itsenäisen työsuorittajan vastuut ja tehtävät",
+                                "sv": "känner till vilka uppgifter och vilket ansvar aktörerna i byggprojektet, byggherren, huvudentreprenören, entreprenören och ensamföretagaren har"
+                            },
+                            "arvo": "8648",
+                            "uri": "ammattitaitovaatimukset_8648",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "tunnistaa rakennushankkeen toimijoiden, rakennuttajan, päätoteuttajan, urakoitsijan ja itsenäisen työsuorittajan vastuut ja tehtävät",
+                            "sv": "känner till vilka uppgifter och vilket ansvar aktörerna i byggprojektet, byggherren, huvudentreprenören, entreprenören och ensamföretagaren har"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501557,
+                            "nimi": {
+                                "fi": "tunnistaa työmaan työturvallisuus- ja luottamusmiesorganisaation",
+                                "sv": "känner till arbetsplatsens arbetarskydds- och förtroendemannaorganisation"
+                            },
+                            "arvo": "8647",
+                            "uri": "ammattitaitovaatimukset_8647",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "tunnistaa työmaan työturvallisuus- ja luottamusmiesorganisaation",
+                            "sv": "känner till arbetsplatsens arbetarskydds- och förtroendemannaorganisation"
+                        }
+                    }
+                ]
+            },
+            {
+                "kuvaus": {
+                    "_id": "7442831",
+                    "_tunniste": "8e162273-7ae8-46d7-aaf5-21b18b2bcae5",
+                    "fi": "Ympäristö ja turvallisuus",
+                    "sv": "Miljö och säkerhet"
+                },
+                "vaatimukset": [
+                    {
+                        "koodi": {
+                            "id": 7501559,
+                            "nimi": {
+                                "fi": "tunnistaa ja lajittelee työmaalla syntyvät jätteet",
+                                "sv": "identifierar och sorterar avfall som uppkommer på arbetsplatsen"
+                            },
+                            "arvo": "8646",
+                            "uri": "ammattitaitovaatimukset_8646",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "tunnistaa ja lajittelee työmaalla syntyvät jätteet",
+                            "sv": "identifierar och sorterar avfall som uppkommer på arbetsplatsen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501561,
+                            "nimi": {
+                                "fi": "toimii vettä, energiaa ja materiaaleja säästävästi työssään",
+                                "sv": "sparar vatten, energi och material i sitt arbete"
+                            },
+                            "arvo": "8645",
+                            "uri": "ammattitaitovaatimukset_8645",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "toimii vettä, energiaa ja materiaaleja säästävästi työssään",
+                            "sv": "sparar vatten, energi och material i sitt arbete"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501563,
+                            "nimi": {
+                                "fi": "käyttää henkilökohtaisia suojaimia",
+                                "sv": "använder personlig skyddsutrustning"
+                            },
+                            "arvo": "8644",
+                            "uri": "ammattitaitovaatimukset_8644",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "käyttää henkilökohtaisia suojaimia",
+                            "sv": "använder personlig skyddsutrustning"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501622,
+                            "nimi": {
+                                "fi": "työskentelee turvallisesti yhteisellä työpaikalla",
+                                "sv": "utför sitt arbete på ett säkert sätt på en gemensam arbetsplats"
+                            },
+                            "arvo": "8643",
+                            "uri": "ammattitaitovaatimukset_8643",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "työskentelee turvallisesti yhteisellä työpaikalla",
+                            "sv": "utför sitt arbete på ett säkert sätt på en gemensam arbetsplats"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501624,
+                            "nimi": {
+                                "fi": "osaa toimia hätätilanteessa ja antaa ensiapua tarvittaessa",
+                                "sv": "kan fungera i en nödsituation och vid behov ge första hjälpen"
+                            },
+                            "arvo": "8642",
+                            "uri": "ammattitaitovaatimukset_8642",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "osaa toimia hätätilanteessa ja antaa ensiapua tarvittaessa",
+                            "sv": "kan fungera i en nödsituation och vid behov ge första hjälpen"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501626,
+                            "nimi": {
+                                "fi": "varmistaa ennen työn aloitusta, että omaa työssä tarvittavat luvat ja pätevyydet",
+                                "sv": "säkerställer innan arbetet inleds att hen har de tillstånd och behörigheter som behövs i arbetet"
+                            },
+                            "arvo": "8641",
+                            "uri": "ammattitaitovaatimukset_8641",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "varmistaa ennen työn aloitusta, että omaa työssä tarvittavat luvat ja pätevyydet",
+                            "sv": "säkerställer innan arbetet inleds att hen har de tillstånd och behörigheter som behövs i arbetet"
+                        }
+                    },
+                    {
+                        "koodi": {
+                            "id": 7501684,
+                            "nimi": {
+                                "fi": "varmistaa ennen työtehtävän aloitusta, että töiden aloittaminen on turvallista",
+                                "sv": "ser innan arbetsuppgifterna påbörjas till att det är säkert att inleda arbetet"
+                            },
+                            "arvo": "8640",
+                            "uri": "ammattitaitovaatimukset_8640",
+                            "koodisto": "ammattitaitovaatimukset",
+                            "versio": 1,
+                            "temporary": false
+                        },
+                        "vaatimus": {
+                            "fi": "varmistaa ennen työtehtävän aloitusta, että töiden aloittaminen on turvallista",
+                            "sv": "ser innan arbetsuppgifterna påbörjas till att det är säkert att inleda arbetet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "muokkaaja": "1.2.246.562.24.47360239257",
+    "id": 6906346,
+    "koodiUri": "tutkinnonosat_106512",
+    "vapaatTekstit": [],
+    "tyyppi": "normaali",
+    "muokattu": 1607963670991
+}
