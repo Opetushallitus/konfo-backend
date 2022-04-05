@@ -30,20 +30,39 @@
                                 (translate-vaatimukset kohde lang (:vaatimukset ka))]
                             (if (string/blank? vaatimukset-translation)
                               ""
-                              (str (trans (:kuvaus ka) lang) ": " vaatimukset-translation)))))
+                              vaatimukset-translation))))
                    (string/join " "))))]
     (if (string/blank? result) nil result)))
 
+(def language-keys [:fi :sv :en])
+
+(defn- strip-ammattitaitovaatimukset-html [html-str]
+  (when (string? html-str)
+    (-> html-str
+        (string/replace #"<[^>]*>" #(case %1
+                                      "</li>" ", "
+                                      "</ul>" ". "
+                                      " "))
+        (string/replace #"(\s|\u008a)+" " ")
+        (string/trim)
+        (string/replace #",\.|(., \.)" ".")
+        (string/replace #"\s," ","))))
+
 (defn- generate-ammattitaitovaatimukset
   [tutkinnon-osa]
-  (println  tutkinnon-osa)
-  (when (:ammattitaitovaatimukset2019 tutkinnon-osa)
-    (let [kohde (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohde])
-          vaatimukset (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :vaatimukset] [])
-          kohdealueet (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohdealueet] [])]
-      {:fi (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :fi)
-       :sv (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :sv)
-       :en (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :en)})))
+  (cond (:ammattitaitovaatimukset2019 tutkinnon-osa)
+        (let [kohde (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohde])
+              vaatimukset (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :vaatimukset] [])
+              kohdealueet (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohdealueet] [])]
+          {:fi (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :fi)
+           :sv (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :sv)
+           :en (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :en)})
+        ;Eperusteissa kaikilla tutkinnon osilla ei ole rakenteista ammattitaitovaatimukset2019-kenttää, 
+        ;joten yritetään siivota html:ää sisältävä ammattitaitovaatimukset-kenttä tekstiksi.
+        (:ammattitaitovaatimukset tutkinnon-osa)
+        (->> (select-keys (:ammattitaitovaatimukset tutkinnon-osa) language-keys)
+             (map (fn [[lng html]] [lng (strip-ammattitaitovaatimukset-html html)]))
+             (into {}))))
 
 (defn select-amm-tutkinnon-osa-kuvaus
   [tutkinnon-osa]

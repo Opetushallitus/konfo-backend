@@ -68,6 +68,9 @@
                              :tutkinnonOsat.koodiUri
                              :tutkinnonOsat.tila
                              :tutkinnonOsat.ammattitaitovaatimukset2019
+                             :tutkinnonOsat.ammattitaitovaatimukset.fi
+                             :tutkinnonOsat.ammattitaitovaatimukset.sv
+                             :tutkinnonOsat.ammattitaitovaatimukset.en
                              :tutkinnonOsat.ammattitaidonOsoittamistavat.fi
                              :tutkinnonOsat.ammattitaidonOsoittamistavat.sv
                              :tutkinnonOsat.ammattitaidonOsoittamistavat.en]
