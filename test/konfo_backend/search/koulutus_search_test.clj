@@ -33,13 +33,9 @@
 
 (def yo-oid "1.2.246.562.13.000005")
 (def amk-oid "1.2.246.562.13.000006")
-(def lukio-oid "1.2.246.562.13.000007")
 
 (def haku-oid-1 "1.2.246.562.29.0000001")
 (def haku-oid-2 "1.2.246.562.29.0000002")
-(def hakukohde-oid-2 "1.2.246.562.20.00000000000000000002")
-(def valintaperuste-id "a5e88367-555b-4d9e-aa43-0904e5ea0a13")
-(def sorakuvaus-id "ffa8c6cf-a962-4bb2-bf61-fe8fc741fabd")
 
 (deftest koulutus-search-test
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto
