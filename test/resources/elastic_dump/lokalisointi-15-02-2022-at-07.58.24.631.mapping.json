@@ -1,1 +1,0 @@
-{"lokalisointi-15-02-2022-at-07.58.24.631":{"mappings":{"dynamic_templates":[{"all":{"match":"*","match_mapping_type":"string","mapping":{"norms":false,"type":"keyword"}}}]}}}
