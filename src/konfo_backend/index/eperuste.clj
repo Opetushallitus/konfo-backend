@@ -57,7 +57,7 @@
   (let [hits (->> (get-in result [:hits :hits]) (map :_source) (vec))]
     (if (seq hits)
       (vec (for [hit hits]
-             (assoc hit :tutkinnonOsat (vec (filter #(= (:tila %) "valmis") (:tutkinnonOsat hit))))))
+             (assoc hit :tutkinnonOsat (vec (remove #(= (:tila %) "poistettu") (:tutkinnonOsat hit))))))
       hits)))
 
 (defn get-tutkinnon-osa-kuvaukset-by-eperuste-ids
@@ -67,6 +67,7 @@
                              :tutkinnonOsat.id
                              :tutkinnonOsat.koodiUri
                              :tutkinnonOsat.tila
+                             :tutkinnonOsat.ammattitaitovaatimukset2019
                              :tutkinnonOsat.ammattitaitovaatimukset.fi
                              :tutkinnonOsat.ammattitaitovaatimukset.sv
                              :tutkinnonOsat.ammattitaitovaatimukset.en
