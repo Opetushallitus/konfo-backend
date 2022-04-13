@@ -22,21 +22,21 @@
   (get-internal-error (apply search-url query-params)))
 
 (deftest external-search-api-test
-  (let [koulutusOid1 "1.2.246.562.13.000041" ;; Autoalan perustutkinto, järjestyksessä ensimmäinen amm
+  (let [koulutusOid1 "1.2.246.562.13.000041" ;; Järjestyksessä ensimmäinen
         koulutusOid2 "1.2.246.562.13.000011" ;; Hevosalan koulutus
         koulutusOid3 "1.2.246.562.13.000014" ;; Hevosalan osaamisala koulutus
         koulutusOid4 "1.2.246.562.13.000031" ;; yo
         koulutusOid5 "1.2.246.562.13.000009" ;; yo
         koulutusOid6 "1.2.246.562.13.000030" ;; yo
         koulutusOid8 "1.2.246.562.13.000047" ;; amk
-        toteutusOid1 "1.2.246.562.17.000025" ;; automaalari
+        toteutusOid1 "1.2.246.562.17.000025" ;; Järjestyksessä ensimmäinen
         toteutusOid2 "1.2.246.562.17.000021" ;; yo
         toteutusOid3 "1.2.246.562.17.000028"] ;; amk
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search toteutus with koulutustyyppi amm"
       (let [r (search :koulutustyyppi "amm")]
-        (is (= 25 (:total r)))
+        (is (= 20 (:total r)))
         (is (= [koulutusOid1] [(:oid (first (:hits r)))]))
         (is (= [toteutusOid1] [(:toteutusOid (first (:toteutukset (first (:hits r)))))]))))
     (testing "Search toteutus with keyword"

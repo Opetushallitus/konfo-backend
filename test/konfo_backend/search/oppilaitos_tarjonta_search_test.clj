@@ -119,14 +119,8 @@
                   :tutkintonimikkeet [],
                   :opetuskielet      ["oppilaitoksenopetuskieli_01"],
                   :koulutustyyppi    "amm",
-                  :kuva              "https://testi.fi/toteutus-teemakuva/oid/kuva.jpg"
-                  :hakukaynnissa     nil
+                  :kuva              "https://testi.fi/toteutus-teemakuva/oid/kuva.jpg",
+                  :hakuAuki          false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
                                  :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
 
-(deftest oppilaitos-tarjonta-test-no-tarjontaa
-  (testing "Get oppilaitoksen tarjonta"
-    (testing "no tarjontaa"
-      (let [r (search "1.2.246.562.10.0000015")]
-        (is (= 0 (:total r)))
-        (is (= [] (:hits r)))))))

@@ -52,23 +52,24 @@
     (testing "Search all koulutukset"
       (let [r (search :sort "name" :order "asc")]
         (is (= 20 (count (:hits r))))
-        (is (= 25 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 20 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 2 (get-in r [:filters :koulutustyyppi :amk :count])))
         (is (= 5 (get-in r [:filters :koulutustyyppi :yo :count])))
         (is (= 3 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))
+        (is (= 5 (get-in r [:filters :koulutustyyppi-muu :aikuisten-perusopetus :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
-        (is (= 2 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+        (is (= 7 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
         (is (= 36 (get-in r [:filters :maakunta :maakunta_01 :count])))
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
-        (is (= 2 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-        (is (= 27 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])) "ammatilliset ja lukio")
-        (is (= 27 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])) "ammatilliset")
-        (is (= 33 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :alakoodit :kansallinenkoulutusluokitus2016koulutusalataso2_01 :count])) "korkeakoulut ja ammatilliset")
-        (is (= 33 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :alakoodit :kansallinenkoulutusluokitus2016koulutusalataso2_02 :count])) "korkeakoulut ja ammatilliset")
+        (is (= 7 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+        (is (= 22 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])) "ammatilliset ja lukio")
+        (is (= 22 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])) "ammatilliset")
+        (is (= 29 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :alakoodit :kansallinenkoulutusluokitus2016koulutusalataso2_01 :count])) "korkeakoulut ja ammatilliset")
+        (is (= 29 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :alakoodit :kansallinenkoulutusluokitus2016koulutusalataso2_02 :count])) "korkeakoulut ja ammatilliset")
         (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_av :count])))
         (is (= 2 (get-in r [:filters :valintatapa :valintatapajono_tv :count])))
         (is (= 1 (get-in r [:filters :hakukaynnissa :count])))
@@ -92,7 +93,7 @@
       (testing "koulutustyyppi amm"
         (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= 20 (count (:hits r))))
-          (is (= 25 (get-in r [:filters :koulutustyyppi :amm :count])))))
+          (is (= 20 (get-in r [:filters :koulutustyyppi :amm :count])))))
 
       (testing "koulutustyyppi amm-osaamisala"
         (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
@@ -147,8 +148,9 @@
 
       (testing "opetustapa"
         (let [r (search :opetustapa "opetuspaikkakk_02" :sort "name" :order "asc")]
-          (is (= 2 (count (:hits r))))
-          (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+          (is (= 7 (count (:hits r))))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 5 (get-in r [:filters :koulutustyyppi-muu :aikuisten-perusopetus :count])))))
 
       (testing "valintatapa"
         (let [r (search :valintatapa "valintatapajono_av" :sort "name" :order "asc")]
