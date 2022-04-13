@@ -16,7 +16,7 @@ jobs:
         uses: ./.github/actions/prepare-clojure-env
 
       - name: Run tests
-        run: lein -U ci-test
+        run: lein -U test
 
   build:
     runs-on: ubuntu-latest
