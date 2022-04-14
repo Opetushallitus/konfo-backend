@@ -133,6 +133,7 @@
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
                                                 #(= "yo" (:tyyppi %)) YoMetadata
                                                 #(= "amk" (:tyyppi %)) AmkMetadata
+                                                #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url

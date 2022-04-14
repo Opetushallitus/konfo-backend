@@ -95,7 +95,7 @@
 
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
-(def Koulutustyyppi (s/enum "amm" "yo" "amk" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa"))
+(def Koulutustyyppi (s/enum "amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa"))
 (def Amm            (s/eq "amm"))
 (def Yo             (s/eq "yo"))
 (def Amk            (s/eq "amk"))
@@ -105,6 +105,7 @@
 (def VapaaSivistystyoOpistovuosi  (s/eq "vapaa-sivistystyo-opistovuosi"))
 (def VapaaSivistystyoMuu          (s/eq "vapaa-sivistystyo-muu"))
 (def Muu                          (s/eq "muu"))
+(def AmmOpeErityisopeJaOpo        (s/eq "amm-ope-erityisope-ja-opo"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 

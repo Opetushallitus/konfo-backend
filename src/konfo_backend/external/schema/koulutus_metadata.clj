@@ -195,6 +195,12 @@
     {:tyyppi Amk}
     KkMetadata))
 
+(def AmmOpeErityisopeJaOpoMetadata
+  (st/merge
+    KkMetadata
+    {:tyyppi AmmOpeErityisopeJaOpo
+     :koulutusala [(->Koodi Koulutusala1Koodi)]}))
+
 (def YoMetadata
   (st/merge
     {:tyyppi Yo}
