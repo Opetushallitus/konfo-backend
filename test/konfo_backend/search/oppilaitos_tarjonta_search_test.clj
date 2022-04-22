@@ -137,7 +137,9 @@
                   :kuva "https://example.com/kuva.jpg"
                   :hakuAuki false
                   :toteutusNimi {:fi "Audikoulutus fi",
-                                 :sv "Audikoulutus sv"}} (first (:hits r))))))
+                                 :sv "Audikoulutus sv"}
+                  :jarjestaaUrheilijanAmmKoulutusta nil
+                  } (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search helsingin-yliopisto :tuleva true)]
@@ -172,7 +174,9 @@
                                        :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
                   :koulutustyyppi "amm"
-                  :hakuAuki false} (first (:hits r)))))))))
+                  :hakuAuki false
+                  :jarjestaaUrheilijanAmmKoulutusta nil
+                  } (first (:hits r)))))))))
 
 (deftest oppilaitos-tarjonta-test-no-tarjontaa
   (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)

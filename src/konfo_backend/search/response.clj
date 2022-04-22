@@ -107,7 +107,9 @@
                (assoc :hakuAuki (hit-haku-kaynnissa? hit))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
-                                {})))))))
+                                {}))
+               (assoc :jarjestaaUrheilijanAmmKoulutusta (some #(true? (get-in % [:jarjestaaUrheilijanAmmKoulutusta]))
+                                                              (get-in hit [:enrichedTarjoajat]))))))))
 
 (defn parse-inner-hits
   ([response]
