@@ -292,6 +292,7 @@
              :lk {:term {:search_terms.koulutustyypit.keyword "lk"}}
              :maisteri {:term {:search_terms.koulutustyypit.keyword "maisteri"}}
              :amk {:term {:search_terms.koulutustyypit.keyword "amk"}}
+             :amk-muu {:term {:search_terms.koulutustyypit.keyword "amk-muu"}}
              :amk-alempi {:term {:search_terms.koulutustyypit.keyword "amk-alempi"}}
              :kandi-ja-maisteri {:term {:search_terms.koulutustyypit.keyword "kandi-ja-maisteri"}}
              :yo {:term {:search_terms.koulutustyypit.keyword "yo"}}
@@ -301,6 +302,7 @@
              :tuva-normal {:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
              :tuva-erityisopetus {:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
              :telma {:term {:search_terms.koulutustyypit.keyword "telma"}}
+             :amm-ope-erityisope-ja-opo {:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}
              :vapaa-sivistystyo {:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
              :vapaa-sivistystyo-opistovuosi {:term {:search_terms.koulutustyypit.keyword
                                                     "vapaa-sivistystyo-opistovuosi"}}

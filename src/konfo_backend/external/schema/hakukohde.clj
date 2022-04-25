@@ -241,8 +241,8 @@
    :nimi                                           Kielistetty
    :jarjestyspaikka                                Organisaatio
    :kaytetaanHaunHakulomaketta                     s/Bool
-   :onkoHarkinnanvarainenKoulutus                  s/Bool
-   (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
+   (s/->OptionalKey :onkoHarkinnanvarainenKoulutus) s/Bool
+   (s/->OptionalKey :Hakulomaketyyppi)             Hakulomaketyyppi
    :hakulomakeKuvaus                               Kielistetty
    :hakulomakeLinkki                               Kielistetty
    :pohjakoulutusvaatimus                          [(->Koodi PohjakoulutusvaatimusKoodi)]

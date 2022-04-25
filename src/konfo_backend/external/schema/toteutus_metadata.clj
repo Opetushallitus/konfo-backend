@@ -373,6 +373,11 @@
    {:tyyppi Amk}
    KorkeakoulutusToteutusMetadata))
 
+(def AmmOpeErityisopeJaOpoToteutusMetadata
+  (st/merge
+    {:tyyppi AmmOpeErityisopeJaOpo}
+    KorkeakoulutusToteutusMetadata))
+
 (def schemas
   (str apuraha-schema "\n"
        opetus-schema "\n"
