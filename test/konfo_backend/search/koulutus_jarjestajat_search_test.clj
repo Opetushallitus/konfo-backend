@@ -142,7 +142,6 @@
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "amm"
                   :hakuAuki true
-                  :jarjestaaUrheilijanAmmKoulutusta nil
                   } (first (:hits r))))))
 
       (testing "tulevat"
@@ -160,7 +159,6 @@
                                    :sv "kunta_091 nimi sv"}}],
                   :kuvaus {}
                   :hakuAuki false
-                  :jarjestaaUrheilijanAmmKoulutusta nil
                   } (first (:hits r)))))))))
 
 (deftest koulutus-jarjestajat-test-no-jarjestajia
