@@ -138,7 +138,6 @@
                   :hakuAuki false
                   :toteutusNimi {:fi "Audikoulutus fi",
                                  :sv "Audikoulutus sv"}
-                  :jarjestaaUrheilijanAmmKoulutusta nil
                   } (first (:hits r))))))
 
       (testing "tulevat"
@@ -175,7 +174,6 @@
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
                   :koulutustyyppi "amm"
                   :hakuAuki false
-                  :jarjestaaUrheilijanAmmKoulutusta nil
                   } (first (:hits r)))))))))
 
 (deftest oppilaitos-tarjonta-test-no-tarjontaa
