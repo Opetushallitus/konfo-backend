@@ -2,14 +2,11 @@
   (:require [clojure.test :refer :all]
             [konfo-backend.external.schema.koulutus :as k]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
-            [kouta-indeksoija-service.fixture.external-services :as mocks]
-            [konfo-backend.test-tools :refer :all]
-            [konfo-backend.test-mock-data :refer [yo-koulutus-metatieto lukio-koulutus-metatieto lukio-toteutus-metatieto yo-toteutus-metatieto]]))
+            [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(use-fixtures :each fixture/mock-indexing-fixture)
+(use-fixtures :once with-elastic-dump)
 
 (defn koulutus-url
   [oid & query-params]
@@ -29,54 +26,25 @@
 
 (deftest external-api-test
   (testing "Testing external apis"
-    (let [koulutusOid1 "1.2.246.562.13.000001"
-          koulutusOid2 "1.2.246.562.13.000002"
-          lukio-Oid "1.2.246.562.13.000003"
-          kkKoulutusOid "1.2.246.562.13.000099"
+    (let [koulutusOid1 "1.2.246.562.13.000003"
+          koulutusOid2 "1.2.246.562.13.000004"
+          lukio-Oid "1.2.246.562.13.000008"
+          kkKoulutusOid "1.2.246.562.13.000009"
           toteutusOid1 "1.2.246.562.17.000001"
           toteutusOid2 "1.2.246.562.17.000002"
           toteutusOid3 "1.2.246.562.17.000003"
-          lukio-toteutus-oid "1.2.246.562.17.000004"
-          kkToteutusOid "1.2.246.562.17.000099"
-          hakukohdeOid1 "1.2.246.562.20.000001"
-          hakukohdeOid2 "1.2.246.562.20.000002"
-          kkHakukohdeOid "1.2.246.562.20.000099"
-          hakuOid1 "1.2.246.562.29.000001"
-          hakuOid2 "1.2.246.562.29.000002"
-          kkHakuOid "1.2.246.562.29.000099"
-          sorakuvausId "a5e88367-555b-4d9e-aa43-0904e5ea0a13"
-          valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
-          valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"]
-
-      (fixture/add-koulutus-mock koulutusOid1 :tila "julkaistu" :nimi "Hauska koulutus" :organisaatio mocks/Oppilaitos1 :sorakuvausId sorakuvausId)
-      (fixture/add-koulutus-mock koulutusOid2 :tila "tallennettu" :nimi "Hupaisa julkaisematon koulutus" :organisaatio mocks/Oppilaitos2 :sorakuvausId sorakuvausId)
-      (fixture/add-koulutus-mock lukio-Oid :tila "julkaistu" :koulutustyyppi "lk" :nimi "Lukio koulutus" :organisaatio mocks/Oppilaitos2 :metadata lukio-koulutus-metatieto :sorakuvausId sorakuvausId :ePerusteId nil)
-      (fixture/add-koulutus-mock kkKoulutusOid :tila "julkaistu" :koulutustyyppi "yo" :nimi "YO koulutus" :organisaatio mocks/Oppilaitos2 :metadata yo-koulutus-metatieto :sorakuvausId sorakuvausId)
-
-      (fixture/add-toteutus-mock toteutusOid1 koulutusOid1 :tila "julkaistu")
-      (fixture/add-toteutus-mock toteutusOid2 koulutusOid1 :tila "tallennettu")
-      (fixture/add-toteutus-mock toteutusOid3 koulutusOid1 :tila "julkaistu")
-      (fixture/add-toteutus-mock lukio-toteutus-oid lukio-Oid :tila "julkaistu" :metadata lukio-toteutus-metatieto)
-      (fixture/add-toteutus-mock kkToteutusOid kkKoulutusOid :tila "julkaistu" :metadata (slurp "test/resources/korkeakoulu-toteutus-metadata.json"))
-
-      (fixture/add-haku-mock hakuOid1 :tila "julkaistu")
-      (fixture/add-haku-mock hakuOid2 :tila "tallennettu")
-      (fixture/add-haku-mock kkHakuOid :tila "julkaistu")
-
-      (fixture/add-hakukohde-mock hakukohdeOid1 toteutusOid3 hakuOid1 :tila "julkaistu" :valintaperuste valintaperusteId1)
-      (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid3 hakuOid2 :tila "tallennettu" :valintaperuste valintaperusteId2)
-      (fixture/add-hakukohde-mock hakukohdeOid2 toteutusOid3 hakuOid2 :tila "tallennettu" :valintaperuste valintaperusteId2)
-      (fixture/add-hakukohde-mock kkHakukohdeOid kkToteutusOid kkHakuOid :tila "julkaistu" :valintaperuste valintaperusteId2)
-
-      (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
-      (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu")
-      (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu")
-
-      (fixture/index-oids-without-related-indices {:koulutukset [koulutusOid1 koulutusOid2 kkKoulutusOid lukio-Oid]
-                                                   :toteutukset [toteutusOid1 toteutusOid2 toteutusOid3 kkToteutusOid lukio-toteutus-oid]
-                                                   :haut [hakuOid1 hakuOid2 kkHakuOid]
-                                                   :hakukohteet [hakukohdeOid1 hakukohdeOid2 kkHakukohdeOid]
-                                                   :valintaperusteet [valintaperusteId1 valintaperusteId2]})
+          toteutusOid4 "1.2.246.562.17.000004"
+          lukio-toteutus-oid "1.2.246.562.17.000007"
+          kkToteutusOid "1.2.246.562.17.000008"
+          hakukohdeOid1 "1.2.246.562.20.0000001"
+          hakukohdeOid2 "1.2.246.562.20.0000002"
+          hakukohdeOid3 "1.2.246.562.20.0000003"
+          hakukohdeOid4 "1.2.246.562.20.0000004"
+          kkHakukohdeOid "1.2.246.562.20.0000011"
+          hakuOid1 "1.2.246.562.29.0000001"
+          hakuOid2 "1.2.246.562.29.0000004"
+          kkHakuOid "1.2.246.562.29.0000006"
+          valintaperusteId1 "31972648-ebb7-4185-ac64-31fa6b841e34"]
 
       (testing "Get koulutus"
         (testing "ok only koulutus"
@@ -94,23 +62,23 @@
         (testing "ok koulutus with toteutukset"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1 :toteutukset true))]
             (is (= koulutusOid1 (:oid response)))
-            (is (= [toteutusOid1 toteutusOid3] (vec (sort (map :oid (:toteutukset response))))))
+            (is (= [toteutusOid1 toteutusOid2 toteutusOid3] (vec (sort (map :oid (:toteutukset response))))))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
         (testing "ok koulutus with hakukohteet"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1 :hakukohteet true))]
             (is (= koulutusOid1 (:oid response)))
-            (is (= [hakukohdeOid1] (vec (sort (map :oid (:hakukohteet response))))))
+            (is (= [hakukohdeOid1 hakukohdeOid3] (vec (sort (map :oid (:hakukohteet response))))))
             (is (false? (contains? response :toteutukset)))
             (is (false? (contains? response :haut)))))
         (testing "ok koulutus with haut"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1 :haut true))]
             (is (= koulutusOid1 (:oid response)))
-            (is (= [hakuOid1] (vec (sort (map :oid (:haut response))))))
+            (is (= [hakuOid1] (vec (sort (distinct (map :oid (:haut response)))))))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :toteutukset)))))
         (testing "not found"
-          (get-not-found (koulutus-url "1.2.246.562.13.000009")))
+          (get-not-found (koulutus-url "1.2.246.562.13.000999")))
         (testing "not julkaistu"
           (get-not-found (koulutus-url koulutusOid2)))
         (testing "not amm"
@@ -118,8 +86,8 @@
 
       (testing "Get toteutus"
         (testing "ok only toteutus"
-          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3))]
-            (is (= toteutusOid3 (:oid response)))
+          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid1))]
+            (is (= toteutusOid1 (:oid response)))
             (is (false? (contains? response :koulutus)))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
@@ -127,27 +95,27 @@
           (let [response (get-ok-or-print-schema-error (toteutus-url lukio-toteutus-oid))]
             (is (= lukio-toteutus-oid (:oid response)))))
         (testing "ok toteutus with koulutus"
-          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3 :koulutus true))]
-            (is (= toteutusOid3 (:oid response)))
+          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid1 :koulutus true))]
+            (is (= toteutusOid1 (:oid response)))
             (is (= koulutusOid1 (get-in response [:koulutus :oid])))
             (is (false? (contains? response :hakukohteet)))
             (is (false? (contains? response :haut)))))
         (testing "ok toteutus with hakukohteet"
-          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3 :hakukohteet true))]
-            (is (= toteutusOid3 (:oid response)))
+          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid1 :hakukohteet true))]
+            (is (= toteutusOid1 (:oid response)))
             (is (false? (contains? response :koulutus)))
             (is (= [hakukohdeOid1] (vec (sort (map :oid (:hakukohteet response))))))
             (is (false? (contains? response :haut)))))
         (testing "ok toteutus with haut"
-          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid3 :haut true))]
-            (is (= toteutusOid3 (:oid response)))
+          (let [response (get-ok-or-print-schema-error (toteutus-url toteutusOid1 :haut true))]
+            (is (= toteutusOid1 (:oid response)))
             (is (false? (contains? response :koulutus)))
             (is (false? (contains? response :hakukohteet)))
             (is (= [hakuOid1] (vec (sort (map :oid (:haut response))))))))
         (testing "not found"
           (get-not-found (toteutus-url "1.2.246.562.17.000009")))
         (testing "not julkaistu"
-          (get-not-found (toteutus-url toteutusOid2)))
+          (get-not-found (toteutus-url toteutusOid4)))
         (testing "not amm"
           (get-ok-or-print-schema-error (toteutus-url kkToteutusOid))))
 
@@ -170,7 +138,7 @@
           (let [response (get-ok-or-print-schema-error (hakukohde-url hakukohdeOid1 :toteutus true))]
             (is (= hakukohdeOid1 (:oid response)))
             (is (false? (contains? response :koulutus)))
-            (is (= toteutusOid3 (get-in response [:toteutus :oid])))
+            (is (= toteutusOid1 (get-in response [:toteutus :oid])))
             (is (false? (contains? response :haku)))
             (is (false? (contains? response :valintaperustekuvaus)))))
         (testing "ok hakukohde with haku"
@@ -188,9 +156,9 @@
             (is (false? (contains? response :haku)))
             (is (= valintaperusteId1 (get-in response [:valintaperustekuvaus :id])))))
         (testing "not found"
-          (get-not-found (hakukohde-url "1.2.246.562.20.000009")))
+          (get-not-found (hakukohde-url "1.2.246.562.20.000999")))
         (testing "not julkaistu"
-          (get-not-found (hakukohde-url hakukohdeOid2)))
+          (get-not-found (hakukohde-url hakukohdeOid4)))
         (testing "not amm"
           (let [response (get-ok-or-print-schema-error (hakukohde-url kkHakukohdeOid :koulutus true :toteutus true :haku true :valintaperustekuvaus true))]
             (is (= kkHakukohdeOid (:oid response)))
@@ -209,21 +177,21 @@
         (testing "ok haku with koulutukset"
           (let [response (get-ok-or-print-schema-error (haku-url hakuOid1 :koulutukset true))]
             (is (= hakuOid1 (:oid response)))
-            (is (= [koulutusOid1] (vec (sort (map :oid (:koulutukset response))))))
+            (is (= [koulutusOid1] (vec (sort (distinct (map :oid (:koulutukset response)))))))
             (is (false? (contains? response :toteutukset)))
             (is (false? (contains? response :hakukohteet)))))
         (testing "ok haku with toteutukset"
           (let [response (get-ok-or-print-schema-error (haku-url hakuOid1 :toteutukset true))]
             (is (= hakuOid1 (:oid response)))
             (is (false? (contains? response :koulutukset)))
-            (is (= [toteutusOid3] (vec (sort (map :oid (:toteutukset response))))))
+            (is (= [toteutusOid1 toteutusOid2] (vec (sort (map :oid (:toteutukset response))))))
             (is (false? (contains? response :hakukohteet)))))
         (testing "ok haku with hakukohteet"
           (let [response (get-ok-or-print-schema-error (haku-url hakuOid1 :hakukohteet true))]
             (is (= hakuOid1 (:oid response)))
             (is (false? (contains? response :koulutukset)))
             (is (false? (contains? response :toteutukset)))
-            (is (= [hakukohdeOid1] (vec (sort (map :oid (:hakukohteet response))))))))
+            (is (= [hakukohdeOid1 hakukohdeOid2 hakukohdeOid3] (vec (sort (map :oid (:hakukohteet response))))))))
         (testing "not found"
           (get-not-found (haku-url "1.2.246.562.29.000009")))
         (testing "not julkaistu"

@@ -1,12 +1,11 @@
 (ns konfo-backend.index.valintaperuste-test
   (:require [clojure.test :refer :all]
-            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [clj-log.access-log]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(use-fixtures :each fixture/mock-indexing-fixture)
+(use-fixtures :once with-elastic-dump)
 
 (defn valintaperuste-url
   [id]
@@ -18,27 +17,31 @@
 
 (deftest valintaperuste-test
 
-  (let [valintaperusteId1 "2d0651b7-cdd3-463b-80d9-303a60d9616c"
-        valintaperusteId2 "45d2ae02-9a5f-42ef-8148-47d07737927b"
-        valintaperusteId3 "45d2ae02-9a5f-42ef-8148-47d077379299"
-        valintaperusteId4 "45d2ae02-9a5f-42ef-8148-47d077379777"]
+  (let [valintaperusteId1  "31972648-ebb7-4185-ac64-31fa6b841e34"
+        valintaperusteId2  "31972648-ebb7-4185-ac64-31fa6b841e35"
+        valintaperusteId3  "31972648-ebb7-4185-ac64-31fa6b841e36"
+        valintaperusteId4  "31972648-ebb7-4185-ac64-31fa6b841e37"
+        valintaperusteId5  "31972648-ebb7-4185-ac64-31fa6b841e38"
+        valintaperusteId6  "31972648-ebb7-4185-ac64-31fa6b841e39"
+        valintaperusteId99 "31972648-ebb7-4185-ac64-31fa6b841e99"]
 
-    (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :esikatselu "false")
-    (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :esikatselu "false")
-    (fixture/add-valintaperuste-mock valintaperusteId4 :tila "tallennettu" :esikatselu "true")
+    (comment
+      (fixture/add-valintaperuste-mock valintaperusteId1 :tila "julkaistu" :esikatselu "false")
+      (fixture/add-valintaperuste-mock valintaperusteId2 :tila "tallennettu" :esikatselu "false")
+      (fixture/add-valintaperuste-mock valintaperusteId4 :tila "tallennettu" :esikatselu "true")
 
-    (fixture/index-oids-without-related-indices {:valintaperusteet [valintaperusteId1 valintaperusteId2 valintaperusteId4]})
-
+      (fixture/index-oids-without-related-indices {:valintaperusteet [valintaperusteId1 valintaperusteId2 valintaperusteId4]})
+      )
     (testing "Get valintaperuste"
       (testing "ok"
         (let [response (get-ok (valintaperuste-url valintaperusteId1))]
           (is (= valintaperusteId1 (:id response)))))
       (testing "get draft valintaperuste when esikatselu true"
-        (let [response (get-ok (valintaperuste-draft-url valintaperusteId4))]
-          (is (= valintaperusteId4 (:id response)))))
+        (let [response (get-ok (valintaperuste-draft-url valintaperusteId6))]
+          (is (= valintaperusteId6 (:id response)))))
       (testing "not found"
-        (get-not-found (valintaperuste-url valintaperusteId3)))
+        (get-not-found (valintaperuste-url valintaperusteId99)))
       (testing "filter not julkaistu and draft true but esikatselu false"
-        (get-not-found (valintaperuste-draft-url valintaperusteId2)))
+        (get-not-found (valintaperuste-draft-url valintaperusteId5)))
       (testing "filter not julkaistu and draft false"
-        (get-not-found (valintaperuste-url valintaperusteId2))))))
+        (get-not-found (valintaperuste-url valintaperusteId6))))))
