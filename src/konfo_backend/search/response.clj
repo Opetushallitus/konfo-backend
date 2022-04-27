@@ -102,14 +102,12 @@
     (vec (for [hit hits
                :let [toteutusOid (:toteutusOid hit)]]
            (-> hit
-               (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva])
+               (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva :jarjestaaUrheilijanAmmKoulutusta])
                (merge (:metadata hit))
                (assoc :hakuAuki (hit-haku-kaynnissa? hit))
                (assoc :kuvaus (if (not (nil? toteutusOid))
                                 (or ((keyword toteutusOid) kuvaukset) {})
-                                {}))
-               (assoc :jarjestaaUrheilijanAmmKoulutusta (some #(true? (get-in % [:jarjestaaUrheilijanAmmKoulutusta]))
-                                                              (get-in hit [:enrichedTarjoajat]))))))))
+                                {})))))))
 
 (defn parse-inner-hits
   ([response]
