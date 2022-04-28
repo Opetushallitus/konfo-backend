@@ -307,5 +307,6 @@
              :vapaa-sivistystyo-opistovuosi {:term {:search_terms.koulutustyypit.keyword
                                                     "vapaa-sivistystyo-opistovuosi"}}
              :vapaa-sivistystyo-muu {:term {:search_terms.koulutustyypit.keyword
-                                            "vapaa-sivistystyo-muu"}}}}
+                                            "vapaa-sivistystyo-muu"}}
+             :aikuisten-perusopetus {:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}}}
            :aggs {:real_hits {:reverse_nested {}}}}}}})))))
