@@ -1,14 +1,13 @@
 (ns konfo-backend.search.oppilaitos-tarjonta-search-test
   (:require [clojure.test :refer :all]
             [clojure.string :refer [starts-with?]]
-            [kouta-indeksoija-service.fixture.kouta-indexer-fixture :as fixture]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
             [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
-(use-fixtures :each fixture/mock-indexing-fixture)
+(use-fixtures :once with-elastic-dump)
 
 (defn jarjestajat-search-url
   [oid & query-params]
@@ -22,25 +21,17 @@
   [oid & query-params]
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
-(def autoala-oid "1.2.246.562.13.000001")
-(def hevosala-oid "1.2.246.562.13.000002")
+(def punkaharjun-yliopisto "1.2.246.562.10.000002")
+(def helsingin-yliopisto      "1.2.246.562.10.000005")
 
-(def ponikoulu-oid "1.2.246.562.17.000001")
-(def mersukoulu-oid "1.2.246.562.17.000002")
-(def audikoulu-oid "1.2.246.562.17.000003")
+(def traktoriala-oid "1.2.246.562.13.000010")
 
-(def sorakuvausId "2ff6700d-087f-4dbf-9e42-7f38948f227a")
+(def ponikoulu-oid "1.2.246.562.17.000010")
+(def valtrakoulu-oid "1.2.246.562.17.000011")
+(def massikkakoulu-oid "1.2.246.562.17.000012")
+(def poniosatoteutus-oid "1.2.246.562.17.000014")
 
 (deftest oppilaitos-tarjonta-test
-  (fixture/add-sorakuvaus-mock sorakuvausId :tila "julkaistu")
-  (fixture/add-koulutus-mock autoala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Autoalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
-  (fixture/add-koulutus-mock hevosala-oid :koulutustyyppi "amm" :tila "julkaistu" :nimi "Hevosalan koulutus" :tarjoajat (str punkaharjun-yliopisto "," helsingin-yliopisto) :sorakuvausId sorakuvausId :metadata koulutus-metatieto)
-  (fixture/add-toteutus-mock ponikoulu-oid hevosala-oid :tila "julkaistu" :nimi "Ponikoulu" :tarjoajat punkaharjun-toimipiste-2 :metadata toteutus-metatieto)
-  (fixture/add-toteutus-mock mersukoulu-oid autoala-oid :tila "julkaistu" :nimi "Mersukoulutus" :tarjoajat punkaharjun-toimipiste-2 :metadata amk-toteutus-metatieto)
-  (fixture/add-toteutus-mock audikoulu-oid autoala-oid :tila "julkaistu" :nimi "Audikoulutus" :tarjoajat helsingin-toimipiste :metadata toteutus-metatieto :teemakuva "https://example.com/kuva.jpg")
-
-  (fixture/index-oids-without-related-indices {:koulutukset [autoala-oid hevosala-oid] :oppilaitokset [punkaharjun-yliopisto, helsingin-yliopisto]} orgs)
-
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitoksen tarjonta with bad requests:"
       (testing "Invalid lng"
@@ -51,26 +42,29 @@
     (testing "Sorting and paging tarjonta"
       (testing "asc order"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
-          (is (= 2 (:total r)))
-          (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))
-          (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))))
+          (is (= 3 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
+          (is (= valtrakoulu-oid (:toteutusOid (last (:hits r)))))))
       (testing "desc order"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "desc")]
-          (is (= 2 (:total r)))
-          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
-          (is (= mersukoulu-oid (:toteutusOid (second (:hits r)))))))
+          (is (= 3 (:total r)))
+          (is (= valtrakoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
+          (is (= ponikoulu-oid (:toteutusOid (last (:hits r)))))))
       (testing "paging"
         (let [r (search punkaharjun-yliopisto :tuleva false :page 2 :size 1)]
-          (is (= 2 (:total r)))
+          (is (= 3 (:total r)))
           (is (= 1 (count (:hits r))))
-          (is (= ponikoulu-oid (:toteutusOid (first (:hits r))))))))
+          (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r))))))))
 
     (testing "Filtering tarjonta"
       (testing "Can filter by sijainti"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_091")]
-          (is (= 2 (:total r)))
-          (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))
-          (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))))
+          (is (= 3 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
+          (is (= valtrakoulu-oid (:toteutusOid (last (:hits r)))))))
       (testing "Can filter by sijainti, no match"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_618")]
           (is (= 0 (:total r)))))
@@ -82,36 +76,28 @@
           (is (= 0 (:total r)))))
       (testing "Can filter by opetuskieli"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
-          (is (= 1 (:total r)))
-          (is (= mersukoulu-oid (:toteutusOid (first (:hits r)))))))
+          (is (= 0 (:total r)))))
       (testing "Can filter by opetustapa"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
-          (is (= 1 (:total r)))
-          (is (= mersukoulu-oid (:toteutusOid (first (:hits r))))))))
+          (is (= 0 (:total r))))))
 
     (testing "Filter counts"
       (testing "Without any filters"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
-          (is (= 2 (:total r)))
-          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
-          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
-          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          (is (= 3 (:total r)))
+          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
+          (is (= 2 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 2 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
-          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-          (is (= 2 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
-      (testing "Filetering reduces counts"
-        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
-          (is (= 1 (:total r)))
-          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
-          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
-          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :amm-muu :count])))
-          (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-          (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count]))))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+          (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
+      (testing "Filtering reduces counts"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_02")]
+          (is (= 2 (:total r)))
+          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 2 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count]))))))
 
     (testing "Get oppilaitoksen tarjonta"
       (testing "no tarjontaa"
@@ -121,64 +107,20 @@
       (testing "nykyinen"
         (let [r (search helsingin-yliopisto :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:oppilaitosOid "1.2.246.562.10.000005"
+          (is (= {:oppilaitosOid     "1.2.246.562.10.000005"
                   ;:maksunMaara nil,
-                  :kuvaus {},
-                  :koulutusOid autoala-oid
-                  :toteutusOid audikoulu-oid,
-                  :opetusajat [],
-                  :nimi {:fi "Audikoulutus fi",
-                         :sv "Audikoulutus sv"},
+                  :kuvaus            {},
+                  :koulutusOid       traktoriala-oid
+                  :toteutusOid       massikkakoulu-oid,
+                  :nimi              {:fi "Massikkakoulutus fi",
+                         :sv "Massikkakoulutus sv"},
                   ;:maksullisuustyyppi nil,
-                  :kunnat [],
+                  :kunnat            [],
                   :tutkintonimikkeet [],
-                  :opetuskielet ["oppilaitoksenopetuskieli_02"],
-                  :koulutustyyppi "amm",
-                  :kuva "https://example.com/kuva.jpg"
-                  :hakuAuki false
-                  :toteutusNimi {:fi "Audikoulutus fi",
-                                 :sv "Audikoulutus sv"}} (first (:hits r))))))
+                  :opetuskielet      ["oppilaitoksenopetuskieli_01"],
+                  :koulutustyyppi    "amm",
+                  :kuva              "https://testi.fi/toteutus-teemakuva/oid/kuva.jpg",
+                  :hakuAuki          false,
+                  :toteutusNimi      {:fi "Massikkakoulutus fi",
+                                 :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
 
-      (testing "tulevat"
-        (let [r (search helsingin-yliopisto :tuleva true)]
-          (is (= 1 (:total r)))
-          (is (= {:oppilaitosOid "1.2.246.562.10.000005"
-                  :koulutustyypit [{:koodiUri "koulutustyyppi_01",
-                                    :nimi {:fi "koulutustyyppi_01 nimi fi",
-                                           :sv "koulutustyyppi_01 nimi sv"}},
-                                   {:koodiUri "koulutustyyppi_02",
-                                    :nimi {:fi "koulutustyyppi_02 nimi fi",
-                                           :sv "koulutustyyppi_02 nimi sv"}}],
-                  :kuvaus {},
-                  :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6",
-                                            :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi",
-                                                   :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                  :opintojenLaajuusNumero 150,
-                  :opintojenLaajuus {:koodiUri "opintojenlaajuus_150",
-                                     :nimi {:fi "opintojenlaajuus_150 nimi fi",
-                                            :sv "opintojenlaajuus_150 nimi sv"}},
-                  :koulutusOid hevosala-oid
-                  :nimi {:fi "Hevosalan koulutus fi",
-                         :sv "Hevosalan koulutus sv"},
-                  :kuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
-                  :kunnat [{:koodiUri "kunta_091",
-                            :nimi {:fi "kunta_091 nimi fi",
-                                   :sv "kunta_091 nimi sv"}}],
-                  :opetuskielet ["oppilaitoksenopetuskieli_1" "oppilaitoksenopetuskieli_2"],
-                  :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
-                                       :nimi {:fi "tutkintonimikkeet_01 nimi fi",
-                                              :sv "tutkintonimikkeet_01 nimi sv"}},
-                                      {:koodiUri "tutkintonimikkeet_02",
-                                       :nimi {:fi "tutkintonimikkeet_02 nimi fi",
-                                              :sv "tutkintonimikkeet_02 nimi sv"}}],
-                  :koulutustyyppi "amm"
-                  :hakuAuki false} (first (:hits r)))))))))
-
-(deftest oppilaitos-tarjonta-test-no-tarjontaa
-  (fixture/index-oids-without-related-indices {:oppilaitokset [punkaharjun-yliopisto]} orgs)
-
-  (testing "Get oppilaitoksen tarjonta"
-    (testing "no tarjontaa"
-      (let [r (search punkaharjun-yliopisto)]
-        (is (= 0 (:total r)))
-        (is (= [] (:hits r)))))))

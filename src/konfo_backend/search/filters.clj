@@ -51,7 +51,8 @@
   (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         telma-count (get filter-counts :telma 0)
-        amm-muu-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count)
+        amm-muu-count (get filter-counts :amm-muu 0)
+        muut-ammatilliset-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count amm-muu-count)
         amm-ope-erityisope-ja-opo-count (get filter-counts :amm-ope-erityisope-ja-opo 0)
         total-amk-muu-count amm-ope-erityisope-ja-opo-count
         tuva-normal-count (get filter-counts :tuva-normal 0)
@@ -60,11 +61,13 @@
         vapaa-sivistystyo-opistovuosi-count (get filter-counts :vapaa-sivistystyo-opistovuosi 0)
         vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count
-                                         vapaa-sivistystyo-muu-count)]
-    {:amm-muu (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
-                                   :amm-osaamisala {:count amm-osaamisala-count}
-                                   :telma {:count telma-count}}}
-                amm-muu-count (assoc :count amm-muu-count))
+                                         vapaa-sivistystyo-muu-count)
+        aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)]
+    {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
+                                             :amm-osaamisala {:count amm-osaamisala-count}
+                                             :amm-muu {:count amm-muu-count}
+                                             :telma {:count telma-count}}}
+                muut-ammatilliset-count (assoc :count muut-ammatilliset-count))
      :tuva (cond-> {:alakoodit {:tuva-normal {:count tuva-normal-count}
                                 :tuva-erityisopetus {:count tuva-erityisopetus-count}}}
              total-tuva-count (assoc :count total-tuva-count))
@@ -75,7 +78,8 @@
        total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
      :amk-muu
      (cond-> {:alakoodit {:amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
-       total-amk-muu-count (assoc :count total-amk-muu-count))}))
+       total-amk-muu-count (assoc :count total-amk-muu-count))
+     :aikuisten-perusopetus {:count aikuisten-perusopetus-count}}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
