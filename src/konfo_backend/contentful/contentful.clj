@@ -34,6 +34,7 @@
                 (.withContentType content-type)
                 (.where "locale" locale))]
     (-> query
+        (.limit 1000)
         (.all)
         (.items))))
 
@@ -46,5 +47,6 @@
                (.fetch client CDAAsset)
                 (.where "locale" locale))]
     (-> query
+        (.limit 1000)
         (.all)
         (.items))))
