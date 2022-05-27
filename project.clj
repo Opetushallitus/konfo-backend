@@ -2,7 +2,7 @@
 (cemerick.pomegranate.aether/register-wagon-factory!
  "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
 
-(defproject konfo-backend "0.2.0-SNAPSHOT"
+(defproject konfo-backend "0.2.1-SNAPSHOT"
   :description "Konfo-backend"
   :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
                  ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
@@ -38,7 +38,7 @@
                  [com.contentful.java/java-sdk "10.4.1"]
                  [commons-codec/commons-codec "1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.3.3-SNAPSHOT"]
+                 [oph/clj-elasticsearch "0.5.0-SNAPSHOT"]
                  [mount "0.1.11"]
                  [org.clojure/data.xml "0.0.8"]]
   :env {:name "konfo-backend"}
@@ -54,15 +54,12 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT"]
-                                   [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT" :classifier "tests"]
-                                   [fi.oph.kouta/kouta-common "2.7.0-SNAPSHOT" :classifier "tests"]
-                                   [org.mockito/mockito-core "2.28.2"]
-                                   [oph/clj-test-utils "0.3.0-SNAPSHOT"]
+                                   [oph/clj-test-utils "0.5.0-SNAPSHOT"]
+                                   [org.mockito/mockito-all "1.9.5"]
                                    [clj-http-fake "1.0.3"]
                                    [pjstadig/humane-test-output "0.11.0"]]
-                    :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
+             :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
+             :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
                                  (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
                                    (do
@@ -71,14 +68,6 @@
                                    (utils/global-docker-elastic-fixture))
                                  (require 'pjstadig.humane-test-output)
                                  (pjstadig.humane-test-output/activate!)]}
-             :ci-test {:dependencies [[ring/ring-mock "0.3.2"]
-                                      [kouta-indeksoija-service "9.3.1-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT"]
-                                      [fi.oph.kouta/kouta-backend "6.21.2-SNAPSHOT" :classifier "tests"]
-                                      [fi.oph.kouta/kouta-common "2.7.0-SNAPSHOT" :classifier "tests"]
-                                      [org.mockito/mockito-core "2.28.2"]
-                                      [oph/clj-test-utils "0.3.0-SNAPSHOT"]]
-                       :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
                        :resource-paths ["oph-configuration" "resources"]}}
@@ -86,8 +75,7 @@
             "run-updater" ["with-profile" "+updater" "run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
-            "ci-test" ["with-profile" "+ci-test" "test"]
-            "auto-test" ["with-profile" "+ci-test" "auto" "test"]
-            "test-reload" ["with-profile" "+ci-test" "test-refresh"]
+            "auto-test" ["with-profile" "+test" "auto" "test"]
+            "test-reload" ["with-profile" "+test" "test-refresh"]
             "cloverage" ["with-profile" "+test" "cloverage"]}
   :zprint {:width 100 :old? false :style :community :map {:comma? false}})

@@ -118,9 +118,6 @@
    |          type: object
    |          description: Se organisaatio, jossa järjestetään koulutus, johon hakukohteessa voi hakea
    |          $ref: '#/components/schemas/Organisaatio'
-   |        onkoHarkinnanvarainenKoulutus:
-   |          type: boolean
-   |          description: Harkinnanvaraisuutta ei kysytä hakulomakkeella
    |        hakulomaketyyppi:
    |          type: string
    |          description: Hakulomakkeen tyyppi. Kertoo, käytetäänkö Atarun (hakemuspalvelun) hakulomaketta, muuta hakulomaketta
@@ -241,7 +238,6 @@
    :nimi                                           Kielistetty
    :jarjestyspaikka                                Organisaatio
    :kaytetaanHaunHakulomaketta                     s/Bool
-   :onkoHarkinnanvarainenKoulutus                  s/Bool
    (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
    :hakulomakeKuvaus                               Kielistetty
    :hakulomakeLinkki                               Kielistetty

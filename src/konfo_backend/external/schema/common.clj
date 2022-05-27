@@ -95,7 +95,7 @@
 
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
-(def Koulutustyyppi (s/enum "amm" "yo" "amk" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa"))
+(def Koulutustyyppi (s/enum "amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus"))
 (def Amm            (s/eq "amm"))
 (def Yo             (s/eq "yo"))
 (def Amk            (s/eq "amk"))
@@ -104,7 +104,9 @@
 (def Telma           (s/eq "telma"))
 (def VapaaSivistystyoOpistovuosi  (s/eq "vapaa-sivistystyo-opistovuosi"))
 (def VapaaSivistystyoMuu          (s/eq "vapaa-sivistystyo-muu"))
+(def AikuistenPerusopetus         (s/eq "aikuisten-perusopetus"))
 (def Muu                          (s/eq "muu"))
+(def AmmOpeErityisopeJaOpo        (s/eq "amm-ope-erityisope-ja-opo"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 
@@ -206,6 +208,11 @@
    (s/->OptionalKey :paattyy) (s/maybe Datetime)
    s/Any s/Any})
 
+(def FormatoituAikaleima
+  {:fi  s/Str
+   :sv  s/Str
+   :en  s/Str})
+
 (def Alkamiskausityyppi (s/enum "henkilokohtainen suunnitelma" "tarkka alkamisajankohta" "alkamiskausi ja -vuosi"))
 
 (def koulutuksenalkamiskausi-schema
@@ -243,7 +250,9 @@
 (def KoulutuksenAlkamiskausi
   {(s/->OptionalKey :alkamiskausityyppi) (s/maybe Alkamiskausityyppi)
    (s/->OptionalKey :koulutuksenAlkamispaivamaara) (s/maybe Datetime)
+   (s/->OptionalKey :formatoituKoulutuksenalkamispaivamaara) (s/maybe FormatoituAikaleima)
    (s/->OptionalKey :koulutuksenPaattymispaivamaara) (s/maybe Datetime)
+   (s/->OptionalKey :formatoituKoulutuksenpaattymispaivamaara) (s/maybe FormatoituAikaleima)
    (s/->OptionalKey :koulutuksenAlkamiskausi) (s/maybe (->Koodi AlkamiskausiKoodi))
    (s/->OptionalKey :koulutuksenAlkamisvuosi) (s/maybe s/Str)
    (s/->OptionalKey :henkilokohtaisenSuunnitelmanLisatiedot) (s/maybe Kielistetty)})

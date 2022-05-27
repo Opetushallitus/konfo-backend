@@ -240,17 +240,17 @@
      {:tyyppi Amm}
      ValintaperusteKuvausMetadata))
 
-(def KorkeakoulutusValintaperusteKuvausMetadata
-  (st/merge
-     {:osaamistaustat    [(->Koodi OsaamistaustaKoodi)]}
-     ValintaperusteKuvausMetadata))
-
 (def YoValintaperusteKuvausMetadata
   (st/merge
      {:tyyppi Yo}
-     KorkeakoulutusValintaperusteKuvausMetadata))
+     ValintaperusteKuvausMetadata))
 
 (def AmkValintaperusteKuvausMetadata
   (st/merge
      {:tyyppi Amk}
-     KorkeakoulutusValintaperusteKuvausMetadata))
+     ValintaperusteKuvausMetadata))
+
+(def AmmOpeErityisopeJaOpoValintaperusteKuvausMetadata
+  (st/merge
+    {:tyyppi AmmOpeErityisopeJaOpo}
+    ValintaperusteKuvausMetadata))
