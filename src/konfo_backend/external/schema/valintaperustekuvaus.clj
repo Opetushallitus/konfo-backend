@@ -95,6 +95,7 @@
    (s/->OptionalKey :metadata)            (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata
                                                          #(= "yo" (:tyyppi %)) YoValintaperusteKuvausMetadata
                                                          #(= "amk" (:tyyppi %)) AmkValintaperusteKuvausMetadata
+                                                         #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoValintaperusteKuvausMetadata
                                                          #(= "amm-ope-erityisope-ja-opo"
                                                              (:tyyppi %)) AmmOpeErityisopeJaOpoValintaperusteKuvausMetadata)
    :organisaatio                          Organisaatio

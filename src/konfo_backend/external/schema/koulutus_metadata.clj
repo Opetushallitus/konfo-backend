@@ -190,16 +190,21 @@
    (s/->OptionalKey :eperuste)                (s/maybe Eperuste)
    s/Any                                      s/Any})
 
-(def AmkMetadata
+(def AmkKoulutusMetadata
   (st/merge
     {:tyyppi Amk}
     KkMetadata))
 
-(def AmmOpeErityisopeJaOpoMetadata
+(def AmmOpeErityisopeJaOpoKoulutusMetadata
   (st/merge
     KkMetadata
     {:tyyppi AmmOpeErityisopeJaOpo
      :koulutusala [(->Koodi Koulutusala1Koodi)]}))
+
+(def KorkeakoulutusOpintojaksoKoulutusMetadata
+  (st/merge
+   KkMetadata
+   {:tyyppi AmmOpeErityisopeJaOpo}))
 
 (def YoMetadata
   (st/merge

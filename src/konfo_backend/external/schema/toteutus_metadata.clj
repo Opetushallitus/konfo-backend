@@ -378,6 +378,11 @@
     {:tyyppi AmmOpeErityisopeJaOpo}
     KorkeakoulutusToteutusMetadata))
 
+(def KorkeakoulutusOpintojaksoToteutusMetadata
+  (st/merge
+   {:tyyppi KkOpintojakso}
+   KorkeakoulutusToteutusMetadata))
+
 (def schemas
   (str apuraha-schema "\n"
        opetus-schema "\n"

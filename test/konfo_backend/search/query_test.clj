@@ -308,5 +308,7 @@
                                                     "vapaa-sivistystyo-opistovuosi"}}
              :vapaa-sivistystyo-muu {:term {:search_terms.koulutustyypit.keyword
                                             "vapaa-sivistystyo-muu"}}
-             :aikuisten-perusopetus {:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}}}
+             :aikuisten-perusopetus {:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}
+             :kk-opintojakso {:term {:search_terms.koulutustyypit.keyword
+                                                         "kk-opintojakso"}}}}
            :aggs {:real_hits {:reverse_nested {}}}}}}})))))
