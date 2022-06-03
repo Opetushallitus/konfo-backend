@@ -123,4 +123,3 @@
                   :hakuAuki          false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
                                  :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
-
