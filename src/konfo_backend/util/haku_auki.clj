@@ -6,7 +6,8 @@
 (defn with-is-haku-auki [data]
   (prewalk (fn [x]
              (if (not (nil? (:alkaa x)))
-               (assoc x :hakuAuki (hakuaika-kaynnissa? x))
-               (assoc x :hakuMennyt (hakuaika-menneisyydessa? x))
+               (-> x
+                 (assoc :hakuAuki (hakuaika-kaynnissa? x))
+                 (assoc :hakuMennyt (hakuaika-menneisyydessa? x)))
                x))
            data))
