@@ -7,5 +7,6 @@
   (prewalk (fn [x]
              (if (not (nil? (:alkaa x)))
                (assoc x :hakuAuki (hakuaika-kaynnissa? x))
+               (assoc x :hakuMennyt (hakuaika-menneisyydessa? x))
                x))
            data))

@@ -60,6 +60,14 @@
       false
       (within? gte (time/now) lt))))
 
+(defn hakuaika-menneisyydessa?
+  [hakuaika]
+  (let [lt (when (not (nil? (:paattyy hakuaika)))
+             (kouta-date-time-string->date-time (:paattyy hakuaika)))]
+    (if (nil? lt)
+      false
+      (time/after? (time/now) lt))))
+
 (defn toteutus-haku-kaynnissa?
   [toteutus]
   (let [hakutiedot (get-in toteutus [:hakutiedot])
