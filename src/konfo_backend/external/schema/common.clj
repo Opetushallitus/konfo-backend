@@ -138,7 +138,8 @@
 (def Organisaatio
   {:paikkakunta (->Koodi KuntaKoodi)
    :nimi        Kielistetty
-   :oid         OrganisaatioOid})
+   :oid         OrganisaatioOid
+   s/Any        s/Any})
 
 (def koulutuslisatieto-schema
   "|    KoulutusLisatieto:
