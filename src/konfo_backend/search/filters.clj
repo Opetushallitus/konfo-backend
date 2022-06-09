@@ -62,7 +62,9 @@
         vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count
                                          vapaa-sivistystyo-muu-count)
-        aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)]
+        aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)
+        kk-opintojakso-count (get filter-counts :kk-opintojakso 0)
+        total-kk-muu-count kk-opintojakso-count]
     {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                                              :amm-osaamisala {:count amm-osaamisala-count}
                                              :amm-muu {:count amm-muu-count}
@@ -79,7 +81,10 @@
      :amk-muu
      (cond-> {:alakoodit {:amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
        total-amk-muu-count (assoc :count total-amk-muu-count))
-     :aikuisten-perusopetus {:count aikuisten-perusopetus-count}}))
+     :aikuisten-perusopetus {:count aikuisten-perusopetus-count}
+     :kk-muu 
+     (cond-> {:alakoodit {:kk-opintojakso {:count kk-opintojakso-count}}}
+        total-kk-muu-count (assoc :count total-kk-muu-count))}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 

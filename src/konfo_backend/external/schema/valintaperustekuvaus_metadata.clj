@@ -254,3 +254,9 @@
   (st/merge
     {:tyyppi AmmOpeErityisopeJaOpo}
     ValintaperusteKuvausMetadata))
+
+(def KorkeakoulutusOpintojaksoValintaperusteKuvausMetadata
+  (st/merge
+   {:tyyppi KkOpintojakso}
+   ValintaperusteKuvausMetadata))
+
