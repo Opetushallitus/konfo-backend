@@ -24,7 +24,7 @@
     |    AmmatillinenKoulutusMetadata:
     |      type: object
     |      properties:
-    |        koulutustyyppi:
+    |        tyyppi:
     |          type: string
     |          description: Koulutuksen metatiedon tyyppi
     |          example: amm
@@ -105,7 +105,7 @@
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
     |        - type: object
     |          properties:
-    |            koulutustyyppi:
+    |            tyyppi:
     |              type: string
     |              description: Koulutuksen metatiedon tyyppi
     |              example: yo
@@ -116,7 +116,7 @@
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
     |        - type: object
     |          properties:
-    |            koulutustyyppi:
+    |            tyyppi:
     |              type: string
     |              description: Koulutuksen metatiedon tyyppi
     |              example: amk
@@ -125,7 +125,7 @@
     |    LukioKoulutusMetadata:
     |      type: object
     |      properties:
-    |        koulutustyyppi:
+    |        tyyppi:
     |          type: string
     |          description: Koulutuksen metatiedon tyyppi
     |          example: lk
