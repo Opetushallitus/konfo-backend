@@ -204,7 +204,7 @@
 (def KorkeakoulutusOpintojaksoKoulutusMetadata
   (st/merge
    KkMetadata
-   {:tyyppi AmmOpeErityisopeJaOpo}))
+   {:tyyppi KkOpintojakso}))
 
 (def YoMetadata
   (st/merge
