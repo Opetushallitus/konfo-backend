@@ -206,7 +206,7 @@
    KkMetadata
    {:tyyppi KkOpintojakso}))
 
-(def YoMetadata
+(def YoKoulutusMetadata
   (st/merge
     {:tyyppi Yo}
     KkMetadata))

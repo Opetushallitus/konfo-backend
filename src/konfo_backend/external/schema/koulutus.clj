@@ -131,7 +131,7 @@
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
-                                                #(= "yo" (:tyyppi %)) YoMetadata
+                                                #(= "yo" (:tyyppi %)) YoKoulutusMetadata
                                                 #(= "amk" (:tyyppi %)) AmkKoulutusMetadata
                                                 #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoKoulutusMetadata
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
