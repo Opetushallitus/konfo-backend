@@ -136,7 +136,7 @@
    |        koodiUri:
    |          type: string
    |          example: opintojenlaajuus_40
-   |          description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
    |        nimi:
    |          type: object
    |          description: Tutkinnon laajuuden eri kielillä.
@@ -152,7 +152,7 @@
    |        koodiUri:
    |          type: string
    |          example: opintojenlaajuus_40
-   |          description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuusyksikko/1)
+   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuusyksikko/1)
    |        nimi:
    |          type: object
    |          description: Tutkinnon laajuuden eri kielillä.
@@ -168,7 +168,7 @@
    |        koodiUri:
    |          type: string
    |          example: oppilaitoksenopetuskieli_1
-   |          description: Opetuskieli. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/oppilaitoksenopetuskieli/1)
+   |          description: Opetuskieli. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/oppilaitoksenopetuskieli/1)
    |        nimi:
    |          type: object
    |          description: Opetuskieli eri kielillä.
@@ -184,7 +184,7 @@
    |        koodiUri:
    |          type: string
    |          example: opetusaikakk_1
-   |          description: Opetusaika. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetusaikakk/1)
+   |          description: Opetusaika. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetusaikakk/1)
    |        nimi:
    |          type: object
    |          description: Opetusaika eri kielillä.
@@ -200,7 +200,7 @@
    |        koodiUri:
    |          type: string
    |          example: opetuspaikkakk_1
-   |          description: Opetustapa. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetuspaikkakk/1)
+   |          description: Opetustapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetuspaikkakk/1)
    |        nimi:
    |          type: object
    |          description: Opetustapa eri kielillä.
@@ -216,7 +216,7 @@
    |        koodiUri:
    |          type: string
    |          example: kausi_s
-   |          description: Alkamiskausi. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
+   |          description: Alkamiskausi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
    |        nimi:
    |          type: object
    |          description: Alkamiskausi eri kielillä
@@ -360,7 +360,7 @@
    |        koodiUri:
    |          type: string
    |          example: osaamistausta_1
-   |          description: Osaamistausta. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
+   |          description: Osaamistausta. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
    |        nimi:
    |          type: object
    |          description: Osaamistausta.
