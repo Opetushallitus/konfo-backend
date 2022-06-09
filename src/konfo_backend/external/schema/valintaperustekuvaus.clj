@@ -92,12 +92,7 @@
    (s/->OptionalKey :valintakokeet)       [Valintakoe]
    :kielivalinta                          [Kieli]
    :nimi                                  Kielistetty
-   (s/->OptionalKey :metadata)            (s/conditional #(= "amm" (:tyyppi %)) AmmValintaperustekuvausMetadata
-                                                         #(= "yo" (:tyyppi %)) YoValintaperusteKuvausMetadata
-                                                         #(= "amk" (:tyyppi %)) AmkValintaperusteKuvausMetadata
-                                                         #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoValintaperusteKuvausMetadata
-                                                         #(= "amm-ope-erityisope-ja-opo"
-                                                             (:tyyppi %)) AmmOpeErityisopeJaOpoValintaperusteKuvausMetadata)
+   (s/->OptionalKey :metadata)            ValintaperusteKuvausMetadata
    :organisaatio                          Organisaatio
    :modified                              Datetime
    :timestamp                             s/Int
