@@ -24,7 +24,7 @@
     |    AmmatillinenKoulutusMetadata:
     |      type: object
     |      properties:
-    |        koulutustyyppi:
+    |        tyyppi:
     |          type: string
     |          description: Koulutuksen metatiedon tyyppi
     |          example: amm
@@ -88,7 +88,7 @@
     |            koodiUri:
     |              type: string
     |              example: opintojenlaajuus_40
-    |              description: Tutkinnon laajuus. Viittaa koodistoon [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+    |              description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
     |            nimi:
     |              type: object
     |              description: Tutkinnon laajuuden eri kielillä.
@@ -105,7 +105,7 @@
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
     |        - type: object
     |          properties:
-    |            koulutustyyppi:
+    |            tyyppi:
     |              type: string
     |              description: Koulutuksen metatiedon tyyppi
     |              example: yo
@@ -116,7 +116,7 @@
     |        - $ref: '#/components/schemas/KorkeakouluMetadata'
     |        - type: object
     |          properties:
-    |            koulutustyyppi:
+    |            tyyppi:
     |              type: string
     |              description: Koulutuksen metatiedon tyyppi
     |              example: amk
@@ -125,7 +125,7 @@
     |    LukioKoulutusMetadata:
     |      type: object
     |      properties:
-    |        koulutustyyppi:
+    |        tyyppi:
     |          type: string
     |          description: Koulutuksen metatiedon tyyppi
     |          example: lk
@@ -190,18 +190,23 @@
    (s/->OptionalKey :eperuste)                (s/maybe Eperuste)
    s/Any                                      s/Any})
 
-(def AmkMetadata
+(def AmkKoulutusMetadata
   (st/merge
     {:tyyppi Amk}
     KkMetadata))
 
-(def AmmOpeErityisopeJaOpoMetadata
+(def AmmOpeErityisopeJaOpoKoulutusMetadata
   (st/merge
     KkMetadata
     {:tyyppi AmmOpeErityisopeJaOpo
      :koulutusala [(->Koodi Koulutusala1Koodi)]}))
 
-(def YoMetadata
+(def KorkeakoulutusOpintojaksoKoulutusMetadata
+  (st/merge
+   KkMetadata
+   {:tyyppi KkOpintojakso}))
+
+(def YoKoulutusMetadata
   (st/merge
     {:tyyppi Yo}
     KkMetadata))

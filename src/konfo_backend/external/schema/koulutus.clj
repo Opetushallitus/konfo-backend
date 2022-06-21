@@ -131,9 +131,10 @@
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
-                                                #(= "yo" (:tyyppi %)) YoMetadata
-                                                #(= "amk" (:tyyppi %)) AmkMetadata
-                                                #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoMetadata
+                                                #(= "yo" (:tyyppi %)) YoKoulutusMetadata
+                                                #(= "amk" (:tyyppi %)) AmkKoulutusMetadata
+                                                #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoKoulutusMetadata
+                                                #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url

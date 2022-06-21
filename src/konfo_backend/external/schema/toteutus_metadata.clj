@@ -212,7 +212,7 @@
    |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
    |        - type: object
    |          properties:
-   |            koulutustyyppi:
+   |            tyyppi:
    |              type: string
    |              description: Koulutuksen metatiedon tyyppi
    |              example: yo
@@ -225,7 +225,7 @@
    |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
    |        - type: object
    |          properties:
-   |            koulutustyyppi:
+   |            tyyppi:
    |              type: string
    |              description: Koulutuksen metatiedon tyyppi
    |              example: amk
@@ -247,7 +247,7 @@
    |        - $ref: '#/components/schemas/ToteutusMetadata'
    |        - type: object
    |          properties:
-   |            koulutustyyppi:
+   |            tyyppi:
    |              type: string
    |              description: Koulutuksen metatiedon tyyppi
    |              example: lk
@@ -295,7 +295,7 @@
    |            ammatillinenPerustutkintoErityisopetuksena:
    |              type: boolean
    |              description: Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?
-   |            koulutustyyppi:
+   |            tyyppi:
    |              type: string
    |              description: Koulutuksen metatiedon tyyppi
    |              example: amm
@@ -377,6 +377,11 @@
   (st/merge
     {:tyyppi AmmOpeErityisopeJaOpo}
     KorkeakoulutusToteutusMetadata))
+
+(def KorkeakoulutusOpintojaksoToteutusMetadata
+  (st/merge
+   {:tyyppi KkOpintojakso}
+   KorkeakoulutusToteutusMetadata))
 
 (def schemas
   (str apuraha-schema "\n"

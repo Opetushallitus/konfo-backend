@@ -80,58 +80,6 @@
    |          description: Valintatavan vähimmäispisteet
    |          example: 10.0")
 
-(def amm-valintaperustekuvaus-metadata-schema
-  "|    AmmValintaperustekuvausMetadata:
-   |      type: object
-   |      $ref: '#/components/schemas/ValintaperustekuvausMetadata'
-   |      properties:
-   |        tyyppi:
-   |          type: string
-   |          description: Valintaperustekuvauksen metatiedon tyyppi
-   |          example: amm
-   |          enum:
-   |            - amm")
-
-(def korkeakoulutus-valintaperustekuvaus-metadata-schema
-  "|    KorkeakoulutusValintaperustekuvausMetadata:
-   |      type: object
-   |      $ref: '#/components/schemas/ValintaperustekuvausMetadata'
-   |      properties:
-   |        osaamistaustat:
-   |          type: array
-   |          description: Lista valintaperustekuvauksen osaamistaustoista
-   |          items:
-   |            type: object
-   |            $ref: '#/components/schemas/Osaamistausta'
-   |        kuvaus:
-   |          type: object
-   |          description: Valintaperustekuvauksen kuvausteksti eri kielillä. Kielet on määritetty valintaperustekuvauksen kielivalinnassa.
-   |          $ref: '#/components/schemas/Kuvaus'")
-
-(def yo-valintaperustekuvaus-metadata-schema
-  "|    YoValintaperustekuvausMetadata:
-   |      type: object
-   |      $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
-   |      properties:
-   |        tyyppi:
-   |          type: string
-   |          description: Valintaperustekuvauksen metatiedon tyyppi
-   |          example: yo
-   |          enum:
-   |            - yo")
-
-(def amk-valintaperustekuvaus-metadata-schema
-  "|    AmkValintaperustekuvausMetadata:
-   |      type: object
-   |      $ref: '#/components/schemas/KorkeakoulutusValintaperustekuvausMetadata'
-   |      properties:
-   |        tyyppi:
-   |          type: string
-   |          description: Valintaperustekuvauksen metatiedon tyyppi
-   |          example: amk
-   |          enum:
-   |            - amk")
-
 (def valintatapa-sisalto-teksti-schema
   "|    SisaltoTeksti:
    |      type: object
@@ -198,11 +146,7 @@
   (str valintatapa-sisalto-teksti-schema "\n"
        valintatapa-sisalto-taulukko-schema "\n"
        valintaperustekuvaus-metadata-schema "\n"
-       valintaperustekuvaus-valintatapa-schema "\n"
-       amm-valintaperustekuvaus-metadata-schema "\n"
-       korkeakoulutus-valintaperustekuvaus-metadata-schema "\n"
-       yo-valintaperustekuvaus-metadata-schema "\n"
-       amk-valintaperustekuvaus-metadata-schema))
+       valintaperustekuvaus-valintatapa-schema "\n"))
 
 (def SisaltoTeksti
   {:tyyppi                   (s/eq "teksti")
@@ -227,7 +171,8 @@
    (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
 (def ValintaperusteKuvausMetadata
-  {(s/->OptionalKey :valintatavat)               [Valintatapa]
+  {:tyyppi         Koulutustyyppi
+   (s/->OptionalKey :valintatavat)               [Valintatapa]
    (s/->OptionalKey :hakukelpoisuus)             Kielistetty
    (s/->OptionalKey :lisatiedot)                 Kielistetty
    (s/->OptionalKey :sisalto)                    [(s/if #(= "taulukko" (:tyyppi %)) SisaltoTaulukko SisaltoTeksti)]
@@ -235,22 +180,4 @@
    (s/->OptionalKey :valintakokeidenYleiskuvaus) Kielistetty
    s/Any                                         s/Any})
 
-(def AmmValintaperustekuvausMetadata
-  (st/merge
-     {:tyyppi Amm}
-     ValintaperusteKuvausMetadata))
 
-(def YoValintaperusteKuvausMetadata
-  (st/merge
-     {:tyyppi Yo}
-     ValintaperusteKuvausMetadata))
-
-(def AmkValintaperusteKuvausMetadata
-  (st/merge
-     {:tyyppi Amk}
-     ValintaperusteKuvausMetadata))
-
-(def AmmOpeErityisopeJaOpoValintaperusteKuvausMetadata
-  (st/merge
-    {:tyyppi AmmOpeErityisopeJaOpo}
-    ValintaperusteKuvausMetadata))
