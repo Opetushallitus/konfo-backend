@@ -432,9 +432,12 @@
                                         (not-found "Not found"))))
 
     (GET "/hakukohde/:oid/demo" [:as request]
-      :path-params [oid :- String]
-      (with-access-logging request
-        (ok {"demoAllowed" (ataru/demo-allowed-for-hakukohde? oid)})))
+         :path-params [oid :- String]
+         (with-access-logging request (if-let [hakukohde (hakukohde/get oid false)]
+                                        (let [ataru-lomake? (= (:hakulomaketyyppi hakukohde) "ataru")
+                                              demo-allowed? (if ataru-lomake? (ataru/demo-allowed-for-hakukohde? oid) false)]
+                                          (ok {"demoAllowed" demo-allowed?}))
+                                        (not-found "Not found"))))
 
     (GET "/valintaperuste/:id" [:as request]
          :query-params [{draft :- Boolean false}]
