@@ -29,48 +29,29 @@
                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (ten-months-past-as-kouta-format)}}}]}}}})
 
 (defn- hakuaika-filter-query
-  ([inner-query]
-   (if (nil? inner-query)
-     {:bool (some-hakuaika-kaynnissa)}
-     {:bool (conj (some-hakuaika-kaynnissa) {:must {:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}})}))
-  ([]
-   (hakuaika-filter-query nil)))
+  []
+  {:bool (some-hakuaika-kaynnissa)})
 
 (defn- external-hakutieto-query
-  ([haku-kaynnissa inner-query]
-   (if haku-kaynnissa (hakuaika-filter-query inner-query)
-                      {:nested {:path  "search_terms.hakutiedot"
-                                :query {:bool {:filter (vec (remove nil? [(some-past-hakuaika-still-viable) inner-query]))}}}}))
-  ([haku-kaynnissa]
-   (external-hakutieto-query haku-kaynnissa nil)))
-
-(defn- haku-kaynnissa-not-already-included?
-  [constraints]
-  (every? false? [(hakutapa? constraints)
-                  (pohjakoulutusvaatimus? constraints)
-                  (valintatapa? constraints)
-                  (yhteishaku? constraints)]))
+  [inner-query]
+  {:nested {:path  "search_terms.hakutiedot"
+            :query {:bool {:filter (vec (remove nil? [(some-past-hakuaika-still-viable) inner-query]))}}}})
 
 (defn- external-filters
   [constraints]
-  (let [haku-kaynnissa (haku-kaynnissa? constraints)
-        ; NOTE haku-käynnissä rajainta halutaan käyttää vain jos jotain muuta hakutietorajainta ei ole käytössä (koska se sisältyy niihin jos ne on käytössä)
-        use-haku-kaynnissa (and haku-kaynnissa
-                                (haku-kaynnissa-not-already-included? constraints))]
+  (cond-> []
+          (koulutustyyppi? constraints) (conj (->external-terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
+          (opetuskieli? constraints) (conj (->external-terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
+          (sijainti? constraints) (conj (->external-terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
+          (koulutusala? constraints) (conj (->external-terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
+          (opetustapa? constraints) (conj (->external-terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
 
-    (cond-> []
-            (koulutustyyppi? constraints) (conj (->external-terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
-            (opetuskieli? constraints) (conj (->external-terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
-            (sijainti? constraints) (conj (->external-terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
-            (koulutusala? constraints) (conj (->external-terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
-            (opetustapa? constraints) (conj (->external-terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
-
-            ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
-            use-haku-kaynnissa (conj (external-hakutieto-query true))
-            (hakutapa? constraints) (conj (external-hakutieto-query haku-kaynnissa (->external-terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
-            (pohjakoulutusvaatimus? constraints) (conj (external-hakutieto-query haku-kaynnissa (->external-terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
-            (valintatapa? constraints) (conj (external-hakutieto-query haku-kaynnissa (->external-terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
-            (yhteishaku? constraints) (conj (external-hakutieto-query haku-kaynnissa (->external-terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))))
+          ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
+          (haku-kaynnissa? constraints) (conj (hakuaika-filter-query))
+          (hakutapa? constraints) (conj (external-hakutieto-query (->external-terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
+          (pohjakoulutusvaatimus? constraints) (conj (external-hakutieto-query (->external-terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
+          (valintatapa? constraints) (conj (external-hakutieto-query (->external-terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
+          (yhteishaku? constraints) (conj (external-hakutieto-query (->external-terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))))))
 
 (defn generate-external-search-params
   [suffixes search-params usr-lng]
