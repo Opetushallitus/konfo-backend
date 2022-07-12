@@ -65,7 +65,8 @@
         aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)
         erikoislaakari-count (get filter-counts :erikoislaakari 0)
         kk-opintojakso-count (get filter-counts :kk-opintojakso 0)
-        total-kk-muu-count (+ kk-opintojakso-count erikoislaakari-count)]
+        kk-opintokokonaisuus-count (get filter-counts :kk-opintokokonaisuus 0)
+        total-kk-muu-count (+ kk-opintojakso-count erikoislaakari-count kk-opintokokonaisuus-count)]
     {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                                              :amm-osaamisala {:count amm-osaamisala-count}
                                              :amm-muu {:count amm-muu-count}
@@ -84,10 +85,10 @@
        total-amk-muu-count (assoc :count total-amk-muu-count))
      :aikuisten-perusopetus {:count aikuisten-perusopetus-count}
      :kk-muu
-     (cond-> {:alakoodit {:kk-opintojakso {:count kk-opintojakso-count}
-                          :erikoislaakari {:count erikoislaakari-count}}}
-        total-kk-muu-count (assoc :count total-kk-muu-count))}))
-
+     (cond-> {:alakoodit {:erikoislaakari {:count erikoislaakari-count}
+                          :kk-opintojakso {:count kk-opintojakso-count}
+                          :kk-opintokokonaisuus {:count kk-opintokokonaisuus-count}}}
+       total-kk-muu-count (assoc :count total-kk-muu-count))}))
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
 (defn- yhteishaku

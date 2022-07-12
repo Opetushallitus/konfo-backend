@@ -310,7 +310,9 @@
                                             "vapaa-sivistystyo-muu"}}
              :aikuisten-perusopetus {:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}
              :kk-opintojakso {:term {:search_terms.koulutustyypit.keyword
-                                                         "kk-opintojakso"}}
+                                     "kk-opintojakso"}}
              :erikoislaakari {:term {:search_terms.koulutustyypit.keyword
-                                     "erikoislaakari"}}}}
+                                     "erikoislaakari"}}
+             :kk-opintokokonaisuus {:term {:search_terms.koulutustyypit.keyword
+                                     "kk-opintokokonaisuus"}}}}
            :aggs {:real_hits {:reverse_nested {}}}}}}})))))

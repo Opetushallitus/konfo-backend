@@ -109,6 +109,7 @@
 (def AmmOpeErityisopeJaOpo        (s/eq "amm-ope-erityisope-ja-opo"))
 (def KkOpintojakso                (s/eq "kk-opintojakso"))
 (def Erikoislaakari               (s/eq "erikoislaakari"))
+(def KkOpintokokonaisuus          (s/eq "kk-opintokokonaisuus"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 
