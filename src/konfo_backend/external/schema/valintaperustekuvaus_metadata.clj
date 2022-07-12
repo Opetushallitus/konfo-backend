@@ -3,8 +3,7 @@
     [schema.core :as s]
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
-    [schema-tools.core :as st]))
+    [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]))
 
 (def valintaperustekuvaus-metadata-schema
   "|    ValintaperustekuvausMetadata:

@@ -204,7 +204,7 @@
 
 (defn- koulutustyyppi-filters
   [field]
-  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "yo" "kk-opintojakso" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"]))
+  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "yo" "kk-opintojakso" "erikoislaakari" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"]))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field]
@@ -317,7 +317,6 @@
                                             :koulutustyyppi        (koulutustyyppi-filters-for-subentity :search_terms.koulutustyypit.keyword)
                                             :koulutustyyppitaso2   (koodisto-filters-for-subentity :search_terms.koulutustyypit.keyword "koulutustyyppi")
                                             :opetustapa            (koodisto-filters-for-subentity :search_terms.opetustavat.keyword "opetuspaikkakk")
-
                                             :hakukaynnissa         (if no-other-hakutieto-filters-used (hakukaynnissa-filter) (deduct-hakukaynnissa-aggs-from-other-filters constraints))
                                             :hakutapa              (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.hakutapa "hakutapa")
                                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters haku-kaynnissa :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
