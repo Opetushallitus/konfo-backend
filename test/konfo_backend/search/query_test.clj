@@ -69,7 +69,7 @@
                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
      (is
       (=
-       (hakutulos-aggregations false)
+       (hakutulos-aggregations)
        {:hits_aggregation
         {:nested {:path "search_terms"}
          :aggs

@@ -17,7 +17,7 @@
   (let [query (if (match-all? keyword constraints)
                 (match-all-query)
                 (query keyword constraints lng ["words"]))
-        aggs (hakutulos-aggregations constraints)]
+        aggs (hakutulos-aggregations)]
     (log-pretty query)
     (log-pretty aggs)
     (koulutus-kouta-search
