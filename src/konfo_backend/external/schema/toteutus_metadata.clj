@@ -190,26 +190,10 @@
    |          items:
    |            $ref: '#/components/schemas/Ammattinimike'")
 
-(def korkeakoulu-toteutus-metadata-schema
-  "|    KorkeakouluToteutusMetadata:
-   |      allOf:
-   |        - $ref: '#/components/schemas/ToteutusMetadata'
-   |      properties:
-   |        alemmanKorkeakoulututkinnonOsaamisalat:
-   |          type: array
-   |          description: Lista alemman korkeakoulututkinnon erikoistumisalojen, opintosuuntien, pääaineiden tms. kuvauksista.
-   |          items:
-   |            $ref: '#/components/schemas/KorkeakouluOsaamisala'
-   |        ylemmanKorkeakoulututkinnonOsaamisalat:
-   |          type: array
-   |          items:
-   |            $ref: '#/components/schemas/KorkeakouluOsaamisala'
-   |          description: Lista ylemmän korkeakoulututkinnon erikoistumisalojen, opintosuuntien, pääaineiden tms. kuvauksista.")
-
 (def yliopisto-toteutus-metadata-schema
   "|    YliopistoToteutusMetadata:
    |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
    |        - type: object
    |          properties:
    |            tyyppi:
@@ -222,7 +206,7 @@
 (def ammattikorkea-toteutus-metadata-schema
   "|    AmmattikorkeaToteutusMetadata:
    |      allOf:
-   |        - $ref: '#/components/schemas/KorkeakouluToteutusMetadata'
+   |        - $ref: '#/components/schemas/ToteutusMetadata'
    |        - type: object
    |          properties:
    |            tyyppi:
@@ -342,12 +326,6 @@
    :ammattinimikkeet [Keyword]
    s/Any s/Any})
 
-(def KorkeakoulutusToteutusMetadata
-  (st/merge
-   {:alemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]
-    :ylemmanKorkeakoulututkinnonOsaamisalat [KorkeakouluOsaamisala]}
-   ToteutusMetadata))
-
 (def AmmToteutusMetadata
   (st/merge
    {:tyyppi Amm
@@ -358,7 +336,7 @@
 (def YoToteutusMetadata
   (st/merge
    {:tyyppi Yo}
-   KorkeakoulutusToteutusMetadata))
+   ToteutusMetadata))
 
 (def LukioToteutusMetadata
   (st/merge
@@ -371,17 +349,17 @@
 (def AmkToteutusMetadata
   (st/merge
    {:tyyppi Amk}
-   KorkeakoulutusToteutusMetadata))
+   ToteutusMetadata))
 
 (def AmmOpeErityisopeJaOpoToteutusMetadata
   (st/merge
     {:tyyppi AmmOpeErityisopeJaOpo}
-    KorkeakoulutusToteutusMetadata))
+    ToteutusMetadata))
 
 (def KorkeakoulutusOpintojaksoToteutusMetadata
   (st/merge
    {:tyyppi KkOpintojakso}
-   KorkeakoulutusToteutusMetadata))
+   ToteutusMetadata))
 
 (def schemas
   (str apuraha-schema "\n"
@@ -393,6 +371,5 @@
        korkeakoulu-osaamisala-schema "\n"
        toteutus-metadata-schema "\n"
        lukio-toteutus-metadata-schema "\n"
-       korkeakoulu-toteutus-metadata-schema "\n"
        yliopisto-toteutus-metadata-schema "\n"
        ammattikorkea-toteutus-metadata-schema))
