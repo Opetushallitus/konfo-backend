@@ -74,10 +74,6 @@
     |          items:
     |            type: object
     |            $ref: '#/components/schemas/KoulutusLisatieto'
-    |        kuvauksenNimi:
-    |          type: object
-    |          description: Koulutuksen kuvaukseni nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          $ref: '#/components/schemas/Nimi'
     |        tutkintonimike:
     |          type: array
     |          items:
@@ -169,7 +165,6 @@
 
 (def KkMetadata
   {:kuvaus                             Kielistetty
-   :kuvauksenNimi                      Kielistetty
    :lisatiedot                         [KoulutusLisatieto]
    :koulutusala                        [(->Koodi Koulutusala2Koodi)]
    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
