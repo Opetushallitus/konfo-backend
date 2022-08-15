@@ -478,19 +478,19 @@
                                                                                size
                                                                                sort
                                                                                order
-                                                                               koulutustyyppi
-                                                                               sijainti
-                                                                               opetuskieli
-                                                                               koulutusala
-                                                                               opetustapa
-                                                                               valintatapa
-                                                                               hakukaynnissa
-                                                                               hakutapa
-                                                                               yhteishaku
-                                                                               pohjakoulutusvaatimus
-                                                                               nil
-                                                                               nil
-                                                                               nil)))
+                                                                               {:koulutustyyppi koulutustyyppi
+                                                                                :sijainti sijainti
+                                                                                :opetuskieli opetuskieli
+                                                                                :koulutusala koulutusala
+                                                                                :opetustapa opetustapa
+                                                                                :valintatapa valintatapa
+                                                                                :hakukaynnissa hakukaynnissa
+                                                                                :hakutapa hakutapa
+                                                                                :yhteishaku yhteishaku
+                                                                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                                                :lukiopainotukset nil
+                                                                                :lukiolinjaterityinenkoulutustehtava nil
+                                                                                :osaamisala nil})))
              (GET "/search/filters" [:as request]
                   (with-access-logging request (if-let [result (filters/generate-filter-counts-external)]
                                                  (ok result)
