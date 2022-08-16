@@ -50,6 +50,7 @@
 
           ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
           (haku-kaynnissa? constraints) (conj (hakuaika-filter-query))
+          (has-jotpa-rahoitus? constraints) (conj {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}})
           (hakutapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
           (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
           (valintatapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
@@ -212,6 +213,12 @@
   []
   {:filters {:filters {:hakukaynnissa (hakuaika-filter-query)}} :aggs {:real_hits {:reverse_nested {}}}})
 
+(defn- jotpa-filter
+  [has-jotpa-rahoitus]
+  (if (nil? has-jotpa-rahoitus)
+      {:filters {:filters {:jotpa {:terms {:search_terms.hasJotpaRahoitus [true false]}}}} :aggs {:real_hits {:reverse_nested {}}}}
+      {:filters {:filters {:jotpa {:term {:search_terms.hasJotpaRahoitus has-jotpa-rahoitus}}}} :aggs {:real_hits {:reverse_nested {}}}}))
+
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
 
@@ -221,7 +228,7 @@
     (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list)))
 
 (defn- generate-default-aggs
-  []
+  [constraints]
   (remove-nils {:maakunta              (koodisto-filters :search_terms.sijainti.keyword "maakunta")
                 :kunta                 (koodisto-filters :search_terms.sijainti.keyword "kunta")
                 :opetuskieli           (koodisto-filters :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
@@ -232,6 +239,7 @@
                 :opetustapa            (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk")
 
                 :hakukaynnissa         (hakukaynnissa-filter)
+                :jotpa                 (jotpa-filter (:jotpa constraints))
                 :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
                 :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
                 :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
@@ -290,8 +298,8 @@
                                           :yhteishaku            (yhteishaku-filter)})}})
 
 (defn hakutulos-aggregations
-  []
-  (aggregations #(generate-default-aggs)))
+  [constraints]
+  (aggregations #(generate-default-aggs constraints)))
 
 (defn jarjestajat-aggregations
   [tuleva? constraints]

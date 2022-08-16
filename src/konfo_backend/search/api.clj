@@ -146,6 +146,13 @@
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
    |          default: false
    |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
+   |          default: false
+   |        - in: query
    |          name: hakutapa
    |          schema:
    |            type: string
@@ -579,6 +586,7 @@
    :valintatapa           (comma-separated-string->vec (:valintatapa constraints))
    :hakukaynnissa         (:hakukaynnissa constraints)
    :hakutapa              (comma-separated-string->vec (:hakutapa constraints))
+   :jotpa                 (:jotpa constraints)
    :yhteishaku            (comma-separated-string->vec (:yhteishaku constraints))
    :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus constraints))
    :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset constraints))
@@ -645,6 +653,7 @@
                      {opetustapa            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean nil}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -667,6 +676,7 @@
                                       :valintatapa valintatapa
                                       :hakukaynnissa hakukaynnissa
                                       :hakutapa hakutapa
+                                      :jotpa jotpa
                                       :yhteishaku yhteishaku
                                       :pohjakoulutusvaatimus pohjakoulutusvaatimus
                                       :lukiopainotukset lukiopainotukset

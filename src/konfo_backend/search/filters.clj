@@ -90,6 +90,8 @@
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
+(defn- jotpa [aggs] {:count (:jotpa aggs)})
+
 (defn- yhteishaku
   [aggs]
   (let [yhteishaut (get-yhteishaut)]
@@ -116,6 +118,7 @@
       :valintatapa (filters "valintatapajono")
       :hakukaynnissa (hakukaynnissa filter-counts)
       :hakutapa (filters "hakutapa")
+      :jotpa (jotpa filter-counts)
       :yhteishaku (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([] (generate-filter-counts-external {})))
@@ -133,6 +136,7 @@
       :valintatapa (filters "valintatapajono")
       :hakukaynnissa (hakukaynnissa filter-counts)
       :hakutapa (filters "hakutapa")
+      :jotpa (jotpa filter-counts)
       :yhteishaku (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
       :osaamisala (filters "osaamisala")

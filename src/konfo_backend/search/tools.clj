@@ -43,6 +43,10 @@
   [constraints]
   (true? (:hakukaynnissa constraints)))
 
+(defn has-jotpa-rahoitus?
+  [constraints]
+  (true? (:jotpa constraints)))
+
 (defn yhteishaku?
   [constraints]
   (constraint? constraints :yhteishaku))
@@ -69,6 +73,7 @@
       (valintatapa? constraints)
       (haku-kaynnissa? constraints)
       (hakutapa? constraints)
+      (has-jotpa-rahoitus? constraints)
       (yhteishaku? constraints)
       (pohjakoulutusvaatimus? constraints)))
 

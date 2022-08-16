@@ -69,7 +69,7 @@
                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
      (is
       (=
-       (hakutulos-aggregations)
+       (hakutulos-aggregations {})
        {:hits_aggregation
         {:nested {:path "search_terms"}
          :aggs
@@ -247,6 +247,12 @@
                                {:gt
                                 "2020-01-01T01:01"}}}]}}]}}}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
+          :jotpa {:filters
+                  {:filters
+                   {:jotpa
+                    {:terms
+                     {:search_terms.hasJotpaRahoitus [true false]}}}}
+                  :aggs {:real_hits {:reverse_nested {}}}}
           :valintatapa
           {:filters
            {:filters
