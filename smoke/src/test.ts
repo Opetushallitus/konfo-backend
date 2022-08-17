@@ -1,16 +1,27 @@
-import connectToEndpoint from './util'
+import connectToEndpoint, 
+  {KoulutusWithToteutus, getKoulutusWithToteutukset} from './util'
 import DOMAINS from './domains'
 import ENDPOINTS from './endpoints'
 
 describe('Running tests', () => {
-  for (let endpoint of ENDPOINTS) {
+  for (let domain of DOMAINS) {
 
-    describe(`testing endpoint ${endpoint}`, () => {
+    let koulutusWithToteutus : KoulutusWithToteutus;
 
-      for (let domain of DOMAINS) {
+    const getParams = async (): Promise<KoulutusWithToteutus> => {
+      if (!koulutusWithToteutus) {
+        koulutusWithToteutus = await getKoulutusWithToteutukset(domain);
+      }
+      return koulutusWithToteutus;
+    }
 
-        it (`with domain domain ${domain}`, async () => {
-          const status = await connectToEndpoint(domain, endpoint)
+    describe(`testing domain ${domain}`, () => {
+
+      for (let endpoint of ENDPOINTS) {
+
+        it (`with endpoint ${endpoint.url}`, async () => {
+          const params = await getParams()
+          const status = await connectToEndpoint(domain, endpoint, params)
           expect(status).toBe(200)
         })
       }
