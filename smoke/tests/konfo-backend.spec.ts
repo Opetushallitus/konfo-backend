@@ -1,9 +1,10 @@
+import { test, expect } from '@playwright/test'
 import connectToEndpoint, 
-  {KoulutusWithToteutus, getKoulutusWithToteutukset} from './util'
-import DOMAINS from './domains'
-import ENDPOINTS from './endpoints'
+  {KoulutusWithToteutus, getKoulutusWithToteutukset} from '../src/util'
+import DOMAINS from '../src/domains'
+import ENDPOINTS from '../src/endpoints'
 
-describe('Running tests', () => {
+test.describe('konfo external api', () => {
   for (let domain of DOMAINS) {
 
     let koulutusWithToteutus : KoulutusWithToteutus;
@@ -12,14 +13,14 @@ describe('Running tests', () => {
       if (!koulutusWithToteutus) {
         koulutusWithToteutus = await getKoulutusWithToteutukset(domain);
       }
-      return koulutusWithToteutus;
+      return koulutusWithToteutus
     }
 
-    describe(`testing domain ${domain}`, () => {
+    test.describe(`testing domain ${domain}`, () => {
 
       for (let endpoint of ENDPOINTS) {
 
-        it (`with endpoint ${endpoint.url}`, async () => {
+        test(`with endpoint ${endpoint.url}`, async () => {
           const params = await getParams()
           const status = await connectToEndpoint(domain, endpoint, params)
           expect(status).toBe(200)
