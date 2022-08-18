@@ -250,8 +250,8 @@
           :jotpa {:filters
                   {:filters
                    {:jotpa
-                    {:terms
-                     {:search_terms.hasJotpaRahoitus [true false]}}}}
+                    {:term
+                     {:search_terms.hasJotpaRahoitus true}}}}
                   :aggs {:real_hits {:reverse_nested {}}}}
           :valintatapa
           {:filters

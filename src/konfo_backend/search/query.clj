@@ -214,10 +214,8 @@
   {:filters {:filters {:hakukaynnissa (hakuaika-filter-query)}} :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- jotpa-filter
-  [has-jotpa-rahoitus]
-  (if (nil? has-jotpa-rahoitus)
-      {:filters {:filters {:jotpa {:terms {:search_terms.hasJotpaRahoitus [true false]}}}} :aggs {:real_hits {:reverse_nested {}}}}
-      {:filters {:filters {:jotpa {:term {:search_terms.hasJotpaRahoitus has-jotpa-rahoitus}}}} :aggs {:real_hits {:reverse_nested {}}}}))
+  []
+  {:filters {:filters {:jotpa {:term {:search_terms.hasJotpaRahoitus true}}}} :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
@@ -239,7 +237,7 @@
                 :opetustapa            (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk")
 
                 :hakukaynnissa         (hakukaynnissa-filter)
-                :jotpa                 (jotpa-filter (:jotpa constraints))
+                :jotpa                 (jotpa-filter)
                 :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
                 :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
                 :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
