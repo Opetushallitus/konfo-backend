@@ -90,7 +90,7 @@
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
-(defn- jotpa [aggs] {:count (:jotpa aggs)})
+(defn- jotpa [filter-counts] {:count (get filter-counts :jotpa 0)})
 
 (defn- yhteishaku
   [aggs]
