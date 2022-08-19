@@ -277,6 +277,13 @@
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
    |          default: false
    |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
+   |          default: false
+   |        - in: query
    |          name: lukiopainotukset
    |          schema:
    |            type: string
@@ -402,6 +409,13 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |          default: nil
+   |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
+   |          default: false
    |      responses:
    |        '200':
    |          description: Ok
@@ -653,7 +667,7 @@
                      {opetustapa            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
-                     {jotpa                 :- Boolean nil}
+                     {jotpa                 :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -675,8 +689,8 @@
                                       :opetustapa opetustapa
                                       :valintatapa valintatapa
                                       :hakukaynnissa hakukaynnissa
-                                      :hakutapa hakutapa
                                       :jotpa jotpa
+                                      :hakutapa hakutapa
                                       :yhteishaku yhteishaku
                                       :pohjakoulutusvaatimus pohjakoulutusvaatimus
                                       :lukiopainotukset lukiopainotukset
@@ -696,6 +710,7 @@
                      {opetustapa            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -717,6 +732,7 @@
                                       :opetustapa opetustapa
                                       :valintatapa valintatapa
                                       :hakukaynnissa hakukaynnissa
+                                      :jotpa jotpa
                                       :hakutapa hakutapa
                                       :yhteishaku yhteishaku
                                       :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -738,6 +754,7 @@
                      {opetustapa            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -758,6 +775,7 @@
                                                                     :opetustapa opetustapa
                                                                     :valintatapa valintatapa
                                                                     :hakukaynnissa hakukaynnissa
+                                                                    :jotpa jotpa
                                                                     :hakutapa hakutapa
                                                                     :yhteishaku yhteishaku
                                                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
