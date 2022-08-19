@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { KONFO_GET_KOULUTUS_WITH_TOTEUTUKSET, Endpoint } from './endpoints';
-export interface KoulutusWithToteutus {
-  toteutusOid: string
-  koulutusOid: string
-  domain: string
-}
+import { KONFO_GET_KOULUTUS_WITH_TOTEUTUKSET,
+  KONFO_GET_KOULUTUS_WITH_HAKU_AND_HAKUKOHDE, 
+  Endpoint } from './endpoints';
+import { KonfoParams } from './params';
 
 const connectToEndpoint = async (domain: string, endpoint: Endpoint, params: object): Promise<number> => {
   const url = endpoint.params.reduce(
@@ -13,10 +11,19 @@ const connectToEndpoint = async (domain: string, endpoint: Endpoint, params: obj
   return response.status
 }
 
-export const getKoulutusWithToteutukset = async (domain: string): Promise<KoulutusWithToteutus> => {
+export const getKonfoParams = async (domain: string): Promise<KonfoParams> => {
   const response = await axios.get(`${domain}/${KONFO_GET_KOULUTUS_WITH_TOTEUTUKSET}`)
   const result = response.data.hits[0];
-  return {domain, koulutusOid: result.oid, toteutusOid: result.toteutukset[0].toteutusOid}
+  const koulutusOid = result.oid
+  const koulutusResponse = await axios.get(`${domain}/${KONFO_GET_KOULUTUS_WITH_HAKU_AND_HAKUKOHDE.replace('%s', koulutusOid)}`)
+  const hakuOid = koulutusResponse.data.haut[0].oid;
+  return {
+    domain, 
+    koulutusOid, 
+    toteutusOid: result.toteutukset[0].toteutusOid,
+    hakuOid,
+    hakukohdeOid: ''
+  }
 }
 
 export default connectToEndpoint

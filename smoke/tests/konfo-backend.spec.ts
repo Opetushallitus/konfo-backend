@@ -1,19 +1,20 @@
 import { test, expect } from '@playwright/test'
 import connectToEndpoint, 
-  {KoulutusWithToteutus, getKoulutusWithToteutukset} from '../src/util'
+  {getKonfoParams} from '../src/util'
+import { KonfoParams } from '../src/params'
 import DOMAINS from '../src/domains'
 import ENDPOINTS from '../src/endpoints'
 
 test.describe('konfo external api', () => {
   for (let domain of DOMAINS) {
 
-    let koulutusWithToteutus : KoulutusWithToteutus;
+    let konfoParams : KonfoParams;
 
-    const getParams = async (): Promise<KoulutusWithToteutus> => {
-      if (!koulutusWithToteutus) {
-        koulutusWithToteutus = await getKoulutusWithToteutukset(domain);
+    const getParams = async (): Promise<KonfoParams> => {
+      if (!konfoParams) {
+        konfoParams = await getKonfoParams(domain);
       }
-      return koulutusWithToteutus
+      return konfoParams
     }
 
     test.describe(`testing domain ${domain}`, () => {
