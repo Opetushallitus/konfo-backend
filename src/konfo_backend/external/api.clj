@@ -320,6 +320,13 @@
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
    |          default: false
    |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
+   |          default: false
+   |        - in: query
    |          name: hakutapa
    |          schema:
    |            type: string
@@ -467,6 +474,7 @@
                                  {opetustapa            :- String nil}
                                  {valintatapa           :- String nil}
                                  {hakukaynnissa         :- Boolean false}
+                                 {jotpa                 :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
                                  {pohjakoulutusvaatimus :- String nil}]
@@ -485,6 +493,7 @@
                                                                                 :opetustapa opetustapa
                                                                                 :valintatapa valintatapa
                                                                                 :hakukaynnissa hakukaynnissa
+                                                                                :jotpa jotpa
                                                                                 :hakutapa hakutapa
                                                                                 :yhteishaku yhteishaku
                                                                                 :pohjakoulutusvaatimus pohjakoulutusvaatimus
