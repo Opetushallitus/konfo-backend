@@ -17,12 +17,13 @@ export const getKonfoParams = async (domain: string): Promise<KonfoParams> => {
   const koulutusOid = result.oid
   const koulutusResponse = await axios.get(`${domain}/${KONFO_GET_KOULUTUS_WITH_HAKU_AND_HAKUKOHDE.replace('%s', koulutusOid)}`)
   const hakuOid = koulutusResponse.data.haut[0].oid;
+  const hakukohdeOid = koulutusResponse.data.hakukohteet[0].oid;
   return {
     domain, 
     koulutusOid, 
     toteutusOid: result.toteutukset[0].toteutusOid,
     hakuOid,
-    hakukohdeOid: ''
+    hakukohdeOid
   }
 }
 
