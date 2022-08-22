@@ -14,7 +14,7 @@
   [keyword lng page size sort order constraints]
   (when (do-search? keyword constraints)
     (let [query (query keyword constraints lng ["words"])
-          aggs (hakutulos-aggregations constraints)]
+          aggs (hakutulos-aggregations)]
       (log-pretty query)
       (log-pretty aggs)
       (oppilaitos-kouta-search

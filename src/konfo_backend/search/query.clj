@@ -145,7 +145,7 @@
     (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list)))
 
 (defn- generate-default-aggs
-  [constraints]
+  []
   (remove-nils {:maakunta              (koodisto-filters :search_terms.sijainti.keyword "maakunta")
                 :kunta                 (koodisto-filters :search_terms.sijainti.keyword "kunta")
                 :opetuskieli           (koodisto-filters :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
@@ -215,8 +215,8 @@
                                           :yhteishaku            (yhteishaku-filter)})}})
 
 (defn hakutulos-aggregations
-  [constraints]
-  (aggregations #(generate-default-aggs constraints)))
+  []
+  (aggregations #(generate-default-aggs)))
 
 (defn jarjestajat-aggregations
   [tuleva? constraints]
