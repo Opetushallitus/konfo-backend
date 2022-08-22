@@ -319,47 +319,17 @@
    :arvo s/Str})
 
 (def ToteutusMetadata
-  {:kuvaus  Kielistetty
+  {:tyyppi s/Any
+   :kuvaus  Kielistetty
    :opetus Opetus
    :yhteyshenkilot [Yhteyshenkilo]
    :asiasanat [Keyword]
    :ammattinimikkeet [Keyword]
+   (s/->OptionalKey :ammatillinenPerustutkintoErityisopetuksena) s/Bool
+   (s/->OptionalKey :osaamisalat) [AmmOsaamisala]
+   (s/->OptionalKey :yleislinja) s/Bool
+   (s/->OptionalKey :diplomit) [LukiodiplomiTieto]
    s/Any s/Any})
-
-(def AmmToteutusMetadata
-  (st/merge
-   {:tyyppi Amm
-    :ammatillinenPerustutkintoErityisopetuksena s/Bool
-    :osaamisalat [AmmOsaamisala]}
-   ToteutusMetadata))
-
-(def YoToteutusMetadata
-  (st/merge
-   {:tyyppi Yo}
-   ToteutusMetadata))
-
-(def LukioToteutusMetadata
-  (st/merge
-    {:tyyppi     Lk
-     :yleislinja s/Bool
-     :diplomit   [LukiodiplomiTieto]
-     }
-    ToteutusMetadata))
-
-(def AmkToteutusMetadata
-  (st/merge
-   {:tyyppi Amk}
-   ToteutusMetadata))
-
-(def AmmOpeErityisopeJaOpoToteutusMetadata
-  (st/merge
-    {:tyyppi AmmOpeErityisopeJaOpo}
-    ToteutusMetadata))
-
-(def KorkeakoulutusOpintojaksoToteutusMetadata
-  (st/merge
-   {:tyyppi KkOpintojakso}
-   ToteutusMetadata))
 
 (def schemas
   (str apuraha-schema "\n"
