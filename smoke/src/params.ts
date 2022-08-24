@@ -1,4 +1,4 @@
-export interface KonfoParams {
+export interface KonfoParams extends Record<string, string> {
   toteutusOid: string
   koulutusOid: string
   hakuOid: string
