@@ -13,9 +13,8 @@
                                     {:term {:search_terms.sijainti.keyword "kunta_091"}}]}}}})))
   (testing
    "Query with hakukaynnissa filters"
-   (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                 konfo-backend.tools/ten-months-past-as-kouta-format (fn [] "2019-06-01T01:01")]
-     (is
+    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+      (is
       (= (query nil {:hakukaynnissa true} "fi" ["words"])
          {:nested
           {:path "search_terms"
@@ -64,7 +63,6 @@
    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
                                                                           (str x "_02")])
                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                 konfo-backend.tools/ten-months-past-as-kouta-format (fn [] "2019-06-01T01:01")
                  konfo-backend.index.haku/list-yhteishaut
                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
      (is
@@ -88,17 +86,7 @@
                        {:path "search_terms.hakutiedot"
                         :query
                         {:bool {:filter
-                                [{:nested
-                                  {:path "search_terms.hakutiedot.hakuajat"
-                                   :query
-                                   {:bool {:should
-                                           [{:bool {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                     {:gt "2019-06-01T01:01"}}}]}}}}
-                                 {:term {:search_terms.hakutiedot.yhteishakuOid
+                                [{:term {:search_terms.hakutiedot.yhteishakuOid
                                          "1.2.246.562.29.00000000000000000001"}}]}}}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :koulutusalataso2
@@ -119,34 +107,12 @@
             {:pohjakoulutusvaatimuskonfo_01
              {:nested {:path "search_terms.hakutiedot"
                        :query {:bool {:filter
-                                      [{:nested
-                                        {:path "search_terms.hakutiedot.hakuajat"
-                                         :query
-                                         {:bool {:should
-                                                 [{:bool
-                                                   {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                  {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                           {:gt "2019-06-01T01:01"}}}]}}}}
-                                       {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                      [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                "pohjakoulutusvaatimuskonfo_01"}}]}}}}
              :pohjakoulutusvaatimuskonfo_02
              {:nested {:path "search_terms.hakutiedot"
                        :query {:bool {:filter
-                                      [{:nested
-                                        {:path "search_terms.hakutiedot.hakuajat"
-                                         :query
-                                         {:bool {:should
-                                                 [{:bool
-                                                   {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                  {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                           {:gt "2019-06-01T01:01"}}}]}}}}
-                                       {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                      [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                "pohjakoulutusvaatimuskonfo_02"}}]}}}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :maakunta
@@ -166,32 +132,12 @@
              {:nested {:path "search_terms.hakutiedot"
                        :query {:bool
                                {:filter
-                                [{:nested
-                                  {:path "search_terms.hakutiedot.hakuajat"
-                                   :query
-                                   {:bool {:should
-                                           [{:bool {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                     {:gt "2019-06-01T01:01"}}}]}}}}
-                                 {:term {:search_terms.hakutiedot.hakutapa "hakutapa_01"}}]}}}}
+                                [{:term {:search_terms.hakutiedot.hakutapa "hakutapa_01"}}]}}}}
              :hakutapa_02
              {:nested {:path "search_terms.hakutiedot"
                        :query {:bool
                                {:filter
-                                [{:nested
-                                  {:path "search_terms.hakutiedot.hakuajat"
-                                   :query
-                                   {:bool {:should
-                                           [{:bool {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                     {:gt "2019-06-01T01:01"}}}]}}}}
-                                 {:term {:search_terms.hakutiedot.hakutapa "hakutapa_02"}}]}}}}}}
+                                [{:term {:search_terms.hakutiedot.hakutapa "hakutapa_02"}}]}}}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :opetustapa {:filters {:filters
                                  {:opetuspaikkakk_01 {:term {:search_terms.opetustavat.keyword
@@ -261,31 +207,13 @@
                        :query
                        {:bool
                         {:filter
-                         [{:nested
-                           {:path "search_terms.hakutiedot.hakuajat"
-                            :query {:bool {:should
-                                           [{:bool {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                     {:gt "2019-06-01T01:01"}}}]}}}}
-                          {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_01"}}]}}}}
+                         [{:term {:search_terms.hakutiedot.valintatavat "valintatapajono_01"}}]}}}}
              :valintatapajono_02
              {:nested
               {:path "search_terms.hakutiedot"
                :query {:bool
                        {:filter
-                        [{:nested {:path "search_terms.hakutiedot.hakuajat"
-                                   :query
-                                   {:bool {:should
-                                           [{:bool {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy
-                                                     {:gt "2019-06-01T01:01"}}}]}}}}
-                         {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}]}}}}}}
+                        [{:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}]}}}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :koulutustyyppi
           {:filters

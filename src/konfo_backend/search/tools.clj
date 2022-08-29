@@ -107,11 +107,6 @@
                                               {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
                                                                {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}}}]})
 
-(defn some-past-hakuaika-still-viable
-  []
-  {:nested {:path  "search_terms.hakutiedot.hakuajat"
-            :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (ten-months-past-as-kouta-format)}}}]}}}})
 
 (defn hakuaika-filter-query
   []
@@ -120,7 +115,7 @@
 (defn hakutieto-query
   [inner-query]
   {:nested {:path  "search_terms.hakutiedot"
-            :query {:bool {:filter (vec (remove nil? [(some-past-hakuaika-still-viable) inner-query]))}}}})
+            :query {:bool {:filter (vec (remove nil? [inner-query]))}}}})
 
 (defn filters
   [constraints]

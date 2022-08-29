@@ -112,8 +112,8 @@
                   :kuvaus            {},
                   :koulutusOid       traktoriala-oid
                   :toteutusOid       massikkakoulu-oid,
-                  :nimi              {:fi "Massikkakoulutus fi",
-                         :sv "Massikkakoulutus sv"},
+                  :nimi              {:fi "Massikkakoulutus fi" ,
+                                      :sv "Massikkakoulutus sv"},
                   ;:maksullisuustyyppi nil,
                   :kunnat            [],
                   :tutkintonimikkeet [],
@@ -121,5 +121,6 @@
                   :koulutustyyppi    "amm",
                   :kuva              "https://testi.fi/toteutus-teemakuva/oid/kuva.jpg",
                   :hakuAuki          false,
+                  :jarjestaaUrheilijanAmmKoulutusta false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
                                  :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
