@@ -67,7 +67,7 @@
                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
      (is
       (=
-       (hakutulos-aggregations)
+       (hakutulos-aggregations {})
        {:hits_aggregation
         {:nested {:path "search_terms"}
          :aggs
@@ -156,12 +156,32 @@
           {:filters
            {:filters
             {:hakukaynnissa
-                  {:bool
-                   {:should
-                    [{:bool
+             {:bool
+              {:filter
+               [{:bool
+                 {:should
+                  [{:bool
+                    {:filter
+                     [{:range
+                       {:search_terms.toteutusHakuaika.alkaa
+                        {:lte "2020-01-01T01:01"}}}
+                      {:bool
+                       {:should
+                        [{:bool
+                          {:must_not
+                           {:exists
+                            {:field
+                             "search_terms.toteutusHakuaika.paattyy"}}}}
+                         {:range
+                          {:search_terms.toteutusHakuaika.paattyy
+                           {:gt "2020-01-01T01:01"}}}]}}]}}
+                   {:nested
+                    {:path "search_terms.hakutiedot.hakuajat" ,
+                     :query
+                     {:bool
                       {:filter
                        [{:range
-                         {:search_terms.toteutusHakuaika.alkaa
+                         {:search_terms.hakutiedot.hakuajat.alkaa
                           {:lte "2020-01-01T01:01"}}}
                         {:bool
                          {:should
@@ -169,29 +189,11 @@
                             {:must_not
                              {:exists
                               {:field
-                               "search_terms.toteutusHakuaika.paattyy"}}}}
+                               "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                            {:range
-                            {:search_terms.toteutusHakuaika.paattyy
-                             {:gt "2020-01-01T01:01"}}}]}}]}}
-                     {:nested
-                      {:path "search_terms.hakutiedot.hakuajat",
-                       :query
-                       {:bool
-                        {:filter
-                         [{:range
-                           {:search_terms.hakutiedot.hakuajat.alkaa
-                            {:lte "2020-01-01T01:01"}}}
-                          {:bool
-                           {:should
-                            [{:bool
-                              {:must_not
-                               {:exists
-                                {:field
-                                 "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                             {:range
-                              {:search_terms.hakutiedot.hakuajat.paattyy
-                               {:gt
-                                "2020-01-01T01:01"}}}]}}]}}}}]}}}}
+                            {:search_terms.hakutiedot.hakuajat.paattyy
+                             {:gt
+                              "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :jotpa {:filters
                   {:filters

@@ -98,19 +98,18 @@
     {:terms {(keyword key) (->lower-case-vec coll)}}))
 
 (defn some-hakuaika-kaynnissa
-  []
-  {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte (current-time-as-kouta-format)}}}
+  [current-time]
+  {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
                              {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                              {:range {:search_terms.toteutusHakuaika.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}
+                                              {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
             {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                      :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte (current-time-as-kouta-format)}}}
+                      :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
                                               {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                                               {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}}}]})
-
+                                                               {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]})
 
 (defn hakuaika-filter-query
-  []
-  {:bool (some-hakuaika-kaynnissa)})
+  [current-time]
+  {:bool (some-hakuaika-kaynnissa current-time)})
 
 (defn hakutieto-query
   [inner-query]
@@ -118,7 +117,11 @@
             :query {:bool {:filter (vec (remove nil? [inner-query]))}}}})
 
 (defn filters
-  [constraints]
+  ([constraints]
+   (filters constraints (current-time-as-kouta-format) ""))
+  ([constraints current-time]
+   (filters constraints current-time ""))
+  ([constraints current-time filter-name]
   (cond-> []
           (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
           (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
@@ -127,12 +130,12 @@
           (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
 
           ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
-          (haku-kaynnissa? constraints) (conj (hakuaika-filter-query))
+          (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
           (has-jotpa-rahoitus? constraints) (conj {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}})
           (hakutapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
           (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
           (valintatapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
-          (yhteishaku? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))))))
+          (yhteishaku? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))))
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
