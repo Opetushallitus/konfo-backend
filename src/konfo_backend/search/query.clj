@@ -137,9 +137,9 @@
       {:filter (filters constraints current-time "hakukaynnissa")}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
 
-(defn- jotpa-filter
-  []
-  {:filters {:filters {:jotpa {:term {:search_terms.hasJotpaRahoitus true}}}} :aggs {:real_hits {:reverse_nested {}}}})
+(defn jotpa-filter
+  [current-time constraints]
+  {:filters {:filters {:jotpa {:bool {:filter (filters constraints current-time "jotpa")}}}} :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
@@ -151,21 +151,22 @@
 
 (defn- generate-default-aggs
   [constraints]
-  (remove-nils {:maakunta              (koodisto-filters :search_terms.sijainti.keyword "maakunta")
-                :kunta                 (koodisto-filters :search_terms.sijainti.keyword "kunta")
-                :opetuskieli           (koodisto-filters :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
-                :koulutusala           (koodisto-filters :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
-                :koulutusalataso2      (koodisto-filters :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
-                :koulutustyyppi        (koulutustyyppi-filters :search_terms.koulutustyypit.keyword)
-                :koulutustyyppitaso2   (koodisto-filters :search_terms.koulutustyypit.keyword "koulutustyyppi")
-                :opetustapa            (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk")
+  (let [current-time (current-time-as-kouta-format)]
+    (remove-nils {:maakunta (koodisto-filters :search_terms.sijainti.keyword "maakunta")
+                  :kunta (koodisto-filters :search_terms.sijainti.keyword "kunta")
+                  :opetuskieli (koodisto-filters :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli")
+                  :koulutusala (koodisto-filters :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1")
+                  :koulutusalataso2 (koodisto-filters :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2")
+                  :koulutustyyppi (koulutustyyppi-filters :search_terms.koulutustyypit.keyword)
+                  :koulutustyyppitaso2 (koodisto-filters :search_terms.koulutustyypit.keyword "koulutustyyppi")
+                  :opetustapa (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk")
 
-                :hakukaynnissa         (hakukaynnissa-filter (current-time-as-kouta-format) constraints)
-                :jotpa                 (jotpa-filter)
-                :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
-                :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
-                :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
-                :yhteishaku            (yhteishaku-filter)}))
+                  :hakukaynnissa (hakukaynnissa-filter current-time constraints)
+                  :jotpa (jotpa-filter current-time constraints)
+                  :hakutapa (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
+                  :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
+                  :valintatapa (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
+                  :yhteishaku (yhteishaku-filter)})))
 
 (defn- generate-aggs-for
   [filter-name filter-aggs tuleva? constraints]

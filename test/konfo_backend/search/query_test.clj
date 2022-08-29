@@ -195,12 +195,13 @@
                              {:gt
                               "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
-          :jotpa {:filters
-                  {:filters
-                   {:jotpa
-                    {:term
-                     {:search_terms.hasJotpaRahoitus true}}}}
-                  :aggs {:real_hits {:reverse_nested {}}}}
+          :jotpa
+          {:filters
+           {:filters
+            {:jotpa
+             {:bool
+              {:filter [{:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]} }]}}}}
+           :aggs {:real_hits {:reverse_nested {}}}}
           :valintatapa
           {:filters
            {:filters

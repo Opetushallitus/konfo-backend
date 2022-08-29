@@ -1,6 +1,6 @@
 (ns konfo-backend.search.query-unit-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [hakukaynnissa-filter]]
+            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter]]
             [konfo-backend.search.tools :refer [filters hakuaika-filter-query]]))
 
 (deftest filters-test
@@ -22,7 +22,7 @@
                               {:filter
                                [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}]}}}}])))
 
-  (testing "Should form filter for the query with a hakutieto query with all constraints"
+  (testing "Should form filter for the query with a hakutieto query with several selected constraints"
     (is (= (filters {:sijainti []
                      :lukiopainotukset []
                      :lukiolinjaterityinenkoulutustehtava []
@@ -34,18 +34,38 @@
                      :hakutapa []
                      :opetustapa []
                      :opetuskieli ["oppilaitoksenopetuskieli_2"]
-                     :hakukaynnissa false
+                     :hakukaynnissa true
                      :valintatapa []
                      :koulutustyyppi ["koulutustyyppi_26"]}
                     "2022-08-26T07:21")
            [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
             {:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_2"}}
+            {:bool
+             {:should
+              [{:bool
+                {:filter
+                 [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                  {:bool
+                   {:should
+                    [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                     {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+               {:nested
+                {:path "search_terms.hakutiedot.hakuajat"
+                 :query
+                 {:bool
+                  {:filter
+                   [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                    {:bool
+                     {:should
+                      [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                       {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
             {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}
             {:nested {:path "search_terms.hakutiedot"
                       :query
                       {:bool
                        {:filter
-                        [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}]}}}}]))))
+                        [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}]}}}}
+            ]))))
 
 (deftest hakuaika-filter-query-test
   (testing "Should form hakukaynnissa filter query with current time"
@@ -128,6 +148,94 @@
                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
                  {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}})))
+            :aggs {:real_hits {:reverse_nested {}}}}))))
+
+(deftest jotpa-filter-test
+  (testing "Should form aggs filter for jotpa with hakukaynnissa as the selected filter"
+    (is (= (jotpa-filter  "2022-08-26T07:21" {:jotpa true})
+            {:filters
+             {:filters
+              {:jotpa
+               {:bool
+                {:filter
+                 [{:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
+             :aggs {:real_hits {:reverse_nested {}}}})))
+
+  (testing "Should form aggs filter for jotpa"
+    (is (= (jotpa-filter "2022-08-26T07:21" {:jotpa true :hakukaynnissa true})
+           {:filters
+            {:filters
+             {:jotpa
+              {:bool
+               {:filter
+                [{:bool
+                  {:should
+                   [{:bool
+                     {:filter
+                      [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                       {:bool
+                        {:should
+                         [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                          {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                    {:nested
+                     {:path "search_terms.hakutiedot.hakuajat"
+                      :query
+                      {:bool
+                       {:filter
+                        [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                         {:bool
+                          {:should
+                           [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                 {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}
+               }}}
+            :aggs {:real_hits {:reverse_nested {}}}}))
+    )
   )
+
+;; actual: (not (=
+;;                {:filters
+;;                 {:filters
+;;                  {:jotpa
+;;                   {:filter
+;;                    [{:bool
+;;                      {:should
+;;                       [{:bool
+;;                         {:filter
+;;                          [{:range
+;;                            {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+;;                           {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+;;                                            {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+;;                        {:nested {:path "search_terms.hakutiedot.hakuajat",
+;;                                  :query
+;;                                  {:bool
+;;                                   {:filter
+;;                                    [{:range
+;;                                      {:search_terms.hakutiedot.hakuajat.alkaa
+;;                                       {:lte "2022-08-26T07:21"}}}
+;;                                     {:bool
+;;                                      {:should
+;;                                       [{:bool
+;;                                         {:must_not
+;;                                          {:exists
+;;                                           {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+;;                                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+;;                     {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}, :aggs {:real_hits {:reverse_nested {}}}}
+;;                {:filters
+;;                 {:filters
+;;                  {:jotpa
+;;                   {:bool
+;;                    {:filter
+;;                     [{:bool
+;;                       {:should
+;;                        [{:bool
+;;                          {:filter
+;;                           [{:range
+;;                             {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+;;                            {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+;;                                             {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+;;                         {:nested {:path "search_terms.hakutiedot.hakuajat",
+;;                                   :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}} {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}} {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}} {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}, :aggs {:real_hits {:reverse_nested {}}}}))
+(use 'clojure.test)
+(run-tests)
 
