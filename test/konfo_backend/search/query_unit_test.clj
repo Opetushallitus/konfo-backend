@@ -225,8 +225,7 @@
                          :query {:bool {:filter
                                         [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                  "pohjakoulutusvaatimuskonfo_003"}}]}}}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}
-           )))
+            :aggs {:real_hits {:reverse_nested {}}}})))
 
   (testing "Should form aggs filters for pohjakoulutusvaatimus with jotpa as a selected filter"
     (is (= (->hakutieto-filters-aggregation
@@ -241,15 +240,129 @@
                          :query {:bool {:filter
                                         [{:term {:search_terms.hasJotpaRahoitus true}}
                                          {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                 "pohjakoulutusvaatimuskonfo_am"}}
-                                         ]}}}}
+                                                 "pohjakoulutusvaatimuskonfo_am"}}]}}}}
                :pohjakoulutusvaatimuskonfo_003
                {:nested {:path "search_terms.hakutiedot"
                          :query {:bool {:filter
                                         [{:term {:search_terms.hasJotpaRahoitus true}}
                                          {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                 "pohjakoulutusvaatimuskonfo_003"}}
-                                         ]}}}}}}
+                                                 "pohjakoulutusvaatimuskonfo_003"}}]}}}}}}
+            :aggs {:real_hits {:reverse_nested {}}}})))
+
+  (testing "Should form aggs filters for hakutapa with jotpa, hakukaynnissa and pohjakoulutusvaatimus as selected filters"
+    (is (= (->hakutieto-filters-aggregation
+             :search_terms.hakutiedot.hakutapa
+             ["hakutapa_01" "hakutapa_02"]
+             "2022-08-26T07:21"
+             {:jotpa true
+              :pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_001"]
+              :hakukaynnissa true})
+           {:filters
+             {:filters
+              {:hakutapa_01
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [
+                                         {:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                  ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_001"]}}
+                                         {:bool
+                                          {:should
+                                           [{:bool
+                                             {:filter
+                                              [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                                               {:bool
+                                                {:should
+                                                 [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                  {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                                            {:nested
+                                             {:path "search_terms.hakutiedot.hakuajat"
+                                              :query
+                                              {:bool
+                                               {:filter
+                                                [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                 {:bool
+                                                  {:should
+                                                   [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                                         {:term {:search_terms.hasJotpaRahoitus true}}
+                                         {:term {:search_terms.hakutiedot.hakutapa
+                                                 "hakutapa_01"}}]}}}}
+               :hakutapa_02
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [{:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                  ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_001"]}}
+                                         {:bool
+                                          {:should
+                                           [{:bool
+                                             {:filter
+                                              [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                                               {:bool
+                                                {:should
+                                                 [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                  {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                                            {:nested
+                                             {:path "search_terms.hakutiedot.hakuajat"
+                                              :query
+                                              {:bool
+                                               {:filter
+                                                [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                 {:bool
+                                                  {:should
+                                                   [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                                         {:term {:search_terms.hasJotpaRahoitus true}}
+                                         {:term {:search_terms.hakutiedot.hakutapa
+                                                 "hakutapa_02"}}]}}}}}}
+            :aggs {:real_hits {:reverse_nested {}}}})))
+
+  (testing "Should form aggs filters for pohjakoulutusvaatimus with hakutapa as a selected filter"
+    (is (= (->hakutieto-filters-aggregation
+             :search_terms.hakutiedot.pohjakoulutusvaatimukset
+             ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
+             "2022-08-26T07:21"
+             {:hakutapa ["hakutapa_01" "hakutapa_02"]})
+           {:filters
+             {:filters
+              {:pohjakoulutusvaatimuskonfo_am
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [
+                                         {:terms {:search_terms.hakutiedot.hakutapa ["hakutapa_01" "hakutapa_02"]}}
+                                         {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                 "pohjakoulutusvaatimuskonfo_am"}}]}}}}
+               :pohjakoulutusvaatimuskonfo_003
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [
+                                         {:terms {:search_terms.hakutiedot.hakutapa ["hakutapa_01" "hakutapa_02"]}}
+                                         {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                 "pohjakoulutusvaatimuskonfo_003"}}]}}}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for valintatapa with hakutapa as a selected filter"
+    (is (= (->hakutieto-filters-aggregation
+             :search_terms.hakutiedot.valintatapa
+             ["valintatapajono_av" "valintatapajono_yp"]
+             "2022-08-26T07:21"
+             {:hakutapa ["hakutapa_01" "hakutapa_02"]})
+           {:filters
+             {:filters
+              {:valintatapajono_av
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [
+                                         {:terms {:search_terms.hakutiedot.hakutapa ["hakutapa_01" "hakutapa_02"]}}
+                                         {:term {:search_terms.hakutiedot.valintatapa
+                                                 "valintatapajono_av"}}]}}}}
+               :valintatapajono_yp
+               {:nested {:path "search_terms.hakutiedot"
+                         :query {:bool {:filter
+                                        [
+                                         {:terms {:search_terms.hakutiedot.hakutapa ["hakutapa_01" "hakutapa_02"]}}
+                                         {:term {:search_terms.hakutiedot.valintatapa
+                                                 "valintatapajono_yp"}}]}}}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            )))
   )
@@ -260,8 +373,7 @@
              {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}
              "2022-08-26T07:21"
              {:hakukaynnissa false})
-           [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}]
-           )))
+           [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}])))
 
   (testing "Should create filter array for single pohjakoulutusvaatimus with jotpa and hakukaynnissa as selected filters"
     (is (= (hakutieto-aggs-filters
@@ -288,8 +400,7 @@
                       [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
             {:term {:search_terms.hasJotpaRahoitus true}}
-            {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}]
-           )))
+            {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}])))
   )
 
 

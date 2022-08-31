@@ -137,8 +137,12 @@
 (defn aggs-filters
   [constraints current-time filter-name]
   (cond-> []
-    (pohjakoulutusvaatimus? constraints) (conj {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                       "pohjakoulutusvaatimuskonfo_am"}})
+    (hakutapa? constraints) (conj (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
+    (pohjakoulutusvaatimus? constraints) (conj
+                                           (->terms-query
+                                             :search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                             (:pohjakoulutusvaatimus constraints)))
+    (valintatapa? constraints) (conj (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
     (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
     (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})))
 
