@@ -112,21 +112,28 @@
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter
-  [field term]
-  {(keyword term) (hakutieto-query {:term {field term}})})
+  [field term current-time constraints]
+  {(keyword term) (hakutieto-filters {:term {field term}} current-time constraints)})
 
 (defn- ->hakutieto-term-filters
-  [field terms]
-  (reduce merge {} (map #(->hakutieto-term-filter field %) terms)))
+  [field terms current-time constraints]
+  (reduce merge {} (map #(->hakutieto-term-filter field % current-time constraints) terms)))
 
-(defn- ->hakutieto-filters-aggregation
-  [field terms]
-  {:filters {:filters (->hakutieto-term-filters field terms)} :aggs {:real_hits {:reverse_nested {}}}})
+(defn ->hakutieto-filters-aggregation
+  [field terms current-time constraints]
+  {:filters
+   {:filters (->hakutieto-term-filters field terms current-time constraints)}
+   :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- hakutieto-koodisto-filters
   [field koodisto]
   (if-let [list (seq (list-koodi-urit koodisto))]
-    (->hakutieto-filters-aggregation field list)))
+    (->hakutieto-filters-aggregation field list (current-time-as-kouta-format) {})))
+
+(defn- hakutieto-koodisto-filters-v2
+  [field koodisto current-time constraints]
+  (if-let [list (seq (list-koodi-urit koodisto))]
+    (->hakutieto-filters-aggregation field list current-time constraints)))
 
 (defn hakukaynnissa-filter
   [current-time constraints]
@@ -134,12 +141,17 @@
    {:filters
     {:hakukaynnissa
      {:bool
-      {:filter (filters constraints current-time "hakukaynnissa")}}}}
+      {:filter (aggs-filters constraints current-time "hakukaynnissa")}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn jotpa-filter
   [current-time constraints]
-  {:filters {:filters {:jotpa {:bool {:filter (filters constraints current-time "jotpa")}}}} :aggs {:real_hits {:reverse_nested {}}}})
+  {:filters
+   {:filters
+    {:jotpa
+     {:bool
+      {:filter (aggs-filters constraints current-time "jotpa")}}}}
+   :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
@@ -147,7 +159,7 @@
 (defn- yhteishaku-filter
   []
   (if-let [list (seq (list-yhteishaut))]
-    (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list)))
+    (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list (current-time-as-kouta-format) {})))
 
 (defn- generate-default-aggs
   [constraints]
@@ -163,9 +175,9 @@
 
                   :hakukaynnissa (hakukaynnissa-filter current-time constraints)
                   :jotpa (jotpa-filter current-time constraints)
-                  :hakutapa (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
-                  :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
-                  :valintatapa (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
+                  :hakutapa (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
+                  :pohjakoulutusvaatimus (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
+                  :valintatapa (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
                   :yhteishaku (yhteishaku-filter)})))
 
 (defn- generate-aggs-for

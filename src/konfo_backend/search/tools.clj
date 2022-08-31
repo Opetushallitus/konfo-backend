@@ -118,24 +118,39 @@
 
 (defn filters
   ([constraints]
-   (filters constraints (current-time-as-kouta-format) ""))
+   (filters constraints (current-time-as-kouta-format)))
   ([constraints current-time]
-   (filters constraints current-time ""))
-  ([constraints current-time filter-name]
   (cond-> []
           (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
           (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
           (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
           (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
           (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
-
-          ; NOTE hakukäynnissä rajainta EI haluta käyttää jos se sisältyy muihin rajaimiin (koska ao. rivit käyttäytyvät OR ehtoina)
-          (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
-          (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}})
+          (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
+          (has-jotpa-rahoitus? constraints) (conj {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}})
           (hakutapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
           (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
           (valintatapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
           (yhteishaku? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))))
+
+
+(defn aggs-filters
+  [constraints current-time filter-name]
+  (cond-> []
+    (pohjakoulutusvaatimus? constraints) (conj {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                       "pohjakoulutusvaatimuskonfo_am"}})
+    (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
+    (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})))
+
+(defn hakutieto-aggs-filters
+  [inner-query current-time constraints]
+  (conj (aggs-filters constraints current-time "")
+        inner-query))
+
+(defn hakutieto-filters
+  [inner-query current-time constraints]
+  {:nested {:path "search_terms.hakutiedot"
+            :query {:bool {:filter (hakutieto-aggs-filters inner-query current-time constraints)}}}})
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
