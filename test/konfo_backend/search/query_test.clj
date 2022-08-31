@@ -280,7 +280,8 @@
                           {:path "search_terms.hakutiedot"
                            :query
                            {:bool {:filter
-                                   [{:term {:search_terms.hakutiedot.yhteishakuOid
+                                   [{:term {:search_terms.hasJotpaRahoitus true}}
+                                    {:term {:search_terms.hakutiedot.yhteishakuOid
                                             "1.2.246.562.29.00000000000000000001"}}]}}}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :koulutusalataso2

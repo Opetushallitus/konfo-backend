@@ -157,9 +157,9 @@
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
 
 (defn- yhteishaku-filter
-  []
+  [current-time constraints]
   (if-let [list (seq (list-yhteishaut))]
-    (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list (current-time-as-kouta-format) {})))
+    (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list current-time constraints)))
 
 (defn- generate-default-aggs
   [constraints]
@@ -178,7 +178,7 @@
                   :hakutapa (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
                   :pohjakoulutusvaatimus (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                   :valintatapa (hakutieto-koodisto-filters-v2 :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
-                  :yhteishaku (yhteishaku-filter)})))
+                  :yhteishaku (yhteishaku-filter current-time constraints)})))
 
 (defn- generate-aggs-for
   [filter-name filter-aggs tuleva? constraints]
@@ -205,7 +205,7 @@
                             :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
                             :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
-                            :yhteishaku            (yhteishaku-filter)})}
+                            :yhteishaku            (yhteishaku-filter (current-time-as-kouta-format) {})})}
      :lukiopainotukset_aggs                    (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints)
      :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints)
      :osaamisala_aggs                          (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints)}))
@@ -230,7 +230,7 @@
                                           :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa")
                                           :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo")
                                           :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono")
-                                          :yhteishaku            (yhteishaku-filter)})}})
+                                          :yhteishaku            (yhteishaku-filter (current-time-as-kouta-format) {})})}})
 
 (defn hakutulos-aggregations
   [constraints]
