@@ -113,7 +113,7 @@
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter
   [field term current-time constraints]
-  {(keyword term) (hakutieto-filters {:term {field term}} current-time constraints)})
+  {(keyword term) {:bool {:filter (hakutieto-filters {:term {field term}} current-time constraints)}}})
 
 (defn- ->hakutieto-term-filters
   [field terms current-time constraints]

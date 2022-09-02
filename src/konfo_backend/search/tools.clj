@@ -137,24 +137,33 @@
 (defn aggs-filters
   [constraints current-time filter-name]
   (cond-> []
-    (hakutapa? constraints) (conj (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
+    (hakutapa? constraints) (conj
+                              {:nested
+                               {:path "search_terms.hakutiedot"
+                                :query
+                                {:bool
+                                 {:filter (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))}}}})
     (pohjakoulutusvaatimus? constraints) (conj
-                                           (->terms-query
-                                             :search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                             (:pohjakoulutusvaatimus constraints)))
+                                           {:nested
+                                            {:path "search_terms.hakutiedot"
+                                             :query
+                                             {:bool
+                                              {:filter (->terms-query
+                                                         :search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                         (:pohjakoulutusvaatimus constraints))}}}})
     (valintatapa? constraints) (conj (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
     (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
     (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})))
 
-(defn hakutieto-aggs-filters
-  [inner-query current-time constraints]
-  (conj (aggs-filters constraints current-time "")
-        inner-query))
-
 (defn hakutieto-filters
   [inner-query current-time constraints]
-  {:nested {:path "search_terms.hakutiedot"
-            :query {:bool {:filter (hakutieto-aggs-filters inner-query current-time constraints)}}}})
+  (vec (concat
+    [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
+    (aggs-filters constraints current-time ""))))
+
+(defn term-filters
+  [inner-query current-time constraints]
+  {:bool {:filter (aggs-filters constraints current-time "")}})
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
