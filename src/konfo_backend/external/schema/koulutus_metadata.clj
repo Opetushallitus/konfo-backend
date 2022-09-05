@@ -196,7 +196,7 @@
     {:tyyppi AmmOpeErityisopeJaOpo
      :koulutusala [(->Koodi Koulutusala1Koodi)]}))
 
-(def KorkeakoulutusOpintojaksoKoulutusMetadata
+(def KkOpintojaksoKoulutusMetadata
   (st/merge
    KkMetadata
    {:tyyppi KkOpintojakso}))
@@ -214,4 +214,14 @@
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
    :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]
+   s/Any                                      s/Any})
+
+(def KkOpintokokonaisuusKoulutusMetadata
+  {:tyyppi                                    KkOpintokokonaisuus
+   :kuvaus                                    Kielistetty
+   :lisatiedot                                [KoulutusLisatieto]
+   :koulutusala                               [(->Koodi Koulutusala1Koodi)]
+   (s/->OptionalKey :opintojenLaajuusNumeroMin) s/Num
+   (s/->OptionalKey :opintojenLaajuusNumeroMax) s/Num
+   (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)
    s/Any                                      s/Any})

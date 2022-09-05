@@ -108,6 +108,7 @@
 (def Muu                          (s/eq "muu"))
 (def AmmOpeErityisopeJaOpo        (s/eq "amm-ope-erityisope-ja-opo"))
 (def KkOpintojakso                (s/eq "kk-opintojakso"))
+(def KkOpintokokonaisuus          (s/eq "kk-opintokokonaisuus"))
 (def Erikoislaakari               (s/eq "erikoislaakari"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))

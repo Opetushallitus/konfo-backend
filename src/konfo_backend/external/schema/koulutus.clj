@@ -133,7 +133,8 @@
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
                                                 #(= "yo" (:tyyppi %)) YoKoulutusMetadata
                                                 #(= "amk" (:tyyppi %)) AmkKoulutusMetadata
-                                                #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoKoulutusMetadata
+                                                #(= "kk-opintojakso" (:tyyppi %)) KkOpintojaksoKoulutusMetadata
+                                                #(= "kk-opintokokonaisuus" (:tyyppi %)) KkOpintokokonaisuusKoulutusMetadata
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
    :organisaatio                 Organisaatio
