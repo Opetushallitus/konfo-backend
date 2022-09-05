@@ -20,7 +20,7 @@ Asenna haluamallasi tavalla koneellesi
 3. [Leiningen](https://leiningen.org/) (Valitse asennus haluammallasi package managerilla)
 
 Lisäksi tarvitset Java SDK:n (Unix pohjaisissa käyttöjärjestelmissä auttaa esim. [SDKMAN!](https://sdkman.io/)).
-Katso [.travis.yml](.travis.yml) mitä versioita sovellus käyttää. Kirjoitushetkellä käytössä openJDK11.
+Kirjoitushetkellä käytössä openJDK11.
 
 Konfo-backendin saa konfiguroitua luomalla tiedoston `dev-configuration/konfo-backend.edn` (laitettu .gitignoreen) ja asettamalla sinne
 tarvittavat arvot. Tiedostosta `dev-configuration/konfo-backend.template` näkee mitä arvoja sovellus tarvitsee toimiakseen.
@@ -134,10 +134,6 @@ ja ylläpidolta löytyy apuja.
 
 Konfo-backendin lokit löytyvät AWS:n cloudwatchista log groupista <testiympäristö>-app-konfo-backend, 
 esim. hahtuva-app-konfo-backend. Lisäohjeita ylläpidolta.
-
-### 5.4. Continuous integration
-
-https://travis-ci.com/github/Opetushallitus/konfo-backend
 
 ## 6. Lisätietoa
 
