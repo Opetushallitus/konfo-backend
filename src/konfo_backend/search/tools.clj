@@ -137,6 +137,11 @@
 (defn aggs-filters
   [constraints current-time filter-name]
   (cond-> []
+    (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
+    (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
+    (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
+    (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
+    (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})
     (hakutapa? constraints) (conj
                               {:nested
                                {:path "search_terms.hakutiedot"
@@ -157,16 +162,12 @@
                                    :query
                                    {:bool
                                     {:filter (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))}}}})
-    (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
-    (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
     (yhteishaku? constraints) (conj
                                 {:nested
                                  {:path "search_terms.hakutiedot"
                                   :query
                                   {:bool
-                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}})
-    (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
-    (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})))
+                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}})))
 
 (defn hakutieto-filters
   [inner-query current-time constraints]
