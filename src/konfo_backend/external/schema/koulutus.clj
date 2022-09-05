@@ -28,8 +28,8 @@
      |            - amk
      |            - lk
      |            - erikoislaakari
-     |            - opintojakso
-     |            - opintokokonaisuus
+     |            - kk-opintojakso
+     |            - kk-opintokokonaisuus
      |            - muu
      |          example: amm
      |        koulutukset:
