@@ -21,7 +21,35 @@
     |          type: string
     |          example: ePerusten voimassaolon loppumishetki
     |          description: 2021-12-12T00:00:00
+    |    KoulutusMetadata:
+    |      type: object
+    |      properties:
+    |        kuvaus:
+    |          type: object
+    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          $ref: '#/components/schemas/Kuvaus'
+    |        lisatiedot:
+    |          type: array
+    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle Opintopolussa
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/KoulutusLisatieto'
+    |    TutkintoonJohtavaKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        tutkintonimike:
+    |          type: array
+    |          items:
+    |            #ref: '#/components/schemas/Tutkintonimike'
+    |        opintojenLaajuus:
+    |          $ref: '#/components/schemas/OpintojenLaajuus'
+    |        opintojenLaajuusyksikko:
+    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
     |    AmmatillinenKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/TutkintoonJohtavaKoulutusMetadata'
     |      type: object
     |      properties:
     |        tyyppi:
@@ -30,95 +58,34 @@
     |          example: amm
     |          enum:
     |            - amm
-    |        kuvaus:
-    |          type: object
-    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          $ref: '#/components/schemas/Kuvaus'
-    |        lisatiedot:
-    |          type: array
-    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
-    |          items:
-    |            type: object
-    |            $ref: '#/components/schemas/KoulutusLisatieto'
-    |        tutkintonimike:
-    |          type: array
-    |          description: Lista koulutuksen tutkintonimikkeistä
-    |          items:
-    |            type: object
-    |            $ref: '#/components/schemas/Tutkintonimike'
-    |        koulutusala:
-    |          type: array
-    |          description: Lista koulutuksen koulutusaloista
-    |          items:
-    |            type: object
-    |            $ref: '#/components/schemas/Koulutusala1'
-    |        opintojenLaajuus:
-    |          type: object
-    |          $ref: '#/components/schemas/OpintojenLaajuus'
-    |        opintojenLaajuusyksikko:
-    |          type: object
-    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
-    |        eperuste:
-    |          type: object
-    |          $ref: '#/components/schemas/Eperuste'
-    |    KorkeakouluMetadata:
-    |      type: object
-    |      properties:
-    |        kuvaus:
-    |          type: object
-    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          $ref: '#/components/schemas/Kuvaus'
-    |        lisatiedot:
-    |          type: array
-    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
-    |          items:
-    |            type: object
-    |            $ref: '#/components/schemas/KoulutusLisatieto'
-    |        tutkintonimike:
-    |          type: array
-    |          items:
-    |            #ref: '#/components/schemas/Tutkintonimike'
-    |        opintojenLaajuus:
-    |          type: object
-    |          properties:
-    |            koodiUri:
-    |              type: string
-    |              example: opintojenlaajuus_40
-    |              description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
-    |            nimi:
-    |              type: object
-    |              description: Tutkinnon laajuuden eri kielillä.
-    |              example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-    |              $ref: '#/components/schemas/Teksti'
-    |        opintojenLaajuusyksikko:
-    |          type: object
-    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
     |        eperuste:
     |          type: object
     |          $ref: '#/components/schemas/Eperuste'
     |    YliopistoKoulutusMetadata:
     |      allOf:
-    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
-    |        - type: object
-    |          properties:
-    |            tyyppi:
-    |              type: string
-    |              description: Koulutuksen metatiedon tyyppi
-    |              example: yo
-    |              enum:
-    |                - yo
+    |        - $ref: '#/components/schemas/TutkintoonJohtavaKoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        tyyppi:
+    |          type: string
+    |          description: Koulutuksen metatiedon tyyppi
+    |          example: yo
+    |          enum:
+    |            - yo
     |    AmmattikorkeaKoulutusMetadata:
     |      allOf:
-    |        - $ref: '#/components/schemas/KorkeakouluMetadata'
-    |        - type: object
-    |          properties:
-    |            tyyppi:
-    |              type: string
-    |              description: Koulutuksen metatiedon tyyppi
-    |              example: amk
-    |              enum:
-    |                - amk
+    |        - $ref: '#/components/schemas/TutkintoonJohtavaKoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        tyyppi:
+    |          type: string
+    |          description: Koulutuksen metatiedon tyyppi
+    |          example: amk
+    |          enum:
+    |            - amk
     |    LukioKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/TutkintoonJohtavaKoulutusMetadata'
     |      type: object
     |      properties:
     |        tyyppi:
@@ -127,101 +94,129 @@
     |          example: lk
     |          enum:
     |            - lk
-    |        kuvaus:
-    |          type: object
-    |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
-    |          $ref: '#/components/schemas/Kuvaus'
-    |        lisatiedot:
-    |          type: array
-    |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle
-    |          items:
-    |            type: object
-    |            $ref: '#/components/schemas/KoulutusLisatieto'
+    |    ErikoislaakariKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        opintojenLaajuusNumero:
+    |          type: integer
+    |          description: Opintojen laajuus numeroarvona
+    |          example: 10
+    |        opintojenLaajuusyksikko:
+    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
     |        koulutusala:
     |          type: array
     |          description: Lista koulutuksen koulutusaloista
     |          items:
     |            type: object
     |            $ref: '#/components/schemas/Koulutusala1'
-    |        opintojenLaajuus:
-    |          type: object
-    |          $ref: '#/components/schemas/OpintojenLaajuus'
+    |    KkOpintojaksoKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        opintojenLaajuusNumero:
+    |          type: integer
+    |          description: Opintojen laajuus numeroarvona
+    |          example: 10
     |        opintojenLaajuusyksikko:
-    |          type: object
     |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
-    |        tutkintonimike:
+    |        koulutusala:
     |          type: array
-    |          description: Lista koulutuksen tutkintonimikkeistä
+    |          description: Lista koulutuksen koulutusaloista
     |          items:
     |            type: object
-    |            $ref: '#/components/schemas/Tutkintonimike'
-    |"
-  )
+    |            $ref: '#/components/schemas/Koulutusala2'
+    |    KkOpintokokonaisuusKoulutusMetadata:
+    |      allOf:
+    |        - $ref: '#/components/schemas/KoulutusMetadata'
+    |      type: object
+    |      properties:
+    |        opintojenLaajuusNumeroMin:
+    |          type: integer
+    |          description: Opintojen laajuuden tai keston vähimmäismäärä numeroarvona
+    |          example: 10
+    |        opintojenLaajuusNumeroMax:
+    |          type: integer
+    |          description: Opintojen laajuuden tai keston enimmäismäärä numeroarvona
+    |          example: 20
+    |        opintojenLaajuusyksikko:
+    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+    |        koulutusala:
+    |          type: array
+    |          description: Lista koulutuksen koulutusaloista
+    |          items:
+    |            type: object
+    |            $ref: '#/components/schemas/Koulutusala1'
+    |")
+  
 
 (def Eperuste
   {(s/->OptionalKey :id) s/Int
    (s/->OptionalKey :diaarinumero) s/Str
    (s/->OptionalKey :voimassaoloLoppuu) (s/maybe s/Str)})
 
-(def KkMetadata
-  {:kuvaus                             Kielistetty
-   :lisatiedot                         [KoulutusLisatieto]
+ (def KoulutusMetadata
+   {:kuvaus                             Kielistetty
+    :lisatiedot [KoulutusLisatieto]})
+
+(def TutkintoonJohtavaKoulutusMetadata
+  (st/merge KoulutusMetadata {
    :koulutusala                        [(->Koodi Koulutusala2Koodi)]
-   (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
+   (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKoodi))]
    (s/->OptionalKey :opintojenLaajuus) (s/maybe (->Koodi OpintojenLaajuusKoodi))
    :opintojenLaajuusyksikko            (->Koodi OpintojenLaajuusyksikkoKoodi)
-   (s/->OptionalKey :eperuste)         (s/maybe Eperuste)
-   s/Any                               s/Any})
+   s/Any                               s/Any}))
 
 (def AmmKoulutusMetadata
-  {:tyyppi                                    Amm
-   :kuvaus                                    Kielistetty
-   :lisatiedot                                [KoulutusLisatieto]
-   :koulutusala                               [(->Koodi Koulutusala1Koodi)]
-   (s/->OptionalKey :tutkintonimike)          [(->Koodi TutkintonimikeKoodi)]
-   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Any)
-   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
-   (s/->OptionalKey :eperuste)                (s/maybe Eperuste)
-   s/Any                                      s/Any})
+  (st/merge 
+   TutkintoonJohtavaKoulutusMetadata  
+   {:tyyppi                                    Amm 
+    (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Any) 
+    (s/->OptionalKey :eperuste)                (s/maybe Eperuste) 
+    :koulutusala                        [(->Koodi Koulutusala1Koodi)] 
+    s/Any                                      s/Any}))
 
 (def AmkKoulutusMetadata
   (st/merge
-    {:tyyppi Amk}
-    KkMetadata))
+   TutkintoonJohtavaKoulutusMetadata 
+   {:tyyppi Amk
+    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]}))
 
 (def AmmOpeErityisopeJaOpoKoulutusMetadata
   (st/merge
-    KkMetadata
-    {:tyyppi AmmOpeErityisopeJaOpo
-     :koulutusala [(->Koodi Koulutusala1Koodi)]}))
+    TutkintoonJohtavaKoulutusMetadata
+    {:tyyppi AmmOpeErityisopeJaOpo}))
+
+(def YoKoulutusMetadata
+  (st/merge 
+   TutkintoonJohtavaKoulutusMetadata
+   {:tyyppi Yo
+    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]}))
+
+(def LukioKoulutusMetadata
+  (st/merge 
+   TutkintoonJohtavaKoulutusMetadata
+   {:tyyppi Lk
+    :koulutusala                        [(->Koodi Koulutusala1Koodi)]}))
+
+(def ErikoislaakariKoulutusMetadata
+  (st/merge
+   KoulutusMetadata
+   {:tyyppi KkOpintojakso
+   (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
+    }))
 
 (def KkOpintojaksoKoulutusMetadata
   (st/merge
-   KkMetadata
+   TutkintoonJohtavaKoulutusMetadata
    {:tyyppi KkOpintojakso}))
 
-(def YoKoulutusMetadata
-  (st/merge
-    {:tyyppi Yo}
-    KkMetadata))
-
-(def LukioKoulutusMetadata
-  {:tyyppi                                    Lk
-   :kuvaus                                    Kielistetty
-   :lisatiedot                                [KoulutusLisatieto]
-   :koulutusala                               [(->Koodi Koulutusala1Koodi)]
-   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   :opintojenLaajuusyksikko                   (->Koodi OpintojenLaajuusyksikkoKoodi)
-   :tutkintonimike                            [(->Koodi TutkintonimikeKoodi)]
-   s/Any                                      s/Any})
-
 (def KkOpintokokonaisuusKoulutusMetadata
-  {:tyyppi                                    KkOpintokokonaisuus
-   :kuvaus                                    Kielistetty
-   :lisatiedot                                [KoulutusLisatieto]
-   :koulutusala                               [(->Koodi Koulutusala1Koodi)]
-   (s/->OptionalKey :opintojenLaajuusNumeroMin) s/Num
-   (s/->OptionalKey :opintojenLaajuusNumeroMax) s/Num
-   (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)
-   s/Any                                      s/Any})
+  (st/merge 
+   KoulutusMetadata
+   {:tyyppi                                    KkOpintokokonaisuus 
+    (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num) 
+    (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num) 
+    (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)}))
