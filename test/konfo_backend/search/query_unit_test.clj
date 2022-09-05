@@ -599,7 +599,7 @@
 
   (testing "Should form aggs filters for koulutustyyppi with sijainti filter"
     (is (= (->filters-aggregation-v2
-             :search_terms.koulutustyypit.keyword ["amm" "amk"] 
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
              "2022-08-26T07:21"
              {:sijainti ["kunta_01" "maakunta_02"]})
            {:filters
@@ -614,6 +614,29 @@
                {:filter
                 [{:term {:search_terms.koulutustyypit.keyword "amk"}}
                  {:terms {:search_terms.sijainti.keyword ["kunta_01" "maakunta_02"]}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi with koulutusala filter"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:koulutusala ["kansallinenkoulutusluokitus2016koulutusalataso1_01"
+                            "kansallinenkoulutusluokitus2016koulutusalataso1_02"]})
+           {:filters
+            {:filters
+             {:amm
+              {:bool
+               {:filter
+                [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                 {:terms {:search_terms.koulutusalat.keyword ["kansallinenkoulutusluokitus2016koulutusalataso1_01"
+                                                              "kansallinenkoulutusluokitus2016koulutusalataso1_02"]}}]}}
+              :amk
+              {:bool
+               {:filter
+                [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                 {:terms {:search_terms.koulutusalat.keyword ["kansallinenkoulutusluokitus2016koulutusalataso1_01"
+                                                              "kansallinenkoulutusluokitus2016koulutusalataso1_02"]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            )))
   )
