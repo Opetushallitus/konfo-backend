@@ -151,7 +151,14 @@
                                               {:filter (->terms-query
                                                          :search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                          (:pohjakoulutusvaatimus constraints))}}}})
-    (valintatapa? constraints) (conj (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
+    (valintatapa? constraints) (conj
+                                 {:nested
+                                  {:path "search_terms.hakutiedot"
+                                   :query
+                                   {:bool
+                                    {:filter (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))}}}})
+    (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
+    (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
     (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
     (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})))
 
@@ -160,6 +167,12 @@
   (vec (concat
     [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
     (aggs-filters constraints current-time ""))))
+
+(defn terms-filters
+  [inner-query current-time constraints]
+  (vec (concat
+         [inner-query]
+         (aggs-filters constraints current-time ""))))
 
 (defn term-filters
   [inner-query current-time constraints]

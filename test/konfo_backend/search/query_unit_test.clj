@@ -1,6 +1,6 @@
 (ns konfo-backend.search.query-unit-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter ->hakutieto-filters-aggregation]]
+            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter ->hakutieto-filters-aggregation ->filters-aggregation-v2]]
             [konfo-backend.search.tools :refer [filters hakuaika-filter-query]]))
 
 (deftest filters-test
@@ -398,42 +398,41 @@
            )))
    )
 
-;; (deftest ->filters-aggregation-test
-;;   (testing "Should form aggs filters for opetuskieli without any selected filters"
-;;     (is (= (->filters-aggregation
-;;              :search_terms.opetuskielet.keyword ["oppilaitoksenopetuskieli_4" "oppilaitoksenopetuskieli_5"]
-;;              "2022-08-26T07:21"
-;;              {}
-;;              )
-;;            {:filters
-;;             {:filters
-;;              {:oppilaitoksenopetuskieli_4 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
-;;                                                   "oppilaitoksenopetuskieli_4"}}]}}
-;;               :oppilaitoksenopetuskieli_5 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
-;;                                                   "oppilaitoksenopetuskieli_5"}}]}}
-;;               }}
-;;             :aggs {:real_hits {:reverse_nested {}}}}
-;;            )))
+(deftest ->filters-aggregation-test
+  (testing "Should form aggs filters for opetuskieli without any selected filters"
+    (is (= (->filters-aggregation-v2
+             :search_terms.opetuskielet.keyword ["oppilaitoksenopetuskieli_4" "oppilaitoksenopetuskieli_5"]
+             "2022-08-26T07:21"
+             {})
+           {:filters
+            {:filters
+             {:oppilaitoksenopetuskieli_4 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
+                                                                  "oppilaitoksenopetuskieli_4"}}]}}
+              :oppilaitoksenopetuskieli_5 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
+                                                                  "oppilaitoksenopetuskieli_5"}}]}}
+              }}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
 
-;;   (testing "Should form aggs filters for opetuskieli with jotpa as selected filter"
-;;     (is (= (->filters-aggregation
-;;              :search_terms.opetuskielet.keyword ["oppilaitoksenopetuskieli_4" "oppilaitoksenopetuskieli_5"]
-;;              "2022-08-26T07:21"
-;;              {:jotpa true}
-;;              )
-;;            {:filters
-;;             {:filters
-;;              {:oppilaitoksenopetuskieli_4 {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}
-;;                                                            {:term {:search_terms.opetuskielet.keyword
-;;                                                                    "oppilaitoksenopetuskieli_4"}}]}}
-;;               :oppilaitoksenopetuskieli_5 {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}
-;;                                                            {:term {:search_terms.opetuskielet.keyword
-;;                                                                    "oppilaitoksenopetuskieli_5"}}
-;;                                                            ]}}
-;;               }}
-;;             :aggs {:real_hits {:reverse_nested {}}}}
-;;            )))
-;;   )
+  (testing "Should form aggs filters for opetuskieli with jotpa as selected filter"
+    (is (= (->filters-aggregation-v2
+             :search_terms.opetuskielet.keyword ["oppilaitoksenopetuskieli_4" "oppilaitoksenopetuskieli_5"]
+             "2022-08-26T07:21"
+             {:jotpa true}
+             )
+           {:filters
+            {:filters
+             {:oppilaitoksenopetuskieli_4 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
+                                                                   "oppilaitoksenopetuskieli_4"}}
+                                                           {:term {:search_terms.hasJotpaRahoitus true}}]}}
+              :oppilaitoksenopetuskieli_5 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
+                                                                   "oppilaitoksenopetuskieli_5"}}
+                                                           {:term {:search_terms.hasJotpaRahoitus true}}
+                                                           ]}}
+              }}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+  )
 
 
 (use 'clojure.test)
