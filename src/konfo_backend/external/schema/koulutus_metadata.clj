@@ -42,7 +42,7 @@
     |        tutkintonimike:
     |          type: array
     |          items:
-    |            #ref: '#/components/schemas/Tutkintonimike'
+    |            $ref: '#/components/schemas/Tutkintonimike'
     |        opintojenLaajuus:
     |          $ref: '#/components/schemas/OpintojenLaajuus'
     |        opintojenLaajuusyksikko:

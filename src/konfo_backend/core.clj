@@ -73,19 +73,14 @@
               |  version: 0.1-SNAPSHOT
               |  termsOfService: https://opintopolku.fi/wp/fi/opintopolku/tietoa-palvelusta/
               |  contact:
-              |    name: \"\"
-              |    email: verkkotoimitus_opintopolku@oph.fi
-              |    url: \"\"
+              |    name: \"Opetushallitus\"
+              |    email: \"verkkotoimitus_opintopolku@oph.fi\"
+              |    url: \"https://www.oph.fi/\" 
               |  license:
               |    name: \"EUPL 1.1 or latest approved by the European Commission\"
               |    url: \"http://www.osor.eu/eupl/\"
               |servers:
               |  - url: /konfo-backend/
-              |  - url: http://localhost:3006/konfo-backend/
-              |  - url: https://beta.opintopolku.fi/konfo-backend/
-              |  - url: https://beta.untuvaopintopolku.fi/konfo-backend/
-              |  - url: https://beta.hahtuvaopintopolku.fi/konfo-backend/
-              |  - url: https://beta.testiopintopolku.fi/konfo-backend/
               |paths:
               "
               default/paths "\n"
