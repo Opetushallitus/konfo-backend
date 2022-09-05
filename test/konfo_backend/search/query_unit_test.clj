@@ -414,26 +414,170 @@
             :aggs {:real_hits {:reverse_nested {}}}}
            )))
 
-  (testing "Should form aggs filters for opetuskieli with jotpa as selected filter"
+  (testing "Should form aggs filters for opetuskieli with jotpa and hakukaynnissa as selected filters"
     (is (= (->filters-aggregation-v2
              :search_terms.opetuskielet.keyword ["oppilaitoksenopetuskieli_4" "oppilaitoksenopetuskieli_5"]
              "2022-08-26T07:21"
-             {:jotpa true}
+             {:jotpa true :hakukaynnissa true}
              )
            {:filters
             {:filters
-             {:oppilaitoksenopetuskieli_4 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
-                                                                   "oppilaitoksenopetuskieli_4"}}
-                                                           {:term {:search_terms.hasJotpaRahoitus true}}]}}
-              :oppilaitoksenopetuskieli_5 {:bool {:filter [{:term {:search_terms.opetuskielet.keyword
-                                                                   "oppilaitoksenopetuskieli_5"}}
-                                                           {:term {:search_terms.hasJotpaRahoitus true}}
-                                                           ]}}
-              }}
+             {:oppilaitoksenopetuskieli_4
+              {:bool
+               {:filter
+                [{:term {:search_terms.opetuskielet.keyword
+                         "oppilaitoksenopetuskieli_4"}}
+                 {:bool
+                  {:should
+                   [{:bool
+                     {:filter
+                      [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                       {:bool
+                        {:should
+                         [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                          {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                    {:nested
+                     {:path "search_terms.hakutiedot.hakuajat"
+                      :query
+                      {:bool
+                       {:filter
+                        [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                         {:bool
+                          {:should
+                           [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                 {:term {:search_terms.hasJotpaRahoitus true}}]}}
+              :oppilaitoksenopetuskieli_5
+              {:bool
+               {:filter
+                [{:term {:search_terms.opetuskielet.keyword
+                         "oppilaitoksenopetuskieli_5"}}
+                 {:bool
+                  {:should
+                   [{:bool
+                     {:filter
+                      [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                       {:bool
+                        {:should
+                         [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                          {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                    {:nested
+                     {:path "search_terms.hakutiedot.hakuajat"
+                      :query
+                      {:bool
+                       {:filter
+                        [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                         {:bool
+                          {:should
+                           [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                 {:term {:search_terms.hasJotpaRahoitus true}}
+                 ]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi without any selected filters"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {})
+           {:filters
+            {:filters
+             {:amm {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm"}}]}}
+              :amk {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amk"}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi with one opetustapa as a selected filter"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:opetustapa ["opetuspaikkakk_4"]})
+           {:filters
+            {:filters
+             {:amm {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                            {:term {:search_terms.opetustavat.keyword "opetuspaikkakk_4"}}]}}
+              :amk {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                            {:term {:search_terms.opetustavat.keyword "opetuspaikkakk_4"}}
+                            ]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi with two opetustapa filters"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:opetustapa ["opetuspaikkakk_3" "opetuspaikkakk_4"]})
+           {:filters
+            {:filters
+             {:amm {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                            {:terms {:search_terms.opetustavat.keyword ["opetuspaikkakk_3" "opetuspaikkakk_4"]}}]}}
+              :amk {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                            {:terms {:search_terms.opetustavat.keyword ["opetuspaikkakk_3" "opetuspaikkakk_4"]}}
+                            ]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi with yhteishaku filter"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:yhteishaku ["1.2.246.562.29.00000000000000000001" "1.2.246.562.29.00000000000000000002"]})
+           {:filters
+            {:filters
+             {:amm {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                            {:nested
+                             {:path "search_terms.hakutiedot"
+                              :query
+                              {:bool {:filter
+                                      {:terms {:search_terms.hakutiedot.yhteishakuOid
+                                              ["1.2.246.562.29.00000000000000000001"
+                                               "1.2.246.562.29.00000000000000000002"]}}}}}}]}}
+              :amk {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                            {:nested
+                             {:path "search_terms.hakutiedot"
+                              :query
+                              {:bool {:filter
+                                      {:terms {:search_terms.hakutiedot.yhteishakuOid
+                                              ["1.2.246.562.29.00000000000000000001"
+                                               "1.2.246.562.29.00000000000000000002" ]}}}}}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           )))
+
+  (testing "Should form aggs filters for koulutustyyppi with yhteishaku filter"
+    (is (= (->filters-aggregation-v2
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:yhteishaku ["1.2.246.562.29.00000000000000000001" "1.2.246.562.29.00000000000000000002"]})
+           {:filters
+            {:filters
+             {:amm {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                            {:nested
+                             {:path "search_terms.hakutiedot"
+                              :query
+                              {:bool {:filter
+                                      {:terms {:search_terms.hakutiedot.yhteishakuOid
+                                              ["1.2.246.562.29.00000000000000000001"
+                                               "1.2.246.562.29.00000000000000000002"]}}}}}}]}}
+              :amk {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                            {:nested
+                             {:path "search_terms.hakutiedot"
+                              :query
+                              {:bool {:filter
+                                      {:terms {:search_terms.hakutiedot.yhteishakuOid
+                                              ["1.2.246.562.29.00000000000000000001"
+                                               "1.2.246.562.29.00000000000000000002" ]}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            )))
   )
-
 
 (use 'clojure.test)
 (run-tests)
