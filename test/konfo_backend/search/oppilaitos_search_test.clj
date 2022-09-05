@@ -3,6 +3,7 @@
             [clojure.string :refer [starts-with?]]
             [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.test-tools :refer :all]
+            [konfo-backend.tools :refer [debug-pretty]]
             [cheshire.core :as cheshire]
             [konfo-backend.test-mock-data :refer :all]))
 
@@ -79,16 +80,16 @@
         (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= 4 (count (:hits r))))
           (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))))
 
       (testing "koulutustyyppi amm-osaamisala"
         (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
-          ;(debug-pretty r)
+          ;; (debug-pretty r)
           (is (= 1 (count (:hits r))))
-          (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))

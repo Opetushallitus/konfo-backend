@@ -641,5 +641,3 @@
            )))
   )
 
-(use 'clojure.test)
-(run-tests)
