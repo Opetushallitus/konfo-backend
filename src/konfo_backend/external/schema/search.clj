@@ -87,7 +87,9 @@
    (s/->OptionalKey :ePerusteId)              (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)               (s/maybe Url)
    (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Any)
+   (s/->OptionalKey :opintojenLaajuusNumeroMin)        (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumeroMax)        (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Num)
    (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
    (s/->OptionalKey :tutkintonimikkeet)       [(->Koodi TutkintonimikeKoodi)]
    :toteutukset                               [KoulutusToteutusHit]})

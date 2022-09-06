@@ -1,9 +1,8 @@
 (ns konfo-backend.palaute.api
   (:require
     [konfo-backend.palaute.palaute :as palaute]
-    [compojure.api.core :refer [POST]]
     [konfo-backend.palaute.sqs :as sqs]
-    [ring.util.http-response :refer :all]
+    [ring.util.http-response :refer [ok]]
     [compojure.api.core :as c]))
 
 (defonce sqs-client (sqs/create-sqs-client))
@@ -13,18 +12,21 @@
    |    post:
    |      summary: Lähetä palaute
    |      description: Lähetä palaute
-   |      parameters:
-   |        - in: FormData
-   |          name: arvosana
-   |          type: number
-   |          description: Palautteen arvosana
-   |        - in: FormData
-   |          name: palaute
-   |          type: string
-   |          description: Palautteen teksti
-   |        - in: FormData
-   |          name: path
-   |          type: string
+   |      requestBody:
+   |        content:
+   |          'application/x-www-form-urlencoded':
+   |            schema:
+   |              properties:  
+   |                arvosana:
+   |                  type: number
+   |                  description: Palautteen arvosana
+   |                palaute:
+   |                  type: string
+   |                  description: Palautteen teksti
+   |                path:
+   |                  type: string
+   |              required:
+   |                - arvosana
    |      responses:
    |        '200':
    |          description: Ok
@@ -35,7 +37,7 @@
 
 (def routes
   (c/routes
-    (POST "/palaute" [:as request]
+    (c/POST "/palaute" [:as request]
           :form-params [{arvosana :- Long nil}
                         {palaute :- String ""}
                         {path :- String ""}]

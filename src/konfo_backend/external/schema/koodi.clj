@@ -136,10 +136,10 @@
    |        koodiUri:
    |          type: string
    |          example: opintojenlaajuus_40
-   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+   |          description: Opintojen laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
    |        nimi:
    |          type: object
-   |          description: Tutkinnon laajuuden eri kielillä.
+   |          description: Opintojen laajuus eri kielillä.
    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
