@@ -112,9 +112,12 @@
   {:bool (some-hakuaika-kaynnissa current-time)})
 
 (defn hakutieto-query
-  [inner-query]
-  {:nested {:path  "search_terms.hakutiedot"
-            :query {:bool {:filter (vec (remove nil? [inner-query]))}}}})
+  [field constraint]
+  {:nested
+   {:path "search_terms.hakutiedot"
+    :query
+    {:bool
+     {:filter (->terms-query field constraint)}}}})
 
 (defn filters
   [constraints current-time]
@@ -126,32 +129,12 @@
     (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
     (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
     (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
-    (hakutapa? constraints) (conj
-                              {:nested
-                               {:path "search_terms.hakutiedot"
-                                :query
-                                {:bool
-                                 {:filter (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))}}}})
-    (pohjakoulutusvaatimus? constraints) (conj
-                                           {:nested
-                                            {:path "search_terms.hakutiedot"
-                                             :query
-                                             {:bool
-                                              {:filter (->terms-query
-                                                         :search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                         (:pohjakoulutusvaatimus constraints))}}}})
-    (valintatapa? constraints) (conj
-                                 {:nested
-                                  {:path "search_terms.hakutiedot"
-                                   :query
-                                   {:bool
-                                    {:filter (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))}}}})
-    (yhteishaku? constraints) (conj
-                                {:nested
-                                 {:path "search_terms.hakutiedot"
-                                  :query
-                                  {:bool
-                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}})))
+    (hakutapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
+    (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
+                                               :search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                               (:pohjakoulutusvaatimus constraints)))
+    (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
+    (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))
 
 (defn hakutieto-filters
   [inner-query current-time constraints]
