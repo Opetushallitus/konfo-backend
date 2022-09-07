@@ -45,22 +45,22 @@
    |          name: toteutukset
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös koulutuksen toteutukset?
    |        - in: query
    |          name: hakukohteet
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös hakukohteet, joissa voi hakea koulutukseen?
    |        - in: query
    |          name: haut
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös haut, joissa voi hakea koulutukseen?
    |      responses:
    |        '200':
@@ -90,22 +90,22 @@
    |          name: koulutus
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös toteutuksen koulutus?
    |        - in: query
    |          name: hakukohteet
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös hakukohteet, joissa voi hakea toteutukseen?
    |        - in: query
    |          name: haut
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös haut, joissa voi hakea toteutukseen?
    |      responses:
    |        '200':
@@ -135,29 +135,29 @@
    |          name: valintaperustekuvaus
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös hakukohteen valintaperusteiden kuvaus?
    |        - in: query
    |          name: koulutus
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös sen koulutuksen tiedot, johon hakukohteessa voi hakea?
    |        - in: query
    |          name: toteutus
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös sen toteutuksen tiedot, johon haussa voi hakea?
    |        - in: query
    |          name: haku
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös haku, johon hakukohde kuuluu?
    |      responses:
    |        '200':
@@ -187,22 +187,22 @@
    |          name: koulutukset
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös niiden koulutusten tiedot, joihin haussa voi hakea?
    |        - in: query
    |          name: toteutukset
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko myös niiden toteutusten tiedot, joihin haussa voi hakea?
    |        - in: query
    |          name: hakukohteet
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
-   |          default: false
    |          description: Haetaanko haun hakukohteet?
    |      responses:
    |        '200':
@@ -227,50 +227,48 @@
    |          required: false
    |          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
    |            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
-   |          default: nil
    |          example: Hevostalous
    |        - in: query
    |          name: page
    |          schema:
    |            type: number
+   |            default: 1
    |          required: false
    |          description: Hakutuloksen sivunumero
-   |          default: 1
    |        - in: query
    |          name: size
    |          schema:
    |            type: number
+   |            default: 20
    |          required: false
    |          description: Hakutuloksen sivun koko
-   |          default: 20
    |        - in: query
    |          name: lng
    |          schema:
    |            type: string
+   |            default: fi
    |          required: false
    |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |          default: fi
    |        - in: query
    |          name: sort
    |          schema:
    |            type: string
+   |            default: score
    |          required: false
    |          description: Järjestysperuste. 'name' tai 'score'
-   |          default: score
    |        - in: query
    |          name: order
    |          schema:
    |            type: string
+   |            default: desc
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
-   |          default: desc
    |        - in: query
    |          name: koulutustyyppi
    |          schema:
    |            type: string
    |          required: false
    |          description: Pilkulla eroteltu koulutustyypit. 'amm, 'yo' tai 'amk'
-   |          default: nil
    |          example: amk
    |        - in: query
    |          name: sijainti
@@ -279,7 +277,6 @@
    |          required: false
    |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
    |          example: kunta_091,maakunta_01,maakunta_03
-   |          default: nil
    |        - in: query
    |          name: opetuskieli
    |          schema:
@@ -287,7 +284,6 @@
    |          required: false
    |          description: Pilkulla eroteltu opetuskielten koodeja
    |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
-   |          default: nil
    |        - in: query
    |          name: koulutusala
    |          schema:
@@ -295,7 +291,6 @@
    |          required: false
    |          description: Pilkulla eroteltu koulutusalojen koodeja
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
-   |          default: nil
    |        - in: query
    |          name: opetustapa
    |          schema:
@@ -303,7 +298,6 @@
    |          required: false
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
-   |          default: nil
    |        - in: query
    |          name: valintatapa
    |          schema:
@@ -311,21 +305,20 @@
    |          required: false
    |          description: Pilkulla eroteltu valintatapojen koodeja
    |          example: valintatapajono_av, valintatapajono_tv
-   |          default: nil
    |        - in: query
    |          name: hakukaynnissa
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
-   |          default: false
    |        - in: query
    |          name: jotpa
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
-   |          default: false
    |        - in: query
    |          name: hakutapa
    |          schema:
@@ -333,7 +326,6 @@
    |          required: false
    |          description: Pilkulla eroteltu hakutapojen koodeja
    |          example: hakutapa_01, hakutapa_03
-   |          default: nil
    |        - in: query
    |          name: yhteishaku
    |          schema:
@@ -341,7 +333,6 @@
    |          required: false
    |          description: Pilkulla eroteltu lista yhteishakujen oideja
    |          example: 1.2.246.562.29.00000000000000000800
-   |          default: nil
    |        - in: query
    |          name: pohjakoulutusvaatimus
    |          schema:
@@ -349,7 +340,6 @@
    |          required: false
    |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
-   |          default: nil
    |      responses:
    |        '200':
    |          description: Ok

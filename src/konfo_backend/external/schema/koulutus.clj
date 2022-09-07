@@ -27,6 +27,9 @@
      |            - yo
      |            - amk
      |            - lk
+     |            - erikoislaakari
+     |            - kk-opintojakso
+     |            - kk-opintokokonaisuus
      |            - muu
      |          example: amm
      |        koulutukset:
@@ -59,41 +62,14 @@
      |          description: Koulutuksen näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
      |          $ref: '#/components/schemas/Nimi'
      |        metadata:
-     |          type: object
-     |          oneOf:
-     |            - $ref: '#/components/schemas/AmmatillinenKoulutusMetadata'
-     |          example:
-     |            koulutustyyppi: amm
-     |            koulutusalaKoodiUrit:
-     |              - kansallinenkoulutusluokitus2016koulutusalataso1_054#1
-     |              - kansallinenkoulutusluokitus2016koulutusalataso1_055#1
-     |            kuvaus:
-     |              fi: Suomenkielinen kuvaus
-     |              sv: Ruotsinkielinen kuvaus
-     |            lisatiedot:
-     |              - otsikko:
-     |                  koodiUri: koulutuksenlisatiedot_03#1
-     |                  nimi:
-     |                    fi: Lisätiedon otsikko suomeksi
-     |                    sv: Lisätiedon otsikko ruotsiksi
-     |                teksti:
-     |                  fi: Opintojen suomenkielinen lisätietokuvaus
-     |                  sv: Opintojen ruotsinkielinen lisätietokuvaus
-     |            tutkintonimike:
-     |              - koodiUri: tutkintonimikkeet_10024
-     |                nimi:
-     |                  fi: Tutkintonimike suomeksi
-     |                  sv: Tutkintonimike ruotsiksi
-     |            opintojenLaajuus:
-     |              - koodiUri: opintojenlaajuus_40
-     |                nimi:
-     |                  fi: 40
-     |                  sv: 40
-     |            opintojenLaajuusyksikko:
-     |              - koodiUri: opintojenlaajuusyksikko_2
-     |                nimi:
-     |                  fi: Opintopistettä
-     |                  sv: Opintopistettä ruotsiksi
+      |          type: object
+      |          oneOf:
+      |            - $ref: '#/components/schemas/YliopistoKoulutusMetadata'
+      |            - $ref: '#/components/schemas/AmmattikorkeaKoulutusMetadata'
+      |            - $ref: '#/components/schemas/KkOpintojaksoKoulutusMetadata'
+      |            - $ref: '#/components/schemas/KkOpintokokonaisuusKoulutusMetadata'
+      |            - $ref: '#/components/schemas/LukioKoulutusMetadata'
+      |            - $ref: '#/components/schemas/ErikoislaakariKoulutusMetadata'
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
@@ -133,7 +109,9 @@
    :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
                                                 #(= "yo" (:tyyppi %)) YoKoulutusMetadata
                                                 #(= "amk" (:tyyppi %)) AmkKoulutusMetadata
-                                                #(= "kk-opintojakso" (:tyyppi %)) KorkeakoulutusOpintojaksoKoulutusMetadata
+                                                #(= "erikoislaakari" (:tyyppi %)) ErikoislaakariKoulutusMetadata
+                                                #(= "kk-opintojakso" (:tyyppi %)) KkOpintojaksoKoulutusMetadata
+                                                #(= "kk-opintokokonaisuus" (:tyyppi %)) KkOpintokokonaisuusKoulutusMetadata
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
    :organisaatio                 Organisaatio

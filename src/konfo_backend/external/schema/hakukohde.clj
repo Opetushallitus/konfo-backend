@@ -215,6 +215,9 @@
    |          example:
    |            - fi
    |            - sv
+   |        jarjestaaUrheilijanAmmKoulutusta:
+   |          type: boolean
+   |          description: Järjestääkö hakukohde urheilijan ammatillista koulutusta
    |        organisaatio:
    |          type: object
    |          description: Hakukohteen luonut organisaatio
@@ -230,38 +233,38 @@
    |          example: 1587537927174")
 
 (s/defschema Hakukohde
-  {:oid                                            HakukohdeOid
-   (s/->OptionalKey :externalId)                   s/Str
-   :toteutusOid                                    ToteutusOid
-   :hakuOid                                        HakuOid
-   :tila                                           Julkaistu
-   :nimi                                           Kielistetty
-   :jarjestyspaikka                                Organisaatio
-   :kaytetaanHaunHakulomaketta                     s/Bool
-   (s/->OptionalKey :hakulomaketyyppi)             Hakulomaketyyppi
-   :hakulomakeKuvaus                               Kielistetty
-   :hakulomakeLinkki                               Kielistetty
-   :pohjakoulutusvaatimus                          [(->Koodi PohjakoulutusvaatimusKoodi)]
-   :pohjakoulutusvaatimusTarkenne                  Kielistetty
-   :muuPohjakoulutusvaatimus                       Kielistetty
-   :toinenAsteOnkoKaksoistutkinto                  s/Bool
-   :kaytetaanHaunAikataulua                        s/Bool
-   :hakuajat                                       [Ajanjakso]
-   :liitteetOnkoSamaToimitusaika                   s/Bool
-   :liitteetOnkoSamaToimitusosoite                 s/Bool
-   (s/->OptionalKey :liitteidenToimitusaika)       Datetime
-   (s/->OptionalKey :liitteidenToimitusosoite)     LiitteenToimitusosoite
-   (s/->OptionalKey :liitteidenToimitustapa)       LiitteenToimitustapa
-   :liitteet                                       [Liite]
-   :valintakokeet                                  [Valintakoe]
-   :kielivalinta                                   [Kieli]
+  {:oid                                                HakukohdeOid
+   (s/->OptionalKey :externalId)                       s/Str
+   :toteutusOid                                        ToteutusOid
+   :hakuOid                                            HakuOid
+   :tila                                               Julkaistu
+   :nimi                                               Kielistetty
+   :jarjestyspaikka                                    Organisaatio
+   :kaytetaanHaunHakulomaketta                         s/Bool
+   (s/->OptionalKey :hakulomaketyyppi)                 Hakulomaketyyppi
+   :hakulomakeKuvaus                                   Kielistetty
+   :hakulomakeLinkki                                   Kielistetty
+   :pohjakoulutusvaatimus                              [(->Koodi PohjakoulutusvaatimusKoodi)]
+   :pohjakoulutusvaatimusTarkenne                      Kielistetty
+   :muuPohjakoulutusvaatimus                           Kielistetty
+   :toinenAsteOnkoKaksoistutkinto                      s/Bool
+   :kaytetaanHaunAikataulua                            s/Bool
+   :hakuajat                                           [Ajanjakso]
+   :liitteetOnkoSamaToimitusaika                       s/Bool
+   :liitteetOnkoSamaToimitusosoite                     s/Bool
+   (s/->OptionalKey :liitteidenToimitusaika)           Datetime
+   (s/->OptionalKey :liitteidenToimitusosoite)         LiitteenToimitusosoite
+   (s/->OptionalKey :liitteidenToimitustapa)           LiitteenToimitustapa
+   :liitteet                                           [Liite]
+   :valintakokeet                                      [Valintakoe]
+   :kielivalinta                                       [Kieli]
    (s/->OptionalKey :jarjestaaUrheilijanAmmKoulutusta) s/Bool
-   (s/->OptionalKey :valintaperustekuvaus)         Valintaperustekuvaus
-   (s/->OptionalKey :metadata)                     HakukohdeMetadata
-   :organisaatio                                   Organisaatio
-   :modified                                       Datetime
-   :timestamp                                      s/Int
-   s/Any s/Any})
+   (s/->OptionalKey :valintaperustekuvaus)             Valintaperustekuvaus
+   (s/->OptionalKey :metadata)                         HakukohdeMetadata
+   :organisaatio                                       Organisaatio
+   :modified                                           Datetime
+   :timestamp                                          s/Int
+   s/Any                                               s/Any})
 
 (def schemas
   (str

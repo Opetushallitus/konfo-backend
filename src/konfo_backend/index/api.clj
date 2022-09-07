@@ -56,9 +56,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -87,9 +87,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -141,9 +141,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -200,9 +200,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -231,9 +231,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -262,9 +262,9 @@
    |          name: draft
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Näytetäänkö luonnos esikatselua varten
-   |          default: false
    |          example: false
    |      responses:
    |        '200':
@@ -317,9 +317,9 @@
    |          name: osaamisalakuvaukset
    |          schema:
    |            type: boolean
+   |            default: false
    |          required: false
    |          description: Haetaanko osaamisalakuvaukset
-   |          default: false
    |          example: true
    |      responses:
    |        '200':

@@ -57,7 +57,10 @@
                                    [oph/clj-test-utils "0.5.0-SNAPSHOT"]
                                    [org.mockito/mockito-all "1.9.5"]
                                    [clj-http-fake "1.0.3"]
-                                   [pjstadig/humane-test-output "0.11.0"]]
+                                   [pjstadig/humane-test-output "0.11.0"]
+                                   [io.swagger.parser.v3/swagger-parser "2.1.1"]
+                                   [com.fasterxml.jackson.dataformat/jackson-dataformat-yaml "2.13.2"]
+                                   [com.fasterxml.jackson.core/jackson-annotations "2.13.2"]]
              :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
              :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])

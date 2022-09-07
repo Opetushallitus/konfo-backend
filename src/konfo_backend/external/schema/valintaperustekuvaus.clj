@@ -63,7 +63,7 @@
    |        metadata:
    |          type: object
    |          oneOf:
-   |            - $ref: '#/components/schemas/AmmValintaperustekuvausMetadata'
+   |            - $ref: '#/components/schemas/ValintaperustekuvausMetadata'
    |        organisaatio:
    |          type: object
    |          description: Valintaperustekuvauksen luoneen organisaation oid
