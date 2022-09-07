@@ -118,24 +118,10 @@
 
 (defn filters
   ([constraints]
-   (filters constraints (current-time-as-kouta-format)))
+   (filters constraints (current-time-as-kouta-format) ""))
   ([constraints current-time]
-  (cond-> []
-          (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
-          (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
-          (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
-          (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
-          (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
-          (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
-          (has-jotpa-rahoitus? constraints) (conj {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}})
-          (hakutapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints))))
-          (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.pohjakoulutusvaatimukset (:pohjakoulutusvaatimus constraints))))
-          (valintatapa? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints))))
-          (yhteishaku? constraints) (conj (hakutieto-query (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))))
-
-
-(defn aggs-filters
-  [constraints current-time filter-name]
+   (filters constraints current-time ""))
+  ([constraints current-time filter-name]
   (cond-> []
     (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
     (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
@@ -169,23 +155,23 @@
                                  {:path "search_terms.hakutiedot"
                                   :query
                                   {:bool
-                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}})))
+                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}}))))
 
 (defn hakutieto-filters
   [inner-query current-time constraints]
   (vec (concat
     [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
-    (aggs-filters constraints current-time ""))))
+    (filters constraints current-time ""))))
 
 (defn terms-filters
   [inner-query current-time constraints]
   (vec (concat
          [inner-query]
-         (aggs-filters constraints current-time ""))))
+         (filters constraints current-time ""))))
 
 (defn term-filters
   [inner-query current-time constraints]
-  {:bool {:filter (aggs-filters constraints current-time "")}})
+  {:bool {:filter (filters constraints current-time "")}})
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
