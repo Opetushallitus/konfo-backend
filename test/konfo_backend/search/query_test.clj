@@ -419,7 +419,8 @@
                {:hakukaynnissa
                 {:bool
                  {:filter
-                  [{:bool
+                  [{:term {:search_terms.hasJotpaRahoitus true}}
+                   {:bool
                     {:should
                      [{:bool
                        {:filter
@@ -454,9 +455,7 @@
                               {:range
                                {:search_terms.hakutiedot.hakuajat.paattyy
                                 {:gt
-                                 "2020-01-01T01:01"}}}]}}]}}}}]}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}
-                   ]}}}}
+                                 "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :jotpa
              {:filters

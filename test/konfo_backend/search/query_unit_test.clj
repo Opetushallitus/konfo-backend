@@ -6,7 +6,7 @@
 (deftest filters-test
   (testing "Should form filter for the query with jotpa as the only constraint"
     (is (= [{:term {:search_terms.hasJotpaRahoitus true}}]
-          (filters {:jotpa true}))))
+           (filters {:jotpa true} "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with two terms queries"
     (is (=[{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
@@ -64,8 +64,7 @@
                      :hakukaynnissa true
                      :valintatapa []
                      :koulutustyyppi ["koulutustyyppi_26"]}
-                    "2022-08-26T07:21")
-           ))))
+                    "2022-08-26T07:21")))))
 
 (deftest hakuaika-filter-query-test
   (testing "Should form hakukaynnissa filter query with current time"
@@ -126,6 +125,35 @@
              {:hakukaynnissa
               {:bool
                {:filter
+                [{:term {:search_terms.hasJotpaRahoitus true}}
+                 {:bool
+                  {:should
+                   [{:bool
+                     {:filter
+                      [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                       {:bool
+                        {:should
+                         [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                          {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                    {:nested
+                     {:path "search_terms.hakutiedot.hakuajat"
+                      :query
+                      {:bool
+                       {:filter
+                        [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                         {:bool
+                          {:should
+                           [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           (hakukaynnissa-filter "2022-08-26T07:21" {:jotpa true}))))
+
+  (testing "Should form aggs filter for hakukaynnissa with hakukaynnissa as the selected filter"
+    (is (= {:filters
+            {:filters
+             {:hakukaynnissa
+              {:bool
+               {:filter
                 [{:bool
                   {:should
                    [{:bool
@@ -144,13 +172,12 @@
                          {:bool
                           {:should
                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-                 {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (hakukaynnissa-filter "2022-08-26T07:21" {:jotpa true})))))
+           (hakukaynnissa-filter "2022-08-26T07:21" {:hakukaynnissa true})))))
 
 (deftest jotpa-filter-test
-  (testing "Should form aggs filter for jotpa with hakukaynnissa as the selected filter"
+  (testing "Should form aggs filter for jotpa without selected filters"
     (is (= {:filters
              {:filters
               {:jotpa
@@ -158,7 +185,7 @@
                 {:filter
                  [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (jotpa-filter  "2022-08-26T07:21" {:jotpa true}))))
+           (jotpa-filter "2022-08-26T07:21" {}))))
 
   (testing "Should form aggs filter for jotpa with hakukaynnissa as selected filter"
     (is (= {:filters
@@ -188,7 +215,7 @@
                  {:term {:search_terms.hasJotpaRahoitus true}}]}
                }}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (jotpa-filter "2022-08-26T07:21" {:jotpa true :hakukaynnissa true}))))
+           (jotpa-filter "2022-08-26T07:21" {:hakukaynnissa true}))))
 
   (testing "Should form aggs filter for jotpa with pohjakoulutusvaatimus as selected filter"
     (is (= {:filters
@@ -196,13 +223,23 @@
              {:jotpa
               {:bool
                {:filter
-                [{:term {:search_terms.hasJotpaRahoitus true}}
-                 {:nested {:path "search_terms.hakutiedot"
+                [{:nested {:path "search_terms.hakutiedot"
                            :query {:bool {:filter
                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                  "pohjakoulutusvaatimuskonfo_am"}}}}}}]}}}}
+                                                  "pohjakoulutusvaatimuskonfo_am"}}}}}}
+                 {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (jotpa-filter "2022-08-26T07:21" {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]})))))
+           (jotpa-filter "2022-08-26T07:21" {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}))))
+
+  (testing "Should form aggs filter for jotpa with jotpa as the selected filter"
+    (is (= {:filters
+            {:filters
+             {:jotpa
+              {:bool
+               {:filter
+                [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           (jotpa-filter "2022-08-26T07:21" {:jotpa true})))))
 
 (deftest ->hakutieto-filters-aggregation-test
   (testing "Should form aggs filters for pohjakoulutusvaatimus without selected filters"
@@ -367,7 +404,7 @@
                 {:filter
                  [{:nested {:path "search_terms.hakutiedot"
                             :query {:bool {:filter
-                                           {:term {:search_terms.hakutiedot.valintatapa
+                                           {:term {:search_terms.hakutiedot.valintatavat
                                                     "valintatapajono_av"}}}}}}
                   {:nested {:path "search_terms.hakutiedot"
                             :query {:bool {:filter
@@ -378,7 +415,7 @@
                 {:filter
                  [{:nested {:path "search_terms.hakutiedot"
                             :query {:bool {:filter
-                                           {:term {:search_terms.hakutiedot.valintatapa
+                                           {:term {:search_terms.hakutiedot.valintatavat
                                                    "valintatapajono_yp"}}}}}}
                   {:nested {:path "search_terms.hakutiedot"
                                    :query {:bool {:filter
@@ -386,10 +423,36 @@
                                                            ["hakutapa_01" "hakutapa_02"]}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (->hakutieto-filters-aggregation
-             :search_terms.hakutiedot.valintatapa
+             :search_terms.hakutiedot.valintatavat
              ["valintatapajono_av" "valintatapajono_yp"]
              "2022-08-26T07:21"
-             {:hakutapa ["hakutapa_01" "hakutapa_02"]})))))
+             {:hakutapa ["hakutapa_01" "hakutapa_02"]}))))
+
+  (testing "Should form aggs filters for valintatapa with one valintatapa as a selected filter"
+    (is (= {:filters
+             {:filters
+              {:valintatapajono_av
+               {:bool
+                {:filter
+                 [{:nested {:path "search_terms.hakutiedot"
+                            :query {:bool {:filter
+                                           {:term {:search_terms.hakutiedot.valintatavat
+                                                    "valintatapajono_av"}}}}}}]}}
+               :valintatapajono_yp
+               {:bool
+                {:filter
+                 [{:nested {:path "search_terms.hakutiedot"
+                            :query {:bool {:filter
+                                           {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_yp"}}}}}}
+                  {:nested {:path "search_terms.hakutiedot"
+                            :query {:bool {:filter
+                                           {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_av"}}}}}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           (->hakutieto-filters-aggregation
+             :search_terms.hakutiedot.valintatavat
+             ["valintatapajono_av" "valintatapajono_yp"]
+             "2022-08-26T07:21"
+             {:valintatapa ["valintatapajono_av"]})))))
 
 (deftest ->filters-aggregation-test
   (testing "Should form aggs filters for opetuskieli without any selected filters"
@@ -623,7 +686,23 @@
              :search_terms.koulutustyypit.keyword ["amm" "amk"]
              "2022-08-26T07:21"
              {:koulutusala ["kansallinenkoulutusluokitus2016koulutusalataso1_01"
-                            "kansallinenkoulutusluokitus2016koulutusalataso1_02"]})))))
+                            "kansallinenkoulutusluokitus2016koulutusalataso1_02"]}))))
+
+  (testing "Should not have duplicates for amm filter agg when it is also the selected filter"
+    (is (= {:filters
+            {:filters
+             {:amm {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amm"}}]}}
+              :amk {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                            {:term {:search_terms.koulutustyypit.keyword "amm"}}]}}}}
+            :aggs {:real_hits {:reverse_nested {}}}}
+           (->filters-aggregation
+             :search_terms.koulutustyypit.keyword ["amm" "amk"]
+             "2022-08-26T07:21"
+             {:koulutustyyppi ["amm"]}))))
+
+  )
 
 (use 'clojure.test)
 (run-tests)

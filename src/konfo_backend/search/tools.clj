@@ -117,19 +117,15 @@
             :query {:bool {:filter (vec (remove nil? [inner-query]))}}}})
 
 (defn filters
-  ([constraints]
-   (filters constraints (current-time-as-kouta-format) ""))
-  ([constraints current-time]
-   (filters constraints current-time ""))
-  ([constraints current-time filter-name]
+  [constraints current-time]
   (cond-> []
     (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
     (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
     (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
     (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
     (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
-    (or (= filter-name "hakukaynnissa") (haku-kaynnissa? constraints)) (conj (hakuaika-filter-query current-time))
-    (or (= filter-name "jotpa") (has-jotpa-rahoitus? constraints)) (conj {:term {:search_terms.hasJotpaRahoitus true}})
+    (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
+    (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
     (hakutapa? constraints) (conj
                               {:nested
                                {:path "search_terms.hakutiedot"
@@ -155,23 +151,23 @@
                                  {:path "search_terms.hakutiedot"
                                   :query
                                   {:bool
-                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}}))))
+                                   {:filter (->terms-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))}}}})))
 
 (defn hakutieto-filters
   [inner-query current-time constraints]
-  (vec (concat
+  (vec (distinct (concat
     [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
-    (filters constraints current-time ""))))
+    (filters constraints current-time)))))
 
 (defn terms-filters
   [inner-query current-time constraints]
   (vec (concat
          [inner-query]
-         (filters constraints current-time ""))))
+         (filters constraints current-time))))
 
 (defn term-filters
   [inner-query current-time constraints]
-  {:bool {:filter (filters constraints current-time "")}})
+  {:bool {:filter (filters constraints current-time)}})
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
@@ -204,4 +200,4 @@
                                               :tie_breaker 0.9
                                               :operator    "and"
                                               :type        "cross_fields"}}))
-      filter? (assoc :filter (filters constraints)))))
+      filter? (assoc :filter (filters constraints (current-time-as-kouta-format))))))

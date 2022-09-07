@@ -50,7 +50,7 @@
         (if (empty? lukiolinjat-and-osaamisala-filters)
           {}
           {:should lukiolinjat-and-osaamisala-filters}))}]
-    :filter (filters constraints)}})
+    :filter (filters constraints (current-time-as-kouta-format))}})
 
 (defn inner-hits-query
   [oid lng page size order tuleva? constraints]
@@ -78,7 +78,7 @@
 
 (defn- ->term-filter
   [field term current-time constraints]
-  {(keyword term) {:bool {:filter (terms-filters {:term {field term}} current-time constraints)}}})
+  {(keyword term) {:bool {:filter (distinct (terms-filters {:term {field term}} current-time constraints))}}})
 
 (defn- ->term-filters
   [field terms current-time constraints]
@@ -137,7 +137,10 @@
    {:filters
     {:hakukaynnissa
      {:bool
-      {:filter (filters constraints current-time "hakukaynnissa")}}}}
+      {:filter (distinct
+                 (conj
+                   (filters constraints current-time)
+                   (hakuaika-filter-query current-time)))}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn jotpa-filter
@@ -146,7 +149,10 @@
    {:filters
     {:jotpa
      {:bool
-      {:filter (filters constraints current-time "jotpa")}}}}
+      {:filter (distinct
+                 (conj
+                   (filters constraints current-time)
+                     {:term {:search_terms.hasJotpaRahoitus true}}))}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
 
 (defn- remove-nils [record]
@@ -177,10 +183,10 @@
                   :yhteishaku (yhteishaku-filter current-time constraints)})))
 
 (defn- generate-aggs-for
-  [filter-name filter-aggs tuleva? constraints]
+  [filter-name filter-aggs tuleva? constraints current-time]
   {:filter {:bool
             {:must   {:term {"search_terms.onkoTuleva" tuleva?}}
-             :filter (filters constraints)}}
+             :filter (filters constraints current-time)}}
    :aggs   (if (nil? filter-aggs)
              {}
              {filter-name filter-aggs})})
@@ -203,9 +209,9 @@
                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                             :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
                             :yhteishaku            (yhteishaku-filter current-time constraints)})}
-     :lukiopainotukset_aggs                    (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints)
-     :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints)
-     :osaamisala_aggs                          (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints)}))
+     :lukiopainotukset_aggs                    (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
+     :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
+     :osaamisala_aggs                          (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints current-time)}))
 
 (defn- aggregations
   [aggs-generator]
