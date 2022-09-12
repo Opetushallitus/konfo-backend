@@ -87,7 +87,7 @@
     (some #(or (nil? (:paattyy %))
                (.isAfter
                  (kouta-date-time-string->date-time (:paattyy %))
-                 (kouta-date-time-string->date-time (ten-months-past-as-kouta-format)))) hakuajat)))
+                 (kouta-date-time-string->date-time (current-time-as-kouta-format)))) hakuajat)))
 
 (defn hit-haku-kaynnissa?
   [hit]

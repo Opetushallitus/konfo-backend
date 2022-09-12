@@ -313,6 +313,13 @@
    |          required: false
    |          description: Haetaanko koulutuksia joilla on haku käynnissä
    |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
+   |        - in: query
    |          name: hakutapa
    |          schema:
    |            type: string
@@ -457,6 +464,7 @@
                                  {opetustapa            :- String nil}
                                  {valintatapa           :- String nil}
                                  {hakukaynnissa         :- Boolean false}
+                                 {jotpa                 :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
                                  {pohjakoulutusvaatimus :- String nil}]
@@ -468,19 +476,20 @@
                                                                                size
                                                                                sort
                                                                                order
-                                                                               koulutustyyppi
-                                                                               sijainti
-                                                                               opetuskieli
-                                                                               koulutusala
-                                                                               opetustapa
-                                                                               valintatapa
-                                                                               hakukaynnissa
-                                                                               hakutapa
-                                                                               yhteishaku
-                                                                               pohjakoulutusvaatimus
-                                                                               nil
-                                                                               nil
-                                                                               nil)))
+                                                                               {:koulutustyyppi koulutustyyppi
+                                                                                :sijainti sijainti
+                                                                                :opetuskieli opetuskieli
+                                                                                :koulutusala koulutusala
+                                                                                :opetustapa opetustapa
+                                                                                :valintatapa valintatapa
+                                                                                :hakukaynnissa hakukaynnissa
+                                                                                :jotpa jotpa
+                                                                                :hakutapa hakutapa
+                                                                                :yhteishaku yhteishaku
+                                                                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                                                :lukiopainotukset nil
+                                                                                :lukiolinjaterityinenkoulutustehtava nil
+                                                                                :osaamisala nil})))
              (GET "/search/filters" [:as request]
                   (with-access-logging request (if-let [result (filters/generate-filter-counts-external)]
                                                  (ok result)
