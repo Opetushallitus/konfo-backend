@@ -5,9 +5,7 @@
 
 (defn get-eperuste-by-id
   [id]
-  (when-let [eperuste (eperuste-index/get id)]
-    (when (= "valmis" (:tila eperuste))
-      eperuste)))
+  (eperuste-index/get id))
 
 (defn get-osaamisalakuvaus-by-id
   [id]

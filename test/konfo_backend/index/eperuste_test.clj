@@ -147,8 +147,4 @@
                                                          :sv "AmmattitaidonOsoittamistavat 105980 sv"
                                                          :en "AmmattitaidonOsoittamistavat 105980 en"},
                           :id 6734824,
-                          :tila "valmis"}])))))
-
-  (testing "Don't get not valmis eperuste"
-    (with-redefs [clj-elasticsearch.elastic-connect/get-document (fn [x y & z] {:found true :_source {:id 3536456 :tila "luonnos" :voimassaoloAlkaa  (- (now-in-millis) 10000)}})]
-      (get-not-found (eperuste-url 3536456)))))
+                          :tila "valmis"}]))))))
