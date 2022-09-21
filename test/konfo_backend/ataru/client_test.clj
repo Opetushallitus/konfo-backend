@@ -3,14 +3,14 @@
             [konfo-backend.ataru.client :as client])
   (:use clj-http.fake))
 
-(defonce hakukohde-route #"http://localhost:8351/hakemus/api/hakukohde/.*")
+(defonce hakukohde-route #"http://localhost:8351/hakemus/api/haku/.*")
 
 (deftest ataru-client-test
   (testing "get-form-for-hakukohde"
     (testing "response status is 200"
       (with-fake-routes-in-isolation
         {hakukohde-route (fn [req] {:status 200 :body "{\"some-data\": 42}"})}
-        (let [form (client/get-form-for-hakukohde "123")]
+        (let [form (client/get-form-for-haku "123")]
           (testing "returns parsed body"
             (is (= {:some-data 42} form))))))
 
@@ -18,4 +18,4 @@
       (with-fake-routes-in-isolation
         {hakukohde-route (fn [req] {:status 404 :body "{\"some-data\": 42}"})}
         (testing "exception is thrown"
-          (is (thrown? Exception (client/get-form-for-hakukohde "123"))))))))
+          (is (thrown? Exception (client/get-form-for-haku "123"))))))))

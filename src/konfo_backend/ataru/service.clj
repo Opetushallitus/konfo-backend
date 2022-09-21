@@ -5,8 +5,8 @@
   [{demo-allowed :demo-allowed}]
   demo-allowed)
 
-(defn demo-allowed-for-hakukohde?
-  [hakukohde-oid]
-  (-> hakukohde-oid
-    client/get-form-for-hakukohde
+(defn demo-allowed-for-haku?
+  [haku-oid]
+  (-> haku-oid
+    client/get-form-for-haku
     get-demo-allowed))

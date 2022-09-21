@@ -423,20 +423,19 @@
          (with-access-logging request (if-let [result (haku/get oid)]
                                         (ok result)
                                         (not-found "Not found"))))
+    (GET "/haku/:hakuOid/demo" [:as request]
+         :path-params [oid :- String]
+         (with-access-logging request (if-let [haku (haku/get oid)]
+                                        (let [ataru-lomake? (= (:hakulomaketyyppi haku) "ataru")
+                                              demo-allowed? (if ataru-lomake? (ataru/demo-allowed-for-haku? oid) false)]
+                                          (ok {"demoAllowed" demo-allowed?}))
+                                        (not-found "Not found"))))
 
     (GET "/hakukohde/:oid" [:as request]
          :query-params [{draft :- Boolean false}]
          :path-params [oid :- String]
          (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                         (ok result)
-                                        (not-found "Not found"))))
-
-    (GET "/hakukohde/:oid/demo" [:as request]
-         :path-params [oid :- String]
-         (with-access-logging request (if-let [hakukohde (hakukohde/get oid false)]
-                                        (let [ataru-lomake? (= (:hakulomaketyyppi hakukohde) "ataru")
-                                              demo-allowed? (if ataru-lomake? (ataru/demo-allowed-for-hakukohde? oid) false)]
-                                          (ok {"demoAllowed" demo-allowed?}))
                                         (not-found "Not found"))))
 
     (GET "/valintaperuste/:id" [:as request]
