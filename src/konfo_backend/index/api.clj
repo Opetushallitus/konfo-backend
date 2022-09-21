@@ -154,19 +154,19 @@
    |                type: json
    |        '404':
    |          description: Not found
-   |  /hakukohde/{oid}/demo:
+   |  /haku/{oid}/demo:
    |    get:
    |      tags:
    |        - internal
-   |      summary: Hae tieto onko hakukohteen hakulomakkeen demo käytössä
-   |      description: Hae tieto hakukohteen hakulomakkeen demosta annetulla oidilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      summary: Hae tieto onko haun hakulomakkeen demo käytössä
+   |      description: Hae tieto haun hakulomakkeen demosta annetulla oidilla. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: path
    |          name: oid
    |          schema:
    |            type: string
    |          required: true
-   |          description: Hakukohteen yksilöivä oid
+   |          description: Haun yksilöivä oid
    |          example: 1.2.246.562.20.00000000000000000001
    |      responses:
    |        '200':
@@ -178,7 +178,7 @@
    |                properties:
    |                  demoAllowed:
    |                    type: boolean
-   |                    description: Onko hakukohteen hakulomakkeen demo käytössä?
+   |                    description: Onko haun hakulomakkeen demo käytössä?
    |        '404':
    |          description: Not found
    |  /valintaperuste/{id}:
@@ -423,7 +423,7 @@
          (with-access-logging request (if-let [result (haku/get oid)]
                                         (ok result)
                                         (not-found "Not found"))))
-    (GET "/haku/:hakuOid/demo" [:as request]
+    (GET "/haku/:oid/demo" [:as request]
          :path-params [oid :- String]
          (with-access-logging request (if-let [haku (haku/get oid)]
                                         (let [ataru-lomake? (= (:hakulomaketyyppi haku) "ataru")
