@@ -189,6 +189,11 @@
     TutkintoonJohtavaKoulutusMetadata
     {:tyyppi AmmOpeErityisopeJaOpo}))
 
+(def OpePedagOpinnotKoulutusMetadata
+  (st/merge
+    TutkintoonJohtavaKoulutusMetadata
+    {:tyyppi OpePedagOpinnot}))
+
 (def YoKoulutusMetadata
   (st/merge 
    TutkintoonJohtavaKoulutusMetadata

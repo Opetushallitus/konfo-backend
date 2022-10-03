@@ -1,12 +1,10 @@
 (ns konfo-backend.search.query
   (:require
-    [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
+    [konfo-backend.elastic-tools :refer [->from ->size]]
     [konfo-backend.index.haku :refer [list-yhteishaut]]
+    [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
     [konfo-backend.search.tools :refer :all]
-    [clojure.string :refer [lower-case]]
-    [konfo-backend.elastic-tools :refer [->size ->from]]
-    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format ten-months-past-as-kouta-format ->lower-case-vec]]
-    [konfo-backend.config :refer [config]]))
+    [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (defn query
   [keyword constraints user-lng suffixes]
@@ -105,7 +103,7 @@
 
 (defn- koulutustyyppi-filters
   [field current-time constraints]
-  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"] current-time constraints))
+  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"] current-time constraints))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field current-time constraints]

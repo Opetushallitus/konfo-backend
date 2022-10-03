@@ -251,6 +251,7 @@
              :tuva-erityisopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}]}}
              :telma {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "telma"}}]}}
              :amm-ope-erityisope-ja-opo {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}]}}
+             :ope-pedag-opinnot {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "ope-pedag-opinnot"}}]}}
              :vapaa-sivistystyo {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}]}}
              :vapaa-sivistystyo-opistovuosi {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-opistovuosi"}}]}}
              :vapaa-sivistystyo-muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-muu"}}]}}
@@ -545,6 +546,9 @@
                 :amm-ope-erityisope-ja-opo {:bool {:filter
                                                    [{:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}
                                                     {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                :ope-pedag-opinnot {:bool {:filter
+                                           [{:term {:search_terms.koulutustyypit.keyword "ope-pedag-opinnot"}}
+                                            {:term {:search_terms.hasJotpaRahoitus true}}]}}
                 :vapaa-sivistystyo {:bool {:filter
                                            [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
                                             {:term {:search_terms.hasJotpaRahoitus true}}]}}
