@@ -14,16 +14,17 @@
   []
   {:match_all {}})
 
+;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
   [order lng]
-  {(->lng-keyword "nimi.%s.keyword" lng) {:order order :unmapped_type "string"}})
+  [{(->lng-keyword "nimi.%s.keyword" lng) {:order order :unmapped_type "string"}}
+   {(->lng-keyword "nimi_sort.%s.keyword" lng) {:order order :unmapped_type "string"}}])
 
 (defn sorts
   [sort order lng]
-  (case sort
-    "score" [{:_score {:order order}} (->name-sort "asc" lng)]
-    "name" [(->name-sort order lng)]
-    [{:_score {:order order}} (->name-sort "asc" lng)]))
+  (if (= "name" sort)
+    (->name-sort order lng)
+    (vec (concat [{:_score {:order order}}] (->name-sort "asc" lng)))))
 
 (defn- lukio-filters [constraints]
   (cond-> []
