@@ -207,7 +207,7 @@
                             :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                             :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
-                            :oppilaitos            (->filters-aggregation-for-subentity "search_terms.oppilaitosOid.keyword" oppilaitos-oids current-time constraints)
+                            :oppilaitos            (when-not (empty? oppilaitos-oids) (->filters-aggregation-for-subentity "search_terms.oppilaitosOid.keyword" oppilaitos-oids current-time constraints))
                             :yhteishaku            (yhteishaku-filter current-time constraints)})}
      :lukiopainotukset_aggs                    (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
      :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
