@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer [allowed-to-view]]
-    [konfo-backend.elastic-tools :refer [get-source search]]))
+    [konfo-backend.elastic-tools :refer [get-source get-sources search]]))
 
 (defonce index "oppilaitos-kouta")
 
@@ -21,6 +21,12 @@
   [oid draft?]
   (some->> (get-source index oid)
            (dissoc-kouta-data-if-not-allowed-to-view draft?)))
+
+(defn get-many
+  [oids draft?]
+  (when-not (empty? oids)
+    (some->> (get-sources index oids nil)
+             (map #(dissoc-kouta-data-if-not-allowed-to-view draft? %)))))
 
 (defn- select-matching-osat
   [oid oppilaitos]
