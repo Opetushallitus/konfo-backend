@@ -1,5 +1,6 @@
 (ns konfo-backend.search.filters
   (:require [konfo-backend.koodisto.koodisto :as k]
+            [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.index.haku :refer [get-yhteishaut]]
             [konfo-backend.tools :refer [reduce-merge-map]]))
 
@@ -148,8 +149,28 @@
       :lukiopainotukset (filters "lukiopainotukset")}))
   ([] (generate-filter-counts {})))
 
+(defn- add-oppilaitos-nimet
+  [oppilaitokset]
+  (let [oppilaitos-oids (keys oppilaitokset)
+        indexed-oppilaitokset (oppilaitos/get-many oppilaitos-oids false)
+        oppilaitokset-with-nimet (reduce-kv (fn [target-map oppilaitos-oid oppilaitos]
+                                              (let [indexed-oppilaitos (first (filter #(= (keyword (:oid %)) oppilaitos-oid) indexed-oppilaitokset))
+                                                    updated-oppilaitos (-> oppilaitos
+                                                                           (assoc :nimi (:nimi indexed-oppilaitos))
+                                                                           (assoc :count (:doc_count oppilaitos))
+                                                                           (dissoc :doc_count))]
+                                                ;(println (str "indexed-oppilaitos: " oppilaitos-oid " " indexed-oppilaitos))
+                                                (assoc target-map oppilaitos-oid updated-oppilaitos))) {} oppilaitokset)]
+    ;(println (str "indexed-oppilaitokset: " (prn-str indexed-oppilaitokset)))
+    oppilaitokset-with-nimet))
+
+(defn- oppilaitos-filters
+  [aggs]
+  (let [oppilaitokset-with-nimet (add-oppilaitos-nimet (get-in aggs [:inner_hits_agg :oppilaitos :buckets]))]
+    oppilaitokset-with-nimet))
+
 (defn generate-filter-counts-for-jarjestajat
-  [filter-counts]
+  [filter-counts aggs]
   (let [filters (partial koodisto->filters filter-counts)]
     {:opetuskieli           (filters "oppilaitoksenopetuskieli")
      :maakunta              (filters "maakunta")
@@ -162,6 +183,7 @@
      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
      :lukiopainotukset      (filters "lukiopainotukset")
      :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
+     :oppilaitos            (oppilaitos-filters aggs)
      :osaamisala            (filters "osaamisala")})
     )
 
