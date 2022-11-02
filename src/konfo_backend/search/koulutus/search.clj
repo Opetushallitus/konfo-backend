@@ -52,13 +52,10 @@
 
 (defn- assoc-oppilaitos-counts
   [koulutus-oid result]
-  (let [query {:bool {:must [{:term {:oid koulutus-oid}}]}}
+  (let [query {:bool {:must {:term {:oid koulutus-oid}}}}
         aggs {:hits_aggregation {:nested {:path "search_terms"}
-                                 :aggs   {:inner_hits_agg {:filter {:bool {:must   [{:term {:search_terms.onkoTuleva false}}
-                                                                                    {:bool {}}]
-                                                                           :filter []}}
-                                                           :aggs   {:oppilaitos {:filter {:bool {:must   {:term {:search_terms.onkoTuleva false}}
-                                                                                                 :filter []}},
+                                 :aggs   {:inner_hits_agg {:filter {:bool {:must {:term {:search_terms.onkoTuleva false}}}}
+                                                           :aggs   {:oppilaitos {:filter {:bool {:must {:term {:search_terms.onkoTuleva false}}}},
                                                                                  :aggs   {:oppilaitos {:terms {:field "search_terms.oppilaitosOid.keyword",
                                                                                                                :size  10000}}}}}}}}}
         oppilaitos-counts (e/search index
