@@ -1,10 +1,11 @@
 (ns konfo-backend.search.response
   (:require
-     [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
-     [konfo-backend.search.tools :refer :all]
-     [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
-     [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-     [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
+    [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
+    [konfo-backend.index.oppilaitos :as oppilaitos]
+    [konfo-backend.elastic-tools :as e]
+    [konfo-backend.search.tools :refer :all]
+    [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
+    [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
   [response]
@@ -126,3 +127,33 @@
 (defn parse-inner-hits-for-tarjoajat
   [response]
   (parse-inner-hits response filters-for-tarjoajat))
+
+(defn- add-oppilaitos-nimi-to-counts
+  [oppilaitos indexed-oppilaitos]
+  (assoc oppilaitos :nimi (:nimi indexed-oppilaitos)))
+
+(defn add-oppilaitos-nimet-to-counts
+  [oppilaitokset]
+  (let [oppilaitos-oids (map #(:key %) oppilaitokset)
+        indexed-oppilaitokset (oppilaitos/get-many oppilaitos-oids false)]
+    (map (fn [j] (add-oppilaitos-nimi-to-counts j (first (filter #(= (:oid %) (:key j)) indexed-oppilaitokset)))) oppilaitokset)))
+
+(defn oppilaitos-counts-mapper
+  [response]
+  (let [buckets (add-oppilaitos-nimet-to-counts (get-in response [:aggregations :hits_aggregation :inner_hits_agg :oppilaitos :buckets]))
+        oppilaitos-counts (reduce (fn [target-map bucket] (assoc target-map (keyword (:key bucket)) {:count (:doc_count bucket) :nimi (:nimi bucket)})) {} buckets)]
+    oppilaitos-counts))
+
+(defn assoc-oppilaitos-counts
+  [koulutus-oid result]
+  (let [query {:bool {:must {:term {:oid koulutus-oid}}}}
+        aggs {:hits_aggregation {:nested {:path "search_terms"}
+                                 :aggs   {:inner_hits_agg {:filter {:bool {:must {:term {:search_terms.onkoTuleva false}}}},
+                                                           :aggs   {:oppilaitos {:terms {:field "search_terms.oppilaitosOid.keyword",
+                                                                                         :size  10000}}}}}}}
+        oppilaitos-counts (e/search "koulutus-kouta-search"
+                                    oppilaitos-counts-mapper
+                                    :size 0
+                                    :query query
+                                    :aggs aggs)]
+    (assoc-in result [:filters :oppilaitos] oppilaitos-counts)))
