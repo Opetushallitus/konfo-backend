@@ -73,7 +73,7 @@
     (let [toteutukset (when toteutukset? (get-toteutukset-by-oids (vec (map :oid (:toteutukset koulutus)))))
           hakukohteet (when (or haut? hakukohteet?) (get-hakukohteet-by-toteutus-oids (vec (map :oid (:toteutukset koulutus)))))
           haut        (when haut? (get-haut-by-oids (vec (map :hakuOid hakukohteet))))]
-      (cond-> (dissoc koulutus :toteutukset)
+      (cond-> (apply dissoc koulutus [:toteutukset :haut])
               toteutukset? (assoc :toteutukset toteutukset)
               hakukohteet? (assoc :hakukohteet hakukohteet)
               haut?        (assoc :haut haut)))))
