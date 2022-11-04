@@ -114,7 +114,8 @@
                                                 #(= "kk-opintokokonaisuus" (:tyyppi %)) KkOpintokokonaisuusKoulutusMetadata
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "ope-pedag-opinnot" (:tyyppi %)) OpePedagOpinnotKoulutusMetadata
-                                                #(= "lk" (:tyyppi %)) LukioKoulutusMetadata )
+                                                #(= "lk" (:tyyppi %)) LukioKoulutusMetadata
+                                                :else s/Any)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    (s/->OptionalKey :ePerusteId) s/Int
