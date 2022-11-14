@@ -65,6 +65,10 @@
   [constraints]
   (constraint? constraints :osaamisala))
 
+(defn oppilaitos?
+      [constraints]
+      (constraint? constraints :oppilaitos))
+
 (defn constraints?
   [constraints]
   (or (sijainti? constraints)
@@ -77,6 +81,7 @@
       (hakutapa? constraints)
       (has-jotpa-rahoitus? constraints)
       (yhteishaku? constraints)
+      (oppilaitos? constraints)
       (pohjakoulutusvaatimus? constraints)))
 
 (defn ->lng-keyword
@@ -133,6 +138,7 @@
     (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
                                                :search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                (:pohjakoulutusvaatimus constraints)))
+    (oppilaitos? constraints) (conj (->terms-query :search_terms.oppilaitosOid.keyword (:oppilaitos constraints)))
     (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
     (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))
 

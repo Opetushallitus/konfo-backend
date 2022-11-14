@@ -191,7 +191,7 @@
              {filter-name filter-aggs})})
 
 (defn- jarjestajat-aggs
-  [tuleva? constraints]
+  [tuleva? constraints oppilaitos-oids]
   (let [current-time (current-time-as-kouta-format)
         lukiopainotukset-aggs (koodisto-filters-for-subentity :search_terms.lukiopainotukset.keyword "lukiopainotukset" current-time constraints)
         lukiolinjat-er-aggs (koodisto-filters-for-subentity :search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava" current-time constraints)
@@ -207,6 +207,7 @@
                             :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
                             :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                             :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
+                            :oppilaitos            (when-not (empty? oppilaitos-oids) (->filters-aggregation-for-subentity "search_terms.oppilaitosOid.keyword" oppilaitos-oids current-time constraints))
                             :yhteishaku            (yhteishaku-filter current-time constraints)})}
      :lukiopainotukset_aggs                    (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
      :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
@@ -240,8 +241,8 @@
   (aggregations #(generate-default-aggs constraints)))
 
 (defn jarjestajat-aggregations
-  [tuleva? constraints]
-  (aggregations #(jarjestajat-aggs tuleva? constraints)))
+  [tuleva? constraints oppilaitos-oids]
+  (aggregations #(jarjestajat-aggs tuleva? constraints oppilaitos-oids)))
 
 (defn tarjoajat-aggregations
   [tuleva? constraints]

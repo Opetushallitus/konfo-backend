@@ -290,6 +290,13 @@
    |          required: false
    |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
    |          example: osaamisala_1756, osaamisala_3076
+   |        - in: query
+   |          name: oppilaitos
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lista toteutusten oppilaitoksista
+   |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356
    |      responses:
    |        '200':
    |          description: Ok
@@ -585,7 +592,8 @@
    :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus constraints))
    :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset constraints))
    :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava constraints))
-   :osaamisala            (comma-separated-string->vec (:osaamisala constraints))})
+   :osaamisala            (comma-separated-string->vec (:osaamisala constraints))
+   :oppilaitos            (comma-separated-string->vec (:oppilaitos constraints))})
 
 (defn ->search-with-validated-params
   [f keyword lng page size sort order constraints]
@@ -696,7 +704,8 @@
                      {pohjakoulutusvaatimus :- String nil}
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
-                     {osaamisala            :- String nil}]
+                     {osaamisala            :- String nil}
+                     {oppilaitos            :- String nil}]
       (with-access-logging request (->search-subentities-with-validated-params
                                      koulutus-search/search-koulutuksen-jarjestajat
                                      oid
@@ -718,7 +727,8 @@
                                       :pohjakoulutusvaatimus pohjakoulutusvaatimus
                                       :lukiopainotukset lukiopainotukset
                                       :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                      :osaamisala osaamisala})))
+                                      :osaamisala osaamisala
+                                      :oppilaitos oppilaitos})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
