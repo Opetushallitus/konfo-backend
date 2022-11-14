@@ -159,9 +159,7 @@
                                                                            (assoc :nimi (:nimi indexed-oppilaitos))
                                                                            (assoc :count (:doc_count oppilaitos))
                                                                            (dissoc :doc_count))]
-                                                ;(println (str "indexed-oppilaitos: " oppilaitos-oid " " indexed-oppilaitos))
                                                 (assoc target-map oppilaitos-oid updated-oppilaitos))) {} oppilaitokset)]
-    ;(println (str "indexed-oppilaitokset: " (prn-str indexed-oppilaitokset)))
     oppilaitokset-with-nimet))
 
 (defn- oppilaitos-filters
