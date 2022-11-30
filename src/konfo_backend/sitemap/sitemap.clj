@@ -17,9 +17,7 @@
 (defonce hakukohde-url-template "https://opintopolku.fi/konfo/%s/hakukohde/%s/valintaperuste")
 (defonce contentful-page-url-template "https://opintopolku.fi/konfo/%s/sivu/")
 
-(defonce sitemap-urls ["https://opintopolku.fi/sitemap-learningopportunity.xml"
-                       "https://opintopolku.fi/wp/sitemap.xml"
-                       "https://opintopolku.fi/konfo-backend/sitemap/sivut-sitemap.xml"
+(defonce sitemap-urls ["https://opintopolku.fi/konfo-backend/sitemap/sivut-sitemap.xml"
                        "https://opintopolku.fi/konfo-backend/sitemap/koulutus-sitemap.xml"
                        "https://opintopolku.fi/konfo-backend/sitemap/toteutus-sitemap.xml"
                        "https://opintopolku.fi/konfo-backend/sitemap/hakukohde-sitemap.xml"])
