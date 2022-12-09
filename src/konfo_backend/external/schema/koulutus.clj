@@ -112,6 +112,7 @@
                                                 #(= "erikoislaakari" (:tyyppi %)) ErikoislaakariKoulutusMetadata
                                                 #(= "kk-opintojakso" (:tyyppi %)) KkOpintojaksoKoulutusMetadata
                                                 #(= "kk-opintokokonaisuus" (:tyyppi %)) KkOpintokokonaisuusKoulutusMetadata
+                                                #(= "erikoistumiskoulutus" (:tyyppi %)) ErikoistumiskoulutusMetadata
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "ope-pedag-opinnot" (:tyyppi %)) OpePedagOpinnotKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata
