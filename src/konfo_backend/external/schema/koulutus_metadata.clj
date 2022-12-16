@@ -116,10 +116,14 @@
     |        - $ref: '#/components/schemas/KoulutusMetadata'
     |      type: object
     |      properties:
-    |        opintojenLaajuusNumero:
+    |        opintojenLaajuusNumeroMin:
     |          type: integer
-    |          description: Opintojen laajuus numeroarvona
+    |          description: Opintojen laajuuden tai keston vähimmäismäärä numeroarvona\n
     |          example: 10
+    |        opintojenLaajuusNumeroMax:
+    |          type: integer
+    |          description: Opintojen laajuuden tai keston enimmäismäärä numeroarvona
+    |          example: 20
     |        opintojenLaajuusyksikko:
     |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
     |        koulutusala:
@@ -209,14 +213,16 @@
 (def ErikoislaakariKoulutusMetadata
   (st/merge
    KoulutusMetadata
-   {:tyyppi KkOpintojakso
+   {:tyyppi Erikoislaakari
    (s/->OptionalKey :tutkintonimike)   [(s/maybe (->Koodi TutkintonimikeKkKoodi))]
     }))
 
 (def KkOpintojaksoKoulutusMetadata
   (st/merge
    TutkintoonJohtavaKoulutusMetadata
-   {:tyyppi KkOpintojakso}))
+   {:tyyppi KkOpintojakso
+    (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num)
+    (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num)}))
 
 (def KkOpintokokonaisuusKoulutusMetadata
   (st/merge 
@@ -225,3 +231,11 @@
     (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num) 
     (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num) 
     (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)}))
+
+(def ErikoistumiskoulutusMetadata
+  (st/merge
+    KoulutusMetadata
+    {:tyyppi                                    Erikoistumiskoulutus
+     (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num)
+     (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num)
+     (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)}))

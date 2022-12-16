@@ -258,7 +258,8 @@
              :aikuisten-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}]}}
              :kk-opintojakso {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kk-opintojakso"}}]}}
              :kk-opintokokonaisuus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kk-opintokokonaisuus"}}]}}
-             :erikoislaakari {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}]}}}}
+             :erikoislaakari {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}]}}
+             :erikoistumiskoulutus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}}}}))))
 
   (testing
@@ -569,6 +570,9 @@
                                                {:term {:search_terms.hasJotpaRahoitus true}}]}}
                 :erikoislaakari {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}
+                                         {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                :erikoistumiskoulutus {:bool {:filter
+                                        [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}
                                          {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}}}}))))
   )
