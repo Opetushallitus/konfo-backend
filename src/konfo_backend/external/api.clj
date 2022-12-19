@@ -4,6 +4,7 @@
     [compojure.api.exception :as ex]
     [ring.util.http-response :refer :all]
     [compojure.api.sweet :refer [api]]
+    [clojure.tools.logging :as log]
     [konfo-backend.external.schema.common :as common]
     [konfo-backend.external.schema.koodi :as koodi]
     [konfo-backend.external.schema.koulutus :as koulutus]
@@ -400,11 +401,18 @@
        search/schemas "\n"
        response/schemas))
 
+(defn with-uri-logging
+  ([handler]
+   (fn [^Exception e data req]
+     (log/error (str "Error when handling request for uri: " (:uri req)) e)
+     (handler e data req))))
+
 (def routes
   (api
     {:exceptions
      {:handlers
-      {::ex/response-validation (ex/with-logging ex/response-validation-handler :error)}}}
+      {::ex/response-validation (with-uri-logging ex/response-validation-handler)
+       ::ex/default             (with-uri-logging ex/safe-handler)}}}
     (context "/external" []
              :tags ["external"]
 
