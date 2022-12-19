@@ -289,10 +289,10 @@
            (log/info (str "new manifest en " new-manifest-str-en))
            (log/info (str "merged manifest " (cheshire/generate-string new-manifest-combined)))
            (if (= old-manifest-str new-manifest-combined-str)
-          (log/info "No new updates found in manifest!")
-          (do
-            (log/info "New updates found in manifest!")
-            (store->s3 ttl-manifest "application/json; charset=utf-8" "manifest.json" (.getBytes new-manifest-combined-str)))))
+             (log/info "No new updates found in manifest!")
+             (do
+               (log/info "New updates found in manifest!")
+               (store->s3 ttl-manifest "application/json; charset=utf-8" "manifest.json" (.getBytes new-manifest-combined-str)))))
       (catch Exception e
         (.printStackTrace e)
         (log/error (str "Contentful updated halted due to exception: " e)))
