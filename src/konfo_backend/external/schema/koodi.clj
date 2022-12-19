@@ -15,7 +15,7 @@
    |          example: {\"fi\": \"Helsinki\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def KuntaKoodi    #"^kunta_")
+(def KuntaKoodi    #"^kunta_\d+")
 
 (def maakunta-schema
   "|    Maakunta:
@@ -31,7 +31,7 @@
    |          example: {\"fi\": \"Uusimaa\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def MaakuntaKoodi    #"^maakunta_")
+(def MaakuntaKoodi    #"^maakunta_\d+")
 
 (def koulutus-koodi-schema
   "|    KoulutusKoodi:
@@ -47,7 +47,7 @@
    |          example: {\"fi\": \"IB-tutkinto\", \"sv\": \"IB-examen\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def KoulutusKoodi #"^koulutus_")
+(def KoulutusKoodi #"^koulutus_\d{6}(#\d{1,2})?$")
 
 (def koulutusala-1-schema
   "|    Koulutusala1:
@@ -63,7 +63,7 @@
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def Koulutusala1Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso1_")
+(def Koulutusala1Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso1_\d+(#\d{1,2})?$")
 
 (def koulutusala-2-schema
   "|    Koulutusala2:
@@ -79,7 +79,7 @@
    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def Koulutusala2Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso2_")
+(def Koulutusala2Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso2_\d+(#\d{1,2})?$")
 
 (def koulutuslisatieto-koodi-schema
   "|    KoulutusLisatietoKoodi:
@@ -95,7 +95,7 @@
    |          example: {\"fi\": \"Otsikko suomeksi\", \"sv\": \"Otsikko på svenska\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def KoulutusLisatietoKoodi #"^koulutuksenlisatiedot_")
+(def KoulutusLisatietoKoodi #"koulutuksenlisatiedot_\d+(#\d{1,2})?$")
 
 (def tutkintonimike-schema
   "|    Tutkintonimike:
@@ -127,7 +127,7 @@
    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
    |          $ref: '#/components/schemas/Nimi'")
 
-(def TutkintonimikeKkKoodi #"^tutkintonimikekk_")
+(def TutkintonimikeKkKoodi #"tutkintonimikekk_\d+(#\d{1,2})?$")
 
 (def opintojenlaajuus-schema
   "|    OpintojenLaajuus:
@@ -143,7 +143,7 @@
    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OpintojenLaajuusKoodi #"^opintojenlaajuus_")
+(def OpintojenLaajuusKoodi #"opintojenlaajuus_\d+(#\d{1,2})?$")
 
 (def opintojenlaajuusyksikko-schema
   "|    OpintojenLaajuusyksikko:
@@ -159,7 +159,7 @@
    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OpintojenLaajuusyksikkoKoodi #"^opintojenlaajuusyksikko_")
+(def OpintojenLaajuusyksikkoKoodi #"opintojenlaajuusyksikko_\d+(#\d{1,2})?$")
 
 (def opetuskieli-schema
   "|    Opetuskieli:
@@ -175,7 +175,7 @@
    |          example: {\"fi\": \"suomi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OpetuskieliKoodi #"^oppilaitoksenopetuskieli_")
+(def OpetuskieliKoodi #"oppilaitoksenopetuskieli_\d+(#\d{1,2})?$")
 
 (def opetusaika-schema
   "|    Opetusaika:
@@ -191,7 +191,7 @@
    |          example: {\"fi\": \"suomi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OpetusaikaKoodi #"^opetusaikakk_")
+(def OpetusaikaKoodi #"opetusaikakk_\d+(#\d{1,2})?$")
 
 (def opetustapa-schema
   "|    Opetustapa:
@@ -207,7 +207,7 @@
    |          example: {\"fi\": \"suomi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OpetustapaKoodi #"^opetuspaikkakk_")
+(def OpetustapaKoodi #"opetuspaikkakk_\d+(#\d{1,2})?$")
 
 (def alkamiskausi-schema
   "|    Alkamiskausi:
@@ -223,7 +223,7 @@
    |          example: {\"fi\": \"syksy\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def AlkamiskausiKoodi #"^kausi_")
+(def AlkamiskausiKoodi #"kausi_\w+(#\d{1,2})?$")
 
 (def pohjakoulutusvaatimus-schema
   "|    Pohjakoulutusvaatimus:
@@ -239,7 +239,7 @@
    |          example: {\"fi\": \"syksy\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def PohjakoulutusvaatimusKoodi #"^pohjakoulutusvaatimuskouta_")
+(def PohjakoulutusvaatimusKoodi #"pohjakoulutusvaatimuskouta_\w+(#\d{1,2})?$")
 
 (def postinumero-schema
   "|    Postinumero:
@@ -255,7 +255,7 @@
    |          example: {\"fi\": \"Kerava\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def PostinumeroKoodi #"^posti_")
+(def PostinumeroKoodi #"posti_\d+(#\d{1,2})?$")
 
 (def liitteen-tyyppi-schema
   "|    LiitteenTyyppi:
@@ -271,7 +271,7 @@
    |          example: {\"fi\": \"Todistus\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def LiitteenTyyppiKoodi #"^liitetyypitamm_")
+(def LiitteenTyyppiKoodi #"liitetyypitamm_\d+(#\d{1,2})?$")
 
 (def valintakokeen-tyyppi-schema
   "|    ValintakokeenTyyppi:
@@ -287,7 +287,7 @@
    |          example: {\"fi\": \"Kuulustelu\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def ValintakokeenTyyppiKoodi #"^valintakokeentyyppi_")
+(def ValintakokeenTyyppiKoodi #"valintakokeentyyppi_\d+(#\d{1,2})?$")
 
 (def hakutapa-schema
   "|    Hakutapa:
@@ -303,7 +303,7 @@
    |          example: {\"fi\": \"Yhteishaku\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def HakutapaKoodi #"^hakutapa_")
+(def HakutapaKoodi #"hakutapa_\d+(#\d{1,2})?$")
 
 (def haun-kohdejoukko-schema
   "|    HaunKohdejoukko:
@@ -319,7 +319,7 @@
    |          example: {\"fi\": \"Kohdejoukko\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def HaunKohdejoukkoKoodi #"^haunkohdejoukko_")
+(def HaunKohdejoukkoKoodi #"haunkohdejoukko_\d+(#\d{1,2})?$")
 
 (def haun-kohdejoukon-tarkenne-schema
   "|    HaunKohdejoukonTarkenne:
@@ -335,7 +335,7 @@
    |          example: {\"fi\": \"Kohdejoukon tarkenne\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def HaunKohdejoukonTarkenneKoodi #"^haunkohdejoukontarkenne_")
+(def HaunKohdejoukonTarkenneKoodi #"haunkohdejoukontarkenne_\d+(#\d{1,2})?$")
 
 (def valintatapa-schema
   "|    Valintatapa:
@@ -351,7 +351,7 @@
    |          example: {\"fi\": \"Valintatapa suomeksi\"}
    |          $ref: '#/components/schemas/Teksti'")
 
-(def ValintatapaKoodi #"^valintatapajono_")
+(def ValintatapaKoodi #"valintatapajono_\w+(#\d{1,2})?$")
 
 (def osaamistausta-schema
   "|    Osaamistausta:
@@ -366,7 +366,7 @@
    |          description: Osaamistausta.
    |          $ref: '#/components/schemas/Teksti'")
 
-(def OsaamistaustaKoodi #"^osaamistausta_")
+(def OsaamistaustaKoodi #"osaamistausta_\d+(#\d{1,2})?$")
 
 (def LukioDiplomiKoodi s/Str)
 
