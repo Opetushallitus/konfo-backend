@@ -31,7 +31,7 @@
 
 (defn- doc_count-by-filter
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :jotpa :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
+  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :jotpa :tyovoimakoulutus :taydennyskoulutus :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
 (defn- doc_count-by-filter-for-tarjoajat

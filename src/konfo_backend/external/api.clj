@@ -321,6 +321,20 @@
    |          required: false
    |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
    |        - in: query
+   |          name: tyovoimakoulutus
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia jotka ovat työvoimakoulutusta
+   |        - in: query
+   |          name: taydennyskoulutus
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta
+   |        - in: query
    |          name: hakutapa
    |          schema:
    |            type: string
@@ -478,6 +492,8 @@
                                  {valintatapa           :- String nil}
                                  {hakukaynnissa         :- Boolean false}
                                  {jotpa                 :- Boolean false}
+                                 {tyovoimakoulutus      :- Boolean false}
+                                 {taydennyskoulutus     :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
                                  {pohjakoulutusvaatimus :- String nil}]
@@ -497,6 +513,8 @@
                                                                                 :valintatapa valintatapa
                                                                                 :hakukaynnissa hakukaynnissa
                                                                                 :jotpa jotpa
+                                                                                :tyovoimakoulutus tyovoimakoulutus
+                                                                                :taydennyskoulutus taydennyskoulutus
                                                                                 :hakutapa hakutapa
                                                                                 :yhteishaku yhteishaku
                                                                                 :pohjakoulutusvaatimus pohjakoulutusvaatimus

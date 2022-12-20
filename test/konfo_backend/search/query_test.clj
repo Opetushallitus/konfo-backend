@@ -211,6 +211,20 @@
              {:bool
               {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
+          :tyovoimakoulutus
+          {:filters
+           {:filters
+            {:tyovoimakoulutus
+             {:bool
+              {:filter [{:term {:search_terms.isTyovoimakoulutus true}}]}}}}
+           :aggs {:real_hits {:reverse_nested {}}}}
+          :taydennyskoulutus
+          {:filters
+           {:filters
+            {:taydennyskoulutus
+             {:bool
+              {:filter [{:term {:search_terms.isTaydennyskoulutus true}}]}}}}
+           :aggs {:real_hits {:reverse_nested {}}}}
           :valintatapa
           {:filters
            {:filters
@@ -466,6 +480,24 @@
                {:jotpa
                 {:bool
                  {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+              :aggs {:real_hits {:reverse_nested {}}}}
+            :tyovoimakoulutus
+              {:filters
+              {:filters
+                {:tyovoimakoulutus
+                {:bool
+                  {:filter [
+                    {:term {:search_terms.hasJotpaRahoitus true}}
+                    {:term {:search_terms.isTyovoimakoulutus true}}]}}}}
+              :aggs {:real_hits {:reverse_nested {}}}}
+            :taydennyskoulutus
+              {:filters
+              {:filters
+                {:taydennyskoulutus
+                {:bool
+                  {:filter [
+                    {:term {:search_terms.hasJotpaRahoitus true}}
+                    {:term {:search_terms.isTaydennyskoulutus true}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :valintatapa
              {:filters

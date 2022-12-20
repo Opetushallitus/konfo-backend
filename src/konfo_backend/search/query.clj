@@ -154,6 +154,30 @@
                      {:term {:search_terms.hasJotpaRahoitus true}}))}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
 
+(defn tyovoimakoulutus-filter
+  [current-time constraints]
+  {:filters
+   {:filters
+    {:tyovoimakoulutus
+     {:bool
+      {:filter (distinct
+                 (conj
+                   (filters constraints current-time)
+                   {:term {:search_terms.isTyovoimakoulutus true}}))}}}}
+   :aggs {:real_hits {:reverse_nested {}}}})
+
+(defn taydennyskoulutus-filter
+  [current-time constraints]
+  {:filters
+   {:filters
+    {:taydennyskoulutus
+     {:bool
+      {:filter (distinct
+                 (conj
+                   (filters constraints current-time)
+                   {:term {:search_terms.isTaydennyskoulutus true}}))}}}}
+   :aggs {:real_hits {:reverse_nested {}}}})
+
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
 
@@ -173,9 +197,10 @@
                   :koulutustyyppi (koulutustyyppi-filters :search_terms.koulutustyypit.keyword current-time constraints)
                   :koulutustyyppitaso2 (koodisto-filters :search_terms.koulutustyypit.keyword "koulutustyyppi" current-time constraints)
                   :opetustapa (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk" current-time constraints)
-
                   :hakukaynnissa (hakukaynnissa-filter current-time constraints)
                   :jotpa (jotpa-filter current-time constraints)
+                  :tyovoimakoulutus (tyovoimakoulutus-filter current-time constraints)
+                  :taydennyskoulutus (taydennyskoulutus-filter current-time constraints)
                   :hakutapa (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
                   :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                   :valintatapa (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)

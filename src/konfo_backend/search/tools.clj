@@ -49,6 +49,14 @@
   [constraints]
   (true? (:jotpa constraints)))
 
+(defn tyovoimakoulutus?
+      [constraints]
+      (true? (:tyovoimakoulutus constraints)))
+
+(defn taydennyskoulutus?
+      [constraints]
+      (true? (:taydennyskoulutus constraints)))
+
 (defn yhteishaku?
   [constraints]
   (constraint? constraints :yhteishaku))
@@ -80,6 +88,8 @@
       (haku-kaynnissa? constraints)
       (hakutapa? constraints)
       (has-jotpa-rahoitus? constraints)
+      (tyovoimakoulutus? constraints)
+      (taydennyskoulutus? constraints)
       (yhteishaku? constraints)
       (oppilaitos? constraints)
       (pohjakoulutusvaatimus? constraints)))
@@ -134,6 +144,8 @@
     (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
     (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
     (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
+    (tyovoimakoulutus? constraints) (conj {:term {:search_terms.isTyovoimakoulutus true}})
+    (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}})
     (hakutapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
     (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
                                                :search_terms.hakutiedot.pohjakoulutusvaatimukset
