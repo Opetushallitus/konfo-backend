@@ -401,6 +401,11 @@
        search/schemas "\n"
        response/schemas))
 
+(defn no-log-handler
+  [_ _ _]
+  (internal-server-error {:type "Unknown exception"
+                          :class "Internal server error"}))
+
 (defn with-uri-logging
   ([handler]
    (fn [^Exception e data req]
@@ -412,7 +417,7 @@
     {:exceptions
      {:handlers
       {::ex/response-validation (with-uri-logging ex/response-validation-handler)
-       ::ex/default             (with-uri-logging ex/safe-handler)}}}
+       ::ex/default             (with-uri-logging no-log-handler)}}}
     (context "/external" []
              :tags ["external"]
 
