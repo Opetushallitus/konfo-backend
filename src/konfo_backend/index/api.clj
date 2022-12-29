@@ -12,7 +12,8 @@
     [ring.util.http-response :refer :all]
     [clj-log.access-log :refer [with-access-logging]]
     [konfo-backend.tools :refer [comma-separated-string->vec]]
-    [konfo-backend.ataru.service :as ataru]))
+    [konfo-backend.ataru.service :as ataru]
+    [konfo-backend.koodisto.koodisto :as koodisto]))
 
 (def paths
   "|  /translation/{lng}:
@@ -393,6 +394,30 @@
    |              schema:
    |                type: json
    |        '404':
+   |          description: Not found
+   |  /koodisto/{id}/koodit:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae koodiston koodit koodistourilla
+   |      description: Hae koodit koodistosta käyttäen koodiston koodistouria
+   |        Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: id
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: koodiston tunnus
+   |          example: kielivalikoima
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
    |          description: Not found")
 
 (def routes
@@ -491,5 +516,11 @@
          :path-params [id :- String]
          :query-params [{koodi-urit :- String nil}]
          (with-access-logging request (if-let [result (eperuste/get-osaamisala-kuvaukset id (comma-separated-string->vec koodi-urit))]
+                                        (ok result)
+                                        (not-found "Not found"))))
+
+    (GET "/koodisto/:id/koodit" [:as request]
+         :path-params [id :- String]
+         (with-access-logging request (if-let [result (koodisto/list-koodit id)]
                                         (ok result)
                                         (not-found "Not found"))))))

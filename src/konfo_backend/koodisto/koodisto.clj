@@ -13,7 +13,7 @@
 (def get-koodisto-with-cache
   (memo/ttl get-koodisto {} :ttl/threshold (* 1000 60 5))) ;5 minuutin cache
 
-(defn- list-koodit
+(defn list-koodit
   [koodisto]
   (vec (:koodit (get-koodisto-with-cache koodisto))))
 
