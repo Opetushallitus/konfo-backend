@@ -395,12 +395,12 @@
    |                type: json
    |        '404':
    |          description: Not found
-   |  /koodisto/{id}:
+   |  /koodisto/{id}/koodit:
    |    get:
    |      tags:
    |        - internal
-   |      summary: Hae koodisto koodistourilla
-   |      description: Hae koodisto käyttäen koodiston koodistouria
+   |      summary: Hae koodiston koodit koodistourilla
+   |      description: Hae koodit koodistosta käyttäen koodiston koodistouria
    |        Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: path
@@ -519,8 +519,8 @@
                                         (ok result)
                                         (not-found "Not found"))))
 
-    (GET "/koodisto/:id" [:as request]
+    (GET "/koodisto/:id/koodit" [:as request]
          :path-params [id :- String]
-         (with-access-logging request (if-let [result (koodisto/get-koodisto-with-cache id)]
+         (with-access-logging request (if-let [result (koodisto/list-koodit id)]
                                         (ok result)
                                         (not-found "Not found"))))))
