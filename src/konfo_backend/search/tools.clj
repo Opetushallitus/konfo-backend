@@ -1,9 +1,9 @@
 (ns konfo-backend.search.tools
   (:require
    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format ->lower-case-vec]]
-    [clojure.core :refer [keyword] :rename {keyword kw}]
-    [clojure.string :refer [lower-case]]
-    [konfo-backend.config :refer [config]]))
+   [clojure.core :refer [keyword] :rename {keyword kw}]
+   [clojure.string :refer [lower-case]]
+   [konfo-backend.config :refer [config]]))
 
 (defn- constraint?
   [constraints key]
@@ -50,12 +50,12 @@
   (true? (:jotpa constraints)))
 
 (defn tyovoimakoulutus?
-      [constraints]
-      (true? (:tyovoimakoulutus constraints)))
+  [constraints]
+  (true? (:tyovoimakoulutus constraints)))
 
 (defn taydennyskoulutus?
-      [constraints]
-      (true? (:taydennyskoulutus constraints)))
+  [constraints]
+  (true? (:taydennyskoulutus constraints)))
 
 (defn yhteishaku?
   [constraints]
@@ -74,8 +74,8 @@
   (constraint? constraints :osaamisala))
 
 (defn oppilaitos?
-      [constraints]
-      (constraint? constraints :oppilaitos))
+  [constraints]
+  (constraint? constraints :oppilaitos))
 
 (defn constraints?
   [constraints]
@@ -134,37 +134,44 @@
     {:bool
      {:filter (->terms-query field constraint)}}}})
 
+(defn tyoelama-filters-query
+  [constraints]
+  (let [tyoelama-should (cond-> []
+                          (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
+                          (tyovoimakoulutus? constraints) (conj {:term {:search_terms.isTyovoimakoulutus true}})
+                          (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}}))]
+    (when (seq tyoelama-should) {:bool {:should tyoelama-should}})))
+
 (defn filters
   [constraints current-time]
-  (cond-> []
-    (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
-    (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
-    (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
-    (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
-    (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
-    (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
-    (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
-    (tyovoimakoulutus? constraints) (conj {:term {:search_terms.isTyovoimakoulutus true}})
-    (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}})
-    (hakutapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
-    (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
-                                               :search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                               (:pohjakoulutusvaatimus constraints)))
-    (oppilaitos? constraints) (conj (->terms-query :search_terms.oppilaitosOid.keyword (:oppilaitos constraints)))
-    (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
-    (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints)))))
+  (let [tyoelama-bool-filter (tyoelama-filters-query constraints)]
+    (cond-> []
+      (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
+      (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
+      (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
+      (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
+      (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
+      (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
+      (not (nil? tyoelama-bool-filter)) (conj tyoelama-bool-filter)
+      (hakutapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
+      (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
+                                                  :search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                  (:pohjakoulutusvaatimus constraints)))
+      (oppilaitos? constraints) (conj (->terms-query :search_terms.oppilaitosOid.keyword (:oppilaitos constraints)))
+      (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
+      (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))))))
 
 (defn hakutieto-filters
   [inner-query current-time constraints]
   (vec (distinct (concat
-    [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
-    (filters constraints current-time)))))
+                  [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
+                  (filters constraints current-time)))))
 
 (defn terms-filters
   [inner-query current-time constraints]
   (vec (concat
-         [inner-query]
-         (filters constraints current-time))))
+        [inner-query]
+        (filters constraints current-time))))
 
 (defn generate-search-params
   [suffixes search-params usr-lng]
@@ -172,9 +179,9 @@
         suffix (conj suffixes nil)]
     (if (= language usr-lng)
       (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :language-default]))
-                                                                                (str "." suffix "^" (:boost search-params))))
+                                                                  (str "." suffix "^" (:boost search-params))))
       (str "search_terms." (:term search-params) "." language (if (nil? suffix) (str "^" (get-in config [:search-terms-boost :default]))
-                                                                                (str "." suffix "^" (get-in config [:search-terms-boost :default])))))))
+                                                                  (str "." suffix "^" (get-in config [:search-terms-boost :default])))))))
 
 (defn generate-keyword-query
   [usr-lng suffixes]

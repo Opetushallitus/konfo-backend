@@ -209,21 +209,21 @@
            {:filters
             {:jotpa
              {:bool
-              {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+              {:filter [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :tyovoimakoulutus
           {:filters
            {:filters
             {:tyovoimakoulutus
              {:bool
-              {:filter [{:term {:search_terms.isTyovoimakoulutus true}}]}}}}
+              {:filter [{:bool {:should [{:term {:search_terms.isTyovoimakoulutus true}}]}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :taydennyskoulutus
           {:filters
            {:filters
             {:taydennyskoulutus
              {:bool
-              {:filter [{:term {:search_terms.isTaydennyskoulutus true}}]}}}}
+              {:filter [{:bool {:should [{:term {:search_terms.isTaydennyskoulutus true}}]}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}
           :valintatapa
           {:filters
@@ -296,12 +296,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kansallinenkoulutusluokitus2016koulutusalataso1_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
                            :aggs {:real_hits {:reverse_nested {}}}}
              :yhteishaku
              {:filters {:filters
@@ -313,7 +313,7 @@
                                     {:bool {:filter
                                             {:term {:search_terms.hakutiedot.yhteishakuOid
                                                      "1.2.246.562.29.00000000000000000001"}}}}}}
-                                  {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :koulutusalataso2
              {:filters
@@ -322,12 +322,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kansallinenkoulutusluokitus2016koulutusalataso2_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :kunta
              {:filters
@@ -336,12 +336,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.sijainti.keyword "kunta_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kunta_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.sijainti.keyword "kunta_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
                      :aggs {:real_hits {:reverse_nested {}}}}
              :pohjakoulutusvaatimus
              {:filters
@@ -351,13 +351,13 @@
                                            :query {:bool {:filter
                                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                                   "pohjakoulutusvaatimuskonfo_01"}}}}}}
-                                 {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :pohjakoulutusvaatimuskonfo_02
                 {:bool {:filter [{:nested {:path "search_terms.hakutiedot"
                                            :query {:bool {:filter
                                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                                   "pohjakoulutusvaatimuskonfo_02"}}}}}}
-                                 {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :maakunta
              {:filters
@@ -366,11 +366,11 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.sijainti.keyword "maakunta_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :maakunta_02 {:bool
                  {:filter
                   [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :koulutustyyppitaso2
              {:filters
@@ -379,12 +379,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :koulutustyyppi_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :hakutapa
              {:filters
@@ -394,13 +394,13 @@
                                            :query {:bool
                                                    {:filter
                                                     {:term {:search_terms.hakutiedot.hakutapa "hakutapa_01"}}}}}}
-                                 {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :hakutapa_02
                 {:bool {:filter [{:nested {:path "search_terms.hakutiedot"
                                            :query {:bool
                                                    {:filter
                                                     {:term {:search_terms.hakutiedot.hakutapa "hakutapa_02"}}}}}}
-                                 {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :opetustapa
              {:filters
@@ -409,12 +409,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :opetuspaikkakk_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :opetuskieli
              {:filters
@@ -423,12 +423,12 @@
                 {:bool
                  {:filter
                   [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :oppilaitoksenopetuskieli_02
                 {:bool
                  {:filter
                   [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}
-                   {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :hakukaynnissa
              {:filters
@@ -436,7 +436,7 @@
                {:hakukaynnissa
                 {:bool
                  {:filter
-                  [{:term {:search_terms.hasJotpaRahoitus true}}
+                  [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
                    {:bool
                     {:should
                      [{:bool
@@ -479,16 +479,14 @@
               {:filters
                {:jotpa
                 {:bool
-                 {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                 {:filter [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
             :tyovoimakoulutus
               {:filters
               {:filters
                 {:tyovoimakoulutus
                 {:bool
-                  {:filter [
-                    {:term {:search_terms.hasJotpaRahoitus true}}
-                    {:term {:search_terms.isTyovoimakoulutus true}}]}}}}
+                  {:filter [{:bool {:should [{:term {:search_terms.isTyovoimakoulutus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
             :taydennyskoulutus
               {:filters
@@ -496,8 +494,7 @@
                 {:taydennyskoulutus
                 {:bool
                   {:filter [
-                    {:term {:search_terms.hasJotpaRahoitus true}}
-                    {:term {:search_terms.isTaydennyskoulutus true}}]}}}}
+                    {:bool {:should [{:term {:search_terms.isTaydennyskoulutus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :valintatapa
              {:filters
@@ -509,7 +506,7 @@
                                    {:bool
                                     {:filter
                                      {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_01"}}}}}}
-                         {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :valintatapajono_02
                 {:bool {:filter
                         [{:nested
@@ -517,94 +514,94 @@
                            :query {:bool
                                    {:filter
                                     {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}}}}}
-                         {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}
              :koulutustyyppi
              {:filters
               {:filters
                {:amm-osaamisala {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "amm-osaamisala"}}
-                                         {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kandi {:bool {:filter
                                [{:term {:search_terms.koulutustyypit.keyword "kandi"}}
-                                {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amk-ylempi {:bool {:filter
                                     [{:term {:search_terms.koulutustyypit.keyword "amk-ylempi"}}
-                                     {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                     {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :tohtori {:bool {:filter
                                  [{:term {:search_terms.koulutustyypit.keyword "tohtori"}}
-                                  {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amm-tutkinnon-osa {:bool {:filter
                                            [{:term {:search_terms.koulutustyypit.keyword "amm-tutkinnon-osa"}}
-                                            {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :lk {:bool {:filter
                             [{:term {:search_terms.koulutustyypit.keyword "lk"}}
-                             {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :maisteri {:bool {:filter
                                   [{:term {:search_terms.koulutustyypit.keyword "maisteri"}}
-                                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amk {:bool {:filter
                              [{:term {:search_terms.koulutustyypit.keyword "amk"}}
-                              {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                              {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amk-muu {:bool {:filter
                                  [{:term {:search_terms.koulutustyypit.keyword "amk-muu"}}
-                                  {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amk-alempi {:bool {:filter
                                     [{:term {:search_terms.koulutustyypit.keyword "amk-alempi"}}
-                                     {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                     {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kandi-ja-maisteri {:bool {:filter
                                            [{:term {:search_terms.koulutustyypit.keyword "kandi-ja-maisteri"}}
-                                            {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :yo {:bool {:filter
                             [{:term {:search_terms.koulutustyypit.keyword "yo"}}
-                             {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amm {:bool {:filter
                              [{:term {:search_terms.koulutustyypit.keyword "amm"}}
-                              {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                              {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amm-muu {:bool {:filter
                                  [{:term {:search_terms.koulutustyypit.keyword "amm-muu"}}
-                                  {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :tuva {:bool {:filter
                               [{:term {:search_terms.koulutustyypit.keyword "tuva"}}
-                               {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                               {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :tuva-normal {:bool {:filter
                                      [{:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
-                                      {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                      {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :tuva-erityisopetus {:bool {:filter
                                             [{:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
-                                             {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :telma {:bool {:filter
                                [{:term {:search_terms.koulutustyypit.keyword "telma"}}
-                                {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :amm-ope-erityisope-ja-opo {:bool {:filter
                                                    [{:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}
-                                                    {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                                    {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :ope-pedag-opinnot {:bool {:filter
                                            [{:term {:search_terms.koulutustyypit.keyword "ope-pedag-opinnot"}}
-                                            {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :vapaa-sivistystyo {:bool {:filter
                                            [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
-                                            {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :vapaa-sivistystyo-opistovuosi {:bool {:filter
                                                        [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-opistovuosi"}}
-                                                        {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                                        {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :vapaa-sivistystyo-muu {:bool {:filter
                                                [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-muu"}}
-                                                {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                                {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :aikuisten-perusopetus {:bool {:filter
                                                [{:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}
-                                                {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                                {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kk-opintojakso {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "kk-opintojakso"}}
-                                         {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :kk-opintokokonaisuus {:bool {:filter
                                               [{:term {:search_terms.koulutustyypit.keyword "kk-opintokokonaisuus"}}
-                                               {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                               {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :erikoislaakari {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}
-                                         {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                 :erikoistumiskoulutus {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}
-                                         {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                                         {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}}}}))))
   )
