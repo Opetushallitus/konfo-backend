@@ -166,10 +166,6 @@
          [inner-query]
          (filters constraints current-time))))
 
-(defn term-filters
-  [inner-query current-time constraints]
-  {:bool {:filter (filters constraints current-time)}})
-
 (defn generate-search-params
   [suffixes search-params usr-lng]
   (for [language ["fi" "sv" "en"]
