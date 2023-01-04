@@ -38,7 +38,7 @@
                  [com.contentful.java/java-sdk "10.4.1"]
                  [commons-codec/commons-codec "1.13"]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch "0.5.0-SNAPSHOT"]
+                 [oph/clj-elasticsearch "0.5.4-SNAPSHOT"]
                  [mount "0.1.11"]
                  [org.clojure/data.xml "0.0.8"]]
   :env {:name "konfo-backend"}
