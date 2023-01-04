@@ -123,6 +123,7 @@
                                               :sv "tutkintonimikkeet_02 nimi sv"}}],
                   ;:jarjestetaanErityisopetuksena nil,
                   :ammatillinenPerustutkintoErityisopetuksena false,
+                  :jarjestaaUrheilijanAmmKoulutusta true,
                   ;:oppilaitosTila nil,
                   :opetuskielet ["oppilaitoksenopetuskieli_02"]
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},

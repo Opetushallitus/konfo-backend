@@ -191,8 +191,10 @@
                   :nimi {:fi "Hevosalan koulutus fi",
                          :sv "Hevosalan koulutus sv"},
                   :oid "1.2.246.562.13.000011",
+                  :opintojenLaajuusNumeroMin nil,
                   :toteutustenTarjoajat {:nimi {:fi "Punkaharjun yliopisto",
                                                 :sv "Punkaharjun yliopisto sv"}, :count 1}
+                  :opintojenLaajuusNumeroMax nil,
                   :kielivalinta [ "fi", "sv" ],
                   :koulutukset [{ :koodiUri  "koulutus_371101#1",
                                   :nimi {:fi "koulutus_371101#1 nimi fi",
@@ -204,6 +206,7 @@
                                         :nimi {:fi "tutkintonimikkeet_02 nimi fi",
                                                :sv "tutkintonimikkeet_02 nimi sv"}} ],
                   :opintojenLaajuusNumero 150,
+                  :isAvoinKorkeakoulutus nil,
                   :opintojenLaajuus {:koodiUri  "opintojenlaajuus_150",
                                      :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                             :sv "opintojenlaajuus_150 nimi sv"}},
