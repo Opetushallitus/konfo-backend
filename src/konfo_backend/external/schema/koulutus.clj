@@ -62,14 +62,15 @@
      |          description: Koulutuksen näytettävä nimi eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
      |          $ref: '#/components/schemas/Nimi'
      |        metadata:
-      |          type: object
-      |          oneOf:
-      |            - $ref: '#/components/schemas/YliopistoKoulutusMetadata'
-      |            - $ref: '#/components/schemas/AmmattikorkeaKoulutusMetadata'
-      |            - $ref: '#/components/schemas/KkOpintojaksoKoulutusMetadata'
-      |            - $ref: '#/components/schemas/KkOpintokokonaisuusKoulutusMetadata'
-      |            - $ref: '#/components/schemas/LukioKoulutusMetadata'
-      |            - $ref: '#/components/schemas/ErikoislaakariKoulutusMetadata'
+     |          type: object
+     |          oneOf:
+     |            - $ref: '#/components/schemas/YliopistoKoulutusMetadata'
+     |            - $ref: '#/components/schemas/AmmattikorkeaKoulutusMetadata'
+     |            - $ref: '#/components/schemas/KkOpintojaksoKoulutusMetadata'
+     |            - $ref: '#/components/schemas/KkOpintokokonaisuusKoulutusMetadata'
+     |            - $ref: '#/components/schemas/LukioKoulutusMetadata'
+     |            - $ref: '#/components/schemas/ErikoislaakariKoulutusMetadata'
+     |            - $ref: '#/components/schemas/TaiteidenPerusopetusKoulutusMetadata'
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
@@ -116,6 +117,7 @@
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "ope-pedag-opinnot" (:tyyppi %)) OpePedagOpinnotKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata
+                                                #(= "taiteiden-perusopetus" (:tyyppi %)) TaiteidenPerusopetusKoulutusMetadata
                                                 :else s/Any)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url

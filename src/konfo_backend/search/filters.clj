@@ -64,6 +64,7 @@
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count
                                          vapaa-sivistystyo-muu-count)
         aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)
+        taiteiden-perusopetus-count (get filter-counts :taiteiden-perusopetus 0)
         erikoislaakari-count (get filter-counts :erikoislaakari 0)
         kk-opintojakso-normal-count (get filter-counts :kk-opintojakso-normal 0)
         kk-opintojakso-avoin-count (get filter-counts :kk-opintojakso-avoin 0)
@@ -89,6 +90,7 @@
      (cond-> {:alakoodit {:amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
        total-amk-muu-count (assoc :count total-amk-muu-count))
      :aikuisten-perusopetus {:count aikuisten-perusopetus-count}
+     :taiteiden-perusopetus {:count taiteiden-perusopetus-count}
      :kk-muu
      (cond-> {:alakoodit {:erikoislaakari {:count erikoislaakari-count}
                           :kk-opintojakso-normal {:count kk-opintojakso-normal-count}
