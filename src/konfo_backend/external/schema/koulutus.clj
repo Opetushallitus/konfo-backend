@@ -70,7 +70,7 @@
      |            - $ref: '#/components/schemas/KkOpintokokonaisuusKoulutusMetadata'
      |            - $ref: '#/components/schemas/LukioKoulutusMetadata'
      |            - $ref: '#/components/schemas/ErikoislaakariKoulutusMetadata'
-     |            - $ref: '#/components/schemas/TaiteidenPerusopetusKoulutusMetadata'
+     |            - $ref: '#/components/schemas/TaiteenPerusopetusKoulutusMetadata'
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
@@ -117,7 +117,7 @@
                                                 #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
                                                 #(= "ope-pedag-opinnot" (:tyyppi %)) OpePedagOpinnotKoulutusMetadata
                                                 #(= "lk" (:tyyppi %)) LukioKoulutusMetadata
-                                                #(= "taiteiden-perusopetus" (:tyyppi %)) TaiteidenPerusopetusKoulutusMetadata
+                                                #(= "taiteen-perusopetus" (:tyyppi %)) TaiteenPerusopetusKoulutusMetadata
                                                 :else s/Any)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url

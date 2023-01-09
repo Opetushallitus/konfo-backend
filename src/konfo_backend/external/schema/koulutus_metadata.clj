@@ -153,7 +153,7 @@
     |          items:
     |            type: object
     |            $ref: '#/components/schemas/Koulutusala1'
-    |    TaiteidenPerusopetusKoulutusMetadata:
+    |    TaiteenPerusopetusKoulutusMetadata:
     |      allOf:
     |        - $ref: '#/components/schemas/KoulutusMetadata'
     |")
@@ -243,7 +243,7 @@
      (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num)
      (s/->OptionalKey :opintojenLaajuusyksikko)  (->Koodi OpintojenLaajuusyksikkoKoodi)}))
 
-(def TaiteidenPerusopetusKoulutusMetadata
+(def TaiteenPerusopetusKoulutusMetadata
   (st/merge
     KoulutusMetadata
-    {:tyyppi TaiteidenPerusopetus}))
+    {:tyyppi TaiteenPerusopetus}))

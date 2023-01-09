@@ -274,7 +274,7 @@
              :kk-opintokokonaisuus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kk-opintokokonaisuus"}}]}}
              :erikoislaakari {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}]}}
              :erikoistumiskoulutus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}]}}
-             :taiteiden-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "taiteiden-perusopetus"}}]}}}}
+             :taiteen-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "taiteen-perusopetus"}}]}}}}
            :aggs {:real_hits {:reverse_nested {}}}}}}}))))
 
   (testing
@@ -604,8 +604,8 @@
                 :erikoistumiskoulutus {:bool {:filter
                                         [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}
                                          {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
-                :taiteiden-perusopetus {:bool {:filter
-                                         [{:term {:search_terms.koulutustyypit.keyword "taiteiden-perusopetus"}}
+                :taiteen-perusopetus {:bool {:filter
+                                         [{:term {:search_terms.koulutustyypit.keyword "taiteen-perusopetus"}}
                                          {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
               :aggs {:real_hits {:reverse_nested {}}}}}}}))))
   )
