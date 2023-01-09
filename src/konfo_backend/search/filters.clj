@@ -64,13 +64,15 @@
         total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count
                                          vapaa-sivistystyo-muu-count)
         aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)
+        taiteen-perusopetus-count (get filter-counts :taiteen-perusopetus 0)
         erikoislaakari-count (get filter-counts :erikoislaakari 0)
         kk-opintojakso-normal-count (get filter-counts :kk-opintojakso-normal 0)
         kk-opintojakso-avoin-count (get filter-counts :kk-opintojakso-avoin 0)
         kk-opintokokonaisuus-normal-count (get filter-counts :kk-opintokokonaisuus-normal 0)
         kk-opintokokonaisuus-avoin-count (get filter-counts :kk-opintokokonaisuus-avoin 0)
         ope-pedag-opinnot-count (get filter-counts :ope-pedag-opinnot 0)
-        total-kk-muu-count (+ erikoislaakari-count kk-opintojakso-normal-count kk-opintojakso-avoin-count kk-opintokokonaisuus-normal-count kk-opintokokonaisuus-avoin-count ope-pedag-opinnot-count)]
+        erikoistumiskoulutus-count (get filter-counts :erikoistumiskoulutus 0)
+        total-kk-muu-count (+ erikoislaakari-count kk-opintojakso-normal-count kk-opintojakso-avoin-count kk-opintokokonaisuus-normal-count kk-opintokokonaisuus-avoin-count ope-pedag-opinnot-count erikoistumiskoulutus-count)]
     {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                                              :amm-osaamisala {:count amm-osaamisala-count}
                                              :amm-muu {:count amm-muu-count}
@@ -88,13 +90,15 @@
      (cond-> {:alakoodit {:amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
        total-amk-muu-count (assoc :count total-amk-muu-count))
      :aikuisten-perusopetus {:count aikuisten-perusopetus-count}
+     :taiteen-perusopetus {:count taiteen-perusopetus-count}
      :kk-muu
      (cond-> {:alakoodit {:erikoislaakari {:count erikoislaakari-count}
                           :kk-opintojakso-normal {:count kk-opintojakso-normal-count}
                           :kk-opintojakso-avoin {:count kk-opintojakso-avoin-count}
                           :kk-opintokokonaisuus-normal {:count kk-opintokokonaisuus-normal-count}
                           :kk-opintokokonaisuus-avoin {:count kk-opintokokonaisuus-avoin-count}
-                          :ope-pedag-opinnot {:count ope-pedag-opinnot-count}}}
+                          :ope-pedag-opinnot {:count ope-pedag-opinnot-count}
+                          :erikoistumiskoulutus {:count erikoistumiskoulutus-count}}}
         total-kk-muu-count (assoc :count total-kk-muu-count))}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
