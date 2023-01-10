@@ -95,7 +95,7 @@
 
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
-(def Koulutustyyppi (s/enum "amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus"))
+(def Koulutustyyppi (s/enum "amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus" "taiteen-perusopetus"))
 (def Amm            (s/eq "amm"))
 (def Yo             (s/eq "yo"))
 (def Amk            (s/eq "amk"))
@@ -112,6 +112,7 @@
 (def KkOpintokokonaisuus          (s/eq "kk-opintokokonaisuus"))
 (def Erikoislaakari               (s/eq "erikoislaakari"))
 (def Erikoistumiskoulutus         (s/eq "erikoistumiskoulutus"))
+(def TaiteenPerusopetus           (s/eq "taiteen-perusopetus"))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 

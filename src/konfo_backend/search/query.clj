@@ -104,7 +104,7 @@
 
 (defn- koulutustyyppi-filters
   [field current-time constraints]
-  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus"] current-time constraints))
+  (->filters-aggregation field '["amm", "amm-muu", "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma", "vapaa-sivistystyo", "vapaa-sivistystyo-opistovuosi", "vapaa-sivistystyo-muu" "aikuisten-perusopetus" "taiteen-perusopetus"] current-time constraints))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field current-time constraints]
