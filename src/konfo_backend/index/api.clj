@@ -395,7 +395,7 @@
    |                type: json
    |        '404':
    |          description: Not found
-   |  /koodisto/{id}/koodit:
+   |  /koodisto/{koodistouri}/koodit:
    |    get:
    |      tags:
    |        - internal
@@ -404,7 +404,7 @@
    |        Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: path
-   |          name: id
+   |          name: koodistouri
    |          schema:
    |            type: string
    |          required: true
@@ -519,8 +519,8 @@
                                         (ok result)
                                         (not-found "Not found"))))
 
-    (GET "/koodisto/:id/koodit" [:as request]
-         :path-params [id :- String]
-         (with-access-logging request (if-let [result (koodisto/list-koodit id)]
+    (GET "/koodisto/:koodistouri/koodit" [:as request]
+         :path-params [koodistouri :- String]
+         (with-access-logging request (if-let [result (koodisto/list-koodit koodistouri)]
                                         (ok result)
                                         (not-found "Not found"))))))
