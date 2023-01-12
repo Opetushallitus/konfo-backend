@@ -5,7 +5,7 @@
 
 (deftest filters-test
   (testing "Should form filter for the query with jotpa as the only constraint"
-    (is (= [{:term {:search_terms.hasJotpaRahoitus true}}]
+    (is (= [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]
            (filters {:jotpa true} "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with two terms queries"
@@ -44,7 +44,7 @@
                      {:should
                       [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-            {:term {:search_terms.hasJotpaRahoitus true}}
+            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
             {:nested {:path "search_terms.hakutiedot"
                       :query
                       {:bool
@@ -125,7 +125,7 @@
              {:hakukaynnissa
               {:bool
                {:filter
-                [{:term {:search_terms.hasJotpaRahoitus true}}
+                [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
                  {:bool
                   {:should
                    [{:bool
@@ -183,7 +183,7 @@
               {:jotpa
                {:bool
                 {:filter
-                 [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                 [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (jotpa-filter "2022-08-26T07:21" {}))))
 
@@ -212,7 +212,7 @@
                           {:should
                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-                 {:term {:search_terms.hasJotpaRahoitus true}}]}
+                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}
                }}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (jotpa-filter "2022-08-26T07:21" {:hakukaynnissa true}))))
@@ -227,7 +227,7 @@
                            :query {:bool {:filter
                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                   "pohjakoulutusvaatimuskonfo_am"}}}}}}
-                 {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (jotpa-filter "2022-08-26T07:21" {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}))))
 
@@ -237,7 +237,7 @@
              {:jotpa
               {:bool
                {:filter
-                [{:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (jotpa-filter "2022-08-26T07:21" {:jotpa true})))))
 
@@ -272,7 +272,7 @@
                          :query {:bool {:filter
                                         {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                  "pohjakoulutusvaatimuskonfo_am"}}}}}}
-                  {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
                :pohjakoulutusvaatimuskonfo_003
                {:bool
                 {:filter
@@ -280,7 +280,7 @@
                             :query {:bool {:filter
                                            {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                     "pohjakoulutusvaatimuskonfo_003"}}}}}}
-                  {:term {:search_terms.hasJotpaRahoitus true}}]}}}}
+                  {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (->hakutieto-filters-aggregation
              :search_terms.hakutiedot.pohjakoulutusvaatimukset
@@ -496,7 +496,7 @@
                           {:should
                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-                 {:term {:search_terms.hasJotpaRahoitus true}}]}}
+                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
               :oppilaitoksenopetuskieli_5
               {:bool
                {:filter
@@ -521,7 +521,7 @@
                           {:should
                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-                 {:term {:search_terms.hasJotpaRahoitus true}}
+                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
                  ]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            (->filters-aggregation

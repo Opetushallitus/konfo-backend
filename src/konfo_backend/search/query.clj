@@ -1,10 +1,10 @@
 (ns konfo-backend.search.query
   (:require
-    [konfo-backend.elastic-tools :refer [->from ->size]]
-    [konfo-backend.index.haku :refer [list-yhteishaut]]
-    [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+   [konfo-backend.elastic-tools :refer [->from ->size]]
+   [konfo-backend.index.haku :refer [list-yhteishaut]]
+   [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
+   [konfo-backend.search.tools :refer :all]
+   [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (defn query
   [keyword constraints user-lng suffixes]
@@ -28,8 +28,8 @@
 
 (defn- lukio-filters [constraints]
   (cond-> []
-          (lukiopainotukset? constraints) (conj (->terms-query :search_terms.lukiopainotukset.keyword (:lukiopainotukset constraints)))
-          (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query :search_terms.lukiolinjaterityinenkoulutustehtava.keyword (:lukiolinjaterityinenkoulutustehtava constraints)))))
+    (lukiopainotukset? constraints) (conj (->terms-query :search_terms.lukiopainotukset.keyword (:lukiopainotukset constraints)))
+    (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query :search_terms.lukiolinjaterityinenkoulutustehtava.keyword (:lukiolinjaterityinenkoulutustehtava constraints)))))
 
 (defn- osaamisala-filters [constraints]
   [(->terms-query :search_terms.osaamisalat.keyword (:osaamisala constraints))])
@@ -130,29 +130,31 @@
   (if-let [list (seq (list-koodi-urit koodisto))]
     (->hakutieto-filters-aggregation field list current-time constraints)))
 
-(defn hakukaynnissa-filter
-  [current-time constraints]
+(defn bool-agg-filter [filter-name own-filter constraints current-time]
   {:filters
    {:filters
-    {:hakukaynnissa
+    {(keyword filter-name)
      {:bool
-      {:filter (distinct
-                 (conj
-                   (filters constraints current-time)
-                   (hakuaika-filter-query current-time)))}}}}
+      {:filter (distinct (conj (filters constraints current-time) own-filter))}}}}
    :aggs {:real_hits {:reverse_nested {}}}})
+
+(defn- without-tyoelama-constraints [constraints] (dissoc constraints :jotpa :tyovoimakoulutus :taydennyskoulutus))
+
+(defn hakukaynnissa-filter
+  [current-time constraints]
+  (bool-agg-filter "hakukaynnissa" (hakuaika-filter-query current-time) constraints current-time))
 
 (defn jotpa-filter
   [current-time constraints]
-  {:filters
-   {:filters
-    {:jotpa
-     {:bool
-      {:filter (distinct
-                 (conj
-                   (filters constraints current-time)
-                     {:term {:search_terms.hasJotpaRahoitus true}}))}}}}
-   :aggs {:real_hits {:reverse_nested {}}}})
+  (bool-agg-filter "jotpa" (tyoelama-filters-query {:jotpa true}) (without-tyoelama-constraints constraints) current-time))
+
+(defn tyovoimakoulutus-filter
+  [current-time constraints]
+  (bool-agg-filter "tyovoimakoulutus" (tyoelama-filters-query {:tyovoimakoulutus true}) (without-tyoelama-constraints constraints) current-time))
+
+(defn taydennyskoulutus-filter
+  [current-time constraints]
+  (bool-agg-filter "taydennyskoulutus" (tyoelama-filters-query {:taydennyskoulutus true}) (without-tyoelama-constraints constraints) current-time))
 
 (defn- remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
@@ -173,9 +175,10 @@
                   :koulutustyyppi (koulutustyyppi-filters :search_terms.koulutustyypit.keyword current-time constraints)
                   :koulutustyyppitaso2 (koodisto-filters :search_terms.koulutustyypit.keyword "koulutustyyppi" current-time constraints)
                   :opetustapa (koodisto-filters :search_terms.opetustavat.keyword "opetuspaikkakk" current-time constraints)
-
                   :hakukaynnissa (hakukaynnissa-filter current-time constraints)
                   :jotpa (jotpa-filter current-time constraints)
+                  :tyovoimakoulutus (tyovoimakoulutus-filter current-time constraints)
+                  :taydennyskoulutus (taydennyskoulutus-filter current-time constraints)
                   :hakutapa (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
                   :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
                   :valintatapa (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
@@ -220,21 +223,21 @@
 (defn- tarjoajat-aggs
   [tuleva? constraints]
   (let [current-time (current-time-as-kouta-format)]
-   {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
-                    :aggs   (remove-nils {:maakunta              (koodisto-filters-for-subentity :search_terms.sijainti.keyword "maakunta" current-time constraints)
-                                          :kunta                 (koodisto-filters-for-subentity :search_terms.sijainti.keyword "kunta" current-time constraints)
-                                          :opetuskieli           (koodisto-filters-for-subentity :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli" current-time constraints)
-                                          :koulutusala           (koodisto-filters-for-subentity :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1" current-time constraints)
-                                          :koulutusalataso2      (koodisto-filters-for-subentity :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2" current-time constraints)
-                                          :koulutustyyppi        (koulutustyyppi-filters-for-subentity :search_terms.koulutustyypit.keyword current-time constraints)
-                                          :koulutustyyppitaso2   (koodisto-filters-for-subentity :search_terms.koulutustyypit.keyword "koulutustyyppi" current-time constraints)
-                                          :opetustapa            (koodisto-filters-for-subentity :search_terms.opetustavat.keyword "opetuspaikkakk" current-time constraints)
+    {:inner_hits_agg {:filter (inner-hits-filters tuleva? constraints)
+                      :aggs   (remove-nils {:maakunta              (koodisto-filters-for-subentity :search_terms.sijainti.keyword "maakunta" current-time constraints)
+                                            :kunta                 (koodisto-filters-for-subentity :search_terms.sijainti.keyword "kunta" current-time constraints)
+                                            :opetuskieli           (koodisto-filters-for-subentity :search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli" current-time constraints)
+                                            :koulutusala           (koodisto-filters-for-subentity :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1" current-time constraints)
+                                            :koulutusalataso2      (koodisto-filters-for-subentity :search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2" current-time constraints)
+                                            :koulutustyyppi        (koulutustyyppi-filters-for-subentity :search_terms.koulutustyypit.keyword current-time constraints)
+                                            :koulutustyyppitaso2   (koodisto-filters-for-subentity :search_terms.koulutustyypit.keyword "koulutustyyppi" current-time constraints)
+                                            :opetustapa            (koodisto-filters-for-subentity :search_terms.opetustavat.keyword "opetuspaikkakk" current-time constraints)
 
-                                          :hakukaynnissa         (hakukaynnissa-filter current-time constraints)
-                                          :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
-                                          :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
-                                          :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
-                                          :yhteishaku            (yhteishaku-filter current-time {})})}}))
+                                            :hakukaynnissa         (hakukaynnissa-filter current-time constraints)
+                                            :hakutapa              (hakutieto-koodisto-filters :search_terms.hakutiedot.hakutapa "hakutapa" current-time constraints)
+                                            :pohjakoulutusvaatimus (hakutieto-koodisto-filters :search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo" current-time constraints)
+                                            :valintatapa           (hakutieto-koodisto-filters :search_terms.hakutiedot.valintatavat "valintatapajono" current-time constraints)
+                                            :yhteishaku            (yhteishaku-filter current-time {})})}}))
 
 (defn hakutulos-aggregations
   [constraints]

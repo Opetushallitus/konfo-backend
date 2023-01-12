@@ -40,12 +40,6 @@
   []
   (->kouta-date-time-string (time/now)))
 
-(defn ten-months-past-as-kouta-format
-  []
-  (-> (time/now)
-      (time/minus (time/months 10))
-      (->kouta-date-time-string)))
-
 (defn within?
   [gte time lt]
   (if (nil? lt) (time/after? time gte) (time/within? (time/interval gte lt) time)))

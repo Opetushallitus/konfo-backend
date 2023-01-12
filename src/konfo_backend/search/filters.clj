@@ -103,6 +103,10 @@
 
 (defn- jotpa [filter-counts] {:count (get filter-counts :jotpa 0)})
 
+(defn- taydennyskoulutus [filter-counts] {:count (get filter-counts :taydennyskoulutus 0)})
+
+(defn- tyovoimakoulutus [filter-counts] {:count (get filter-counts :tyovoimakoulutus 0)})
+
 (defn- yhteishaku
   [aggs]
   (let [yhteishaut (get-yhteishaut)]
@@ -130,6 +134,8 @@
       :hakukaynnissa (hakukaynnissa filter-counts)
       :hakutapa (filters "hakutapa")
       :jotpa (jotpa filter-counts)
+      :tyovoimakoulutus (tyovoimakoulutus filter-counts)
+      :taydennyskoulutus (taydennyskoulutus filter-counts)
       :yhteishaku (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([] (generate-filter-counts-external {})))
@@ -148,6 +154,8 @@
       :hakukaynnissa (hakukaynnissa filter-counts)
       :hakutapa (filters "hakutapa")
       :jotpa (jotpa filter-counts)
+      :tyovoimakoulutus (tyovoimakoulutus filter-counts)
+      :taydennyskoulutus (taydennyskoulutus filter-counts)
       :yhteishaku (yhteishaku filter-counts)
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
       :osaamisala (filters "osaamisala")
