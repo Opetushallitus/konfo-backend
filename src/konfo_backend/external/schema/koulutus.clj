@@ -63,14 +63,7 @@
      |          $ref: '#/components/schemas/Nimi'
      |        metadata:
      |          type: object
-     |          oneOf:
-     |            - $ref: '#/components/schemas/YliopistoKoulutusMetadata'
-     |            - $ref: '#/components/schemas/AmmattikorkeaKoulutusMetadata'
-     |            - $ref: '#/components/schemas/KkOpintojaksoKoulutusMetadata'
-     |            - $ref: '#/components/schemas/KkOpintokokonaisuusKoulutusMetadata'
-     |            - $ref: '#/components/schemas/LukioKoulutusMetadata'
-     |            - $ref: '#/components/schemas/ErikoislaakariKoulutusMetadata'
-     |            - $ref: '#/components/schemas/TaiteenPerusopetusKoulutusMetadata'
+     |          $ref: '#/components/schemas/KoulutusMetadata'
      |        organisaatio:
      |          type: object
      |          description: Koulutuksen luonut organisaatio
@@ -107,18 +100,7 @@
    :tarjoajat                    [Organisaatio]
    :kielivalinta                 [Kieli]
    :nimi                         Kielistetty
-   :metadata                     (s/conditional #(= "amm" (:tyyppi %)) AmmKoulutusMetadata
-                                                #(= "yo" (:tyyppi %)) YoKoulutusMetadata
-                                                #(= "amk" (:tyyppi %)) AmkKoulutusMetadata
-                                                #(= "erikoislaakari" (:tyyppi %)) ErikoislaakariKoulutusMetadata
-                                                #(= "kk-opintojakso" (:tyyppi %)) KkOpintojaksoKoulutusMetadata
-                                                #(= "kk-opintokokonaisuus" (:tyyppi %)) KkOpintokokonaisuusKoulutusMetadata
-                                                #(= "erikoistumiskoulutus" (:tyyppi %)) ErikoistumiskoulutusMetadata
-                                                #(= "amm-ope-erityisope-ja-opo" (:tyyppi %)) AmmOpeErityisopeJaOpoKoulutusMetadata
-                                                #(= "ope-pedag-opinnot" (:tyyppi %)) OpePedagOpinnotKoulutusMetadata
-                                                #(= "lk" (:tyyppi %)) LukioKoulutusMetadata
-                                                #(= "taiteen-perusopetus" (:tyyppi %)) TaiteenPerusopetusKoulutusMetadata
-                                                :else s/Any)
+   :metadata                     (s/maybe KoulutusMetadata)
    :organisaatio                 Organisaatio
    (s/->OptionalKey :teemakuva)  Url
    (s/->OptionalKey :ePerusteId) s/Int
