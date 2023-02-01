@@ -102,7 +102,19 @@
     (vec (for [hit hits
                :let [toteutusOid (:toteutusOid hit)]]
            (-> hit
-               (select-keys [:koulutusOid :oppilaitosOid :toteutusNimi :opetuskielet :toteutusOid :nimi :koulutustyyppi :kuva :jarjestaaUrheilijanAmmKoulutusta])
+               (select-keys [:koulutusOid
+                             :oppilaitosOid
+                             :toteutusNimi
+                             :opetuskielet
+                             :toteutusOid
+                             :nimi
+                             :koulutustyyppi
+                             :kuva
+                             :jarjestaaUrheilijanAmmKoulutusta
+                             :opintojenLaajuusNumero
+                             :opintojenLaajuusNumeroMin
+                             :opintojenLaajuusNumeroMax
+                             :opintojenLaajuusyksikko])
                (merge (:metadata hit))
                (assoc :hakuAuki (hit-haku-kaynnissa? hit))
                (assoc :kuvaus (if (not (nil? toteutusOid))
