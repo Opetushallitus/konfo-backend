@@ -29,6 +29,7 @@
 
 (def sorakuvaus-id "2ff6700d-087f-4dbf-9e42-7f38948f227a")
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
+(def helsingin-yliopisto "1.2.246.562.10.39218317368")
 
 (deftest oppilaitos-search-test
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
@@ -51,7 +52,7 @@
         (is (= 5 (get-in r [:filters :koulutustyyppi-muu :aikuisten-perusopetus :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
         (is (= 6 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-        (is (= 10 (get-in r [:filters :maakunta :maakunta_01 :count])))
+        (is (= 11 (get-in r [:filters :maakunta :maakunta_01 :count])))
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
         (is (= 6 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
@@ -62,10 +63,10 @@
       (testing "sijainti"
         (let [r (search :sijainti "kunta_091" :sort "name" :order "asc")]
           (is (= 1 (count (:hits r))))
-          (is (= punkaharjun-yliopisto (:oid (last (:hits r)))))
+          (is (= helsingin-yliopisto (:oid (last (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))
           (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))

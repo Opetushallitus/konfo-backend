@@ -1,6 +1,5 @@
 (ns konfo-backend.index.oppilaitos-test
   (:require [clojure.test :refer :all]
-            [clj-elasticsearch.elastic-utils :refer [elastic-post]]
             [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")

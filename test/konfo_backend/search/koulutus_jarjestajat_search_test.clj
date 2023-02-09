@@ -135,9 +135,10 @@
         (let [r (search hevosala-oid :tuleva true)]
           (is (= 1 (:total r)))
           (is (= {:koulutusOid "1.2.246.562.13.000011"
-                  :oppilaitosOid "1.2.246.562.10.000005",
+                  :oppilaitosOid "1.2.246.562.10.39218317368",
                   :nimi {:fi "Helsingin yliopisto",
-                         :sv "Helsingin yliopisto sv"},
+                         :sv "Helsingfors universitet",
+                         :en "University of Helsinki"},
                   ;:oppilaitosTila nil,
                   :koulutustyyppi "yo",
                   ;:opetuskielet [],
