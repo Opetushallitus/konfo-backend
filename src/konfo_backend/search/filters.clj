@@ -210,9 +210,8 @@
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
 (defn flattened-filter-counts
-  [for-external?]
-  (if-let [result (if for-external? (generate-filter-counts-external) (generate-filter-counts))]
-    (reduce-kv (fn [r suodatin m]
-                 (concat r (into [] (for [[k v] m] (filter->obj suodatin k (:nimi v))))))
+  []
+  (let [filter-counts (generate-filter-counts)]
+    (reduce-kv (fn [r suodatin m] (concat r (into [] (for [[k v] m] (filter->obj suodatin k (:nimi v))))))
                []
-               result)))
+               filter-counts)))
