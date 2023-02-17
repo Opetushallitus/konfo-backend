@@ -168,15 +168,21 @@
    |          $ref: '#/components/schemas/Teksti'
    |        wwwSivu:
    |          type: object
-   |          description: Yhteyshenkilön www-sivu eri kielillä. Kielet on määritetty kielivalinnassa.
-   |          $ref: '#/components/schemas/Linkki'")
+   |          description: Yhteyshenkilön www-sivun linkin osoite eri kielillä. Kielet on määritetty kielivalinnassa.
+   |          $ref: '#/components/schemas/Linkki'
+   |        wwwSivuTeksti:
+   |          type: object
+   |          description: Yhteyshenkilön www-sivun linkissä näytettävä eri kielillä. Kielet on määritetty kielivalinnassa.
+   |          $ref: '#/components/schemas/Teksti'")
 
 (def Yhteyshenkilo
-  {:nimi          Kielistetty
-   :titteli       Kielistetty
-   :sahkoposti    Kielistetty
-   :puhelinnumero Kielistetty
-   :wwwSivu       Kielistetty})
+  {:nimi            Kielistetty
+   :titteli         Kielistetty
+   :sahkoposti      Kielistetty
+   :puhelinnumero   Kielistetty
+   :wwwSivu         Kielistetty
+   :wwwSivuTeksti   Kielistetty
+   s/Any            s/Any})
 
 (def ajanjakso-schema
   "|    Ajanjakso:
