@@ -176,12 +176,12 @@
    |          $ref: '#/components/schemas/Teksti'")
 
 (def Yhteyshenkilo
-  {:nimi            Kielistetty
-   :titteli         Kielistetty
-   :sahkoposti      Kielistetty
-   :puhelinnumero   Kielistetty
-   :wwwSivu         Kielistetty
-   :wwwSivuTeksti   Kielistetty
+  {(s/->OptionalKey :nimi)            (s/maybe Kielistetty)
+   (s/->OptionalKey :titteli)         (s/maybe Kielistetty)
+   (s/->OptionalKey :sahkoposti)      (s/maybe Kielistetty)
+   (s/->OptionalKey :puhelinnumero)   (s/maybe Kielistetty)
+   (s/->OptionalKey :wwwSivu)         (s/maybe Kielistetty)
+   (s/->OptionalKey :wwwSivuTeksti)   (s/maybe Kielistetty)
    s/Any            s/Any})
 
 (def ajanjakso-schema
