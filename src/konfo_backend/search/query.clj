@@ -14,6 +14,11 @@
   []
   {:match_all {}})
 
+(defn koulutus-wildcard-query
+  [searchstring user-lng]
+  {:bool {:must [{:wildcard {(keyword (str "nimi." user-lng ".keyword")) {:value (str "*" searchstring "*")}}},
+                {:term {:tila.keyword "julkaistu"}}]}})
+
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
   [order lng]
