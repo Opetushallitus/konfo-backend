@@ -54,9 +54,9 @@
 
 (defn autocomplete-search
   [searchPhrase lng sort order constraints]
-  (let [query (koulutus-wildcard-query searchPhrase lng)]
-    (e/search "koulutus-kouta"
+  (let [query (koulutus-wildcard-query searchPhrase lng constraints)]
+    (e/search index
               #(parse-for-autocomplete lng %)
               :_source ["oid", "nimi"]
-              ;;:sort (sorts sort order lng)
+              :sort (sorts sort order lng)
               :query query)))

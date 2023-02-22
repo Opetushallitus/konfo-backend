@@ -205,3 +205,10 @@
                                               :operator    "and"
                                               :type        "cross_fields"}}))
       filter? (assoc :filter (filters constraints (current-time-as-kouta-format))))))
+
+(defn wildcard-query-fields
+  [searchPhrase constraints user-lng]
+  (let [query {:must {:wildcard {(keyword (str "search_terms.koulutusnimi." user-lng ".keyword")) {:value (str "*" (lower-case searchPhrase) "*")}}}}]
+    (if (constraints? constraints)
+      (assoc query :filter (filters constraints (current-time-as-kouta-format)))
+      query)))
