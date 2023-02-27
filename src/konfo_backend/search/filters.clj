@@ -149,7 +149,7 @@
       :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
   ([] (generate-filter-counts-external {})))
 
-(defn generate-filter-counts
+(defn generate-default-filter-counts
   ([filter-counts]
    (let [filters (partial koodisto->filters filter-counts)]
      {:opetuskieli (filters "oppilaitoksenopetuskieli")
@@ -170,7 +170,7 @@
       :osaamisala (filters "osaamisala")
       :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
       :lukiopainotukset (filters "lukiopainotukset")}))
-  ([] (generate-filter-counts {})))
+  ([] (generate-default-filter-counts {})))
 
 (defn- add-oppilaitos-nimet
   [oppilaitokset]
@@ -191,26 +191,15 @@
 
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts aggs]
-  (let [filters (partial koodisto->filters filter-counts)]
-    {:opetuskieli           (filters "oppilaitoksenopetuskieli")
-     :maakunta              (filters "maakunta")
-     :kunta                 (filters "kunta")
-     :opetustapa            (filters "opetuspaikkakk")
-     :valintatapa           (filters "valintatapajono")
-     :hakukaynnissa         (hakukaynnissa filter-counts)
-     :hakutapa              (filters "hakutapa")
-     :yhteishaku            (yhteishaku filter-counts)
-     :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")
-     :lukiopainotukset      (filters "lukiopainotukset")
-     :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
-     :oppilaitos            (oppilaitos-filters aggs)
-     :osaamisala            (filters "osaamisala")}))
+  (assoc
+    (generate-default-filter-counts filter-counts)
+    :oppilaitos (oppilaitos-filters aggs)))
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
 (defn flattened-filter-counts
   []
-  (let [filter-counts (generate-filter-counts)]
+  (let [filter-counts (generate-default-filter-counts)]
     (reduce-kv (fn [r suodatin m] (concat r (into [] (for [[k v] m] (filter->obj suodatin k (:nimi v))))))
                []
                filter-counts)))

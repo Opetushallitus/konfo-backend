@@ -799,7 +799,7 @@
 
     ;; Jos muokkaat /filters-rajapintaa varmista ettei externalin vastaava rajapinta muutu samalla
     (GET "/filters" [:as request]
-      (with-access-logging request (if-let [result (filters/generate-filter-counts)]
+      (with-access-logging request (if-let [result (filters/generate-default-filter-counts)]
                                      (ok result)
                                      (not-found "Not found"))))
 
