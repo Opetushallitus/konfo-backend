@@ -36,7 +36,7 @@
 
 (defn- swap-osa-and-parent
   [oppilaitos]
-   (assoc (first (:osat oppilaitos)) :oppilaitos (dissoc oppilaitos :osat)))
+   (assoc (first (:osat oppilaitos)) :oppilaitos oppilaitos))
 
 (defn- oppilaitos-osa-mapper
   [result]
