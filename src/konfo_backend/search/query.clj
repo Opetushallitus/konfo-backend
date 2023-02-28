@@ -190,15 +190,20 @@
 
 (defn- generate-default-aggs
   [constraints current-time]
-  {:maakunta (koodisto-filters "sijainti" "maakunta" current-time constraints)
-   :kunta (koodisto-filters "sijainti" "kunta" current-time constraints)
-   :opetuskieli (koodisto-filters "opetuskielet" "oppilaitoksenopetuskieli" current-time constraints)
-   :opetustapa (koodisto-filters "opetustavat" "opetuspaikkakk" current-time constraints)
-   :hakukaynnissa (hakukaynnissa-filter current-time constraints)
-   :hakutapa (hakutieto-koodisto-filters "hakutapa" "hakutapa" current-time constraints)
-   :pohjakoulutusvaatimus (hakutieto-koodisto-filters "pohjakoulutusvaatimukset" "pohjakoulutusvaatimuskonfo" current-time constraints)
-   :valintatapa (hakutieto-koodisto-filters "valintatavat" "valintatapajono" current-time constraints)
-   :yhteishaku (yhteishaku-filter current-time constraints)})
+  (remove-nils
+   {:maakunta (koodisto-filters "sijainti" "maakunta" current-time constraints)
+    :kunta (koodisto-filters "sijainti" "kunta" current-time constraints)
+    :opetuskieli (koodisto-filters "opetuskielet" "oppilaitoksenopetuskieli" current-time constraints)
+    :opetustapa (koodisto-filters "opetustavat" "opetuspaikkakk" current-time constraints)
+    :hakukaynnissa (hakukaynnissa-filter current-time constraints)
+    :hakutapa (hakutieto-koodisto-filters "hakutapa" "hakutapa" current-time constraints)
+    :pohjakoulutusvaatimus (hakutieto-koodisto-filters "pohjakoulutusvaatimukset" "pohjakoulutusvaatimuskonfo" current-time constraints)
+    :valintatapa (hakutieto-koodisto-filters "valintatavat" "valintatapajono" current-time constraints)
+    :yhteishaku (yhteishaku-filter current-time constraints)
+    :koulutusala (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso1" current-time constraints)
+    :koulutusalataso2 (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso2" current-time constraints)
+    :koulutustyyppi (koulutustyyppi-filters current-time constraints)
+    :koulutustyyppitaso2 (koodisto-filters "koulutustyypit" "koulutustyyppi" current-time constraints)}))
 
 (defn- generate-aggs-for
   [filter-name filter-aggs tuleva? constraints current-time]
@@ -214,28 +219,34 @@
   (let [current-time (current-time-as-kouta-format)]
     (remove-nils
      (merge (generate-default-aggs constraints current-time)
-            {:koulutusala (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso1" current-time constraints)
-             :koulutusalataso2 (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso2" current-time constraints)
-             :koulutustyyppi (koulutustyyppi-filters current-time constraints)
-             :koulutustyyppitaso2 (koodisto-filters "koulutustyypit" "koulutustyyppi" current-time constraints)
-             :jotpa (jotpa-filter current-time constraints)
+            {:jotpa (jotpa-filter current-time constraints)
              :tyovoimakoulutus (tyovoimakoulutus-filter current-time constraints)
              :taydennyskoulutus (taydennyskoulutus-filter current-time constraints)}))))
+
+(defn- add-oppilaitos-aggs
+  [default-aggs oppilaitos-oids current-time]
+  (remove-nils
+   (merge default-aggs
+          {:oppilaitos (when-not
+                        (empty? oppilaitos-oids)
+                         (->filters-aggregation "search_terms.oppilaitosOid.keyword" oppilaitos-oids current-time {}))})))
 
 (defn- jarjestajat-aggs
   [tuleva? constraints oppilaitos-oids]
   (let [current-time (current-time-as-kouta-format)
+        default-aggs (generate-default-aggs {} current-time)
         lukiopainotukset-aggs (koodisto-filters "lukiopainotukset" "lukiopainotukset" current-time {})
         lukiolinjat-er-aggs (koodisto-filters "lukiolinjaterityinenkoulutustehtava" "lukiolinjaterityinenkoulutustehtava" current-time {})
         osaamisala-aggs (koodisto-filters "osaamisalat" "osaamisala" current-time {})]
     {:inner_hits_agg
      {:filter (inner-hits-filters tuleva? constraints)
       :aggs
-      (remove-nils
-       (merge (generate-default-aggs {} current-time)
-              {:oppilaitos (when-not
-                            (empty? oppilaitos-oids)
-                             (->filters-aggregation "search_terms.oppilaitosOid.keyword" oppilaitos-oids current-time {}))}))}
+      (-> default-aggs
+          (add-oppilaitos-aggs oppilaitos-oids current-time)
+          (dissoc :koulutusala
+                  :koulutusalataso2
+                  :koulutustyyppi
+                  :koulutustyyppitaso2))}
      :lukiopainotukset_aggs (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
      :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
      :osaamisala_aggs (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints current-time)}))
@@ -250,13 +261,7 @@
     {:inner_hits_agg
      {:filter (inner-hits-filters tuleva? constraints)
       :aggs
-      (remove-nils
-        (merge (generate-default-aggs {} current-time)
-               {:koulutusala (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso1" current-time {})
-                :koulutusalataso2 (koodisto-filters "koulutusalat" "kansallinenkoulutusluokitus2016koulutusalataso2" current-time {})
-                :koulutustyyppi (koulutustyyppi-filters current-time {})
-                :koulutustyyppitaso2 (koodisto-filters "koulutustyypit" "koulutustyyppi" current-time {})
-                :yhteishaku (yhteishaku-filter current-time {})}))}}))
+      (generate-default-aggs {} current-time)}}))
 
 (defn hakutulos-aggregations
   [constraints]
