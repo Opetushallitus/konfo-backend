@@ -30,9 +30,14 @@
 
 (defn- select-matching-osat
   [oid oppilaitos]
-  (->> (:osat oppilaitos)
-       (filter #(= oid (:oid %)))
-       (assoc oppilaitos :osat)))
+  (let [matching-osat (->> (:osat oppilaitos)
+                           (filter #(= oid (:oid %))))
+        parent-oids (->> matching-osat
+                         (map :parentToimipisteOid)
+                         set)
+        parents (->> (:osat oppilaitos)
+                     (filter #(contains? parent-oids (:oid %))))]
+    (assoc oppilaitos :osat (concat matching-osat parents)))) ; matching osat must be first, see swap-osa-and-parent
 
 (defn- swap-osa-and-parent
   [oppilaitos]
