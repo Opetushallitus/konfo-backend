@@ -241,7 +241,7 @@
             :aggs {:real_hits {:reverse_nested {}}}}
            (jotpa-filter "2022-08-26T07:21" {:jotpa true})))))
 
-(deftest ->hakutieto-filters-aggregation-test
+(deftest hakutieto-filters-aggregation-test
   (testing "Should form aggs filters for pohjakoulutusvaatimus without selected filters"
     (is (= {:filters
              {:filters
@@ -460,7 +460,7 @@
              "2022-08-26T07:21"
              {:valintatapa ["valintatapajono_av"]})))))
 
-(deftest ->filters-aggregation-test
+(deftest filters-aggregation-test
   (testing "Should form aggs filters for opetuskieli without any selected filters"
     (is (= {:filters
             {:filters
