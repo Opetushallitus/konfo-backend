@@ -134,25 +134,29 @@
     :search_terms.koulutustyypit.keyword koulutustyypit current-time constraints))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
-(defn- ->hakutieto-term-filter
-  [field term current-time constraints]
-  {(keyword term) {:bool {:filter (hakutieto-filters {:term {field term}} current-time constraints)}}})
+(defn- ->nested-term-filter
+  [nested-field-name field term current-time constraints]
+  {(keyword term) {:bool {:filter (nested-filters {:term {field term}} nested-field-name current-time constraints)}}})
 
-(defn- ->hakutieto-term-filters
-  [field terms current-time constraints]
-  (reduce merge {} (map #(->hakutieto-term-filter field % current-time constraints) terms)))
+(defn- ->nested-term-filters
+  [nested-field-name field terms current-time constraints]
+  (reduce merge {} (map #(->nested-term-filter nested-field-name field % current-time constraints) terms)))
 
-(defn ->hakutieto-filters-aggregation
-  [field terms current-time constraints]
+(defn ->nested-filters-aggregation
+  [nested-field-name field terms current-time constraints]
   {:filters
-   {:filters (->hakutieto-term-filters field terms current-time constraints)}
+   {:filters (->nested-term-filters nested-field-name field terms current-time constraints)}
    :aggs {:real_hits {:reverse_nested {}}}})
+
+(defn- nested-koodisto-filters
+  [nested-field-name field-name koodisto current-time constraints]
+  (if-let [list (seq (list-koodi-urit koodisto))]
+    (->nested-filters-aggregation
+     nested-field-name (keyword (str "search_terms." nested-field-name "." field-name)) list current-time constraints)))
 
 (defn- hakutieto-koodisto-filters
   [field-name koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
-    (->hakutieto-filters-aggregation
-     (keyword (str "search_terms.hakutiedot." field-name)) list current-time constraints)))
+  (nested-koodisto-filters "hakutiedot" field-name koodisto current-time constraints))
 
 (defn bool-agg-filter [filter-name own-filter constraints current-time]
   {:filters
@@ -185,8 +189,8 @@
 
 (defn- yhteishaku-filter
   [current-time constraints]
-  (when-let [list (seq (list-yhteishaut))]
-    (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list current-time constraints)))
+  (if-let [list (seq (list-yhteishaut))]
+    (->nested-filters-aggregation "hakutiedot" :search_terms.hakutiedot.yhteishakuOid list current-time constraints)))
 
 (defn- generate-default-aggs
   [constraints current-time]

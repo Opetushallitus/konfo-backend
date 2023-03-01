@@ -1,6 +1,6 @@
 (ns konfo-backend.search.query-unit-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter ->hakutieto-filters-aggregation ->filters-aggregation]]
+            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter ->nested-filters-aggregation ->filters-aggregation]]
             [konfo-backend.search.tools :refer [filters hakuaika-filter-query]]))
 
 (deftest filters-test
@@ -256,7 +256,8 @@
                                         {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                  "pohjakoulutusvaatimuskonfo_003"}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.pohjakoulutusvaatimukset
              ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
              "2022-08-26T07:21"
@@ -282,7 +283,8 @@
                                                     "pohjakoulutusvaatimuskonfo_003"}}}}}}
                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.pohjakoulutusvaatimukset
              ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
              "2022-08-26T07:21"
@@ -351,7 +353,8 @@
                                            {:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset
                                                     ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.hakutapa
              ["hakutapa_01" "hakutapa_02"]
              "2022-08-26T07:21"
@@ -390,7 +393,8 @@
                                    {:filter
                                     {:terms {:search_terms.hakutiedot.hakutapa ["hakutapa_01" "hakutapa_02"]}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.pohjakoulutusvaatimukset
              ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
              "2022-08-26T07:21"
@@ -422,7 +426,8 @@
                                                   {:terms {:search_terms.hakutiedot.hakutapa
                                                            ["hakutapa_01" "hakutapa_02"]}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.valintatavat
              ["valintatapajono_av" "valintatapajono_yp"]
              "2022-08-26T07:21"
@@ -448,7 +453,8 @@
                             :query {:bool {:filter
                                            {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_av"}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           (->hakutieto-filters-aggregation
+           (->nested-filters-aggregation
+             "hakutiedot"
              :search_terms.hakutiedot.valintatavat
              ["valintatapajono_av" "valintatapajono_yp"]
              "2022-08-26T07:21"
@@ -700,9 +706,4 @@
            (->filters-aggregation
              :search_terms.koulutustyypit.keyword ["amm" "amk"]
              "2022-08-26T07:21"
-             {:koulutustyyppi ["amm"]}))))
-
-  )
-
-(use 'clojure.test)
-(run-tests)
+             {:koulutustyyppi ["amm"]})))))
