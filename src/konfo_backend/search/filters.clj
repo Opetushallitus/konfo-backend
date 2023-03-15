@@ -20,10 +20,17 @@
   (reduce-merge-map #(koodi->filter filter-counts %)
                     (:koodit (k/get-koodisto-with-cache koodisto))))
 
-(defn- beta-koulutustyyppi
+(defn- get-koulutustyyppi-amm-alakoodi-counts [filter-counts]
+  (merge
+   (select-keys (koodisto->filters filter-counts "koulutustyyppi")
+                [:koulutustyyppi_26 :koulutustyyppi_4 :koulutustyyppi_11
+                 :koulutustyyppi_12])
+   {:muu-amm-tutkinto (get filter-counts :muu-amm-tutkinto 0)}))
+
+(defn- konfo-koulutustyyppi
   [filter-counts]
   (let [ammatillinen-count (get filter-counts :amm 0)
-        koulutustyyppi-info-and-counts (koodisto->filters filter-counts "koulutustyyppi")
+        amm-alakoodi-counts (get-koulutustyyppi-amm-alakoodi-counts filter-counts)
         lukio-count (get filter-counts :lk 0)
         amk-count (get filter-counts :amk 0)
         yo-count (get filter-counts :yo 0)
@@ -34,9 +41,7 @@
         maisteri-count (get filter-counts :maisteri 0)
         tohtori-count (get filter-counts :tohtori 0)]
     {:lk {:count lukio-count}
-     :amm (cond-> {:alakoodit (select-keys koulutustyyppi-info-and-counts
-                                           [:koulutustyyppi_26 :koulutustyyppi_4 :koulutustyyppi_11
-                                            :koulutustyyppi_12])}
+     :amm (cond-> {:alakoodit amm-alakoodi-counts}
             ammatillinen-count (assoc :count ammatillinen-count))
      :amk (cond-> {:alakoodit {:amk-alempi {:count amk-alempi-count}
                                :amk-ylempi {:count amk-ylempi-count}}}
@@ -47,7 +52,7 @@
                               :tohtori {:count tohtori-count}}}
            yo-count (assoc :count yo-count))}))
 
-(defn- beta-koulutustyyppi-muu
+(defn- konfo-koulutustyyppi-muu
   [filter-counts]
   (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
@@ -78,7 +83,7 @@
                                              :amm-osaamisala {:count amm-osaamisala-count}
                                              :amm-muu {:count amm-muu-count}
                                              :telma {:count telma-count}}}
-                muut-ammatilliset-count (assoc :count muut-ammatilliset-count))
+                          muut-ammatilliset-count (assoc :count muut-ammatilliset-count))
      :tuva (cond-> {:alakoodit {:tuva-normal {:count tuva-normal-count}
                                 :tuva-erityisopetus {:count tuva-erityisopetus-count}}}
              total-tuva-count (assoc :count total-tuva-count))
@@ -100,9 +105,8 @@
                           :kk-opintokokonaisuus-avoin {:count kk-opintokokonaisuus-avoin-count}
                           :ope-pedag-opinnot {:count ope-pedag-opinnot-count}
                           :erikoistumiskoulutus {:count erikoistumiskoulutus-count}}}
-        total-kk-muu-count (assoc :count total-kk-muu-count))
-     :muu {:count muu-count}
-     }))
+       total-kk-muu-count (assoc :count total-kk-muu-count))
+     :muu {:count muu-count}}))
 
 (defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
 
@@ -131,8 +135,8 @@
      {:opetuskieli (filters "oppilaitoksenopetuskieli")
       :maakunta (filters "maakunta")
       :kunta (filters "kunta")
-      :koulutustyyppi (beta-koulutustyyppi filter-counts)
-      :koulutustyyppi-muu (beta-koulutustyyppi-muu filter-counts)
+      :koulutustyyppi (konfo-koulutustyyppi filter-counts)
+      :koulutustyyppi-muu (konfo-koulutustyyppi-muu filter-counts)
       :koulutusala (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa (filters "opetuspaikkakk")
       :valintatapa (filters "valintatapajono")
@@ -151,8 +155,8 @@
      {:opetuskieli (filters "oppilaitoksenopetuskieli")
       :maakunta (filters "maakunta")
       :kunta (filters "kunta")
-      :koulutustyyppi (beta-koulutustyyppi filter-counts)
-      :koulutustyyppi-muu (beta-koulutustyyppi-muu filter-counts)
+      :koulutustyyppi (konfo-koulutustyyppi filter-counts)
+      :koulutustyyppi-muu (konfo-koulutustyyppi-muu filter-counts)
       :koulutusala (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa (filters "opetuspaikkakk")
       :valintatapa (filters "valintatapajono")
@@ -201,8 +205,7 @@
      :lukiopainotukset      (filters "lukiopainotukset")
      :lukiolinjaterityinenkoulutustehtava (filters "lukiolinjaterityinenkoulutustehtava")
      :oppilaitos            (oppilaitos-filters aggs)
-     :osaamisala            (filters "osaamisala")})
-    )
+     :osaamisala            (filters "osaamisala")}))
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
