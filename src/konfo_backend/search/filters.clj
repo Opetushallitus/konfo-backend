@@ -25,7 +25,7 @@
    (select-keys (koodisto->filters filter-counts "koulutustyyppi")
                 [:koulutustyyppi_26 :koulutustyyppi_4 :koulutustyyppi_11
                  :koulutustyyppi_12])
-   {:muu-amm-tutkinto (get filter-counts :muu-amm-tutkinto 0)}))
+   {:muu-amm-tutkinto {:count (get filter-counts :muu-amm-tutkinto 0)}}))
 
 (defn- konfo-koulutustyyppi
   [filter-counts]
