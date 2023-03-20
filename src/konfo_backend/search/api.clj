@@ -781,14 +781,14 @@
             (not-found "Not found"))))
 
 (defn ->autocomplete-search-with-validated-params
-  [f searchPhrase lng sort order constraints]
+  [search-fn search-phrase lng sort order constraints]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
-    (and (not (nil? searchPhrase))
-         (> 3 (count searchPhrase))) (bad-request "Hakusana on liian lyhyt")
-    :else (ok (f searchPhrase
+    (and (not (nil? search-phrase))
+         (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
+    :else (ok (search-fn search-phrase
                  lng
                  sort
                  order

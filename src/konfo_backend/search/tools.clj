@@ -207,13 +207,13 @@
       filter? (assoc :filter (filters constraints (current-time-as-kouta-format))))))
 
 (defn generate-wildcard-query
-  [searchPhraseToken user-lng]
-  {:wildcard {(keyword (str "search_terms.koulutusnimi." user-lng ".keyword")) {:value (str "*" (lower-case searchPhraseToken) "*")}}})
+  [search-phrase-token user-lng]
+  {:wildcard {(keyword (str "search_terms.koulutusnimi." user-lng ".keyword")) {:value (str "*" (lower-case search-phrase-token) "*")}}})
 
 (defn wildcard-query-fields
-  [searchPhrase constraints user-lng]
-  (let [searchPhraseTokens (split searchPhrase #" ")
-        query {:must (vec (map #(generate-wildcard-query % user-lng) searchPhraseTokens))}]
+  [search-phrase constraints user-lng]
+  (let [search-phrase-tokens (split search-phrase #" ")
+        query {:must (vec (map #(generate-wildcard-query % user-lng) search-phrase-tokens))}]
     (if (constraints? constraints)
       (assoc query :filter (filters constraints (current-time-as-kouta-format)))
       query)))

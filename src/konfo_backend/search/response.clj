@@ -12,7 +12,9 @@
 
 (defn- autocomplete-hits
   [response lng]
-  (map (fn [x] (let [res (:_source x)](assoc {} :label (get-in res [:nimi (keyword lng)]) :id (:oid res))))
+  (map (fn [x] (let [res (:_source x)]
+                 {:label (get-in res [:nimi (keyword lng)])
+                  :id (:oid res)}))
        (get-in response [:hits :hits])))
 
 (defn- ->doc_count
