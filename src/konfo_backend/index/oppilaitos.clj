@@ -48,5 +48,5 @@
   (some->> (search index oppilaitos-osa-mapper :query {:term {:osat.oid.keyword oid}})
            (first)
            (select-matching-osat oid)
-           (dissoc-kouta-data-if-not-allowed-to-view draft?)
+           ;(dissoc-kouta-data-if-not-allowed-to-view draft?)
            (swap-osa-and-parent)))
