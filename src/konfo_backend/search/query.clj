@@ -60,31 +60,6 @@
     (->name-sort order lng)
     (vec (concat [{:_score {:order order}}] (->name-sort "asc" lng)))))
 
-(defn- lukio-filters [constraints]
-  (cond-> []
-    (lukiopainotukset? constraints) (conj (->terms-query "lukiopainotukset" (:lukiopainotukset constraints)))
-    (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query "lukiolinjaterityinenkoulutustehtava" (:lukiolinjaterityinenkoulutustehtava constraints)))))
-
-(defn- osaamisala-filters [constraints]
-  [(->terms-query "osaamisalat" (:osaamisala constraints))])
-
-(defn- inner-hits-filters
-  [tuleva? constraints]
-  {:bool
-   {:must
-    [{:term {"search_terms.onkoTuleva" tuleva?}}
-     {:bool
-      (let [lukiolinjat-and-osaamisala-filters
-            (concat []
-                    (when (or (lukiolinjaterityinenkoulutustehtava? constraints) (lukiopainotukset? constraints))
-                      (lukio-filters constraints))
-                    (when (osaamisala? constraints)
-                      (osaamisala-filters constraints)))]
-        (if (empty? lukiolinjat-and-osaamisala-filters)
-          {}
-          {:should lukiolinjat-and-osaamisala-filters}))}]
-    :filter (filters constraints (current-time-as-kouta-format))}})
-
 (defn inner-hits-query
   [oid lng page size order tuleva? constraints]
   (let [size (->size size)
