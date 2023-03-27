@@ -4,7 +4,7 @@
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.filters :as filters]
    [compojure.api.core :refer [GET context]]
-   [ring.util.http-response :refer :all]
+   [ring.util.http-response :refer [bad-request not-found ok]]
    [clj-log.access-log :refer [with-access-logging]]
    [konfo-backend.tools :refer [comma-separated-string->vec]]))
 
@@ -730,53 +730,53 @@
    |          description: Bad request")
 
 
-(defn- parse-constraints [constraints]
-  {:koulutustyyppi        (->> (:koulutustyyppi constraints) (comma-separated-string->vec))
-   :sijainti              (comma-separated-string->vec (:sijainti constraints))
-   :opetuskieli           (comma-separated-string->vec (:opetuskieli constraints))
-   :koulutusala           (comma-separated-string->vec (:koulutusala constraints))
-   :opetustapa            (comma-separated-string->vec (:opetustapa constraints))
-   :valintatapa           (comma-separated-string->vec (:valintatapa constraints))
-   :hakukaynnissa         (:hakukaynnissa constraints)
-   :hakutapa              (comma-separated-string->vec (:hakutapa constraints))
-   :jotpa                 (:jotpa constraints)
-   :tyovoimakoulutus      (:tyovoimakoulutus constraints)
-   :taydennyskoulutus     (:taydennyskoulutus constraints)
-   :yhteishaku            (comma-separated-string->vec (:yhteishaku constraints))
-   :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus constraints))
-   :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset constraints))
-   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava constraints))
-   :osaamisala            (comma-separated-string->vec (:osaamisala constraints))
-   :oppilaitos            (comma-separated-string->vec (:oppilaitos constraints))})
+(defn- create-constraints [suodatin-params]
+  {:koulutustyyppi        (->> (:koulutustyyppi suodatin-params) (comma-separated-string->vec))
+   :sijainti              (comma-separated-string->vec (:sijainti suodatin-params))
+   :opetuskieli           (comma-separated-string->vec (:opetuskieli suodatin-params))
+   :koulutusala           (comma-separated-string->vec (:koulutusala suodatin-params))
+   :opetustapa            (comma-separated-string->vec (:opetustapa suodatin-params))
+   :valintatapa           (comma-separated-string->vec (:valintatapa suodatin-params))
+   :hakukaynnissa         (:hakukaynnissa suodatin-params)
+   :hakutapa              (comma-separated-string->vec (:hakutapa suodatin-params))
+   :jotpa                 (:jotpa suodatin-params)
+   :tyovoimakoulutus      (:tyovoimakoulutus suodatin-params)
+   :taydennyskoulutus     (:taydennyskoulutus suodatin-params)
+   :yhteishaku            (comma-separated-string->vec (:yhteishaku suodatin-params))
+   :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus suodatin-params))
+   :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset suodatin-params))
+   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava suodatin-params))
+   :osaamisala            (comma-separated-string->vec (:osaamisala suodatin-params))
+   :oppilaitos            (comma-separated-string->vec (:oppilaitos suodatin-params))})
 
 (defn ->search-with-validated-params
-  [f keyword lng page size sort order constraints]
+  [do-search keyword lng page size sort order suodatin-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
     (and (not (nil? keyword))
          (> 3 (count keyword))) (bad-request "Hakusana on liian lyhyt")
-    :else (ok (f keyword
-                 lng
-                 page
-                 size
-                 sort
-                 order
-                 (parse-constraints constraints)))))
+    :else (ok (do-search keyword
+                         lng
+                         page
+                         size
+                         sort
+                         order
+                         (create-constraints suodatin-params)))))
 
 (defn- ->search-subentities-with-validated-params
-  [f oid lng page size order tuleva constraints]
+  [do-search oid lng page size order tuleva suodatin-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-    :else (if-let [result (f oid
-                             lng
-                             page
-                             size
-                             order
-                             tuleva
-                             (parse-constraints constraints))]
+    :else (if-let [result (do-search oid
+                                     lng
+                                     page
+                                     size
+                                     order
+                                     tuleva
+                                     (create-constraints suodatin-params))]
             (ok result)
             (not-found "Not found"))))
 
@@ -809,7 +809,7 @@
                                      (ok result)
                                      (not-found "Not found"))))
 
-    (GET "/koulutukset" [:as request]
+    (GET "/koulutukset" request
       :query-params [{keyword               :- String nil}
                      {page                  :- Long 1}
                      {size                  :- Long 20}
@@ -833,29 +833,29 @@
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
                      {osaamisala            :- String nil}]
       (with-access-logging request (->search-with-validated-params
-                                     koulutus-search/search
-                                     keyword
-                                     lng
-                                     page
-                                     size
-                                     sort
-                                     order
-                                     {:koulutustyyppi koulutustyyppi
-                                      :sijainti sijainti
-                                      :opetuskieli opetuskieli
-                                      :koulutusala koulutusala
-                                      :opetustapa opetustapa
-                                      :valintatapa valintatapa
-                                      :hakukaynnissa hakukaynnissa
-                                      :jotpa jotpa
-                                      :tyovoimakoulutus tyovoimakoulutus
-                                      :taydennyskoulutus taydennyskoulutus
-                                      :hakutapa hakutapa
-                                      :yhteishaku yhteishaku
-                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                      :lukiopainotukset lukiopainotukset
-                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                      :osaamisala osaamisala})))
+                                    koulutus-search/search
+                                    keyword
+                                    lng
+                                    page
+                                    size
+                                    sort
+                                    order
+                                    {:koulutustyyppi koulutustyyppi
+                                     :sijainti sijainti
+                                     :opetuskieli opetuskieli
+                                     :koulutusala koulutusala
+                                     :opetustapa opetustapa
+                                     :valintatapa valintatapa
+                                     :hakukaynnissa hakukaynnissa
+                                     :jotpa jotpa
+                                     :tyovoimakoulutus tyovoimakoulutus
+                                     :taydennyskoulutus taydennyskoulutus
+                                     :hakutapa hakutapa
+                                     :yhteishaku yhteishaku
+                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                     :lukiopainotukset lukiopainotukset
+                                     :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
+                                     :osaamisala osaamisala})))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
       :path-params [oid :- String]
@@ -881,30 +881,30 @@
                      {osaamisala            :- String nil}
                      {oppilaitos            :- String nil}]
       (with-access-logging request (->search-subentities-with-validated-params
-                                     koulutus-search/search-koulutuksen-jarjestajat
-                                     oid
-                                     lng
-                                     page
-                                     size
-                                     order
-                                     tuleva
-                                     {:koulutustyyppi nil
-                                      :sijainti sijainti
-                                      :opetuskieli opetuskieli
-                                      :koulutusala koulutusala
-                                      :opetustapa opetustapa
-                                      :valintatapa valintatapa
-                                      :hakukaynnissa hakukaynnissa
-                                      :jotpa jotpa
-                                      :tyovoimakoulutus tyovoimakoulutus
-                                      :taydennyskoulutus taydennyskoulutus
-                                      :hakutapa hakutapa
-                                      :yhteishaku yhteishaku
-                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                      :lukiopainotukset lukiopainotukset
-                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                      :osaamisala osaamisala
-                                      :oppilaitos oppilaitos})))
+                                    koulutus-search/search-koulutuksen-jarjestajat
+                                    oid
+                                    lng
+                                    page
+                                    size
+                                    order
+                                    tuleva
+                                    {:koulutustyyppi nil
+                                     :sijainti sijainti
+                                     :opetuskieli opetuskieli
+                                     :koulutusala koulutusala
+                                     :opetustapa opetustapa
+                                     :valintatapa valintatapa
+                                     :hakukaynnissa hakukaynnissa
+                                     :jotpa jotpa
+                                     :tyovoimakoulutus tyovoimakoulutus
+                                     :taydennyskoulutus taydennyskoulutus
+                                     :hakutapa hakutapa
+                                     :yhteishaku yhteishaku
+                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                     :lukiopainotukset lukiopainotukset
+                                     :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
+                                     :osaamisala osaamisala
+                                     :oppilaitos oppilaitos})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
