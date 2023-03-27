@@ -1,10 +1,11 @@
 (ns konfo-backend.search.oppilaitos.search
-  (:require
-    [konfo-backend.tools :refer [log-pretty]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query hakutulos-aggregations tarjoajat-aggregations inner-hits-query inner-hits-query-osat sorts]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits]]
-    [konfo-backend.elastic-tools :as e]))
+  (:require [konfo-backend.elastic-tools :as e]
+            [konfo-backend.search.query :refer [hakutulos-aggregations
+                                                inner-hits-query
+                                                inner-hits-query-osat match-all-query query sorts tarjoajat-aggregations]]
+            [konfo-backend.search.response :refer [parse parse-inner-hits]]
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.tools :refer [log-pretty]]))
 
 (defonce index "oppilaitos-kouta-search")
 
@@ -12,19 +13,20 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (when (do-search? keyword constraints)
-    (let [query (query keyword constraints lng ["words"])
-          aggs (hakutulos-aggregations constraints)]
-      (log-pretty query)
-      (log-pretty aggs)
-      (oppilaitos-kouta-search
-        page
-        size
-        parse
-        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
-        :sort (sorts sort order lng)
-        :query query
-        :aggs aggs))))
+  (let [query (if (blank-search? keyword constraints)
+                (match-all-query)
+                (query keyword constraints lng ["words"]))
+        aggs (hakutulos-aggregations constraints)]
+    (log-pretty query)
+    (log-pretty aggs)
+    (oppilaitos-kouta-search
+     page
+     size
+     parse
+     :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
+     :sort (sorts sort order lng)
+     :query query
+     :aggs aggs)))
 
 (defn search-oppilaitoksen-tarjonta
   [oid lng page size order tuleva? constraints]

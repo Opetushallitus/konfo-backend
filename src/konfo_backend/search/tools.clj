@@ -6,27 +6,27 @@
             [konfo-backend.tools :refer [current-time-as-kouta-format
                                          not-blank?]]))
 
-(defn sijainti?
+(defn- sijainti?
   [constraints]
   (constraint? constraints :sijainti))
 
-(defn koulutustyyppi?
+(defn- koulutustyyppi?
   [constraints]
   (constraint? constraints :koulutustyyppi))
 
-(defn opetuskieli?
+(defn- opetuskieli?
   [constraints]
   (constraint? constraints :opetuskieli))
 
-(defn koulutusala?
+(defn- koulutusala?
   [constraints]
   (constraint? constraints :koulutusala))
 
-(defn opetustapa?
+(defn- opetustapa?
   [constraints]
   (constraint? constraints :opetustapa))
 
-(defn valintatapa?
+(defn- valintatapa?
   [constraints]
   (constraint? constraints :valintatapa))
 
@@ -34,35 +34,36 @@
   [constraints]
   (constraint? constraints :hakutapa))
 
-(defn pohjakoulutusvaatimus?
+(defn- pohjakoulutusvaatimus?
   [constraints]
   (constraint? constraints :pohjakoulutusvaatimus))
 
-(defn haku-kaynnissa?
+(defn- haku-kaynnissa?
   [constraints]
   (true? (:hakukaynnissa constraints)))
 
-(defn has-jotpa-rahoitus?
+(defn- has-jotpa-rahoitus?
   [constraints]
   (true? (:jotpa constraints)))
 
-(defn tyovoimakoulutus?
+(defn- tyovoimakoulutus?
   [constraints]
   (true? (:tyovoimakoulutus constraints)))
 
-(defn taydennyskoulutus?
+(defn- taydennyskoulutus?
   [constraints]
   (true? (:taydennyskoulutus constraints)))
 
-(defn yhteishaku?
+(defn- yhteishaku?
   [constraints]
   (constraint? constraints :yhteishaku))
 
-(defn oppilaitos?
+(defn- oppilaitos?
   [constraints]
   (constraint? constraints :oppilaitos))
 
-(defn constraints?
+; Onko mitään suodattimia valittuna 
+(defn- constraints?
   [constraints]
   (or (sijainti? constraints)
       (koulutustyyppi? constraints)
@@ -83,13 +84,9 @@
   [str lng]
   (keyword (format str lng)))
 
-(defn do-search?
+(defn blank-search?
   [keyword constraints]
-  (or (not (empty? keyword)) (constraints? constraints)))
-
-(defn match-all?
-  [keyword constraints]
-  (not (do-search? keyword constraints)))
+  (and (empty? keyword) (not (constraints? constraints))))
 
 (defn tyoelama-filters-query
   [constraints]
@@ -106,7 +103,7 @@
           (let [constraint-vals (get constraints (:id filter-def))]
             (cond
               (and (boolean? constraint-vals) (true? constraint-vals)) (:make-query filter-def)
-              (and (vector? constraint-vals) (not (empty? constraint-vals))) ((:make-query filter-def) constraint-vals))))
+              (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query filter-def) constraint-vals))))
         tyoelama-filter ((:make-query combined-tyoelama-filter) constraints)
         hakukaynnissa-filter ((:make-query hakukaynnissa-filter) constraints current-time)]
   (println constraints)
