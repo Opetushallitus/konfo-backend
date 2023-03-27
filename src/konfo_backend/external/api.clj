@@ -1,6 +1,6 @@
 (ns konfo-backend.external.api
   (:require
-    [compojure.api.core :as c :refer [GET POST context]]
+    [compojure.api.core :refer [GET POST context]]
     [compojure.api.exception :as ex]
     [ring.util.http-response :refer :all]
     [compojure.api.sweet :refer [api]]
