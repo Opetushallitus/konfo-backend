@@ -1,12 +1,14 @@
 (ns konfo-backend.search.koulutus.search
-  (:require
-    [konfo-backend.tools :refer [log-pretty]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query match-all-query hakutulos-aggregations jarjestajat-aggregations inner-hits-query sorts koulutus-wildcard-query]]
-    [konfo-backend.search.external-query :refer [external-query]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits-for-jarjestajat parse-external get-oppilaitos-oids-for-koulutus parse-for-autocomplete]]
-    [konfo-backend.elastic-tools :as e]
-    [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]))
+  (:require [konfo-backend.elastic-tools :as e]
+            [konfo-backend.search.external-query :refer [external-query]]
+            [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
+            [konfo-backend.search.query :refer [constraints-post-filter-query
+                                                hakutulos-aggregations
+                                                inner-hits-query jarjestajat-aggregations search-term-query sorts]]
+            [konfo-backend.search.response :refer [get-oppilaitos-oids-for-koulutus parse parse-external
+                                                   parse-inner-hits-for-jarjestajat]]
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.tools :refer [log-pretty]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -14,19 +16,17 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (let [query (if (blank-search? keyword constraints)
-                (match-all-query)
-                (query keyword constraints lng ["words"]))
+  (let [post-filter-query (constraints-post-filter-query constraints)
+        search-term-query (search-term-query keyword lng ["words"])
         aggs (hakutulos-aggregations constraints)]
-    (log-pretty query)
-    (log-pretty aggs)
     (koulutus-kouta-search
      page
      size
      #(-> % parse with-kuvaukset)
      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
      :sort (sorts sort order lng)
-     :query query
+     :query search-term-query
+     :post_filter post-filter-query
      :aggs aggs)))
 
 (defn search-koulutuksen-jarjestajat

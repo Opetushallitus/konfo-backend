@@ -1,6 +1,6 @@
 (ns konfo-backend.search.query-unit-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter ->nested-filters-aggregation ->filters-aggregation]]
+            [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter nested-rajain-aggregation ->default-rajain-aggregation]]
             [konfo-backend.search.tools :refer [filters hakuaika-filter-query]]))
 
 (deftest filters-test

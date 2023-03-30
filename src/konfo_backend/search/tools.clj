@@ -62,8 +62,8 @@
   [constraints]
   (constraint? constraints :oppilaitos))
 
-; Onko mitään suodattimia valittuna?
-(defn- constraints?
+; Onko hakurajaimia valittuna?
+(defn constraints?
   [constraints]
   (or (sijainti? constraints)
       (koulutustyyppi? constraints)
@@ -106,13 +106,12 @@
               (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query filter-def) constraint-vals))))
         tyoelama-filter ((:make-query combined-tyoelama-filter) constraints)
         hakukaynnissa-filter ((:make-query hakukaynnissa-filter) constraints current-time)]
-  (println constraints)
-  (filterv
-   some?
-   (conj
-    (mapv make-constraint-query filter-definitions)
-    tyoelama-filter
-    hakukaynnissa-filter))))
+    (filterv
+     some?
+     (conj
+      (mapv make-constraint-query filter-definitions)
+      tyoelama-filter
+      hakukaynnissa-filter))))
 
 (defn inner-hits-filters
   [tuleva? constraints]
@@ -121,18 +120,6 @@
     [{:term {"search_terms.onkoTuleva" tuleva?}}
      {:bool ((:make-query combined-jarjestaja-filters) constraints)}]
     :filter (filters constraints (current-time-as-kouta-format))}})
-
-(defn nested-filters
-  [inner-query nested-path current-time constraints]
-  (vec (distinct (concat
-                  [{:nested {:path (str "search_terms." nested-path) :query {:bool {:filter inner-query}}}}]
-                  (filters constraints current-time)))))
-
-(defn terms-filters
-  [inner-query current-time constraints]
-  (vec (concat
-        [inner-query]
-        (filters constraints current-time))))
 
 (defn- generate-search-params
   [suffixes search-params usr-lng]
@@ -154,6 +141,17 @@
                        {:term "koulutus_organisaationimi" :boost (get-in config [:search-terms-boost :koulutus_organisaationimi])}
                        {:term "toteutus_organisaationimi" :boost (get-in config [:search-terms-boost :toteutus_organisaationimi])}]]
     (generate-search-params suffixes search-params usr-lng)))
+
+
+(defn make-search-query [keyword user-lng suffixes]
+  (when (not-blank? keyword) {:must {:multi_match {:query       keyword,
+                                                   :fields      (flatten (generate-keyword-query user-lng suffixes))
+                                                   :tie_breaker 0.9
+                                                   :operator    "and"
+                                                   :type        "cross_fields"}}}))
+
+(defn make-search-post-filter [constraints]
+  (when (constraints? constraints) (filters constraints (current-time-as-kouta-format))))
 
 (defn fields
   [keyword constraints user-lng suffixes]

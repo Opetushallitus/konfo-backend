@@ -123,3 +123,6 @@
   [json]
   (println (cheshire/generate-string json {:pretty true})))
 
+(defn remove-nils [record]
+  (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
+
