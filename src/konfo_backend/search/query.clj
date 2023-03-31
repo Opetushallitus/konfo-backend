@@ -161,10 +161,8 @@
     :pohjakoulutusvaatimus (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset" current-time constraints)
     :valintatapa (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat" current-time constraints)
     :yhteishaku (yhteishaku-filter current-time constraints)
-    :koulutusala (rajain-aggregation "koulutusala" (->field-key "koulutusalat.keyword") current-time constraints "kansallinenkoulutusluokitus2016koulutusalataso1.*")
-    :koulutusalataso2 (rajain-aggregation "koulutusalataso2" (->field-key "koulutusalat.keyword") current-time constraints "kansallinenkoulutusluokitus2016koulutusalataso2.*")
-    :koulutustyyppi (rajain-aggregation "koulutustyyppi" (->field-key "koulutustyypit.keyword") current-time constraints koulutustyypit)
-    :koulutustyyppitaso2 (rajain-aggregation "koulutustyyppitaso2" (->field-key "koulutustyypit.keyword") current-time constraints "koulutustyyppi.*")}))
+    :koulutusala (rajain-aggregation "koulutusala" (->field-key "koulutusalat.keyword") current-time constraints)
+    :koulutustyyppi (rajain-aggregation "koulutustyyppi" (->field-key "koulutustyypit.keyword") current-time constraints koulutustyypit)}))
 
 (defn- generate-aggs-for
   [filter-name filter-aggs tuleva? constraints current-time]
@@ -205,9 +203,7 @@
       (-> default-aggs
           (add-oppilaitos-aggs oppilaitos-oids current-time)
           (dissoc :koulutusala
-                  :koulutusalataso2
-                  :koulutustyyppi
-                  :koulutustyyppitaso2))}
+                  :koulutustyyppi))}
      :lukiopainotukset_aggs (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
      :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
      :osaamisala_aggs (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints current-time)}))

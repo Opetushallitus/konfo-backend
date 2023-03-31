@@ -89,14 +89,6 @@
                                                   {:term {:search_terms.hakutiedot.yhteishakuOid
                                                           "1.2.246.562.29.00000000000000000001"}}}}}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           :koulutusalataso2
-           {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01
-                                {:bool {:filter [{:term {:search_terms.koulutusalat.keyword
-                                                         "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}]}}
-                                :kansallinenkoulutusluokitus2016koulutusalataso2_02
-                                {:bool {:filter [{:term {:search_terms.koulutusalat.keyword
-                                                         "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}
            :kunta {:filters {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}]}}
                                        :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword
                                                                           "kunta_02"}}]}}}}
@@ -119,14 +111,6 @@
            {:filters {:filters
                       {:maakunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_01"}}]}}
                        :maakunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_02"}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}
-           :koulutustyyppitaso2
-           {:filters
-            {:filters
-             {:koulutustyyppi_01
-              {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}]}}
-              :koulutustyyppi_02
-              {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            :hakutapa
            {:filters
@@ -318,20 +302,6 @@
                                                   "1.2.246.562.29.00000000000000000001"}}}}}}
                                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
-           :koulutusalataso2
-           {:filters
-            {:filters
-             {:kansallinenkoulutusluokitus2016koulutusalataso2_01
-              {:bool
-               {:filter
-                [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
-                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
-              :kansallinenkoulutusluokitus2016koulutusalataso2_02
-              {:bool
-               {:filter
-                [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}
-                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}
            :kunta
            {:filters
             {:filters
@@ -374,20 +344,6 @@
                             {:filter
                              [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
                               {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}
-           :koulutustyyppitaso2
-           {:filters
-            {:filters
-             {:koulutustyyppi_01
-              {:bool
-               {:filter
-                [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}
-                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
-              :koulutustyyppi_02
-              {:bool
-               {:filter
-                [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}
-                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}
            :hakutapa
            {:filters
@@ -966,14 +922,6 @@
                                      {:filter
                                       {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}}}}}]}}}}
                 :aggs {:real_hits {:reverse_nested {}}}}
-               :koulutustyyppitaso2
-               {:filters
-                {:filters
-                 {:koulutustyyppi_01
-                  {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}]}}
-                  :koulutustyyppi_02
-                  {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}]}}}}
-                :aggs {:real_hits {:reverse_nested {}}}}
                :koulutusala
                {:filters
                 {:filters
@@ -981,18 +929,6 @@
                   {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}]}}
                   :kansallinenkoulutusluokitus2016koulutusalataso1_02
                   {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}]}}}}
-                :aggs {:real_hits {:reverse_nested {}}}}
-               :koulutusalataso2
-               {:filters
-                {:filters
-                 {:kansallinenkoulutusluokitus2016koulutusalataso2_01
-                  {:bool
-                   {:filter
-                    [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}]}}
-                  :kansallinenkoulutusluokitus2016koulutusalataso2_02
-                  {:bool
-                   {:filter
-                    [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}]}}}}
                 :aggs {:real_hits {:reverse_nested {}}}}
                :koulutustyyppi
                {:filters
