@@ -52,7 +52,7 @@
 
 (defn search-term-query [search-term user-lng suffixes]
   (if (not-blank? search-term)
-    {:nested {:path "search_terms", :query {:bool (make-search-query search-term user-lng suffixes)}}}
+    {:nested {:path "search_terms", :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
     (match-all-query)))
 
 (defn constraints-post-filter-query [constraints]
