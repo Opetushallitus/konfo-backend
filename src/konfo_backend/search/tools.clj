@@ -150,9 +150,6 @@
                                                    :operator    "and"
                                                    :type        "cross_fields"}}}))
 
-(defn make-search-post-filter [constraints]
-  (when (constraints? constraints) (filters constraints (current-time-as-kouta-format))))
-
 (defn fields
   [keyword constraints user-lng suffixes]
   (let [fields? (not-blank? keyword)
