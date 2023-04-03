@@ -5,7 +5,7 @@
     [konfo-backend.elastic-tools :refer [get-source get-sources search]]))
 
 (defonce index "haku-kouta")
-(defonce yhteishaku-koodi-uri "hakutapa_01")
+(defonce yhteishaku-hakutapa-koodi-uri "hakutapa_01")
 
 (def haku-search (partial search index))
 
@@ -21,11 +21,11 @@
   ([oids]
    (get-many oids [])))
 
-(defn- ->hakutyyppi-query
-  [hakutyypit]
-  (let [terms (if (= 1 (count hakutyypit))
-                {:term  {:hakutapa.koodiUri (first hakutyypit)}}
-                {:terms {:hakutapa.koodiUri (vec hakutyypit)}})]
+(defn- ->hakutapa-query
+  [hakutapa-koodiurit]
+  (let [terms (if (= 1 (count hakutapa-koodiurit))
+                {:term  {:hakutapa.koodiUri (first hakutapa-koodiurit)}}
+                {:terms {:hakutapa.koodiUri (vec hakutapa-koodiurit)}})]
     {:bool {:must terms, :filter {:term {:tila "julkaistu"}}}}))
 
 (defn- parse-results
@@ -39,8 +39,5 @@
   []
   (haku-search parse-results
                :_source [:oid :nimi]
-               :query (->hakutyyppi-query [yhteishaku-koodi-uri])))
+               :query (->hakutapa-query [yhteishaku-hakutapa-koodi-uri])))
 
-(defn list-yhteishaut
-  []
-  (vec (map :oid (get-yhteishaut))))
