@@ -145,10 +145,6 @@
   [current-time constraints]
   (bool-agg-filter (tyoelama-filters-query {:taydennyskoulutus true}) (without-tyoelama-constraints constraints) current-time))
 
-(defn- yhteishaku-filter
-  [current-time constraints]
-  (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid" current-time constraints nil))
-
 (defn- generate-default-aggs
   [constraints current-time]
   (remove-nils
@@ -160,7 +156,7 @@
     :hakutapa (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa" current-time constraints)
     :pohjakoulutusvaatimus (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset" current-time constraints)
     :valintatapa (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat" current-time constraints)
-    :yhteishaku (yhteishaku-filter current-time constraints)
+    :yhteishaku (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid" current-time constraints)
     :koulutusala (rajain-aggregation "koulutusala" (->field-key "koulutusalat.keyword") current-time constraints)
     :koulutustyyppi (rajain-aggregation "koulutustyyppi" (->field-key "koulutustyypit.keyword") current-time constraints koulutustyypit)}))
 
