@@ -16,8 +16,8 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (let [post-filter-query (constraints-post-filter-query constraints)
-        search-term-query (search-term-query keyword lng ["words"])
+  (let [search-term-query (search-term-query keyword lng ["words"])
+        post-filter-query (constraints-post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
     (koulutus-kouta-search
      page
