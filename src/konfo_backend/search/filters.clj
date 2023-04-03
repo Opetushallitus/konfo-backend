@@ -8,7 +8,7 @@
   [filter-counts koodi]
   (let [koodiUri (keyword (:koodiUri koodi))
         nimi (get-in koodi [:nimi])
-        count (koodiUri filter-counts)
+        count (get filter-counts koodiUri 0)
         alakoodit (when (contains? koodi :alakoodit)
                     (reduce-merge-map #(koodi->filter filter-counts %) (:alakoodit koodi)))]
     {koodiUri (cond-> {:nimi nimi}
