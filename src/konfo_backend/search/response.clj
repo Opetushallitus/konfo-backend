@@ -1,10 +1,11 @@
 (ns konfo-backend.search.response
-  (:require
-   [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
-   [konfo-backend.elastic-tools :as e]
-   [konfo-backend.search.tools :refer :all]
-   [konfo-backend.search.filters :refer [generate-default-filter-counts generate-filter-counts-for-jarjestajat]]
-   [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
+  (:require [konfo-backend.elastic-tools :as e]
+            [konfo-backend.index.toteutus :refer [get-kuvaukset]]
+            [konfo-backend.search.filters :refer [buckets-to-map generate-default-filter-counts
+                                                  generate-filter-counts-for-jarjestajat]]
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.tools :refer [debug-pretty hit-haku-kaynnissa?
+                                         log-pretty reduce-merge-map rename-key]]))
 
 (defn- hits
   [response]
@@ -17,17 +18,16 @@
                   :id (:oid res)}))
        (get-in response [:hits :hits])))
 
-(defn get-uniform-buckets [response agg-key]
-  (let [agg-result (get-in response [:aggregations :hits_aggregation agg-key])
-        agg-buckets (get-in agg-result [:buckets]
+(defn get-uniform-buckets [agg agg-key]
+  (let [agg-buckets (get-in agg [:buckets]
                             ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) yksi ylimääräinen aggregaatiokerros:
-                            (get-in agg-result [agg-key :buckets] []))]
-    (into {} (map (fn [x] [(keyword (:key x)) x]) agg-buckets))))
+                            (get-in agg [agg-key :buckets] []))]
+   (buckets-to-map agg-buckets)))
 
 (defn- ->doc_count
   [response agg-key]
-  (let [hits-buckets (get-uniform-buckets response agg-key)
-        inner-hits-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets] [])
+  (let [hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation agg-key]) agg-key)
+        inner-hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key]) agg-key)
         [buckets path] (if (not-empty inner-hits-buckets)
                          [inner-hits-buckets [:doc_count]]
                          [hits-buckets [:constrained :real_hits :doc_count]])
@@ -37,7 +37,7 @@
 
 (defn- ->doc_count-for-lukiolinjat-and-osaamisalat
   [response agg-key]
-  (let [buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs")) (keyword agg-key) :buckets])
+  (let [buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs"))]) (keyword agg-key))
         mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
@@ -62,11 +62,10 @@
 
 (defn doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
+  (let [jarjestajat-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava" "osaamisala"]]
     (merge
      (doc_count-by-filter response)
-     (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) lukio-agg-keys)
-     (->doc_count-for-lukiolinjat-and-osaamisalat response "osaamisala"))))
+     (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) jarjestajat-agg-keys))))
 
 (defn- filter-counts
   [response]
