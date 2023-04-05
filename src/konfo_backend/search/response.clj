@@ -1,7 +1,6 @@
 (ns konfo-backend.search.response
   (:require
     [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
-    [konfo-backend.index.oppilaitos :as oppilaitos]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
@@ -10,6 +9,13 @@
 (defn- hits
   [response]
   (map (fn [x] (-> (:_source x) (assoc :_score (:_score x)))) (get-in response [:hits :hits])))
+
+(defn- autocomplete-hits
+  [response lng]
+  (map (fn [x] (let [res (:_source x)]
+                 {:label (get-in res [:nimi (keyword lng)])
+                  :id (:oid res)}))
+       (get-in response [:hits :hits])))
 
 (defn- ->doc_count
   [response agg-key]
@@ -66,6 +72,10 @@
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
    :filters (filter-counts response)})
+
+(defn parse-for-autocomplete
+  [lng response]
+  {:hits    (autocomplete-hits response lng)})
 
 (defn- inner-hit->toteutus-hit
   [inner-hit]

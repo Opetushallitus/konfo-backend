@@ -14,6 +14,10 @@
   []
   {:match_all {}})
 
+(defn koulutus-wildcard-query
+  [search-phrase user-lng constraints]
+  {:nested {:path "search_terms", :query {:bool (wildcard-query-fields search-phrase constraints user-lng) }}})
+
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
   [order lng]

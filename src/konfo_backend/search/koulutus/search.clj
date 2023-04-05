@@ -2,9 +2,9 @@
   (:require
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query match-all-query hakutulos-aggregations jarjestajat-aggregations inner-hits-query sorts]]
+    [konfo-backend.search.query :refer [query match-all-query hakutulos-aggregations jarjestajat-aggregations inner-hits-query sorts koulutus-wildcard-query]]
     [konfo-backend.search.external-query :refer [external-query]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits-for-jarjestajat parse-external get-oppilaitos-oids-for-koulutus]]
+    [konfo-backend.search.response :refer [parse parse-inner-hits-for-jarjestajat parse-external get-oppilaitos-oids-for-koulutus parse-for-autocomplete]]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]))
 
@@ -51,3 +51,12 @@
       :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
       :sort (sorts sort order lng)
       :query query)))
+
+(defn autocomplete-search
+  [searchPhrase lng sort order constraints]
+  (let [query (koulutus-wildcard-query searchPhrase lng constraints)]
+    (e/search index
+              #(parse-for-autocomplete lng %)
+              :_source ["oid", "nimi"]
+              :sort (sorts sort order lng)
+              :query query)))
