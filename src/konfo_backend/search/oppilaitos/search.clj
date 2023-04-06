@@ -2,7 +2,7 @@
   (:require [konfo-backend.elastic-tools :as e]
             [konfo-backend.search.query :refer [constraints-post-filter-query
                                                 hakutulos-aggregations
-                                                inner-hits-query inner-hits-query-osat query search-term-query sorts
+                                                inner-hits-query inner-hits-query-osat search-term-query sorts
                                                 tarjoajat-aggregations]]
             [konfo-backend.search.response :refer [parse parse-inner-hits]]
             [konfo-backend.search.tools :refer :all]

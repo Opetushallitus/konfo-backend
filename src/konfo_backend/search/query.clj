@@ -1,47 +1,12 @@
 (ns konfo-backend.search.query
   (:require [clojure.string :as str]
             [konfo-backend.elastic-tools :refer [->from ->size]]
-            [konfo-backend.search.filter.query-tools :refer [hakuaika-filter-query]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [assoc-if current-time-as-kouta-format
-                                         remove-nils]]))
-
-(def koulutustyypit ["amm"
-                     "amm-muu"
-                     "amm-tutkinnon-osa"
-                     "amm-osaamisala"
-                     "lk"
-                     "amk"
-                     "amk-muu"
-                     "amm-ope-erityisope-ja-opo"
-                     "ope-pedag-opinnot"
-                     "yo"
-                     "kk-opintojakso-normal"
-                     "kk-opintojakso-avoin"
-                     "kk-opintokokonaisuus-avoin"
-                     "kk-opintokokonaisuus-normal"
-                     "erikoislaakari"
-                     "erikoistumiskoulutus"
-                     "amk-alempi"
-                     "amk-ylempi"
-                     "kandi"
-                     "kandi-ja-maisteri"
-                     "maisteri"
-                     "tohtori"
-                     "tuva"
-                     "tuva-normal"
-                     "tuva-erityisopetus"
-                     "telma"
-                     "vapaa-sivistystyo"
-                     "vapaa-sivistystyo-opistovuosi"
-                     "vapaa-sivistystyo-muu"
-                     "aikuisten-perusopetus"
-                     "taiteen-perusopetus"
-                     "muu"
-                     "koulutustyyppi_26"
-                     "koulutustyyppi_4"
-                     "koulutustyyppi_11"
-                     "koulutustyyppi_12"])
+            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters inner-hits-filters
+                                                                    generate-hakutulos-aggregations
+                                                                    generate-jarjestajat-aggregations
+                                                                    generate-tarjoajat-aggregations]]
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (defn match-all-query
   []
@@ -62,7 +27,7 @@
 
 (defn constraints-post-filter-query [constraints]
   (when (constraints? constraints)
-    {:nested {:path "search_terms", :query {:bool {:filter (filters constraints (current-time-as-kouta-format))}}}}))
+    {:nested {:path "search_terms", :query {:bool {:filter (common-filters constraints (current-time-as-kouta-format))}}}}))
 
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
@@ -100,122 +65,18 @@
               :query      {:bool {:must [{:term {"search_terms.onkoTuleva" tuleva?}}
                                          {:term {"search_terms.tarjoajat" oid}}]}}}}))
 
-(defn- with-real-hits [agg]
-  (assoc agg :aggs {:real_hits {:reverse_nested {}}}))
-
-(defn- ->field-key [field-name]
-  (str "search_terms." (name field-name)))
-
-(defn- generate-rajain-agg [rajain-key constraints current-time]
-  (let [rajain-agg-constraints (dissoc constraints (keyword rajain-key))]
-    {:constrained (with-real-hits (if (constraints? rajain-agg-constraints)
-                                    {:filter {:bool {:filter (filters rajain-agg-constraints current-time)}}}
-                                    ; Käytetään "reverse_nested":iä dummy-aggregaationa kun ei ole rajaimia, jotta aggregaation tulosten rakenne pysyy samanlaisena
-                                    {:reverse_nested {}}))}))
-
-(defn rajain-aggregation ([rajain-key field-name current-time constraints include]
-                          {:terms (assoc-if {:field field-name
-                                             :min_doc_count 0
-                                             :size (if (seq? include) (count include) 1000)}
-                                            :include include (not-empty include))
-                           :aggs (generate-rajain-agg rajain-key constraints current-time)})
-  ([rajain-key field-name current-time constraints] (rajain-aggregation rajain-key field-name current-time constraints nil)))
-
-; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
-(defn nested-rajain-aggregation
-  ([rajain-key field-name current-time constraints include]
-   {:nested {:path (-> field-name (str/replace-first ".keyword" "") (str/split #"\.") (drop-last) (#(str/join "." %)))}
-    :aggs {(keyword rajain-key) (rajain-aggregation rajain-key field-name current-time constraints include)}})
-  ([rajain-key field-name current-time constraints] (nested-rajain-aggregation rajain-key field-name current-time constraints nil)))
-
-(defn bool-agg-filter [own-filter constraints current-time]
-  (with-real-hits {:filter {:bool
-                            {:filter (distinct (conj (filters constraints current-time) own-filter))}}}))
-
-(defn- without-tyoelama-constraints [constraints] (dissoc constraints :jotpa :tyovoimakoulutus :taydennyskoulutus))
-
-(defn hakukaynnissa-filter
-  [current-time constraints]
-  (bool-agg-filter (hakuaika-filter-query current-time) constraints current-time))
-
-(defn jotpa-filter
-  [current-time constraints]
-  (bool-agg-filter (tyoelama-filters-query {:jotpa true}) (without-tyoelama-constraints constraints) current-time))
-
-(defn tyovoimakoulutus-filter
-  [current-time constraints]
-  (bool-agg-filter (tyoelama-filters-query {:tyovoimakoulutus true}) (without-tyoelama-constraints constraints) current-time))
-
-(defn taydennyskoulutus-filter
-  [current-time constraints]
-  (bool-agg-filter (tyoelama-filters-query {:taydennyskoulutus true}) (without-tyoelama-constraints constraints) current-time))
-
-(defn- generate-default-aggs
-  [constraints current-time]
-  (remove-nils
-   {:maakunta (rajain-aggregation "maakunta" (->field-key "sijainti.keyword") current-time constraints "maakunta.*")
-    :kunta (rajain-aggregation "kunta" (->field-key "sijainti.keyword") current-time constraints "kunta.*")
-    :opetuskieli (rajain-aggregation "opetuskieli" (->field-key "opetuskielet.keyword") current-time constraints)
-    :opetustapa (rajain-aggregation "opetustapa" (->field-key "opetustavat.keyword") current-time constraints)
-    :hakukaynnissa (hakukaynnissa-filter current-time constraints)
-    :hakutapa (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa" current-time constraints)
-    :pohjakoulutusvaatimus (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset" current-time constraints)
-    :valintatapa (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat" current-time constraints)
-    :yhteishaku (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid" current-time constraints)
-    :koulutusala (rajain-aggregation "koulutusala" (->field-key "koulutusalat.keyword") current-time constraints)
-    :koulutustyyppi (rajain-aggregation "koulutustyyppi" (->field-key "koulutustyypit.keyword") current-time constraints koulutustyypit)}))
-
-
-(defn- hakutulos-aggs
-  [constraints]
-  (let [current-time (current-time-as-kouta-format)]
-    (remove-nils
-     (merge (generate-default-aggs constraints current-time)
-            {:jotpa (jotpa-filter current-time constraints)
-             :tyovoimakoulutus (tyovoimakoulutus-filter current-time constraints)
-             :taydennyskoulutus (taydennyskoulutus-filter current-time constraints)}))))
-
-(defn- add-oppilaitos-aggs
-  [default-aggs oppilaitos-oids current-time]
-  (remove-nils
-   (merge default-aggs
-          {:oppilaitos (when-not
-                        (empty? oppilaitos-oids)
-                         (rajain-aggregation "oppilaitosOid" "search_terms.oppilaitosOid.keyword" current-time {} oppilaitos-oids))})))
-
-(defn- jarjestajat-aggs
-  [tuleva? constraints oppilaitos-oids]
-  (let [current-time (current-time-as-kouta-format)
-        default-aggs (generate-default-aggs {} current-time)]
-    {:inner_hits_agg
-     {:filter (inner-hits-filters tuleva? constraints)
-      :aggs
-      (-> default-aggs
-          (add-oppilaitos-aggs oppilaitos-oids current-time)
-          (dissoc :koulutusala :koulutustyyppi))}
-     :lukiopainotukset_aggs (rajain-aggregation "lukiopainotukset" (->field-key "lukiopainotukset.keyword") current-time {})
-     :lukiolinjaterityinenkoulutustehtava_aggs (rajain-aggregation "lukiolinjaterityinenkoulutustehtava.keyword" (->field-key "lukiolinjaterityinenkoulutustehtava.keyword") current-time {})
-     :osaamisala_aggs (rajain-aggregation "osaamisala" (->field-key "osaamisalat.keyword") current-time {})}))
-
 (defn- aggregations
   [aggs-generator]
   {:hits_aggregation {:nested {:path "search_terms"}, :aggs (aggs-generator)}})
 
-(defn- tarjoajat-aggs
-  [tuleva? constraints]
-  (let [current-time (current-time-as-kouta-format)]
-    {:inner_hits_agg
-     {:filter (inner-hits-filters tuleva? constraints)
-      :aggs (generate-default-aggs {} current-time)}}))
-
 (defn hakutulos-aggregations
   [constraints]
-  (aggregations #(hakutulos-aggs constraints)))
+  (aggregations #(generate-hakutulos-aggregations constraints)))
 
 (defn jarjestajat-aggregations
   [tuleva? constraints oppilaitos-oids]
-  (aggregations #(jarjestajat-aggs tuleva? constraints oppilaitos-oids)))
+  (aggregations #(generate-jarjestajat-aggregations tuleva? constraints oppilaitos-oids)))
 
 (defn tarjoajat-aggregations
   [tuleva? constraints]
-  (aggregations #(tarjoajat-aggs tuleva? constraints)))
+  (aggregations #(generate-tarjoajat-aggregations tuleva? constraints)))
