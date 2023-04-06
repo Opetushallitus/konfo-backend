@@ -62,9 +62,7 @@
    "Aggregations"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
                                                                            (str x "_02")])
-                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.index.haku/list-yhteishaut
-                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
        (=
         (hakutulos-aggregations {})
@@ -267,9 +265,7 @@
    "aggregations with selected filters"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
                                                                            (str x "_02")])
-                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.index.haku/list-yhteishaut
-                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
        (=
         (hakutulos-aggregations {:jotpa true})
@@ -576,9 +572,7 @@
   (testing "should form aggregations for jarjestajat query with selected filters"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
                                                                            (str x "_02")])
-                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.index.haku/list-yhteishaut
-                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
         (= {:hits_aggregation
             {:nested {:path "search_terms"}
@@ -789,9 +783,7 @@
   (testing "should form aggregations for tarjoajat query with selected filters"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
                                                                            (str x "_02")])
-                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
-                  konfo-backend.index.haku/list-yhteishaut
-                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
        (= {:hits_aggregation
            {:nested {:path "search_terms"}
