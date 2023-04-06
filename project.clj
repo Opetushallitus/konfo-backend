@@ -58,20 +58,18 @@
                                    [org.mockito/mockito-all "1.9.5"]
                                    [clj-http-fake "1.0.3"]
                                    [net.java.dev.jna/jna "5.12.1"]
-                                   [pjstadig/humane-test-output "0.11.0"]
                                    [io.swagger.parser.v3/swagger-parser "2.1.1"]
                                    [com.fasterxml.jackson.dataformat/jackson-dataformat-yaml "2.13.2"]
-                                   [com.fasterxml.jackson.core/jackson-annotations "2.13.2"]]
-             :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
-             :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
+                                   [com.fasterxml.jackson.core/jackson-annotations "2.13.2"]
+                                   [nubank/matcher-combinators "3.8.5"]]
+                    :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
+                    :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
                                  (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
                                    (do
                                      (prn "Using Elastic from port " elasticPort)
                                      (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
-                                   (utils/global-docker-elastic-fixture))
-                                 (require 'pjstadig.humane-test-output)
-                                 (pjstadig.humane-test-output/activate!)]}
+                                   (utils/global-docker-elastic-fixture))]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
                        :resource-paths ["oph-configuration" "resources"]}}
