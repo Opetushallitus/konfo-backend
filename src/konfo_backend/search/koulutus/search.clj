@@ -4,9 +4,10 @@
             [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
             [konfo-backend.search.query :refer [constraints-post-filter-query
                                                 hakutulos-aggregations
-                                                inner-hits-query jarjestajat-aggregations search-term-query sorts]]
+                                                inner-hits-query jarjestajat-aggregations search-term-query
+                                                koulutus-wildcard-query sorts]]
             [konfo-backend.search.response :refer [get-oppilaitos-oids-for-koulutus parse parse-external
-                                                   parse-inner-hits-for-jarjestajat]]
+                                                   parse-inner-hits-for-jarjestajat parse-for-autocomplete]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [log-pretty]]))
 
@@ -53,8 +54,8 @@
       :query query)))
 
 (defn autocomplete-search
-  [searchPhrase lng sort order constraints]
-  (let [query (koulutus-wildcard-query searchPhrase lng constraints)]
+  [search-phrase lng sort order constraints]
+  (let [query (koulutus-wildcard-query search-phrase lng constraints)]
     (e/search index
               #(parse-for-autocomplete lng %)
               :_source ["oid", "nimi"]

@@ -1,5 +1,5 @@
 (ns konfo-backend.search.tools
-  (:require [clojure.string :refer [lower-case split]]
+  (:require [clojure.string :refer [blank? lower-case split]]
             [konfo-backend.config :refer [config]]
             [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters]]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
@@ -39,7 +39,7 @@
 
 (defn fields
   [keyword constraints user-lng suffixes]
-  (let [fields? (not (str/blank? keyword))
+  (let [fields? (not (blank? keyword))
         filter? (constraints? constraints)]
     (cond-> {}
       fields? (-> (assoc :must (make-search-term-query keyword user-lng suffixes)))
