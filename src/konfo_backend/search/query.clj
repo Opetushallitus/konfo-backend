@@ -98,17 +98,17 @@
 
 (defn- koodisto-filters
   [field koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
+  (when-let [list (seq (list-koodi-urit koodisto))]
     (->filters-aggregation field list current-time constraints)))
 
 (defn- koodisto-filters-for-subentity
   [field koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
+  (when-let [list (seq (list-koodi-urit koodisto))]
     (->filters-aggregation-for-subentity field list current-time constraints)))
 
 (defn- koulutustyyppi-filters
   [field current-time constraints]
-  (->filters-aggregation field '["amm" "amm-muu" "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma" "vapaa-sivistystyo" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "aikuisten-perusopetus" "taiteen-perusopetus" "muu"] current-time constraints))
+  (->filters-aggregation field '["amm" "amm-muu" "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma" "vapaa-sivistystyo" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "aikuisten-perusopetus" "taiteen-perusopetus" "muu", "muu-amm-tutkinto"] current-time constraints))
 
 (defn- koulutustyyppi-filters-for-subentity
   [field current-time constraints]
@@ -131,7 +131,7 @@
 
 (defn- hakutieto-koodisto-filters
   [field koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
+  (when-let [list (seq (list-koodi-urit koodisto))]
     (->hakutieto-filters-aggregation field list current-time constraints)))
 
 (defn bool-agg-filter [filter-name own-filter constraints current-time]
@@ -165,7 +165,7 @@
 
 (defn- yhteishaku-filter
   [current-time constraints]
-  (if-let [list (seq (list-yhteishaut))]
+  (when-let [list (seq (list-yhteishaut))]
     (->hakutieto-filters-aggregation :search_terms.hakutiedot.yhteishakuOid list current-time constraints)))
 
 (defn- generate-default-aggs

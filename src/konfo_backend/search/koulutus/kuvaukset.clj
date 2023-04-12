@@ -124,13 +124,30 @@
                    (select-amm-tutkinnon-osa-kuvaus)))
         tutkinnon-osat))
 
+
+;Toimii koulutukselle, jolla on rikastettu tai rikastamaton koulutus-koodiurit
+(defn get-first-koodi-uri
+  [koulutus]
+  (let [koulutukset (map :koodiUri (:koulutukset koulutus))
+        koulutus-koodi-urit (if (seq koulutukset) koulutukset (:koulutuksetKoodiUri koulutus))]
+      (first koulutus-koodi-urit))) ;Ainoastaan korkeakoulutuksilla voi olla useampi kuin yksi koulutusKoodi
+
+;esim. pelastusalan koulutuksille syötetään tiedot käsin, koska ei ole ePerustetta
+(defonce koulutus-koodit-without-eperuste ["koulutus_381501" "koulutus_381502" "koulutus_381503" "koulutus_381521"])
+
+(defn amm-koulutus-with-eperuste? [koulutus]
+  (if (and koulutus (ammatillinen? koulutus))
+    (when-let [koulutus-koodiuri (get-first-koodi-uri koulutus)]
+      (boolean (not-any? #(string/starts-with? koulutus-koodiuri %) koulutus-koodit-without-eperuste)))
+    false))
+
 (defn with-kuvaukset
   [result]
   (let [amm-kuvaukset (get-amm-kuvaukset result)
         amm-osaamisala-kuvaukset (get-amm-osaamisala-kuvaukset result)
         amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)]
     (->> (for [hit (:hits result)]
-           (cond (ammatillinen? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
+           (cond (amm-koulutus-with-eperuste? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
                  (amm-osaamisala? hit)
                  (assoc hit :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
                  (amm-tutkinnon-osa? hit) (assoc hit

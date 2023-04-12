@@ -275,7 +275,8 @@
               :erikoislaakari {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}]}}
               :erikoistumiskoulutus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}]}}
               :taiteen-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "taiteen-perusopetus"}}]}}
-              :muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "muu"}}]}}}}
+              :muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "muu"}}]}}
+              :muu-amm-tutkinto {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "muu-amm-tutkinto"}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}}}}))))
 
   (testing
@@ -609,5 +610,8 @@
                                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
               :muu {:bool {:filter
                            [{:term {:search_terms.koulutustyypit.keyword "muu"}}
+                            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}
+              :muu-amm-tutkinto {:bool {:filter
+                           [{:term {:search_terms.koulutustyypit.keyword "muu-amm-tutkinto"}}
                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
             :aggs {:real_hits {:reverse_nested {}}}}}}})))))

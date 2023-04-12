@@ -1,7 +1,7 @@
 (ns konfo-backend.koodisto.koodisto
   (:require
     [konfo-backend.tools :refer [koodi-uri-no-version]]
-    [konfo-backend.elastic-tools :refer [get-source search]]
+    [konfo-backend.elastic-tools :refer [get-source]]
     [clojure.core.memoize :as memo]))
 
 (defonce index-name "koodisto")
