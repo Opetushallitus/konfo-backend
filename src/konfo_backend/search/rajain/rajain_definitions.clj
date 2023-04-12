@@ -327,7 +327,7 @@
            (generate-tyoelama-aggregations constraints current-time))))
 
 (defn generate-jarjestajat-aggregations
-  [tuleva? constraints oppilaitos-oids]
+  [tuleva? constraints]
   (let [current-time (current-time-as-kouta-format)
         default-aggs (generate-default-aggs {} current-time)]
     (into
@@ -335,7 +335,8 @@
        {:filter (inner-hits-filters tuleva? constraints)
         :aggs
         (-> default-aggs
-            (add-oppilaitos-aggs oppilaitos-oids)
+            (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size 10000
+                                                                                            :min_doc_count 1}))
             (dissoc :koulutusala :koulutustyyppi))}}
       (for [aggs [lukiopainotukset-aggs lukiolinjaterityinenkoulutustehtava-aggs osaamisala-aggs]]
         {(:id aggs) ((:make-query aggs))}))))

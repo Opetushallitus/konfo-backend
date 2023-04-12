@@ -6,7 +6,7 @@
                                                 hakutulos-aggregations
                                                 inner-hits-query jarjestajat-aggregations search-term-query
                                                 koulutus-wildcard-query sorts]]
-            [konfo-backend.search.response :refer [get-oppilaitos-oids-for-koulutus parse parse-external
+            [konfo-backend.search.response :refer [parse parse-external
                                                    parse-inner-hits-for-jarjestajat parse-for-autocomplete]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [log-pretty]]))
@@ -33,8 +33,7 @@
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
   (let [query (inner-hits-query oid lng page size order tuleva? constraints)
-        oppilaitos-oids (get-oppilaitos-oids-for-koulutus oid)
-        aggs (jarjestajat-aggregations tuleva? constraints oppilaitos-oids)]
+        aggs (jarjestajat-aggregations tuleva? constraints)]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]

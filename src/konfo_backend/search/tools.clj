@@ -37,14 +37,6 @@
                  :operator    "and"
                  :type        "cross_fields"}})
 
-(defn fields
-  [keyword constraints user-lng suffixes]
-  (let [fields? (not (blank? keyword))
-        filter? (constraints? constraints)]
-    (cond-> {}
-      fields? (-> (assoc :must (make-search-term-query keyword user-lng suffixes)))
-      filter? (assoc :filter (common-filters constraints (current-time-as-kouta-format))))))
-
 (defn generate-wildcard-query
   [search-phrase-token user-lng]
   {:wildcard {(keyword (str "search_terms.koulutusnimi." user-lng ".keyword")) {:value (str "*" (lower-case search-phrase-token) "*")}}})

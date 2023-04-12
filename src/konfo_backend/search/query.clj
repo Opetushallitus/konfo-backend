@@ -16,10 +16,6 @@
   [search-phrase user-lng constraints]
   {:nested {:path "search_terms", :query {:bool (wildcard-query-fields search-phrase constraints user-lng) }}})
 
-(defn query
-  [keyword constraints user-lng suffixes]
-  {:nested {:path "search_terms", :query {:bool (fields keyword constraints user-lng suffixes)}}})
-
 (defn search-term-query [search-term user-lng suffixes]
   (if (not (str/blank? search-term))
     {:nested {:path "search_terms", :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
@@ -74,8 +70,8 @@
   (aggregations #(generate-hakutulos-aggregations constraints)))
 
 (defn jarjestajat-aggregations
-  [tuleva? constraints oppilaitos-oids]
-  (aggregations #(generate-jarjestajat-aggregations tuleva? constraints oppilaitos-oids)))
+  [tuleva? constraints]
+  (aggregations #(generate-jarjestajat-aggregations tuleva? constraints)))
 
 (defn tarjoajat-aggregations
   [tuleva? constraints]
