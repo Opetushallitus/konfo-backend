@@ -42,7 +42,7 @@
 
     (testing "Search all oppilaitokset"
       (let [r (search :sort "name" :order "asc")]
-        (is (= 11 (count (:hits r))))
+        (is (= 13 (count (:hits r))))
         (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
@@ -51,7 +51,7 @@
         (is (= 5 (get-in r [:filters :koulutustyyppi-muu :aikuisten-perusopetus :count])))
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
         (is (= 6 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
-        (is (= 10 (get-in r [:filters :maakunta :maakunta_01 :count])))
+        (is (= 11 (get-in r [:filters :maakunta :maakunta_01 :count])))
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
         (is (= 6 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
@@ -60,7 +60,7 @@
 
     (testing "Search oppilaitokset, filter with..."
       (testing "sijainti"
-        (let [r (search :sijainti "kunta_091" :sort "name" :order "asc")]
+        (let [r (search :sijainti "kunta_220" :sort "name" :order "asc")]
           (is (= 1 (count (:hits r))))
           (is (= punkaharjun-yliopisto (:oid (last (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
@@ -68,7 +68,7 @@
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))
-          (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))
+          (is (= 11 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
@@ -80,8 +80,8 @@
         (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
           (is (= 4 (count (:hits r))))
           (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))))
 
@@ -89,7 +89,7 @@
         (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
           ;; (debug-pretty r)
           (is (= 1 (count (:hits r))))
-          (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
           (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
@@ -99,9 +99,9 @@
         (let [r (search :koulutustyyppi "amm-tutkinnon-osa" :sort "name" :order "asc")]
           ;(debug-pretty r)
           (is (= 0 (count (:hits r))))
-          (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
+          (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))))
 
@@ -109,9 +109,9 @@
         (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]
           ;(debug-pretty r)
           (is (= 0 (count (:hits r))))
-          (is (= 0 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
+          (is (= 4 (get-in r [:filters :koulutustyyppi :amm :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-osaamisala :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-tutkinnon-osa :count])))
           (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :alakoodit :amm-muu :count])))))
 
@@ -120,7 +120,7 @@
           (is (= 1 (count (:hits r))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
-          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))))
+          (is (= 6 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))))
 
       (testing "koulutusala"
         (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
@@ -138,7 +138,7 @@
           (is (= 6 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 6 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
-          (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
           (is (= 6 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
           (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
           (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))

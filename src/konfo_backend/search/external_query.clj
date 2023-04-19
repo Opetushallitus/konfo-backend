@@ -7,12 +7,11 @@
 (defn external-query
   [keyword constraints user-lng suffixes]
   (let [query-contents (cond-> {}
-                               (not (blank? keyword)) (->
-                                                        (assoc
-                                                          :must (make-search-term-query keyword user-lng suffixes)))
+                               (not (blank? keyword)) (assoc
+                                                          :must (make-search-term-query keyword user-lng suffixes))
                                (constraints? constraints) (assoc
                                                             :filter (common-filters
                                                                       constraints (current-time-as-kouta-format))))]
   {:nested {:path       "search_terms",
             :inner_hits {},
-            :query      {:bool (query-contents)}}}))
+            :query      {:bool query-contents}}}))

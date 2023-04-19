@@ -87,13 +87,13 @@
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
-          (is (= 5 (count (:hits r))))
-          (is (= "1.2.246.562.13.000015" (:oid (first (:hits r)))))
+          (is (= 16 (count (:hits r))))
+          (is (= "1.2.246.562.13.000020" (:oid (first (:hits r)))))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
     (testing "multiple sijainti"
       (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
-        (is (match? 8 (count (:hits r))))))
+        (is (match? 19 (count (:hits r))))))
 
     ;; (testing "koulutustyyppi amm"
     ;;   (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
