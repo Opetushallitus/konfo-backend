@@ -20,8 +20,10 @@
 
 (defn get-uniform-buckets [agg agg-key]
   (let [agg-buckets (get-in agg [:buckets]
-                            ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) yksi ylimääräinen aggregaatiokerros:
-                            (get-in agg [agg-key :buckets] []))]
+                            ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on constrainteista
+                            ;riippuen joko yksi tai kaksi ylimääräistä aggregaatiokerrosta:
+                            (get-in agg [agg-key :buckets]
+                                    (get-in agg [agg-key agg-key :buckets] [])))]
     (if (and (map? agg) (empty? agg-buckets))
       {agg-key agg} ; single-bucket aggregaatio! esim. hakukaynnissa
       (buckets-to-map agg-buckets))))

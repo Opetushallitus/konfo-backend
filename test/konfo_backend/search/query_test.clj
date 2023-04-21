@@ -163,18 +163,34 @@
          {:nested {:path "search_terms"}
           :aggs
           {:koulutusala (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
-           :yhteishaku {:nested {:path "search_terms.hakutiedot"}
-                        :aggs {:yhteishaku (default-agg "search_terms.hakutiedot.yhteishakuOid" jotpa-bool-filter)}}
+           :yhteishaku {:filter jotpa-bool-filter
+                        :aggs
+                        {:yhteishaku {:nested {:path "search_terms.hakutiedot"}
+                                                 :aggs {:yhteishaku
+                                                        (default-agg
+                                                          "search_terms.hakutiedot.yhteishakuOid")}}}}
            :kunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter)
-           :pohjakoulutusvaatimus {:nested {:path "search_terms.hakutiedot"}
-                                   :aggs {:pohjakoulutusvaatimus (default-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset" jotpa-bool-filter)}}
+           :pohjakoulutusvaatimus {:filter jotpa-bool-filter
+                                   :aggs
+                                   {:pohjakoulutusvaatimus {:nested {:path "search_terms.hakutiedot"}
+                                                            :aggs {:pohjakoulutusvaatimus
+                                                                   (default-agg
+                                                                     "search_terms.hakutiedot.pohjakoulutusvaatimukset")}}}}
            :maakunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter)
-           :hakutapa {:nested {:path "search_terms.hakutiedot"}
-                      :aggs {:hakutapa (default-agg "search_terms.hakutiedot.hakutapa" jotpa-bool-filter)}}
+           :hakutapa {:filter jotpa-bool-filter
+                      :aggs
+                      {:hakutapa {:nested {:path "search_terms.hakutiedot"}
+                                    :aggs {:hakutapa
+                                           (default-agg
+                                             "search_terms.hakutiedot.hakutapa")}}}}
            :opetustapa (default-agg "search_terms.opetustavat.keyword" jotpa-bool-filter)
            :opetuskieli (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
-           :valintatapa {:nested {:path "search_terms.hakutiedot"}
-                         :aggs {:valintatapa (default-agg "search_terms.hakutiedot.valintatavat" jotpa-bool-filter)}}
+           :valintatapa {:filter jotpa-bool-filter
+                         :aggs
+                         {:valintatapa {:nested {:path "search_terms.hakutiedot"}
+                                       :aggs {:valintatapa
+                                              (default-agg
+                                                "search_terms.hakutiedot.valintatavat")}}}}
            :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter {:size (count koulutustyypit) :include koulutustyypit})
            :hakukaynnissa {:filter
                            {:bool
