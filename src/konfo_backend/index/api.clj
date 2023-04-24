@@ -348,8 +348,12 @@
    |          example: 12234
    |        - in: query
    |          name: koodi-urit
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: pilkulla erotettu lista tutkinnon osien koodi-ureja.
    |            Jos puuttuu, palautetaan kaikkien tutkinnon osien kuvaukset
@@ -380,8 +384,12 @@
    |          example: 12234
    |        - in: query
    |          name: koodi-urit
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: pilkulla erotettu lista osaamisalojen koodi-ureja.
    |            Jos puuttuu, palautetaan kaikkien osaamisalojen kuvaukset

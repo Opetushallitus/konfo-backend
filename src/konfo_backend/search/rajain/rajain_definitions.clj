@@ -59,9 +59,12 @@
    :desc "
    |        - in: query
    |          name: koulutustyyppi
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu lista koulutustyyppejä
    |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala"})
 
@@ -70,9 +73,12 @@
    :desc "
    |        - in: query
    |          name: sijainti
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
    |          example: kunta_091,maakunta_01,maakunta_03"})
 
@@ -97,9 +103,12 @@
    :desc "
    |        - in: query
    |          name: opetuskieli
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu opetuskielten koodeja
    |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2"})
 
@@ -111,9 +120,12 @@
    :desc "
    |        - in: query
    |          name: koulutusala
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu koulutusalojen koodeja
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02"})
 
@@ -125,9 +137,12 @@
    :desc "
    |        - in: query
    |          name: opetustapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2"})
 
@@ -139,9 +154,12 @@
    :desc "
    |        - in: query
    |          name: valintatapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu valintatapojen koodeja
    |          example: valintatapajono_av, valintatapajono_tv"})
 
@@ -153,9 +171,12 @@
    :desc "
    |        - in: query
    |          name: hakutapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu hakutapojen koodeja
    |          example: hakutapa_01, hakutapa_03"})
 
@@ -209,9 +230,12 @@
    :desc "
    |        - in: query
    |          name: yhteishaku
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu lista yhteishakujen oideja
    |          example: 1.2.246.562.29.00000000000000000800"})
 
@@ -223,9 +247,12 @@
    :desc "
    |        - in: query
    |          name: pohjakoulutusvaatimus
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102"})
 
@@ -234,9 +261,12 @@
    :desc "
    |        - in: query
    |          name: oppilaitos
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltuna lista toteutusten oppilaitoksista
    |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356"})
 
@@ -245,9 +275,12 @@
    :desc "
    |        - in: query
    |          name: lukiopainotukset
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltuna lukiopainotusten koodeja
    |          example: lukiopainotukset_0111, lukiopainotukset_001"})
 
@@ -256,9 +289,12 @@
    :desc "
    |        - in: query
    |          name: lukiolinjaterityinenkoulutustehtava
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja
    |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126"})
 
@@ -267,9 +303,12 @@
    :desc "
    |        - in: query
    |          name: osaamisala
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
-   |          required: false
+   |            type: array
+   |            items:
+   |              type: string
    |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
    |          example: osaamisala_1756, osaamisala_3076"})
 

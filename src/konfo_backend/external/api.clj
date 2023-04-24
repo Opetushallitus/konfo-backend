@@ -266,43 +266,67 @@
    |          description: Järjestys. 'asc' tai 'desc'
    |        - in: query
    |          name: koulutustyyppi
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu koulutustyypit. 'amm, 'yo' tai 'amk'
    |          example: amk
    |        - in: query
    |          name: sijainti
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
    |          example: kunta_091,maakunta_01,maakunta_03
    |        - in: query
    |          name: opetuskieli
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu opetuskielten koodeja
    |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
    |        - in: query
    |          name: koulutusala
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu koulutusalojen koodeja
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
    |        - in: query
    |          name: opetustapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2
    |        - in: query
    |          name: valintatapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu valintatapojen koodeja
    |          example: valintatapajono_av, valintatapajono_tv
@@ -336,22 +360,34 @@
    |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta
    |        - in: query
    |          name: hakutapa
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu hakutapojen koodeja
    |          example: hakutapa_01, hakutapa_03
    |        - in: query
    |          name: yhteishaku
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu lista yhteishakujen oideja
    |          example: 1.2.246.562.29.00000000000000000800
    |        - in: query
    |          name: pohjakoulutusvaatimus
+   |          style: form
+   |          explode: false
    |          schema:
-   |            type: string
+   |            type: array
+   |            items:
+   |              type: string
    |          required: false
    |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102
