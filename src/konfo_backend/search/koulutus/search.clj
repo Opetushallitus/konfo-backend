@@ -9,7 +9,8 @@
             [konfo-backend.search.response :refer [parse parse-external
                                                    parse-inner-hits-for-jarjestajat parse-for-autocomplete]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [log-pretty]]))
+            [konfo-backend.tools :refer [log-pretty]]
+            [cheshire.core :refer [parse-string, generate-string]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -20,6 +21,7 @@
   (let [search-term-query (search-term-query keyword lng ["words"])
         post-filter-query (constraints-post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
+    (println "!!!!!!!!!!!!!!!!!! search-aggsi " + (generate-string aggs))
     (koulutus-kouta-search
      page
      size
@@ -34,6 +36,8 @@
   [oid lng page size order tuleva? constraints]
   (let [query (inner-hits-query oid lng page size order tuleva? constraints)
         aggs (jarjestajat-aggregations tuleva? constraints)]
+    (println "!!!!!!!!!!!!!!!!!! query " + (generate-string query))
+    (println "!!!!!!!!!!!!!!!!!! aggsi " + (generate-string aggs))
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]
