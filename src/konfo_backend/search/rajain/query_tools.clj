@@ -120,20 +120,24 @@
 (defn- with-real-hits [agg]
   (assoc agg :aggs {:real_hits {:reverse_nested {}}}))
 
-(defn- generate-constrain-aggregation
-  [with-constraints]
-  {:constrained (with-real-hits (if (not-empty with-constraints)
-                                    {:filter {:bool {:filter with-constraints}}}
-                                    ; Käytetään "reverse_nested":iä dummy-aggregaationa kun ei ole rajaimia, jotta aggregaation tulosten rakenne pysyy samanlaisena
-                                    {:reverse_nested {}}))})
+(defn- rajain-terms-agg [field-name term-details]
+  (let [default-terms {:field field-name
+                       :min_doc_count 0
+                       :size 1000}]
+    (with-real-hits {:terms (merge default-terms term-details)})))
+
+(defn- constrained-agg [with-constraints filtered-aggs plain-aggs]
+  (if (not-empty with-constraints)
+    {:filter {:bool {:filter with-constraints}}
+     :aggs filtered-aggs}
+    plain-aggs))
 
 (defn rajain-aggregation
   ([field-name with-constraints term-details]
-   (let [default-terms {:field field-name
-                      :min_doc_count 0
-                      :size 1000}]
-     {:terms (merge default-terms term-details)
-      :aggs (generate-constrain-aggregation with-constraints)}))
+   (constrained-agg
+    with-constraints
+    {:rajain (rajain-terms-agg field-name term-details)}
+    (rajain-terms-agg field-name term-details)))
   ([field-name with-constraints] (rajain-aggregation field-name with-constraints nil)))
 
 (defn bool-agg-filter [own-filter with-constraints]
@@ -146,15 +150,13 @@
 
 (defn nested-rajain-aggregation
   ([rajain-key field-name with-constraints term-details]
-   (let [aggs-def {:nested
-                   {:path (-> field-name
-                              (replace-first ".keyword" "")
-                              (split #"\.")
-                              (drop-last) (#(join "." %)))}
-                    :aggs   {(keyword rajain-key)
-                             (rajain-aggregation field-name {} term-details)}}]
-     (if (not-empty with-constraints)
-       {:filter {:bool {:filter (vec with-constraints)}}
-        :aggs {(keyword rajain-key) aggs-def}}
-       aggs-def)))
+   (let [nested-agg {:nested  {:path (-> field-name
+                                         (replace-first ".keyword" "")
+                                         (split #"\.")
+                                         (drop-last) (#(join "." %)))}
+                     :aggs {:rajain (rajain-terms-agg field-name term-details)}}]
+     (constrained-agg
+      with-constraints
+      {(keyword rajain-key) nested-agg}
+      nested-agg)))
   ([rajain-key field-name with-constraints] (nested-rajain-aggregation rajain-key field-name with-constraints nil)))

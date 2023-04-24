@@ -19,12 +19,13 @@
        (get-in response [:hits :hits])))
 
 (defn get-uniform-buckets [agg agg-key]
-  (let [agg-buckets (get-in agg [:buckets]
-                            ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on constrainteista
-                            ;riippuen joko yksi tai kaksi ylimääräistä aggregaatiokerrosta:
-                            (get-in agg [agg-key :buckets]
-                                    (get-in agg [agg-key agg-key :buckets] [])))]
-    (if (and (map? agg) (empty? agg-buckets))
+  ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on yksi ylimääräinen aggregaatiokerros
+  (let [rajain-agg (get-in agg [agg-key] agg)
+        ;Jos aggregaatiolla on rajaimia, on lisäksi "rajain"-aggregaatiokerros
+        agg-buckets (or (get-in rajain-agg [:buckets])
+                        (get-in rajain-agg [:rajain :buckets])
+                        [])]
+    (if (and (map? agg) (empty? agg-buckets) (contains? agg :real_hits))
       {agg-key agg} ; single-bucket aggregaatio! esim. hakukaynnissa
       (buckets-to-map agg-buckets))))
 
@@ -34,8 +35,7 @@
         inner-hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key]) agg-key)
         [buckets get-count] (if (not-empty inner-hits-buckets)
                               [inner-hits-buckets (fn [key] (get-in inner-hits-buckets [(keyword key) :doc_count]))]
-                              [hits-buckets (fn [key] (get-in hits-buckets [(keyword key) :constrained :real_hits :doc_count]
-                                                              (get-in hits-buckets [(keyword key) :real_hits :doc_count])))])
+                              [hits-buckets (fn [key] (get-in hits-buckets [(keyword key) :real_hits :doc_count]))])
         mapper (fn [key] {key (get-count key)})]
     (reduce-merge-map mapper (keys buckets))))
 
