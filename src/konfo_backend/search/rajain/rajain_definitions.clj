@@ -8,16 +8,15 @@
 ;; rajain-määritysten sisällä, eli se täytyy olla määriteltynä ennen rajain-määrityksiä.
 (def common-rajain-definitions (atom []))
 (def combined-tyoelama-rajain (atom {}))
-(def combined-jarjestaja-rajain (atom {}))
 (def hakukaynnissa-rajain (atom {}))
 (def boolean-type-rajaimet (atom []))
-(def jarjestaja-rajaimet (atom []))
+(def jarjestaja-rajain-definitions (atom []))
 
 (defn constraints?
   [constraints]
   (let [contains-non-boolean-rajaimet? (not-empty (filter #(constraint? constraints %) (map :id @common-rajain-definitions)))
         contains-boolean-true-rajaimet? (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))
-        contains-jarjestaja-rajaimet? (not-empty (filter #(constraint? constraints %) @jarjestaja-rajaimet))]
+        contains-jarjestaja-rajaimet? (not-empty (filter #(constraint? constraints %) (map :id @jarjestaja-rajain-definitions)))]
     (or contains-non-boolean-rajaimet? contains-boolean-true-rajaimet? contains-jarjestaja-rajaimet?)))
 
 (defn common-filters
@@ -34,21 +33,22 @@
       (conj
        (mapv make-constraint-query @common-rajain-definitions)
        ((:make-query @combined-tyoelama-rajain) constraints)
-       ((:make-query @hakukaynnissa-rajain) constraints current-time))))))
+       ((:make-query @hakukaynnissa-rajain) constraints current-time)
+       (mapv make-constraint-query @jarjestaja-rajain-definitions))))))
 
 (defn all-filters-without-rajainkeys
   [constraints current-time & rajain-keys]
   (let [constraints-wo-rajainkey (apply dissoc constraints (map keyword rajain-keys))]
     (when (constraints? constraints-wo-rajainkey)
-      (filterv some? (flatten (conj (common-filters constraints-wo-rajainkey current-time)
-                                    ((:make-query @combined-jarjestaja-rajain) constraints)))))))
+      (common-filters constraints-wo-rajainkey current-time))))
 
 (def koulutustyyppi
   {:id :koulutustyyppi :make-query #(keyword-terms-query "koulutustyypit" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "koulutustyypit.keyword")
-                               (all-filters-without-rajainkeys constraints current-time "koulutustyyppi") {:size       (count koulutustyypit)
-                                                                                                              :include koulutustyypit}))
+                               (all-filters-without-rajainkeys constraints current-time "koulutustyyppi")
+                               {:size (count koulutustyypit)
+                                :include koulutustyypit}))
    :desc "
    |        - in: query
    |          name: koulutustyyppi
@@ -251,6 +251,11 @@
 
 (def oppilaitos
   {:id :oppilaitos :make-query #(keyword-terms-query "oppilaitosOid" %)
+   :aggs (fn [constraints current-time]
+           (rajain-aggregation (->field-key "oppilaitosOid.keyword")
+                               (all-filters-without-rajainkeys constraints current-time "oppilaitos")
+                               {:size 10000
+                                :min_doc_count 1}))
    :desc "
    |        - in: query
    |          name: oppilaitos
@@ -329,11 +334,10 @@
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa yhteishaku pohjakoulutusvaatimus)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
-(swap! jarjestaja-rajaimet conj (:id lukiopainotukset) (:id lukiolinjaterityinenkoulutustehtava) (:id osaamisala))
+(swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
 (reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
 (reset! hakukaynnissa-rajain hakukaynnissa)
-(reset! combined-jarjestaja-rajain {:make-query #(make-combined-jarjestaja-filter-query % [lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala])})
 
 (def default-aggregation-defs
   [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi])
@@ -361,11 +365,7 @@
   (let [current-time (current-time-as-kouta-format)
         default-aggs (generate-default-aggs constraints current-time)]
     (-> default-aggs
-        (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size          10000
-                                                                                        :min_doc_count 1}))
-        (assoc (:id osaamisala) ((:aggs osaamisala) constraints current-time))
-        (assoc (:id lukiopainotukset) ((:aggs lukiopainotukset) constraints current-time))
-        (assoc (:id lukiolinjaterityinenkoulutustehtava) ((:aggs lukiolinjaterityinenkoulutustehtava) constraints current-time))
+        (into (for [agg @jarjestaja-rajain-definitions] {(:id agg) ((:aggs agg) constraints current-time)}))
         (dissoc :koulutusala :koulutustyyppi))))
 
 (defn generate-tarjoajat-aggregations
