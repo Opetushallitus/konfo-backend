@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [konfo-backend.elastic-tools :refer [->from ->size]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters inner-hits-filters
+            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters
                                                                     generate-hakutulos-aggregations
                                                                     generate-jarjestajat-aggregations
                                                                     generate-tarjoajat-aggregations]]
@@ -14,7 +14,7 @@
 
 (defn koulutus-wildcard-query
   [search-phrase user-lng constraints]
-  {:nested {:path "search_terms", :query {:bool (wildcard-query-fields search-phrase constraints user-lng) }}})
+  {:nested {:path "search_terms", :query {:bool (wildcard-query-fields search-phrase constraints user-lng)}}})
 
 (defn search-term-query [search-term user-lng suffixes]
   (if (not (str/blank? search-term))
@@ -37,18 +37,29 @@
     (->name-sort order lng)
     (vec (concat [{:_score {:order order}}] (->name-sort "asc" lng)))))
 
-(defn inner-hits-query
-  [oid lng page size order tuleva? constraints]
+; Käytetään sekä koulutuksen järjestäjille että oppilaitoksen tarjoajille, joissa listataan toteutuksia
+(defn toteutukset-inner-hits-query [oid lng page size order tuleva?]
   (let [size (->size size)
         from (->from page size)]
     {:bool {:must [{:term {:oid oid}}
-                   {:nested {:inner_hits {:_source ["search_terms.koulutusOid", "search_terms.toteutusOid", "search_terms.toteutusNimi", "search_terms.opetuskielet", "search_terms.oppilaitosOid", "search_terms.kuva", "search_terms.nimi", "search_terms.metadata" "search_terms.hakutiedot" "search_terms.toteutusHakuaika" "search_terms.jarjestaaUrheilijanAmmKoulutusta"]
+                   {:nested {:inner_hits {:_source ["search_terms.koulutusOid"
+                                                    "search_terms.toteutusOid"
+                                                    "search_terms.toteutusNimi"
+                                                    "search_terms.opetuskielet"
+                                                    "search_terms.oppilaitosOid"
+                                                    "search_terms.kuva"
+                                                    "search_terms.nimi"
+                                                    "search_terms.metadata"
+                                                    "search_terms.hakutiedot"
+                                                    "search_terms.toteutusHakuaika"
+                                                    "search_terms.jarjestaaUrheilijanAmmKoulutusta"]
                                           :from    from
                                           :size    size
                                           :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
                              :path       "search_terms"
-                             :query      (inner-hits-filters tuleva? constraints)}}]}}))
+                             :query      {:bool {:filter {:term {"search_terms.onkoTuleva" tuleva?}}}}}}]}}))
 
+; TODO: Eikö oppilaitoksen ja osan tarjonnan pitäisi toimia samanlaisella querylla?
 (defn inner-hits-query-osat
   [oid lng page size order tuleva?]
   (let [size (->size size)
@@ -58,8 +69,8 @@
                            :size    size
                            :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
               :path       "search_terms"
-              :query      {:bool {:must [{:term {"search_terms.onkoTuleva" tuleva?}}
-                                         {:term {"search_terms.tarjoajat" oid}}]}}}}))
+              :query      {:bool {:filter [{:term {"search_terms.onkoTuleva" tuleva?}}
+                                           {:term {"search_terms.tarjoajat" oid}}]}}}}))
 
 (defn- aggregations
   [aggs-generator]
@@ -70,9 +81,9 @@
   (aggregations #(generate-hakutulos-aggregations constraints)))
 
 (defn jarjestajat-aggregations
-  [tuleva? constraints]
-  (aggregations #(generate-jarjestajat-aggregations tuleva? constraints)))
+  [constraints]
+  (aggregations #(generate-jarjestajat-aggregations constraints)))
 
 (defn tarjoajat-aggregations
-  [tuleva? constraints]
-  (aggregations #(generate-tarjoajat-aggregations tuleva? constraints)))
+  [constraints]
+  (aggregations #(generate-tarjoajat-aggregations constraints)))

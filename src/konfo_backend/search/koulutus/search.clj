@@ -3,14 +3,13 @@
             [konfo-backend.search.external-query :refer [external-query]]
             [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
             [konfo-backend.search.query :refer [constraints-post-filter-query
-                                                hakutulos-aggregations
-                                                inner-hits-query jarjestajat-aggregations search-term-query
+                                                hakutulos-aggregations toteutukset-inner-hits-query
+                                                jarjestajat-aggregations search-term-query
                                                 koulutus-wildcard-query sorts]]
             [konfo-backend.search.response :refer [parse parse-external
                                                    parse-inner-hits-for-jarjestajat parse-for-autocomplete]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [log-pretty]]
-            [cheshire.core :refer [parse-string, generate-string]]))
+            [konfo-backend.tools :refer [log-pretty]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -33,12 +32,14 @@
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
-  (let [query (inner-hits-query oid lng page size order tuleva? constraints)
-        aggs (jarjestajat-aggregations tuleva? constraints)]
+  (let [query (toteutukset-inner-hits-query oid lng page size order tuleva?)
+        aggs (jarjestajat-aggregations constraints)
+        post-filter-query (constraints-post-filter-query constraints)]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]
               :query query
+              :post_filter post-filter-query
               :aggs aggs)))
 
 (defn external-search
@@ -46,12 +47,12 @@
   (let [query (external-query keyword constraints lng ["words"])]
     (log-pretty query)
     (koulutus-kouta-search
-      page
-      size
-      #(-> % parse-external with-kuvaukset)
-      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
-      :sort (sorts sort order lng)
-      :query query)))
+     page
+     size
+     #(-> % parse-external with-kuvaukset)
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
+     :sort (sorts sort order lng)
+     :query query)))
 
 (defn autocomplete-search
   [search-phrase lng sort order constraints]

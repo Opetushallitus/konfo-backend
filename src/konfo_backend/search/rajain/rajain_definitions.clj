@@ -1,7 +1,7 @@
 (ns konfo-backend.search.rajain.rajain-definitions
   (:require
-    [konfo-backend.tools :refer [current-time-as-kouta-format]]
-    [konfo-backend.search.rajain.query-tools :refer :all]))
+   [konfo-backend.tools :refer [current-time-as-kouta-format]]
+   [konfo-backend.search.rajain.query-tools :refer :all]))
 
 ;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
 ;; vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta myöhempänä. Ja common-filtersiä taas käytetään
@@ -16,8 +16,8 @@
 
 (defn constraints?
   [constraints]
-  (let [contains-non-boolean-rajaimet? (not (empty? (filter #(constraint? constraints %) (map :id @common-rajain-definitions))))
-        contains-boolean-true-rajaimet? (not (empty? (filter #(true? (% constraints)) @boolean-type-rajaimet)))]
+  (let [contains-non-boolean-rajaimet? (not-empty (filter #(constraint? constraints %) (map :id @common-rajain-definitions)))
+        contains-boolean-true-rajaimet? (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))]
     (or contains-non-boolean-rajaimet? contains-boolean-true-rajaimet?)))
 
 (defn common-filters
@@ -29,12 +29,12 @@
               (and (boolean? constraint-vals) (true? constraint-vals)) (:make-query rajain-def)
               (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query rajain-def) constraint-vals))))]
     (filterv
-      some?
-      (flatten
-        (conj
-          (mapv make-constraint-query @common-rajain-definitions)
-          ((:make-query @combined-tyoelama-rajain) constraints)
-          ((:make-query @hakukaynnissa-rajain) constraints current-time))))))
+     some?
+     (flatten
+      (conj
+       (mapv make-constraint-query @common-rajain-definitions)
+       ((:make-query @combined-tyoelama-rajain) constraints)
+       ((:make-query @hakukaynnissa-rajain) constraints current-time))))))
 
 (defn inner-hits-filters
   [tuleva? constraints]
@@ -242,8 +242,8 @@
 (def pohjakoulutusvaatimus
   {:id :pohjakoulutusvaatimus :make-query #(hakutieto-query "hakutiedot" "pohjakoulutusvaatimukset" %)
    :aggs (fn [constraints current-time]
-            (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                       (common-filters-without-rajainkeys constraints current-time "pohjakoulutusvaatimus")))
+           (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                      (common-filters-without-rajainkeys constraints current-time "pohjakoulutusvaatimus")))
    :desc "
    |        - in: query
    |          name: pohjakoulutusvaatimus
@@ -350,8 +350,8 @@
 (defn- generate-tyoelama-aggregations
   [constraints current-time]
   (let [constraints-wo-tyoelama (dissoc constraints conj (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))]
-  (into {} (for [agg [jotpa tyovoimakoulutus taydennyskoulutus]]
-             {(:id agg) ((:aggs agg) constraints-wo-tyoelama current-time)}))))
+    (into {} (for [agg [jotpa tyovoimakoulutus taydennyskoulutus]]
+               {(:id agg) ((:aggs agg) constraints-wo-tyoelama current-time)}))))
 
 (defn generate-hakutulos-aggregations
   [constraints]
@@ -360,22 +360,17 @@
            (generate-tyoelama-aggregations constraints current-time))))
 
 (defn generate-jarjestajat-aggregations
-  [tuleva? constraints]
+  [constraints]
   (let [current-time (current-time-as-kouta-format)
         default-aggs (generate-default-aggs constraints current-time)]
-      {:inner_hits_agg
-       {:filter (inner-hits-filters tuleva? {})
-        :aggs
-        (-> default-aggs
-            (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size          10000
-                                                                                            :min_doc_count 1}))
-            (assoc (:id osaamisala) ((:aggs osaamisala) constraints current-time ))
-            (assoc (:id lukiopainotukset) ((:aggs lukiopainotukset) constraints current-time ))
-            (assoc (:id lukiolinjaterityinenkoulutustehtava) ((:aggs lukiolinjaterityinenkoulutustehtava) constraints current-time ))
-            (dissoc :koulutusala :koulutustyyppi))}}))
+    (-> default-aggs
+        (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size          10000
+                                                                                        :min_doc_count 1}))
+        (assoc (:id osaamisala) ((:aggs osaamisala) constraints current-time))
+        (assoc (:id lukiopainotukset) ((:aggs lukiopainotukset) constraints current-time))
+        (assoc (:id lukiolinjaterityinenkoulutustehtava) ((:aggs lukiolinjaterityinenkoulutustehtava) constraints current-time))
+        (dissoc :koulutusala :koulutustyyppi))))
 
 (defn generate-tarjoajat-aggregations
-  [tuleva? constraints]
-    {:inner_hits_agg
-     {:filter (inner-hits-filters tuleva? constraints)
-      :aggs (generate-default-aggs {} (current-time-as-kouta-format))}})
+  [constraints]
+  (generate-default-aggs constraints (current-time-as-kouta-format)))
