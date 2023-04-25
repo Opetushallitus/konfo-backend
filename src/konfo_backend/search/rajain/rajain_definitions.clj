@@ -8,17 +8,17 @@
 ;; rajain-määritysten sisällä, eli se täytyy olla määriteltynä ennen rajain-määrityksiä.
 (def common-rajain-definitions (atom []))
 (def combined-tyoelama-rajain (atom {}))
+(def combined-jarjestaja-rajain (atom {}))
 (def hakukaynnissa-rajain (atom {}))
 (def boolean-type-rajaimet (atom []))
-
-(def combined-jarjestaja-rajain
-  {:make-query #(lukiolinjat-and-osaamisala-filters %)})
+(def jarjestaja-rajaimet (atom []))
 
 (defn constraints?
   [constraints]
   (let [contains-non-boolean-rajaimet? (not-empty (filter #(constraint? constraints %) (map :id @common-rajain-definitions)))
-        contains-boolean-true-rajaimet? (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))]
-    (or contains-non-boolean-rajaimet? contains-boolean-true-rajaimet?)))
+        contains-boolean-true-rajaimet? (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))
+        contains-jarjestaja-rajaimet? (not-empty (filter #(constraint? constraints %) @jarjestaja-rajaimet))]
+    (or contains-non-boolean-rajaimet? contains-boolean-true-rajaimet? contains-jarjestaja-rajaimet?)))
 
 (defn common-filters
   [constraints current-time]
@@ -36,25 +36,18 @@
        ((:make-query @combined-tyoelama-rajain) constraints)
        ((:make-query @hakukaynnissa-rajain) constraints current-time))))))
 
-(defn inner-hits-filters
-  [tuleva? constraints]
-  {:bool
-   {:must
-    [{:term {"search_terms.onkoTuleva" tuleva?}}
-     {:bool ((:make-query combined-jarjestaja-rajain) constraints)}]
-    :filter (common-filters constraints (current-time-as-kouta-format))}})
-
-(defn common-filters-without-rajainkeys
+(defn all-filters-without-rajainkeys
   [constraints current-time & rajain-keys]
   (let [constraints-wo-rajainkey (apply dissoc constraints (map keyword rajain-keys))]
     (when (constraints? constraints-wo-rajainkey)
-      (common-filters constraints-wo-rajainkey current-time))))
+      (filterv some? (flatten (conj (common-filters constraints-wo-rajainkey current-time)
+                                    ((:make-query @combined-jarjestaja-rajain) constraints)))))))
 
 (def koulutustyyppi
   {:id :koulutustyyppi :make-query #(keyword-terms-query "koulutustyypit" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "koulutustyypit.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "koulutustyyppi") {:size   (count koulutustyypit)
+                               (all-filters-without-rajainkeys constraints current-time "koulutustyyppi") {:size       (count koulutustyypit)
                                                                                                               :include koulutustyypit}))
    :desc "
    |        - in: query
@@ -86,20 +79,20 @@
   {:id :maakunta
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "sijainti.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "sijainti")
+                               (all-filters-without-rajainkeys constraints current-time "sijainti")
                                {:include "maakunta.*"}))})
 (def kunta
   {:id :kunta
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "sijainti.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "sijainti")
+                               (all-filters-without-rajainkeys constraints current-time "sijainti")
                                {:include "kunta.*"}))})
 
 (def opetuskieli
   {:id :opetuskieli :make-query #(keyword-terms-query "opetuskielet" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "opetuskielet.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "opetuskieli")))
+                               (all-filters-without-rajainkeys constraints current-time "opetuskieli")))
    :desc "
    |        - in: query
    |          name: opetuskieli
@@ -116,7 +109,7 @@
   {:id :koulutusala :make-query #(keyword-terms-query "koulutusalat" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "koulutusalat.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "koulutusala")))
+                               (all-filters-without-rajainkeys constraints current-time "koulutusala")))
    :desc "
    |        - in: query
    |          name: koulutusala
@@ -133,7 +126,7 @@
   {:id :opetustapa :make-query #(keyword-terms-query "opetustavat" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "opetustavat.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "opetustapa")))
+                               (all-filters-without-rajainkeys constraints current-time "opetustapa")))
    :desc "
    |        - in: query
    |          name: opetustapa
@@ -150,7 +143,7 @@
   {:id :valintatapa :make-query #(hakutieto-query "hakutiedot" "valintatavat" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat"
-                                      (common-filters-without-rajainkeys constraints current-time "valintatapa")))
+                                      (all-filters-without-rajainkeys constraints current-time "valintatapa")))
    :desc "
    |        - in: query
    |          name: valintatapa
@@ -167,7 +160,7 @@
   {:id :hakutapa :make-query #(hakutieto-query "hakutiedot" "hakutapa" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa"
-                                      (common-filters-without-rajainkeys constraints current-time "hakutapa")))
+                                      (all-filters-without-rajainkeys constraints current-time "hakutapa")))
    :desc "
    |        - in: query
    |          name: hakutapa
@@ -184,7 +177,7 @@
   {:id :jotpa :make-query #(single-tyoelama-boolean-term "hasJotpaRahoitus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-boolean-term "hasJotpaRahoitus")
-                            (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
+                            (all-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
    :desc "
    |        - in: query
    |          name: jotpa
@@ -198,7 +191,7 @@
   {:id :tyovoimakoulutus :make-query #(single-tyoelama-boolean-term "isTyovoimakoulutus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-boolean-term "isTyovoimakoulutus")
-                            (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
+                            (all-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
    :desc "
    |        - in: query
    |          name: tyovoimakoulutus
@@ -212,7 +205,7 @@
   {:id :taydennyskoulutus :make-query #(single-tyoelama-boolean-term "isTaydennyskoulutus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-boolean-term "isTaydennyskoulutus")
-                            (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
+                            (all-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
    :desc "
    |        - in: query
    |          name: taydennyskoulutus
@@ -226,7 +219,7 @@
   {:id :yhteishaku :make-query #(hakutieto-query "hakutiedot" "yhteishakuOid" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
-                                      (common-filters-without-rajainkeys constraints current-time "yhteishaku")))
+                                      (all-filters-without-rajainkeys constraints current-time "yhteishaku")))
    :desc "
    |        - in: query
    |          name: yhteishaku
@@ -243,7 +236,7 @@
   {:id :pohjakoulutusvaatimus :make-query #(hakutieto-query "hakutiedot" "pohjakoulutusvaatimukset" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                      (common-filters-without-rajainkeys constraints current-time "pohjakoulutusvaatimus")))
+                                      (all-filters-without-rajainkeys constraints current-time "pohjakoulutusvaatimus")))
    :desc "
    |        - in: query
    |          name: pohjakoulutusvaatimus
@@ -274,7 +267,7 @@
   {:id :lukiopainotukset :make-query #(keyword-terms-query "lukiopainotukset" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "lukiopainotukset.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "lukiopainotukset")))
+                               (all-filters-without-rajainkeys constraints current-time "lukiopainotukset")))
    :desc "
    |        - in: query
    |          name: lukiopainotukset
@@ -291,7 +284,7 @@
   {:id :lukiolinjaterityinenkoulutustehtava :make-query #(keyword-terms-query "lukiolinjaterityinenkoulutustehtava" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "lukiolinjaterityinenkoulutustehtava")))
+                               (all-filters-without-rajainkeys constraints current-time "lukiolinjaterityinenkoulutustehtava")))
    :desc "
    |        - in: query
    |          name: lukiolinjaterityinenkoulutustehtava
@@ -308,7 +301,7 @@
   {:id :osaamisala :make-query #(keyword-terms-query "osaamisala" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "osaamisalat.keyword")
-                               (common-filters-without-rajainkeys constraints current-time "osaamisala")))
+                               (all-filters-without-rajainkeys constraints current-time "osaamisala")))
    :desc "
    |        - in: query
    |          name: osaamisala
@@ -324,7 +317,7 @@
 (def hakukaynnissa
   {:id :hakukaynnissa :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakuaika-filter-query current-time)))
    :aggs (fn [constraints current-time]
-           (hakukaynnissa-aggregation current-time (common-filters-without-rajainkeys constraints current-time "hakukaynnissa")))
+           (hakukaynnissa-aggregation current-time (all-filters-without-rajainkeys constraints current-time "hakukaynnissa")))
    :desc "
    |        - in: query
    |          name: hakukaynnissa
@@ -336,9 +329,11 @@
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa yhteishaku pohjakoulutusvaatimus)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
+(swap! jarjestaja-rajaimet conj (:id lukiopainotukset) (:id lukiolinjaterityinenkoulutustehtava) (:id osaamisala))
 
 (reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
 (reset! hakukaynnissa-rajain hakukaynnissa)
+(reset! combined-jarjestaja-rajain {:make-query #(make-combined-jarjestaja-filter-query % [lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala])})
 
 (def default-aggregation-defs
   [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi])

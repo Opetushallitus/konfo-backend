@@ -92,17 +92,11 @@
 (defn- osaamisala-filters [constraints]
   [(->terms-query "osaamisalat" (:osaamisala constraints))])
 
-(defn lukiolinjat-and-osaamisala-filters
-  [constraints]
-  (let [filters
-        (concat []
-                (when (or (lukiolinjaterityinenkoulutustehtava? constraints) (lukiopainotukset? constraints))
-                  (lukio-filters constraints))
-                (when (osaamisala? constraints)
-                  (osaamisala-filters constraints)))]
-    (if (empty? filters)
-      {}
-      {:should filters})))
+(defn make-combined-jarjestaja-filter-query
+  [constraints sub-filters]
+  (let [selected-sub-filters (filter #(constraint? constraints %) sub-filters)]
+    (when (not-empty selected-sub-filters)
+      {:should (mapv #((:make-query %)) selected-sub-filters)})))
 
 (defn hakuaika-filter-query
   [current-time]
