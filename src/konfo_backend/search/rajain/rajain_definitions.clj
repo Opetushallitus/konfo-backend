@@ -338,6 +338,8 @@
 (def default-aggregation-defs
   [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi])
 
+(def all-aggregation-defs (concat default-aggregation-defs [jotpa tyovoimakoulutus taydennyskoulutus oppilaitos osaamisala lukiopainotukset lukiolinjaterityinenkoulutustehtava]))
+
 (defn- generate-default-aggs
   [constraints current-time]
   (into {} (for [agg default-aggregation-defs] {(:id agg) ((:aggs agg) constraints current-time)})))
