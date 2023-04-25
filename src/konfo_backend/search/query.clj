@@ -1,12 +1,11 @@
 (ns konfo-backend.search.query
   (:require [clojure.string :as str]
             [konfo-backend.elastic-tools :refer [->from ->size]]
-            [konfo-backend.search.tools :refer :all]
-            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters
-                                                                    generate-hakutulos-aggregations
-                                                                    generate-jarjestajat-aggregations
+            [konfo-backend.search.rajain.rajain-definitions :refer [common-filters
+                                                                    constraints? generate-hakutulos-aggregations generate-jarjestajat-aggregations
                                                                     generate-tarjoajat-aggregations]]
-            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.tools :refer [assoc-if current-time-as-kouta-format]]))
 
 (defn match-all-query
   []
@@ -14,16 +13,20 @@
 
 (defn koulutus-wildcard-query
   [search-phrase user-lng constraints]
-  {:nested {:path "search_terms", :query {:bool (wildcard-query-fields search-phrase constraints user-lng)}}})
+  {:nested {:path "search_terms" :query {:bool (wildcard-query-fields search-phrase constraints user-lng)}}})
 
 (defn search-term-query [search-term user-lng suffixes]
   (if (not (str/blank? search-term))
-    {:nested {:path "search_terms", :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
+    {:nested {:path "search_terms" :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
     (match-all-query)))
 
-(defn constraints-post-filter-query [constraints]
-  (when (constraints? constraints)
-    {:nested {:path "search_terms", :query {:bool {:filter (common-filters constraints (current-time-as-kouta-format))}}}}))
+(defn constraints-post-filter-query
+  ([constraints inner-hits]
+   (when (or (constraints? constraints) inner-hits)
+     {:nested (assoc-if {:path "search_terms" :query {:bool {:filter (if (constraints? constraints) (common-filters constraints (current-time-as-kouta-format)) [])}}}
+                        :inner_hits inner-hits inner-hits)}))
+  ([constraints]
+   (constraints-post-filter-query constraints nil)))
 
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
@@ -38,26 +41,28 @@
     (vec (concat [{:_score {:order order}}] (->name-sort "asc" lng)))))
 
 ; Käytetään sekä koulutuksen järjestäjille että oppilaitoksen tarjoajille, joissa listataan toteutuksia
-(defn toteutukset-inner-hits-query [oid lng page size order tuleva?]
+(defn toteutukset-query [oid tuleva?]
+  {:bool {:must [{:term {:oid oid}}
+                 {:nested {:path       "search_terms"
+                           :query      {:bool {:filter {:term {"search_terms.onkoTuleva" tuleva?}}}}}}]}})
+
+(defn toteutukset-inner-hits [lng page size order]
   (let [size (->size size)
         from (->from page size)]
-    {:bool {:must [{:term {:oid oid}}
-                   {:nested {:inner_hits {:_source ["search_terms.koulutusOid"
-                                                    "search_terms.toteutusOid"
-                                                    "search_terms.toteutusNimi"
-                                                    "search_terms.opetuskielet"
-                                                    "search_terms.oppilaitosOid"
-                                                    "search_terms.kuva"
-                                                    "search_terms.nimi"
-                                                    "search_terms.metadata"
-                                                    "search_terms.hakutiedot"
-                                                    "search_terms.toteutusHakuaika"
-                                                    "search_terms.jarjestaaUrheilijanAmmKoulutusta"]
-                                          :from    from
-                                          :size    size
-                                          :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
-                             :path       "search_terms"
-                             :query      {:bool {:filter {:term {"search_terms.onkoTuleva" tuleva?}}}}}}]}}))
+    {:_source ["search_terms.koulutusOid"
+               "search_terms.toteutusOid"
+               "search_terms.toteutusNimi"
+               "search_terms.opetuskielet"
+               "search_terms.oppilaitosOid"
+               "search_terms.kuva"
+               "search_terms.nimi"
+               "search_terms.metadata"
+               "search_terms.hakutiedot"
+               "search_terms.toteutusHakuaika"
+               "search_terms.jarjestaaUrheilijanAmmKoulutusta"]
+     :from    from
+     :size    size
+     :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}))
 
 ; TODO: Eikö oppilaitoksen ja osan tarjonnan pitäisi toimia samanlaisella querylla?
 (defn inner-hits-query-osat
