@@ -23,7 +23,7 @@
                  [ring/ring-devel "1.7.1"]
                  [ring-cors "0.1.13"]
                  ; Logging
-                 [oph/clj-log "0.2.3-SNAPSHOT"]
+                 [oph/clj-log "0.3.2-SNAPSHOT"]
                  [ring-basic-authentication "1.0.5"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.apache.logging.log4j/log4j-api "2.17.0"]
