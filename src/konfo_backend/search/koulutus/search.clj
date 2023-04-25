@@ -21,7 +21,6 @@
   (let [search-term-query (search-term-query keyword lng ["words"])
         post-filter-query (constraints-post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
-    (println "!!!!!!!!!!!!!!!!!! search-aggsi " + (generate-string aggs))
     (koulutus-kouta-search
      page
      size
@@ -36,8 +35,6 @@
   [oid lng page size order tuleva? constraints]
   (let [query (inner-hits-query oid lng page size order tuleva? constraints)
         aggs (jarjestajat-aggregations tuleva? constraints)]
-    (println "!!!!!!!!!!!!!!!!!! query " + (generate-string query))
-    (println "!!!!!!!!!!!!!!!!!! aggsi " + (generate-string aggs))
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]
