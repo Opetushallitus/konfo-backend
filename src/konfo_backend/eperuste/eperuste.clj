@@ -7,20 +7,15 @@
   [id]
   (eperuste-index/get id))
 
-(defn get-osaamisalakuvaus-by-id
-  [id]
-  (osaamisalakuvaus-index/get id))
-
 (defn get-kuvaus-by-eperuste-id
   [id with-osaamisalakuvaukset?]
   (when-let [eperuste (some-> id eperuste-index/get)]
     (cond-> (select-keys eperuste [:id :kuvaus :tyotehtavatJoissaVoiToimia :suorittaneenOsaaminen])
-            with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
+      with-osaamisalakuvaukset? (assoc :osaamisalat (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id id)))))
 
 (defn get-tutkinnonosa-by-id
   [id]
-  (when-let [tutkinnonosa (some-> id tutkinnonosa-index/get)]
-    tutkinnonosa))
+  (id tutkinnonosa-index/get id))
 
 (defn in?
   [value coll]
@@ -32,9 +27,9 @@
                     (first)
                     :tutkinnonOsat
                     (filter #(= (:tila %) "valmis")))
-           (seq koodi-urit) (filter #(in? (:koodiUri %) koodi-urit))))
+    (seq koodi-urit) (filter #(in? (:koodiUri %) koodi-urit))))
 
 (defn get-osaamisala-kuvaukset
   [eperuste-id koodi-urit]
   (cond->> (osaamisalakuvaus-index/get-kuvaukset-by-eperuste-id eperuste-id)
-           (seq koodi-urit) (filter #(in? (:osaamisalakoodiUri %) koodi-urit))))
+    (seq koodi-urit) (filter #(in? (:osaamisalakoodiUri %) koodi-urit))))
