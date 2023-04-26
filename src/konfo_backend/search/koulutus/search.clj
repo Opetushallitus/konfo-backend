@@ -33,10 +33,10 @@
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
-  (let [query (toteutukset-query oid tuleva?)
+  (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
-        aggs (jarjestajat-aggregations constraints)
-        post-filter-query (constraints-post-filter-query constraints inner-hits)]
+        aggs (jarjestajat-aggregations constraints tuleva?)
+        post-filter-query (constraints-post-filter-query constraints inner-hits tuleva?)]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]

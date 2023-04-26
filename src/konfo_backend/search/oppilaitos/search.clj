@@ -4,7 +4,7 @@
                                                 hakutulos-aggregations
                                                 inner-hits-query-osat search-term-query sorts tarjoajat-aggregations
                                                 toteutukset-inner-hits toteutukset-query]]
-            [konfo-backend.search.response :refer [parse parse-inner-hits]]
+            [konfo-backend.search.response :refer [parse parse-inner-hits-for-jarjestajat parse-inner-hits]]
             [konfo-backend.search.tools :refer :all]))
 
 (defonce index "oppilaitos-kouta-search")
@@ -14,7 +14,7 @@
 (defn search
   [keyword lng page size sort order constraints]
   (let [search-term-query (search-term-query keyword lng ["words"])
-        post-filter-query (constraints-post-filter-query constraints false)
+        post-filter-query (constraints-post-filter-query constraints false nil)
         aggs (hakutulos-aggregations constraints)]
     (oppilaitos-kouta-search
      page
@@ -28,12 +28,12 @@
 
 (defn search-oppilaitoksen-tarjonta
   [oid lng page size order tuleva? constraints]
-  (let [query (toteutukset-query oid tuleva?)
+  (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
-        post-filter-query (constraints-post-filter-query constraints inner-hits)
-        aggs (tarjoajat-aggregations constraints)]
+        post-filter-query (constraints-post-filter-query constraints inner-hits tuleva?)
+        aggs (tarjoajat-aggregations constraints tuleva?)]
     (e/search index
-              parse-inner-hits
+              parse-inner-hits-for-jarjestajat
               :_source ["oid"]
               :query query
               :post_filter post-filter-query
