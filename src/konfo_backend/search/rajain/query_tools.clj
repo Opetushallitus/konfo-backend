@@ -34,6 +34,9 @@
                      "aikuisten-perusopetus"
                      "taiteen-perusopetus"
                      "muu"
+                     "kk-muu"
+                     "muut-ammatilliset"
+                     ; ammatilliset koulutus-koodit
                      "koulutustyyppi_26"
                      "koulutustyyppi_4"
                      "koulutustyyppi_11"
@@ -41,7 +44,7 @@
 
 (defn ->terms-query [key value]
   (if (vector? value)
-    {:terms  {(keyword (str "search_terms." key)) (->lower-case-vec value)}}
+    {:terms {(keyword (str "search_terms." key)) (->lower-case-vec value)}}
     {:term {(keyword (str "search_terms." key)) (if (string? value) (lower-case value) value)}}))
 
 (defn ->str-terms-query
@@ -55,7 +58,6 @@
     :query
     {:bool
      {:filter (->str-terms-query (str nested-field-name "." field-name) constraint)}}}})
-
 
 (defn ->boolean-term-query
   [key]
