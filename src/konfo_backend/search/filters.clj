@@ -161,7 +161,7 @@
                                                     updated-oppilaitos (-> oppilaitos
                                                                            (assoc :nimi (:nimi indexed-oppilaitos))
                                                                            (assoc :count (:doc_count oppilaitos))
-                                                                           (dissoc :doc_count))]
+                                                                           (dissoc :doc_count :real_hits))]
                                                 (assoc target-map oppilaitos-oid updated-oppilaitos))) {} oppilaitokset)]
     oppilaitokset-with-nimet))
 

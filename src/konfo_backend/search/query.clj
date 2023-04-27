@@ -21,12 +21,12 @@
     (match-all-query)))
 
 (defn constraints-post-filter-query
-  ([constraints inner-hits tuleva?]
+  ([constraints inner-hits extra-filter]
    (when (or (constraints? constraints) inner-hits)
      (let [filters (vec (flatten
                           (cond-> []
-                                  (constraints? constraints) (conj  (common-filters constraints (current-time-as-kouta-format)))
-                                   inner-hits (conj {:term {:search_terms.onkoTuleva tuleva?}}))))]
+                                  (constraints? constraints) (conj (common-filters constraints (current-time-as-kouta-format)))
+                                   extra-filter (conj extra-filter))))]
        {:nested (assoc-if {:path "search_terms" :query {:bool {:filter filters}}}
                            :inner_hits inner-hits inner-hits)})))
   ([constraints]
