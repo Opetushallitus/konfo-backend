@@ -1,10 +1,10 @@
 (ns konfo-backend.search.oppilaitos.search
   (:require [konfo-backend.elastic-tools :as e]
-            [konfo-backend.search.query :refer [constraints-post-filter-query
+            [konfo-backend.search.query :refer [post-filter-query
                                                 hakutulos-aggregations
                                                 inner-hits-query-osat search-term-query sorts tarjoajat-aggregations
                                                 toteutukset-inner-hits toteutukset-query]]
-            [konfo-backend.search.rajain.query-tools :refer [onkoTuleva-query]]
+            [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
             [konfo-backend.search.response :refer [parse parse-inner-hits
                                                    parse-inner-hits-for-jarjestajat]]
             [konfo-backend.search.tools :refer :all]))
@@ -16,7 +16,7 @@
 (defn search
   [keyword lng page size sort order constraints]
   (let [search-term-query (search-term-query keyword lng ["words"])
-        post-filter-query (constraints-post-filter-query constraints)
+        post-filter-query (post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
     (oppilaitos-kouta-search
      page
@@ -32,7 +32,7 @@
   [oid lng page size order tuleva? constraints]
   (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
-        post-filter-query (constraints-post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))
+        post-filter-query (post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))
         aggs (tarjoajat-aggregations constraints tuleva?)]
     (e/search index
               parse-inner-hits-for-jarjestajat

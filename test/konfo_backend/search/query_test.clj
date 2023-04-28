@@ -1,10 +1,10 @@
 (ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [constraints-post-filter-query
+            [konfo-backend.search.query :refer [post-filter-query
                                                 hakutulos-aggregations
                                                 jarjestajat-aggregations
                                                 tarjoajat-aggregations]]
-            [konfo-backend.search.rajain.query-tools :refer [koulutustyypit]]
+            [konfo-backend.search.rajain-tools :refer [koulutustyypit]]
             [konfo-backend.tools]
             [clojure.string :refer [replace-first split join]]
             [matcher-combinators.matchers :as m]
@@ -13,7 +13,7 @@
 (deftest oppilaitos-query-test
   (testing
    "Query with filters"
-    (is (= (constraints-post-filter-query {:sijainti ["kunta_091"] :koulutustyyppi ["amm" "KK"]})
+    (is (= (post-filter-query {:sijainti ["kunta_091"] :koulutustyyppi ["amm" "KK"]})
            {:nested {:path "search_terms"
                      :query {:bool {:filter
                                     [{:terms {:search_terms.koulutustyypit.keyword ["amm" "kk"]}}
@@ -22,7 +22,7 @@
    "Query with hakukaynnissa filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
-       (= (constraints-post-filter-query {:hakukaynnissa true})
+       (= (post-filter-query {:hakukaynnissa true})
           {:nested
            {:path "search_terms"
             :query

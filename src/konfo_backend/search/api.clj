@@ -1,12 +1,12 @@
 (ns konfo-backend.search.api
   (:require
-   [konfo-backend.search.rajain.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
+   [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                            valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                            hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                            lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
-   [konfo-backend.search.filters :as filters]
+   [konfo-backend.search.rajain-counts :as rajain-counts]
    [compojure.api.core :refer [GET context]]
    [ring.util.http-response :refer [bad-request not-found ok]]
    [clj-log.access-log :refer [with-access-logging]]
@@ -483,7 +483,7 @@
    :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))})
 
 (defn ->search-with-validated-params
-  [do-search keyword lng page size sort order suodatin-params]
+  [do-search keyword lng page size sort order rajain-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -496,10 +496,10 @@
                          size
                          sort
                          order
-                         (create-constraints suodatin-params)))))
+                         (create-constraints rajain-params)))))
 
 (defn- ->search-subentities-with-validated-params
-  [do-search oid lng page size order tuleva suodatin-params]
+  [do-search oid lng page size order tuleva rajain-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
@@ -509,12 +509,12 @@
                                      size
                                      order
                                      tuleva
-                                     (create-constraints suodatin-params))]
+                                     (create-constraints rajain-params))]
             (ok result)
             (not-found "Not found"))))
 
 (defn ->autocomplete-search-with-validated-params
-  [search-fn search-phrase lng sort order suodatin-params]
+  [search-fn search-phrase lng sort order rajain-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -525,20 +525,20 @@
                  lng
                  sort
                  order
-                 (create-constraints suodatin-params)))))
+                 (create-constraints rajain-params)))))
 
 (def routes
   (context "/search" []
 
     ;; Jos muokkaat /filters-rajapintaa varmista ettei externalin vastaava rajapinta muutu samalla
     (GET "/filters" [:as request]
-      (with-access-logging request (if-let [result (filters/generate-default-filter-counts)]
+      (with-access-logging request (if-let [result (rajain-counts/generate-default-rajain-counts)]
                                      (ok result)
                                      (not-found "Not found"))))
 
     ;; Jos muokkaat /filters_as_array-rajapintaa varmista ettei externalin vastaava rajapinta muutu samalla
     (GET "/filters_as_array" [:as request]
-      (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
+      (with-access-logging request (if-let [result (rajain-counts/flattened-rajain-counts)]
                                      (ok result)
                                      (not-found "Not found"))))
 
