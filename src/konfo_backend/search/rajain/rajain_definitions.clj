@@ -54,7 +54,7 @@
 
 (def koulutustyyppi
   {:id :koulutustyyppi
-   :make-query #(->str-terms-query "koulutustyypit.keyword" %)
+   :make-query #(->terms-query "koulutustyypit.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "koulutustyypit.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -77,7 +77,7 @@
 
 (def sijainti
   {:id :sijainti
-   :make-query #(->str-terms-query "sijainti.keyword" %)
+   :make-query #(->terms-query "sijainti.keyword" %)
    :desc "
    |        - in: query
    |          name: sijainti
@@ -111,7 +111,7 @@
 
 (def opetuskieli
   {:id :opetuskieli
-   :make-query #(->str-terms-query "opetuskielet.keyword" %)
+   :make-query #(->terms-query "opetuskielet.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "opetuskielet.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -133,7 +133,7 @@
 
 (def koulutusala
   {:id :koulutusala
-   :make-query #(->str-terms-query "koulutusalat.keyword" %)
+   :make-query #(->terms-query "koulutusalat.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "koulutusalat.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -153,7 +153,7 @@
 
 (def opetustapa
   {:id :opetustapa
-   :make-query #(->str-terms-query "opetustavat.keyword" %)
+   :make-query #(->terms-query "opetustavat.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "opetustavat.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -304,7 +304,7 @@
 
 (def oppilaitos
   {:id :oppilaitos
-   :make-query #(->str-terms-query "oppilaitosOid.keyword" %)
+   :make-query #(->terms-query "oppilaitosOid.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "oppilaitosOid.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -326,7 +326,7 @@
 
 (def lukiopainotukset
   {:id :lukiopainotukset
-   :make-query #(->str-terms-query "lukiopainotukset.keyword" %)
+   :make-query #(->terms-query "lukiopainotukset.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "lukiopainotukset.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -346,7 +346,7 @@
 
 (def lukiolinjaterityinenkoulutustehtava
   {:id :lukiolinjaterityinenkoulutustehtava
-   :make-query #(->str-terms-query "lukiolinjaterityinenkoulutustehtava.keyword" %)
+   :make-query #(->terms-query "lukiolinjaterityinenkoulutustehtava.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword")
                                (aggregation-filters-without-rajainkeys
@@ -366,7 +366,7 @@
 
 (def osaamisala
   {:id :osaamisala
-   :make-query #(->str-terms-query "osaamisala.keyword" %)
+   :make-query #(->terms-query "osaamisala.keyword" %)
    :aggs (fn [constraints rajain-context]
            (rajain-aggregation (->field-key "osaamisalat.keyword")
                                (aggregation-filters-without-rajainkeys

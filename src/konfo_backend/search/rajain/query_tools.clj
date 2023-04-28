@@ -43,13 +43,12 @@
                      "koulutustyyppi_12"])
 
 (defn ->terms-query [key value]
-  (if (vector? value)
-    {:terms {(keyword (str "search_terms." key)) (->lower-case-vec value)}}
-    {:term {(keyword (str "search_terms." key)) (if (string? value) (lower-case value) value)}}))
-
-(defn ->str-terms-query
-  [key coll]
-  (->terms-query key coll))
+  (let [term-key (keyword (str "search_terms." key))
+        ->lower-case (fn [val] (if (string? val) (lower-case val) val))]
+    (cond
+      (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
+      (coll? value) {:terms {term-key (->lower-case-vec value)}}
+      :else {:term {term-key (->lower-case value)}})))
 
 (defn hakutieto-query
   [nested-field-name field-name constraint]
@@ -57,7 +56,7 @@
    {:path "search_terms.hakutiedot"
     :query
     {:bool
-     {:filter (->str-terms-query (str nested-field-name "." field-name) constraint)}}}})
+     {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
 
 (defn ->boolean-term-query
   [key]
