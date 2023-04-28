@@ -90,7 +90,7 @@
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
           (is (= 2 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
           (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
           (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
           (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
       (testing "Filtering reduces counts"
