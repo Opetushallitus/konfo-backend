@@ -16,8 +16,6 @@
 
 (defn reduce-merge-map [f coll] (reduce merge {} (map f coll)))
 
-(defn not-blank? [str] (not (blank? str)))
-
 (defn julkaistu? [e] (and (not (nil? e)) (= "julkaistu" (:tila e))))
 
 (defn julkaistut [coll] (filter julkaistu? coll))

@@ -1,10 +1,10 @@
 (ns konfo-backend.search.tools
-  (:require [konfo-backend.config :refer [config]]
+  (:require [clojure.string :as str]
+            [konfo-backend.config :refer [config]]
             [konfo-backend.search.filter.filterdefs :refer [combined-jarjestaja-filters
                                                             combined-tyoelama-filter filter-definitions hakukaynnissa-filter]]
             [konfo-backend.search.filter.query-tools :refer [constraint?]]
-            [konfo-backend.tools :refer [current-time-as-kouta-format
-                                         not-blank?]]))
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (defn- sijainti?
   [constraints]
@@ -148,7 +148,7 @@
 
 (defn fields
   [keyword constraints user-lng suffixes]
-  (let [fields? (not-blank? keyword)
+  (let [fields? (not (str/blank? keyword))
         filter? (constraints? constraints)]
     (cond-> {}
       fields? (-> (assoc :must (make-search-term-query keyword user-lng suffixes)))

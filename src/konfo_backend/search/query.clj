@@ -4,7 +4,7 @@
             [konfo-backend.search.filter.query-tools :refer [hakuaika-filter-query]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [assoc-if current-time-as-kouta-format
-                                         not-blank? remove-nils]]))
+                                         remove-nils]]))
 
 (defonce koulutustyypit ["amm"
                          "amm-muu"
@@ -51,7 +51,7 @@
   {:nested {:path "search_terms", :query {:bool (fields keyword constraints user-lng suffixes)}}})
 
 (defn search-term-query [search-term user-lng suffixes]
-  (if (not-blank? search-term)
+  (if (not (str/blank? search-term))
     {:nested {:path "search_terms", :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
     (match-all-query)))
 
@@ -119,9 +119,9 @@
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn nested-rajain-aggregation
   ([rajain-key field-name current-time constraints include]
-  {:nested {:path (-> field-name (str/replace-first ".keyword" "") (str/split #"\.") (drop-last) (#(str/join "." %)))}
-   :aggs {(keyword rajain-key) (rajain-aggregation rajain-key field-name current-time constraints include)}})
-  ([rajain-key field-name current-time constraints ] (nested-rajain-aggregation rajain-key field-name current-time constraints nil)))
+   {:nested {:path (-> field-name (str/replace-first ".keyword" "") (str/split #"\.") (drop-last) (#(str/join "." %)))}
+    :aggs {(keyword rajain-key) (rajain-aggregation rajain-key field-name current-time constraints include)}})
+  ([rajain-key field-name current-time constraints] (nested-rajain-aggregation rajain-key field-name current-time constraints nil)))
 
 (defn bool-agg-filter [own-filter constraints current-time]
   (with-real-hits {:filter {:bool
