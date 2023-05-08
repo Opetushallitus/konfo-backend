@@ -84,20 +84,6 @@
     (when (not-empty selected-sub-filters)
       (mapv #((:make-query %)) selected-sub-filters))))
 
-(defn- lukio-filters [constraints]
-  (cond-> []
-    (lukiopainotukset? constraints) (conj (->terms-query "lukiopainotukset" (:lukiopainotukset constraints)))
-    (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query "lukiolinjaterityinenkoulutustehtava" (:lukiolinjaterityinenkoulutustehtava constraints)))))
-
-(defn- osaamisala-filters [constraints]
-  [(->terms-query "osaamisalat" (:osaamisala constraints))])
-
-(defn make-combined-jarjestaja-filter-query
-  [constraints sub-filters]
-  (let [selected-sub-filters (filter #(constraint? constraints %) sub-filters)]
-    (when (not-empty selected-sub-filters)
-      {:should (mapv #((:make-query %)) selected-sub-filters)})))
-
 (defn hakuaika-filter-query
   [current-time]
   {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
