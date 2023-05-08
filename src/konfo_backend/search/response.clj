@@ -1,10 +1,10 @@
 (ns konfo-backend.search.response
   (:require
-    [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
-    [konfo-backend.elastic-tools :as e]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [generate-default-filter-counts generate-filter-counts-for-jarjestajat]]
-    [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
+   [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
+   [konfo-backend.elastic-tools :as e]
+   [konfo-backend.search.tools :refer :all]
+   [konfo-backend.search.filters :refer [generate-default-filter-counts generate-filter-counts-for-jarjestajat]]
+   [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
   [response]
@@ -58,9 +58,9 @@
   [response]
   (let [lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
     (merge
-      (doc_count-by-filter response)
-      (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) lukio-agg-keys)
-      (->doc_count-for-lukiolinjat-and-osaamisalat response "osaamisala"))))
+     (doc_count-by-filter response)
+     (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) lukio-agg-keys)
+     (->doc_count-for-lukiolinjat-and-osaamisalat response "osaamisala"))))
 
 (defn- filter-counts
   [response]
@@ -97,11 +97,11 @@
 (defn- external-hits
   [response]
   (map
-    (fn [hit]
-      (-> (:_source hit)
-          (rename-key :eperuste :ePerusteId)
-          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (filter valid-external-inner-hit (get-in hit [:inner_hits :search_terms :hits :hits])))))))
-    (get-in response [:hits :hits])))
+   (fn [hit]
+     (-> (:_source hit)
+         (rename-key :eperuste :ePerusteId)
+         (assoc :toteutukset (vec (map inner-hit->toteutus-hit (filter valid-external-inner-hit (get-in hit [:inner_hits :search_terms :hits :hits])))))))
+   (get-in response [:hits :hits])))
 
 (defn parse-external
   [response]

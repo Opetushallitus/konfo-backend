@@ -4,7 +4,7 @@
 
 (defn constraint?
   [constraints key]
-  (not (empty? (key constraints))))
+  (not-empty (key constraints)))
 
 (defn lukiopainotukset?
   [constraints]
@@ -68,16 +68,12 @@
       {}
       {:should filters})))
 
-(defn- some-hakuaika-kaynnissa
-  [current-time]
-  {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
-                             {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                              {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
-            {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                      :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
-                                              {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                                               {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]})
-
 (defn hakuaika-filter-query
   [current-time]
-  {:bool (some-hakuaika-kaynnissa current-time)})
+  {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
+                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
+                                                     {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
+                   {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                             :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
+                                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
+                                                                      {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]}})

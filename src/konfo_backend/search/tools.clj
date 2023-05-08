@@ -62,7 +62,7 @@
   [constraints]
   (constraint? constraints :oppilaitos))
 
-; Onko mitään suodattimia valittuna 
+; Onko mitään suodattimia valittuna?
 (defn- constraints?
   [constraints]
   (or (sijainti? constraints)

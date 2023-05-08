@@ -6,35 +6,36 @@
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
-(def koulutustyypit ["amm"
-                     "amm-muu"
-                     "amm-tutkinnon-osa"
-                     "amm-osaamisala"
-                     "lk"
-                     "amk"
-                     "amk-muu"
-                     "amm-ope-erityisope-ja-opo"
-                     "ope-pedag-opinnot"
-                     "yo"
-                     "kk-opintojakso"
-                     "kk-opintokokonaisuus"
-                     "erikoislaakari"
-                     "erikoistumiskoulutus"
-                     "amk-alempi"
-                     "amk-ylempi"
-                     "kandi"
-                     "kandi-ja-maisteri"
-                     "maisteri"
-                     "tohtori"
-                     "tuva"
-                     "tuva-normal"
-                     "tuva-erityisopetus"
-                     "telma"
-                     "vapaa-sivistystyo"
-                     "vapaa-sivistystyo-opistovuosi"
-                     "vapaa-sivistystyo-muu"
-                     "aikuisten-perusopetus"
-                     "taiteen-perusopetus"])
+(defonce koulutustyypit ["amm"
+                         "amm-muu"
+                         "amm-tutkinnon-osa"
+                         "amm-osaamisala"
+                         "lk"
+                         "amk"
+                         "amk-muu"
+                         "amm-ope-erityisope-ja-opo"
+                         "ope-pedag-opinnot"
+                         "yo"
+                         "kk-opintojakso"
+                         "kk-opintokokonaisuus"
+                         "erikoislaakari"
+                         "erikoistumiskoulutus"
+                         "amk-alempi"
+                         "amk-ylempi"
+                         "kandi"
+                         "kandi-ja-maisteri"
+                         "maisteri"
+                         "tohtori"
+                         "tuva"
+                         "tuva-normal"
+                         "tuva-erityisopetus"
+                         "telma"
+                         "vapaa-sivistystyo"
+                         "vapaa-sivistystyo-opistovuosi"
+                         "vapaa-sivistystyo-muu"
+                         "aikuisten-perusopetus"
+                         "taiteen-perusopetus"
+                         "muu"])
 
 (defn query
   [keyword constraints user-lng suffixes]
@@ -99,14 +100,14 @@
 
 (defn- koodisto-filters
   [field-name koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
+  (when-let [list (seq (list-koodi-urit koodisto))]
     (->filters-aggregation
-      (keyword (str "search_terms." field-name ".keyword")) list current-time constraints)))
+     (keyword (str "search_terms." field-name ".keyword")) list current-time constraints)))
 
 (defn- koulutustyyppi-filters
   [current-time constraints]
   (->filters-aggregation
-    :search_terms.koulutustyypit.keyword koulutustyypit current-time constraints))
+   :search_terms.koulutustyypit.keyword koulutustyypit current-time constraints))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->nested-term-filter
@@ -125,7 +126,7 @@
 
 (defn- nested-koodisto-filters
   [nested-field-name field-name koodisto current-time constraints]
-  (if-let [list (seq (list-koodi-urit koodisto))]
+  (when-let [list (seq (list-koodi-urit koodisto))]
     (->nested-filters-aggregation
      nested-field-name (keyword (str "search_terms." nested-field-name "." field-name)) list current-time constraints)))
 
@@ -164,7 +165,7 @@
 
 (defn- yhteishaku-filter
   [current-time constraints]
-  (if-let [list (seq (list-yhteishaut))]
+  (when-let [list (seq (list-yhteishaut))]
     (->nested-filters-aggregation "hakutiedot" :search_terms.hakutiedot.yhteishakuOid list current-time constraints)))
 
 (defn- generate-default-aggs
