@@ -33,17 +33,32 @@
         mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
 
-(defn- doc_count-by-filter
+(defn doc_count-by-filter
   [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :jotpa :tyovoimakoulutus :taydennyskoulutus :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
+  (let [agg-keys
+        [:koulutustyyppi
+         :koulutustyyppitaso2
+         :opetuskieli
+         :maakunta
+         :kunta
+         :koulutusala
+         :koulutusalataso2
+         :opetustapa
+         :valintatapa
+         :hakukaynnissa
+         :jotpa
+         :tyovoimakoulutus
+         :taydennyskoulutus
+         :hakutapa
+         :yhteishaku
+         :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
-(defn- doc_count-by-koodi-uri-for-jarjestajat
+(defn doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]
-        lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
+  (let [lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
     (merge
-      (reduce-merge-map #(->doc_count response %) agg-keys)
+      (doc_count-by-filter response)
       (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) lukio-agg-keys)
       (->doc_count-for-lukiolinjat-and-osaamisalat response "osaamisala"))))
 
