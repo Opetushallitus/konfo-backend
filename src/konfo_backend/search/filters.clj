@@ -108,7 +108,7 @@
        total-kk-muu-count (assoc :count total-kk-muu-count))
      :muu {:count muu-count}}))
 
-(defn- hakukaynnissa [aggs] {:count (:hakukaynnissa aggs)})
+(defn- hakukaynnissa [filter-counts] {:count (get filter-counts :hakukaynnissa 0)})
 
 (defn- jotpa [filter-counts] {:count (get filter-counts :jotpa 0)})
 
