@@ -58,16 +58,15 @@
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
         telma-count (get filter-counts :telma 0)
         amm-muu-count (get filter-counts :amm-muu 0)
-        muut-ammatilliset-count (+ amm-osaamisala-count amm-tutkinnon-osa-count telma-count amm-muu-count)
+        muut-ammatilliset-count (get filter-counts :muut-ammatilliset 0)
         amm-ope-erityisope-ja-opo-count (get filter-counts :amm-ope-erityisope-ja-opo 0)
-        total-amk-muu-count amm-ope-erityisope-ja-opo-count
+        total-amk-muu-count (get filter-counts :amk-muu)
         tuva-normal-count (get filter-counts :tuva-normal 0)
         tuva-erityisopetus-count (get filter-counts :tuva-erityisopetus 0)
         total-tuva-count (get filter-counts :tuva 0)
         vapaa-sivistystyo-opistovuosi-count (get filter-counts :vapaa-sivistystyo-opistovuosi 0)
         vapaa-sivistystyo-muu-count (get filter-counts :vapaa-sivistystyo-muu 0)
-        total-vapaa-sivistystyo-count (+ vapaa-sivistystyo-opistovuosi-count
-                                         vapaa-sivistystyo-muu-count)
+        total-vapaa-sivistystyo-count (get filter-counts :vapaa-sivistystyo 0)
         aikuisten-perusopetus-count (get filter-counts :aikuisten-perusopetus 0)
         taiteen-perusopetus-count (get filter-counts :taiteen-perusopetus 0)
         erikoislaakari-count (get filter-counts :erikoislaakari 0)
@@ -77,7 +76,7 @@
         kk-opintokokonaisuus-avoin-count (get filter-counts :kk-opintokokonaisuus-avoin 0)
         ope-pedag-opinnot-count (get filter-counts :ope-pedag-opinnot 0)
         erikoistumiskoulutus-count (get filter-counts :erikoistumiskoulutus 0)
-        total-kk-muu-count (+ erikoislaakari-count kk-opintojakso-normal-count kk-opintojakso-avoin-count kk-opintokokonaisuus-normal-count kk-opintokokonaisuus-avoin-count ope-pedag-opinnot-count erikoistumiskoulutus-count)
+        total-kk-muu-count (get filter-counts :kk-muu 0)
         muu-count (get filter-counts :muu 0)]
     {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                                              :amm-osaamisala {:count amm-osaamisala-count}
@@ -168,8 +167,8 @@
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts oppilaitos-buckets]
   (assoc
-    (generate-default-filter-counts filter-counts)
-    :oppilaitos (add-oppilaitos-nimet oppilaitos-buckets)))
+   (generate-default-filter-counts filter-counts)
+   :oppilaitos (add-oppilaitos-nimet oppilaitos-buckets)))
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
