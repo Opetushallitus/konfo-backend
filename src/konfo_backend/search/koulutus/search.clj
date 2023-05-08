@@ -14,20 +14,20 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (let [query (if (match-all? keyword constraints)
+  (let [query (if (blank-search? keyword constraints)
                 (match-all-query)
                 (query keyword constraints lng ["words"]))
         aggs (hakutulos-aggregations constraints)]
     (log-pretty query)
     (log-pretty aggs)
     (koulutus-kouta-search
-      page
-      size
-      #(-> % parse with-kuvaukset)
-      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
-      :sort (sorts sort order lng)
-      :query query
-      :aggs aggs)))
+     page
+     size
+     #(-> % parse with-kuvaukset)
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
+     :sort (sorts sort order lng)
+     :query query
+     :aggs aggs)))
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
