@@ -81,20 +81,19 @@
   ([field constrained] (default-agg field constrained nil)))
 
 (defn- default-nested-agg ([rajain-key field-name constrained-filter term-props]
-  (let [terms-agg (make-terms-agg field-name term-props)
-        nested-agg {:nested  {:path (-> field-name
-                                        (replace-first ".keyword" "")
-                                        (split #"\.")
-                                        (drop-last) (#(join "." %)))}
-                    :aggs {:rajain terms-agg}}]
-    (if constrained-filter
-      {:filter constrained-filter
-       :aggs {(keyword rajain-key) nested-agg}}
-      nested-agg)))
+                           (let [terms-agg (make-terms-agg field-name term-props)
+                                 nested-agg {:nested  {:path (-> field-name
+                                                                 (replace-first ".keyword" "")
+                                                                 (split #"\.")
+                                                                 (drop-last) (#(join "." %)))}
+                                             :aggs {:rajain terms-agg}}]
+                             (if constrained-filter
+                               {:filter constrained-filter
+                                :aggs {(keyword rajain-key) nested-agg}}
+                               nested-agg)))
   ([rajain-key field-name] (default-nested-agg rajain-key field-name nil nil)))
 
 (def jotpa-term {:term {:search_terms.hasJotpaRahoitus true}})
-
 (def jotpa-bool-filter {:bool {:filter [jotpa-term]}})
 
 (deftest hakutulos-aggregations-test
@@ -243,6 +242,9 @@
                                :aggs {:real_hits {:reverse_nested {}}}}}}}
         (hakutulos-aggregations {:jotpa true}))))))
 
+(def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
+(def sijainti-bool-filter {:bool {:filter [sijainti-term]}})
+
 (deftest jarjestajat-aggregations-test
   (testing "should form aggregations for jarjestajat query with selected filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
@@ -251,29 +253,47 @@
         {:hits_aggregation
          {:nested {:path "search_terms"}
           :aggs
-          {:inner_hits_agg
-           {:filter {:bool
-                     {:must [{:term {"search_terms.onkoTuleva" false}} {:bool {}}],
-                      :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}},
-            :aggs
-            {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid")
-             :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"})
-             :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
-             :maakunta (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"})
-             :oppilaitos (default-agg "search_terms.oppilaitosOid.keyword" nil {:min_doc_count 1
-                                                                                :size 10000})
-             :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa")
-             :opetustapa (default-agg "search_terms.opetustavat.keyword")
-             :opetuskieli (default-agg "search_terms.opetuskielet.keyword")
-             :hakukaynnissa {:filter
-                             {:bool
-                              {:filter
-                               [{:bool
-                                 {:should
-                                  [{:bool
+          {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" sijainti-bool-filter nil)
+           :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"})
+           :maakunta (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"})
+           :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
+           :oppilaitos (default-agg "search_terms.oppilaitosOid.keyword" sijainti-bool-filter {:min_doc_count 1
+                                                                                               :size 10000})
+           :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" sijainti-bool-filter nil)
+           :opetustapa (default-agg "search_terms.opetustavat.keyword" sijainti-bool-filter nil)
+           :opetuskieli (default-agg "search_terms.opetuskielet.keyword" sijainti-bool-filter nil)
+           :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" sijainti-bool-filter nil)
+           :lukiopainotukset (default-agg "search_terms.lukiopainotukset.keyword" sijainti-bool-filter nil)
+           :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" sijainti-bool-filter nil)
+           :osaamisala (default-agg "search_terms.osaamisalat.keyword" sijainti-bool-filter nil)
+           :hakukaynnissa {:filter
+                           {:bool
+                            {:filter
+                             [sijainti-term
+                              {:bool
+                               {:should
+                                [{:bool
+                                  {:filter
+                                   [{:range
+                                     {:search_terms.toteutusHakuaika.alkaa
+                                      {:lte "2020-01-01T01:01"}}}
+                                    {:bool
+                                     {:should
+                                      [{:bool
+                                        {:must_not
+                                         {:exists
+                                          {:field
+                                           "search_terms.toteutusHakuaika.paattyy"}}}}
+                                       {:range
+                                        {:search_terms.toteutusHakuaika.paattyy
+                                         {:gt "2020-01-01T01:01"}}}]}}]}}
+                                 {:nested
+                                  {:path "search_terms.hakutiedot.hakuajat" ,
+                                   :query
+                                   {:bool
                                     {:filter
                                      [{:range
-                                       {:search_terms.toteutusHakuaika.alkaa
+                                       {:search_terms.hakutiedot.hakuajat.alkaa
                                         {:lte "2020-01-01T01:01"}}}
                                       {:bool
                                        {:should
@@ -281,35 +301,12 @@
                                           {:must_not
                                            {:exists
                                             {:field
-                                             "search_terms.toteutusHakuaika.paattyy"}}}}
+                                             "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                          {:range
-                                          {:search_terms.toteutusHakuaika.paattyy
-                                           {:gt "2020-01-01T01:01"}}}]}}]}}
-                                   {:nested
-                                    {:path "search_terms.hakutiedot.hakuajat" ,
-                                     :query
-                                     {:bool
-                                      {:filter
-                                       [{:range
-                                         {:search_terms.hakutiedot.hakuajat.alkaa
-                                          {:lte "2020-01-01T01:01"}}}
-                                        {:bool
-                                         {:should
-                                          [{:bool
-                                            {:must_not
-                                             {:exists
-                                              {:field
-                                               "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                           {:range
-                                            {:search_terms.hakutiedot.hakuajat.paattyy
-                                             {:gt
-                                              "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
-                             :aggs {:real_hits {:reverse_nested {}}}}
-             :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat")}}
-           :lukiopainotukset-aggs (default-agg "search_terms.lukiopainotukset.keyword")
-           :lukiolinjaterityinenkoulutustehtava-aggs (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword")
-           :osaamisala-aggs (default-agg "search_terms.osaamisalat.keyword")}}}
-        (jarjestajat-aggregations false {:sijainti ["kunta_564"]}))))))
+                                          {:search_terms.hakutiedot.hakuajat.paattyy
+                                           {:gt
+                                            "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}}}
+        (jarjestajat-aggregations {:sijainti ["kunta_564"]}))))))
 
 (deftest tarjoajat-aggregations-test
   (testing "should form aggregations for tarjoajat query with selected filters"
@@ -318,29 +315,44 @@
        (match? {:hits_aggregation
                 {:nested {:path "search_terms"}
                  :aggs
-                 {:inner_hits_agg
-                  {:filter {:bool
-                            {:must [{:term {"search_terms.onkoTuleva" false}} {:bool {}}]
-                             :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                   :aggs
-                   {:koulutusala (default-agg "search_terms.koulutusalat.keyword")
-                    :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid")
-                    :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"})
-                    :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
-                    :maakunta (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"})
-                    :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa")
-                    :opetustapa (default-agg "search_terms.opetustavat.keyword")
-                    :opetuskieli (default-agg "search_terms.opetuskielet.keyword")
-                    :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" nil {:size (count koulutustyypit) :include koulutustyypit})
-                    :hakukaynnissa {:filter
-                                    {:bool
-                                     {:filter
-                                      [{:bool
-                                        {:should
-                                         [{:bool
+                 {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" sijainti-bool-filter nil)
+                  :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"})
+                  :maakunta (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"})
+                  :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
+                  :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" sijainti-bool-filter nil)
+                  :opetustapa (default-agg "search_terms.opetustavat.keyword" sijainti-bool-filter nil)
+                  :opetuskieli (default-agg "search_terms.opetuskielet.keyword" sijainti-bool-filter nil)
+                  :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" sijainti-bool-filter nil)
+                  :koulutusala (default-agg "search_terms.koulutusalat.keyword" sijainti-bool-filter nil)
+                  :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" sijainti-bool-filter {:size (count koulutustyypit) :include koulutustyypit})
+                  :hakukaynnissa {:filter
+                                  {:bool
+                                   {:filter
+                                    [sijainti-term
+                                     {:bool
+                                      {:should
+                                       [{:bool
+                                         {:filter
+                                          [{:range
+                                            {:search_terms.toteutusHakuaika.alkaa
+                                             {:lte "2020-01-01T01:01"}}}
+                                           {:bool
+                                            {:should
+                                             [{:bool
+                                               {:must_not
+                                                {:exists
+                                                 {:field
+                                                  "search_terms.toteutusHakuaika.paattyy"}}}}
+                                              {:range
+                                               {:search_terms.toteutusHakuaika.paattyy
+                                                {:gt "2020-01-01T01:01"}}}]}}]}}
+                                        {:nested
+                                         {:path "search_terms.hakutiedot.hakuajat" ,
+                                          :query
+                                          {:bool
                                            {:filter
                                             [{:range
-                                              {:search_terms.toteutusHakuaika.alkaa
+                                              {:search_terms.hakutiedot.hakuajat.alkaa
                                                {:lte "2020-01-01T01:01"}}}
                                              {:bool
                                               {:should
@@ -348,29 +360,10 @@
                                                  {:must_not
                                                   {:exists
                                                    {:field
-                                                    "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                    "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                 {:range
-                                                 {:search_terms.toteutusHakuaika.paattyy
-                                                  {:gt "2020-01-01T01:01"}}}]}}]}}
-                                          {:nested
-                                           {:path "search_terms.hakutiedot.hakuajat" ,
-                                            :query
-                                            {:bool
-                                             {:filter
-                                              [{:range
-                                                {:search_terms.hakutiedot.hakuajat.alkaa
-                                                 {:lte "2020-01-01T01:01"}}}
-                                               {:bool
-                                                {:should
-                                                 [{:bool
-                                                   {:must_not
-                                                    {:exists
-                                                     {:field
-                                                      "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                  {:range
-                                                   {:search_terms.hakutiedot.hakuajat.paattyy
-                                                    {:gt
-                                                     "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
-                                    :aggs {:real_hits {:reverse_nested {}}}}
-                    :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat")}}}}}
-               (tarjoajat-aggregations false {:sijainti ["kunta_564"]}))))))
+                                                 {:search_terms.hakutiedot.hakuajat.paattyy
+                                                  {:gt
+                                                   "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
+                                  :aggs {:real_hits {:reverse_nested {}}}}}}}
+               (tarjoajat-aggregations {:sijainti ["kunta_564"]}))))))
