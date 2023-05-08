@@ -45,12 +45,10 @@
   [response]
   (let [agg-keys
         [:koulutustyyppi
-         :koulutustyyppitaso2
          :opetuskieli
          :maakunta
          :kunta
          :koulutusala
-         :koulutusalataso2
          :opetustapa
          :valintatapa
          :hakukaynnissa
