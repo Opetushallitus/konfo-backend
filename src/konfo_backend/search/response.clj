@@ -19,14 +19,12 @@
 
 (defn- ->doc_count
   [response agg-key]
-  (let [buckets (get-in response [:aggregations :hits_aggregation agg-key :buckets])
-        mapper (fn [key] {key (get-in (key buckets) [:real_hits :doc_count])})]
-    (reduce-merge-map mapper (keys buckets))))
-
-(defn- ->doc_count-for-subentity
-  [response agg-key]
-  (let [buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
-        mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
+  (let [hits-buckets (get-in response [:aggregations :hits_aggregation agg-key :buckets])
+        inner-hits-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
+        [buckets path] (if inner-hits-buckets
+                         [inner-hits-buckets [:doc_count]]
+                         [hits-buckets [:real_hits :doc_count]])
+        mapper (fn [key] {key (get-in (key buckets) path)})]
     (reduce-merge-map mapper (keys buckets))))
 
 (defn- ->doc_count-for-lukiolinjat-and-osaamisalat
@@ -40,27 +38,18 @@
   (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :jotpa :tyovoimakoulutus :taydennyskoulutus :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
     (reduce-merge-map #(->doc_count response %) agg-keys)))
 
-(defn- doc_count-by-filter-for-tarjoajat
-  [response]
-  (let [agg-keys [:koulutustyyppi :koulutustyyppitaso2 :opetuskieli :maakunta :kunta :koulutusala :koulutusalataso2 :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]]
-    (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)))
-
 (defn- doc_count-by-koodi-uri-for-jarjestajat
   [response]
   (let [agg-keys [:opetuskieli :maakunta :kunta :opetustapa :valintatapa :hakukaynnissa :hakutapa :yhteishaku :pohjakoulutusvaatimus]
         lukio-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava"]]
     (merge
-      (reduce-merge-map #(->doc_count-for-subentity response %) agg-keys)
+      (reduce-merge-map #(->doc_count response %) agg-keys)
       (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) lukio-agg-keys)
       (->doc_count-for-lukiolinjat-and-osaamisalat response "osaamisala"))))
 
 (defn- filter-counts
   [response]
   (generate-filter-counts (doc_count-by-filter response)))
-
-(defn- filters-for-tarjoajat
-  [response]
-  (generate-filter-counts (doc_count-by-filter-for-tarjoajat response)))
 
 (defn- filters-for-jarjestajat
   [response]
@@ -144,10 +133,6 @@
 (defn parse-inner-hits-for-jarjestajat
   [response]
   (parse-inner-hits response filters-for-jarjestajat))
-
-(defn parse-inner-hits-for-tarjoajat
-  [response]
-  (parse-inner-hits response filters-for-tarjoajat))
 
 (defn oppilaitos-counts-mapper
   [response]

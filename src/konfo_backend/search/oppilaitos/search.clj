@@ -3,7 +3,7 @@
     [konfo-backend.tools :refer [log-pretty]]
     [konfo-backend.search.tools :refer :all]
     [konfo-backend.search.query :refer [query hakutulos-aggregations tarjoajat-aggregations inner-hits-query inner-hits-query-osat sorts]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits parse-inner-hits-for-tarjoajat]]
+    [konfo-backend.search.response :refer [parse parse-inner-hits]]
     [konfo-backend.elastic-tools :as e]))
 
 (defonce index "oppilaitos-kouta-search")
@@ -31,7 +31,7 @@
   (let [query (inner-hits-query oid lng page size order tuleva? constraints)
         aggs (tarjoajat-aggregations tuleva? constraints)]
     (e/search index
-              parse-inner-hits-for-tarjoajat
+              parse-inner-hits
               :_source ["oid"]
               :query query
               :aggs aggs)))
