@@ -1,6 +1,6 @@
 (ns konfo-backend.search.rajain.query-tools
   (:require [clojure.string :refer [lower-case replace-first split join]]
-            [konfo-backend.tools :refer [->lower-case-vec remove-nils]]))
+            [konfo-backend.tools :refer [->lower-case-vec]]))
 
 (def koulutustyypit ["amm"
                      "amm-muu"

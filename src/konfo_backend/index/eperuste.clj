@@ -1,10 +1,7 @@
 (ns konfo-backend.index.eperuste
   (:refer-clojure :exclude [get])
   (:require
-    [konfo-backend.tools :refer [koodi-uri-no-version]]
-    [konfo-backend.elastic-tools :refer [get-source search]]
-    [konfo-backend.tools :refer [now-in-millis]]
-    [konfo-backend.tools :refer [log-pretty]]))
+   [konfo-backend.elastic-tools :refer [get-source search]]))
 
 ;TODO tilan pitäisi olla "julkaistu" eikä "valmis"
 
@@ -15,22 +12,6 @@
 (defn get
   [id]
   (get-source index id))
-
-(defonce source [:koulutukset.nimi,
-                 :koulutukset.koulutuskoodiUri
-                 :id,
-                 :kuvaus.fi
-                 :kuvaus.en ;TODO Tarvisteeko näitä kieliä oikeasti eritellä? kts. nimi
-                 :kuvaus.sv
-                 :tyotehtavatJoissaVoiToimia.fi
-                 :tyotehtavatJoissaVoiToimia.en
-                 :tyotehtavatJoissaVoiToimia.sv
-                 :suorittaneenOsaaminen.fi
-                 :suorittaneenOsaaminen.en
-                 :suorittaneenOsaaminen.sv
-                 :voimassaoloAlkaa
-                 :voimassaoloLoppuu
-                 :siirtymaPaattyy])
 
 (defn- ->id-query
   [eperuste-ids]
@@ -47,10 +28,25 @@
 
 (defn get-kuvaukset-by-eperuste-ids
   [eperuste-ids]
-  (eperuste-search parse-kuvaukset
-                   :_source source
-                   :size (count eperuste-ids)
-                   :query (->id-query eperuste-ids)))
+  (when (not-empty eperuste-ids)
+    (eperuste-search parse-kuvaukset
+                     :_source [:koulutukset.nimi,
+                               :koulutukset.koulutuskoodiUri
+                               :id,
+                               :kuvaus.fi
+                               :kuvaus.en ;TODO Tarvitseeko näitä kieliä oikeasti eritellä? kts. nimi
+                               :kuvaus.sv
+                               :tyotehtavatJoissaVoiToimia.fi
+                               :tyotehtavatJoissaVoiToimia.en
+                               :tyotehtavatJoissaVoiToimia.sv
+                               :suorittaneenOsaaminen.fi
+                               :suorittaneenOsaaminen.en
+                               :suorittaneenOsaaminen.sv
+                               :voimassaoloAlkaa
+                               :voimassaoloLoppuu
+                               :siirtymaPaattyy]
+                     :size (count eperuste-ids)
+                     :query (->id-query eperuste-ids))))
 
 (defn- parse-tutkinnon-osa-kuvaukset
   [result]
@@ -62,17 +58,18 @@
 
 (defn get-tutkinnon-osa-kuvaukset-by-eperuste-ids
   [eperuste-ids]
-  (eperuste-search parse-tutkinnon-osa-kuvaukset
-                   :_source [:id
-                             :tutkinnonOsat.id
-                             :tutkinnonOsat.koodiUri
-                             :tutkinnonOsat.tila
-                             :tutkinnonOsat.ammattitaitovaatimukset2019
-                             :tutkinnonOsat.ammattitaitovaatimukset.fi
-                             :tutkinnonOsat.ammattitaitovaatimukset.sv
-                             :tutkinnonOsat.ammattitaitovaatimukset.en
-                             :tutkinnonOsat.ammattitaidonOsoittamistavat.fi
-                             :tutkinnonOsat.ammattitaidonOsoittamistavat.sv
-                             :tutkinnonOsat.ammattitaidonOsoittamistavat.en]
-                   :size (count eperuste-ids)
-                   :query (->id-query eperuste-ids)))
+  (when (not-empty eperuste-ids)
+    (eperuste-search parse-tutkinnon-osa-kuvaukset
+                     :_source [:id
+                               :tutkinnonOsat.id
+                               :tutkinnonOsat.koodiUri
+                               :tutkinnonOsat.tila
+                               :tutkinnonOsat.ammattitaitovaatimukset2019
+                               :tutkinnonOsat.ammattitaitovaatimukset.fi
+                               :tutkinnonOsat.ammattitaitovaatimukset.sv
+                               :tutkinnonOsat.ammattitaitovaatimukset.en
+                               :tutkinnonOsat.ammattitaidonOsoittamistavat.fi
+                               :tutkinnonOsat.ammattitaidonOsoittamistavat.sv
+                               :tutkinnonOsat.ammattitaidonOsoittamistavat.en]
+                     :size (count eperuste-ids)
+                     :query (->id-query eperuste-ids))))
