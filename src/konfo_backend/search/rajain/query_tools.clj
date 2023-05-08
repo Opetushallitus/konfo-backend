@@ -153,12 +153,3 @@
    {:nested {:path (-> field-name (replace-first ".keyword" "") (split #"\.") (drop-last) (#(join "." %)))}
     :aggs {(keyword rajain-key) (rajain-aggregation field-name sub-filters agg-details)}})
   ([rajain-key field-name sub-filters] (nested-rajain-aggregation rajain-key field-name sub-filters nil)))
-
-(defn add-oppilaitos-aggs
-  [default-aggs oppilaitos-oids]
-  (remove-nils
-    (merge default-aggs
-           {:oppilaitos (when-not
-                          (empty? oppilaitos-oids)
-                          (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size (count oppilaitos-oids)
-                                                                                       :include oppilaitos-oids}))})))
