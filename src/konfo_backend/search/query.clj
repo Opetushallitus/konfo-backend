@@ -57,7 +57,7 @@
 
 (defn constraints-post-filter-query [constraints]
   (when (constraints? constraints)
-    {:nested {:path "search_terms", :query {:bool {:filter (make-search-post-filter constraints)}}}}))
+    {:nested {:path "search_terms", :query {:bool {:filter (filters constraints (current-time-as-kouta-format))}}}}))
 
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
