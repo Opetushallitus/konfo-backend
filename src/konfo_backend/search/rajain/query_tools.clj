@@ -145,7 +145,16 @@
   (bool-agg-filter (hakuaika-filter-query current-time) with-constraints))
 
 (defn nested-rajain-aggregation
-  ([rajain-key field-name with-constraints agg-details]
-   {:nested {:path (-> field-name (replace-first ".keyword" "") (split #"\.") (drop-last) (#(join "." %)))}
-    :aggs {(keyword rajain-key) (rajain-aggregation field-name with-constraints agg-details)}})
+  ([rajain-key field-name with-constraints term-details]
+   (let [aggs-def {:nested
+                   {:path (-> field-name
+                              (replace-first ".keyword" "")
+                              (split #"\.")
+                              (drop-last) (#(join "." %)))}
+                    :aggs   {(keyword rajain-key)
+                             (rajain-aggregation field-name {} term-details)}}]
+     (if (not-empty with-constraints)
+       {:filter {:bool {:filter (vec with-constraints)}}
+        :aggs {(keyword rajain-key) aggs-def}}
+       aggs-def)))
   ([rajain-key field-name with-constraints] (nested-rajain-aggregation rajain-key field-name with-constraints nil)))
