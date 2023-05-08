@@ -6,6 +6,36 @@
    [konfo-backend.search.tools :refer :all]
    [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
+(def koulutustyypit ["amm"
+                     "amm-muu"
+                     "amm-tutkinnon-osa"
+                     "amm-osaamisala"
+                     "lk"
+                     "amk"
+                     "amk-muu"
+                     "amm-ope-erityisope-ja-opo"
+                     "ope-pedag-opinnot"
+                     "yo"
+                     "kk-opintojakso"
+                     "kk-opintokokonaisuus"
+                     "erikoislaakari"
+                     "erikoistumiskoulutus"
+                     "amk-alempi"
+                     "amk-ylempi"
+                     "kandi"
+                     "kandi-ja-maisteri"
+                     "maisteri"
+                     "tohtori"
+                     "tuva"
+                     "tuva-normal"
+                     "tuva-erityisopetus"
+                     "telma"
+                     "vapaa-sivistystyo"
+                     "vapaa-sivistystyo-opistovuosi"
+                     "vapaa-sivistystyo-muu"
+                     "aikuisten-perusopetus"
+                     "taiteen-perusopetus"])
+
 (defn query
   [keyword constraints user-lng suffixes]
   {:nested {:path "search_terms", :query {:bool (fields keyword constraints user-lng suffixes)}}})
@@ -99,7 +129,7 @@
 
 (defn- koulutustyyppi-filters
   [field current-time constraints]
-  (->filters-aggregation field '["amm" "amm-muu" "amm-tutkinnon-osa" "amm-osaamisala" "lk" "amk" "amk-muu" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "yo" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "amk-alempi" "amk-ylempi" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "tuva" "tuva-normal" "tuva-erityisopetus" "telma" "vapaa-sivistystyo" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "aikuisten-perusopetus" "taiteen-perusopetus" "muu", "muu-amm-tutkinto"] current-time constraints))
+  (->filters-aggregation field koulutustyypit current-time constraints))
 
 ; NOTE Hakutietosuodattimien sisältö riippuu haku-käynnissä valinnasta
 (defn- ->hakutieto-term-filter
