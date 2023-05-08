@@ -139,23 +139,19 @@
     (generate-search-params suffixes search-params usr-lng)))
 
 
-(defn make-search-query [keyword user-lng suffixes]
-  (when (not-blank? keyword) {:must {:multi_match {:query       keyword,
-                                                   :fields      (flatten (generate-keyword-query user-lng suffixes))
-                                                   :tie_breaker 0.9
-                                                   :operator    "and"
-                                                   :type        "cross_fields"}}}))
+(defn make-search-term-query [keyword user-lng suffixes]
+  {:multi_match {:query       keyword
+                 :fields      (flatten (generate-keyword-query user-lng suffixes))
+                 :tie_breaker 0.9
+                 :operator    "and"
+                 :type        "cross_fields"}})
 
 (defn fields
   [keyword constraints user-lng suffixes]
   (let [fields? (not-blank? keyword)
         filter? (constraints? constraints)]
     (cond-> {}
-      fields? (-> (assoc :must {:multi_match {:query       keyword,
-                                              :fields      (flatten (generate-keyword-query user-lng suffixes))
-                                              :tie_breaker 0.9
-                                              :operator    "and"
-                                              :type        "cross_fields"}}))
+      fields? (-> (assoc :must (make-search-term-query keyword user-lng suffixes)))
       filter? (assoc :filter (filters constraints (current-time-as-kouta-format))))))
 
 (defn generate-wildcard-query
