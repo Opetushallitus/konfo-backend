@@ -242,7 +242,7 @@
                                :aggs {:real_hits {:reverse_nested {}}}}}}}
         (hakutulos-aggregations {:jotpa true}))))))
 
-(def sijainti-term {:terms {:search_terms.sijainti.keyword ["kunta_564"]}})
+(def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
 (def onkotuleva-term {:term {:search_terms.onkoTuleva false}})
 (def onkotuleva-sijainti-bool-filter {:bool {:filter [sijainti-term onkotuleva-term]}})
 
