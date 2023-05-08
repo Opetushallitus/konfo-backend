@@ -2,11 +2,11 @@
   (:require [konfo-backend.elastic-tools :as e]
             [konfo-backend.search.external-query :refer [external-query]]
             [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
-            [konfo-backend.search.query :refer [constraints-post-filter-query
+            [konfo-backend.search.query :refer [post-filter-query
                                                 hakutulos-aggregations
                                                 jarjestajat-aggregations koulutus-wildcard-query search-term-query sorts
                                                 toteutukset-inner-hits toteutukset-query]]
-            [konfo-backend.search.rajain.query-tools :refer [onkoTuleva-query]]
+            [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
             [konfo-backend.search.response :refer [parse parse-external
                                                    parse-for-autocomplete
                                                    parse-inner-hits-for-jarjestajat]]
@@ -20,7 +20,7 @@
 (defn search
   [keyword lng page size sort order constraints]
   (let [search-term-query (search-term-query keyword lng ["words"])
-        post-filter-query (constraints-post-filter-query constraints)
+        post-filter-query (post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
     (koulutus-kouta-search
      page
@@ -37,7 +37,7 @@
   (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
         aggs (jarjestajat-aggregations constraints tuleva?)
-        post-filter-query (constraints-post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))]
+        post-filter-query (post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]

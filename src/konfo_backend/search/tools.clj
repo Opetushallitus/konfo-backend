@@ -1,7 +1,7 @@
 (ns konfo-backend.search.tools
   (:require [clojure.string :refer [blank? lower-case split]]
             [konfo-backend.config :refer [config]]
-            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters]]
+            [konfo-backend.search.rajain-definitions :refer [constraints? common-filters]]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (defn ->lng-keyword

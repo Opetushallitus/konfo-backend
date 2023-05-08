@@ -21,7 +21,7 @@
     [konfo-backend.external.schema.liite :as liite]
     [konfo-backend.external.schema.search :as search]
     [konfo-backend.external.service :as service]
-    [konfo-backend.search.filters :as filters]
+    [konfo-backend.search.rajain-counts :as rajain-counts]
     [clj-log.access-log :refer [with-access-logging]]
     [konfo-backend.search.api :refer [->search-with-validated-params]]
     [konfo-backend.search.koulutus.search :refer [external-search]]))
@@ -558,11 +558,11 @@
                                                                                 :lukiolinjaterityinenkoulutustehtava nil
                                                                                 :osaamisala nil})))
              (GET "/search/filters" [:as request]
-                  (with-access-logging request (if-let [result (filters/generate-default-filter-counts)]
+                  (with-access-logging request (if-let [result (rajain-counts/generate-default-rajain-counts)]
                                                  (ok result)
                                                  (not-found "Not found"))))
 
              (GET "/search/filters_as_array" [:as request]
-                  (with-access-logging request (if-let [result (filters/flattened-filter-counts)]
+                  (with-access-logging request (if-let [result (rajain-counts/flattened-rajain-counts)]
                                                  (ok result)
                                                  (not-found "Not found")))))))

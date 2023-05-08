@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [blank?]]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]
             [konfo-backend.search.tools :refer [make-search-term-query]]
-            [konfo-backend.search.rajain.rajain-definitions :refer [common-filters constraints?]]))
+            [konfo-backend.search.rajain-definitions :refer [common-filters constraints?]]))
 
 (defn external-query
   [keyword constraints user-lng suffixes]

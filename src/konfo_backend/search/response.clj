@@ -1,8 +1,8 @@
 (ns konfo-backend.search.response
   (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-            [konfo-backend.search.filters :refer [generate-default-filter-counts
-                                                  generate-filter-counts-for-jarjestajat]]
-            [konfo-backend.search.rajain.rajain-definitions :refer [all-aggregation-defs]]
+            [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
+                                                  generate-rajain-counts-for-jarjestajat]]
+            [konfo-backend.search.rajain-definitions :refer [all-aggregation-defs]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
                                          reduce-merge-map rename-key]]))
@@ -43,13 +43,13 @@
   [response]
   (reduce-merge-map #(->doc_count response %) (map :id all-aggregation-defs)))
 
-(defn- filter-counts
+(defn- rajain-counts
   [response]
-  (generate-default-filter-counts (doc_count-by-filter response)))
+  (generate-default-rajain-counts (doc_count-by-filter response)))
 
 (defn- filters-for-jarjestajat
   [response]
-  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response)
+  (generate-rajain-counts-for-jarjestajat (doc_count-by-filter response)
                                           (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
 
 (defn parse
@@ -57,7 +57,7 @@
   (log-pretty response)
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
-   :filters (filter-counts response)})
+   :filters (rajain-counts response)})
 
 (defn parse-for-autocomplete
   [lng response]
@@ -119,7 +119,7 @@
 
 (defn parse-inner-hits
   ([response]
-   (parse-inner-hits response filter-counts))
+   (parse-inner-hits response rajain-counts))
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
          total-inner-hits (:value (:total inner-hits))]

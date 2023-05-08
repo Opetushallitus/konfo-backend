@@ -1,7 +1,7 @@
 (ns konfo-backend.search.query
   (:require [clojure.string :as str]
             [konfo-backend.elastic-tools :refer [->from ->size]]
-            [konfo-backend.search.rajain.rajain-definitions :refer [common-filters
+            [konfo-backend.search.rajain-definitions :refer [common-filters
                                                                     constraints? generate-hakutulos-aggregations generate-jarjestajat-aggregations
                                                                     generate-tarjoajat-aggregations]]
             [konfo-backend.search.tools :refer :all]
@@ -20,7 +20,7 @@
     {:nested {:path "search_terms" :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
     (match-all-query)))
 
-(defn constraints-post-filter-query
+(defn post-filter-query
   ([constraints inner-hits extra-filter]
    (when (or (constraints? constraints) inner-hits)
      (let [filters (vec (flatten
@@ -30,7 +30,7 @@
        {:nested (assoc-if {:path "search_terms" :query {:bool {:filter filters}}}
                            :inner_hits inner-hits inner-hits)})))
   ([constraints]
-   (constraints-post-filter-query constraints nil nil)))
+   (post-filter-query constraints nil nil)))
 
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort

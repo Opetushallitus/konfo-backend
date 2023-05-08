@@ -2,10 +2,10 @@
   (:require [clojure.test :refer :all]
             [matcher-combinators.matchers :as m]
             [matcher-combinators.test]
-            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters jotpa
+            [konfo-backend.search.rajain-definitions :refer [constraints? common-filters jotpa
                                                                     pohjakoulutusvaatimus hakutapa
                                                                     koulutustyyppi opetuskieli]]
-            [konfo-backend.search.rajain.query-tools :refer [->terms-query koulutustyypit]]))
+            [konfo-backend.search.rajain-tools :refer [->terms-query koulutustyypit]]))
 
 (defonce default-ctx {:current-time "2022-08-26T07:21"})
 (deftest filters-test
@@ -57,7 +57,7 @@
                                                  "pohjakoulutusvaatimuskonfo_am"}}}}}}
                 {:term {:search_terms.hasJotpaRahoitus true}}]}}
              :aggs {:real_hits {:reverse_nested {}}}})
-          ((:aggs jotpa) {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]} default-ctx)
+          ((:make-agg jotpa) {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]} default-ctx)
           )))
 
   (deftest hakutieto-filters-aggregation-test
@@ -73,7 +73,7 @@
                    :min_doc_count 0
                    :size 1000}}}
                :nested {:path "search_terms.hakutiedot"}})
-              ((:aggs pohjakoulutusvaatimus) {} default-ctx)))))
+              ((:make-agg pohjakoulutusvaatimus) {} default-ctx)))))
 
      (testing "Should form aggregation for pohjakoulutusvaatimus with jotpa as the selected filter"
        (is (match? (m/match-with [map? m/equals]
@@ -89,7 +89,7 @@
                           :size 1000}}}
                 :nested {:path "search_terms.hakutiedot"}}}
               :filter {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}})
-             ((:aggs pohjakoulutusvaatimus) {:jotpa true} default-ctx))))
+             ((:make-agg pohjakoulutusvaatimus) {:jotpa true} default-ctx))))
 
      (testing "Should form aggregation for hakutapa with hakukaynnissa and pohjakoulutusvaatimus as selected filters"
        (is (match? (m/match-with [map? m/equals]
@@ -145,7 +145,7 @@
                                          {:range
                                           {:search_terms.hakutiedot.hakuajat.paattyy
                                            {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}})
-             ((:aggs hakutapa) {:jotpa false
+             ((:make-agg hakutapa) {:jotpa false
                                 :pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
                                 :hakukaynnissa true} default-ctx))))
 
@@ -158,7 +158,7 @@
               :terms {:field "search_terms.opetuskielet.keyword"
                       :min_doc_count 0
                       :size 1000}})
-             ((:aggs opetuskieli) {} default-ctx))))
+             ((:make-agg opetuskieli) {} default-ctx))))
 
        (testing "Should form aggregation for opetuskieli with jotpa and hakukaynnissa as selected filters"
          (is (match? (m/match-with [map? m/equals]
@@ -195,7 +195,7 @@
                                [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                 {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
                       ]}}})
-                ((:aggs opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
+                ((:make-agg opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
 
        (testing "Should form aggregation for koulutustyyppi without any selected filters"
          (is (match? (m/match-with [map? m/equals]
@@ -204,7 +204,7 @@
                          :include       koulutustyypit
                          :min_doc_count 0
                          :size          (count koulutustyypit)}})
-                ((:aggs koulutustyyppi) {} default-ctx))))
+                ((:make-agg koulutustyyppi) {} default-ctx))))
 
        (testing "Should form aggregation for koulutustyyppi with opetustapa filters"
          (is (match? (m/match-with [map? m/equals]
@@ -215,7 +215,7 @@
                                            :size          (count koulutustyypit)}}}
                  :filter {:bool {:filter [{:terms {:search_terms.opetustavat.keyword ["opetuspaikkakk_3"
                                                                                       "opetuspaikkakk_4"]}}]}}})
-                ((:aggs koulutustyyppi) {:opetustapa ["opetuspaikkakk_3" "opetuspaikkakk_4"]} default-ctx))))
+                ((:make-agg koulutustyyppi) {:opetustapa ["opetuspaikkakk_3" "opetuspaikkakk_4"]} default-ctx))))
 
        (testing "Should form aggregation for koulutustyyppi with yhteishaku filter"
          (is (match? (m/match-with [map? m/equals]
@@ -231,7 +231,7 @@
                                                               {:search_terms.hakutiedot.yhteishakuOid
                                                                ["1.2.246.562.29.00000000000000000001"
                                                                 "1.2.246.562.29.00000000000000000002"]}}}}}}]}}})
-                ((:aggs koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
+                ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
                                                       "1.2.246.562.29.00000000000000000002"]} default-ctx))))
 
 
@@ -242,7 +242,7 @@
                          :include       koulutustyypit
                          :min_doc_count 0
                          :size          (count koulutustyypit)}})
-                ((:aggs koulutustyyppi) {:koulutustyyppi ["amm"]} default-ctx))))
+                ((:make-agg koulutustyyppi) {:koulutustyyppi ["amm"]} default-ctx))))
     )
   (testing "Should form filter for the query with a hakutieto query with several selected constraints"
     (is (match?

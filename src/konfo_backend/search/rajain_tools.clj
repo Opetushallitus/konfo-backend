@@ -1,4 +1,4 @@
-(ns konfo-backend.search.rajain.query-tools
+(ns konfo-backend.search.rajain-tools
   (:require [clojure.string :refer [lower-case replace-first split join]]
             [konfo-backend.tools :refer [->lower-case-vec]]))
 
