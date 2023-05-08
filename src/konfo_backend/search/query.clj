@@ -21,12 +21,16 @@
     (match-all-query)))
 
 (defn constraints-post-filter-query
-  ([constraints inner-hits]
+  ([constraints inner-hits tuleva?]
    (when (or (constraints? constraints) inner-hits)
-     {:nested (assoc-if {:path "search_terms" :query {:bool {:filter (if (constraints? constraints) (common-filters constraints (current-time-as-kouta-format)) [])}}}
-                        :inner_hits inner-hits inner-hits)}))
+     (let [filters (vec (flatten
+                          (cond-> []
+                                  (constraints? constraints) (conj  (common-filters constraints (current-time-as-kouta-format)))
+                                   inner-hits (conj {:term {:search_terms.onkoTuleva tuleva?}}))))]
+       {:nested (assoc-if {:path "search_terms" :query {:bool {:filter filters}}}
+                           :inner_hits inner-hits inner-hits)})))
   ([constraints]
-   (constraints-post-filter-query constraints nil)))
+   (constraints-post-filter-query constraints nil nil)))
 
 ;OY-3870 Kenttä nimi_sort lisätty indekseihin oppilaitos-kouta-search ja koulutus-kouta-search.
 (defn- ->name-sort
@@ -41,10 +45,8 @@
     (vec (concat [{:_score {:order order}}] (->name-sort "asc" lng)))))
 
 ; Käytetään sekä koulutuksen järjestäjille että oppilaitoksen tarjoajille, joissa listataan toteutuksia
-(defn toteutukset-query [oid tuleva?]
-  {:bool {:must [{:term {:oid oid}}
-                 {:nested {:path       "search_terms"
-                           :query      {:bool {:filter {:term {"search_terms.onkoTuleva" tuleva?}}}}}}]}})
+(defn toteutukset-query [oid]
+  {:bool {:must {:term {:oid oid}}}})
 
 (defn toteutukset-inner-hits [lng page size order]
   (let [size (->size size)
@@ -86,9 +88,9 @@
   (aggregations #(generate-hakutulos-aggregations constraints)))
 
 (defn jarjestajat-aggregations
-  [constraints]
-  (aggregations #(generate-jarjestajat-aggregations constraints)))
+  [constraints tuleva?]
+  (aggregations #(generate-jarjestajat-aggregations constraints tuleva?)))
 
 (defn tarjoajat-aggregations
-  [constraints]
-  (aggregations #(generate-tarjoajat-aggregations constraints)))
+  [constraints tuleva?]
+  (aggregations #(generate-tarjoajat-aggregations constraints tuleva?)))

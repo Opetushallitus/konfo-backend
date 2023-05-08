@@ -6,11 +6,11 @@
 
 (deftest filters-test
   (testing "Should detect accepted constraints"
-    (is (= (constraints? {:non-existing "nothing"}) false))
-    (is (= (constraints? {:sijainti "jokupaikka"}) true))
-    (is (= (constraints? {:sijainti "jokupaikka" :koulutustyyppi "amm"}) true))
-    (is (= (constraints? {:tyovoimakoulutus true}) true))
-    (is (= (constraints? {:tyovoimakoulutus false}) false)))
+    (is (nil? (constraints? {:non-existing "nothing"})))
+    (is (not (nil? (constraints? {:sijainti "jokupaikka"}))))
+    (is (not (nil? (constraints? {:sijainti "jokupaikka" :koulutustyyppi "amm"}))))
+    (is (not (nil? (constraints? {:tyovoimakoulutus true}))))
+    (is (nil? (constraints? {:tyovoimakoulutus false}))))
 
   (testing "Should form filter for the query with jotpa as the only constraint"
     (is (= [{:term {:search_terms.hasJotpaRahoitus true}}]
