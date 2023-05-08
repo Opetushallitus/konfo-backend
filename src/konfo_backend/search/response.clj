@@ -3,7 +3,7 @@
     [konfo-backend.tools :refer [log-pretty reduce-merge-map rename-key hit-haku-kaynnissa?]]
     [konfo-backend.elastic-tools :as e]
     [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.filters :refer [generate-filter-counts generate-filter-counts-for-jarjestajat]]
+    [konfo-backend.search.filters :refer [generate-default-filter-counts generate-filter-counts-for-jarjestajat]]
     [konfo-backend.index.toteutus :refer [get-kuvaukset]]))
 
 (defn- hits
@@ -49,7 +49,7 @@
 
 (defn- filter-counts
   [response]
-  (generate-filter-counts (doc_count-by-filter response)))
+  (generate-default-filter-counts (doc_count-by-filter response)))
 
 (defn- filters-for-jarjestajat
   [response]
