@@ -22,10 +22,11 @@
 
 (defn search
   [index mapper & query-parts]
-  (->> (apply e/search
-              index
-              query-parts)
-       mapper))
+  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
+    (->> (apply e/search
+                index
+                query-parts-without-nils)
+         mapper)))
 
 (defn count
   [index & query-parts]
@@ -44,6 +45,5 @@
 (defn search-with-pagination
   [index page size mapper & query-parts]
   (let [size (->size size)
-        from (->from page size)
-        query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
-    (apply search index mapper :from from :size size query-parts-without-nils)))
+        from (->from page size)]
+    (apply search index mapper :from from :size size query-parts)))
