@@ -39,13 +39,6 @@
         mapper (fn [key] {key (get-count key)})]
     (reduce-merge-map mapper (keys buckets))))
 
-(defn- ->doc_count-for-lukiolinjat-and-osaamisalat
-  [response agg-key]
-  (println "!!!!!!!!!!!!!!!! respa: " + (get-in response [:aggregations :hits_aggregation]))
-  (let [buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs"))]) (keyword agg-key))
-        mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
-    (reduce-merge-map mapper (keys buckets))))
-
 (defn doc_count-by-filter
   [response]
   (let [agg-keys
@@ -67,10 +60,10 @@
 
 (defn doc_count-by-koodi-uri-for-jarjestajat
   [response]
-  (let [jarjestajat-agg-keys ["lukiopainotukset" "lukiolinjaterityinenkoulutustehtava" "osaamisala"]]
+  (let [jarjestajat-agg-keys [:lukiopainotukset :lukiolinjaterityinenkoulutustehtava :osaamisala]]
     (merge
      (doc_count-by-filter response)
-     (reduce-merge-map #(->doc_count-for-lukiolinjat-and-osaamisalat response %) jarjestajat-agg-keys))))
+     (reduce-merge-map #(->doc_count response %) jarjestajat-agg-keys))))
 
 (defn- filter-counts
   [response]

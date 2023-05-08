@@ -272,6 +272,9 @@
 
 (def lukiopainotukset
   {:id :lukiopainotukset :make-query #(keyword-terms-query "lukiopainotukset" %)
+   :aggs (fn [constraints current-time]
+           (rajain-aggregation (->field-key "lukiopainotukset.keyword")
+                               (common-filters-without-rajainkeys constraints current-time "lukiopainotukset")))
    :desc "
    |        - in: query
    |          name: lukiopainotukset
@@ -286,6 +289,9 @@
 
 (def lukiolinjaterityinenkoulutustehtava
   {:id :lukiolinjaterityinenkoulutustehtava :make-query #(keyword-terms-query "lukiolinjaterityinenkoulutustehtava" %)
+   :aggs (fn [constraints current-time]
+           (rajain-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword")
+                               (common-filters-without-rajainkeys constraints current-time "lukiolinjaterityinenkoulutustehtava")))
    :desc "
    |        - in: query
    |          name: lukiolinjaterityinenkoulutustehtava
@@ -334,15 +340,6 @@
 (reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
-(def lukiopainotukset-aggs
-  {:id :lukiopainotukset-aggs :make-query #(rajain-aggregation (->field-key "lukiopainotukset.keyword") [])})
-
-(def lukiolinjaterityinenkoulutustehtava-aggs
-  {:id :lukiolinjaterityinenkoulutustehtava-aggs :make-query #(rajain-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword") [])})
-
-(def osaamisala-aggs
-  {:id :osaamisala-aggs :make-query #(rajain-aggregation (->field-key "osaamisalat.keyword") [])})
-
 (def default-aggregation-defs
   [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi])
 
@@ -364,17 +361,18 @@
 
 (defn generate-jarjestajat-aggregations
   [tuleva? constraints]
-  (let [default-aggs (generate-default-aggs constraints (current-time-as-kouta-format))]
-    (into
+  (let [current-time (current-time-as-kouta-format)
+        default-aggs (generate-default-aggs constraints current-time)]
       {:inner_hits_agg
        {:filter (inner-hits-filters tuleva? {})
         :aggs
         (-> default-aggs
             (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size          10000
                                                                                             :min_doc_count 1}))
-            (dissoc :koulutusala :koulutustyyppi))}}
-      (for [aggs [lukiopainotukset-aggs lukiolinjaterityinenkoulutustehtava-aggs osaamisala-aggs]]
-        {(:id aggs) ((:make-query aggs))}))))
+            (assoc (:id osaamisala) ((:aggs osaamisala) constraints current-time ))
+            (assoc (:id lukiopainotukset) ((:aggs lukiopainotukset) constraints current-time ))
+            (assoc (:id lukiolinjaterityinenkoulutustehtava) ((:aggs lukiolinjaterityinenkoulutustehtava) constraints current-time ))
+            (dissoc :koulutusala :koulutustyyppi))}}))
 
 (defn generate-tarjoajat-aggregations
   [tuleva? constraints]
