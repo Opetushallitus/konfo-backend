@@ -17,14 +17,22 @@
                   :id (:oid res)}))
        (get-in response [:hits :hits])))
 
+(defn get-uniform-buckets [response agg-key]
+  (let [agg-result (get-in response [:aggregations :hits_aggregation agg-key])
+        agg-buckets (get-in agg-result [:buckets]
+                            ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) yksi ylimääräinen aggregaatiokerros:
+                            (get-in agg-result [agg-key :buckets] []))]
+    (into {} (map (fn [x] [(keyword (:key x)) x]) agg-buckets))))
+
 (defn- ->doc_count
   [response agg-key]
-  (let [hits-buckets (get-in response [:aggregations :hits_aggregation agg-key :buckets])
-        inner-hits-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets])
-        [buckets path] (if inner-hits-buckets
+  (let [hits-buckets (get-uniform-buckets response agg-key)
+        inner-hits-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key :buckets] [])
+        [buckets path] (if (not-empty inner-hits-buckets)
                          [inner-hits-buckets [:doc_count]]
-                         [hits-buckets [:real_hits :doc_count]])
-        mapper (fn [key] {key (get-in (key buckets) path)})]
+                         [hits-buckets [:constrained :real_hits :doc_count]])
+        mapper (fn [key]
+                 {key (get-in buckets (into [key] path))})]
     (reduce-merge-map mapper (keys buckets))))
 
 (defn- ->doc_count-for-lukiolinjat-and-osaamisalat
