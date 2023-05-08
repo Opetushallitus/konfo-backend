@@ -3,11 +3,12 @@
             [konfo-backend.search.external-query :refer [external-query]]
             [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
             [konfo-backend.search.query :refer [constraints-post-filter-query
-                                                hakutulos-aggregations toteutukset-inner-hits-query
-                                                jarjestajat-aggregations search-term-query
-                                                koulutus-wildcard-query sorts]]
+                                                hakutulos-aggregations
+                                                jarjestajat-aggregations koulutus-wildcard-query search-term-query sorts
+                                                toteutukset-inner-hits toteutukset-query]]
             [konfo-backend.search.response :refer [parse parse-external
-                                                   parse-inner-hits-for-jarjestajat parse-for-autocomplete]]
+                                                   parse-for-autocomplete
+                                                   parse-inner-hits-for-jarjestajat]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [log-pretty]]))
 
@@ -32,9 +33,10 @@
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
-  (let [query (toteutukset-inner-hits-query oid lng page size order tuleva?)
+  (let [query (toteutukset-query oid tuleva?)
+        inner-hits (toteutukset-inner-hits lng page size order)
         aggs (jarjestajat-aggregations constraints)
-        post-filter-query (constraints-post-filter-query constraints)]
+        post-filter-query (constraints-post-filter-query constraints inner-hits)]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]
