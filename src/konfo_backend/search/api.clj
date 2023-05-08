@@ -435,70 +435,21 @@
    |            default: desc
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
-   |        - in: query
-   |          name: koulutustyyppi
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala
-   |        - in: query
-   |          name: sijainti
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
-   |          example: kunta_091,maakunta_01,maakunta_03
-   |        - in: query
-   |          name: opetuskieli
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltu opetuskielten koodeja
-   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2
-   |        - in: query
-   |          name: koulutusala
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Pilkulla eroteltu koulutusalojen koodeja
-   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02
-   |        - in: query
-   |          name: opetustapa
-   |          schema:
-   |            type: string
-   |            default: nil
-   |          required: false
-   |          description: Pilkulla eroteltu opetustapojen koodeja
-   |          example: opetuspaikkakk_1, opetuspaikkakk_2
-   |        - in: query
-   |          name: hakukaynnissa
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia joilla on haku käynnissä
-   |        - in: query
-   |          name: jotpa
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus
-   |        - in: query
-   |          name: tyovoimakoulutus
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia jotka ovat työvoimakoulutusta
-   |        - in: query
-   |          name: taydennyskoulutus
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta
+   "
+  (:desc koulutustyyppi) "\n"
+  (:desc sijainti) "\n"
+  (:desc opetuskieli) "\n"
+  (:desc koulutusala) "\n"
+  (:desc opetustapa) "\n"
+  (:desc valintatapa) "\n"
+  (:desc hakukaynnissa) "\n"
+  (:desc jotpa) "\n"
+  (:desc tyovoimakoulutus) "\n"
+  (:desc taydennyskoulutus) "\n"
+  (:desc hakutapa) "\n"
+  (:desc yhteishaku) "\n"
+  (:desc pohjakoulutusvaatimus) "\n"
+  "
    |      responses:
    |        '200':
    |          description: Ok
@@ -563,7 +514,7 @@
             (not-found "Not found"))))
 
 (defn ->autocomplete-search-with-validated-params
-  [search-fn search-phrase lng sort order constraints]
+  [search-fn search-phrase lng sort order suodatin-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
@@ -574,7 +525,7 @@
                  lng
                  sort
                  order
-                 (parse-constraints constraints)))))
+                 (create-constraints suodatin-params)))))
 
 (def routes
   (context "/search" []
@@ -778,10 +729,7 @@
                        {taydennyskoulutus     :- Boolean false}
                        {hakutapa              :- String nil}
                        {yhteishaku            :- String nil}
-                       {pohjakoulutusvaatimus :- String nil}
-                       {lukiopainotukset      :- String nil}
-                       {lukiolinjaterityinenkoulutustehtava :- String nil}
-                       {osaamisala            :- String nil}]
+                       {pohjakoulutusvaatimus :- String nil}]
         (->autocomplete-search-with-validated-params koulutus-search/autocomplete-search
                                         searchPhrase
                                         lng
@@ -799,7 +747,4 @@
                                          :taydennyskoulutus taydennyskoulutus
                                          :hakutapa hakutapa
                                          :yhteishaku yhteishaku
-                                         :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                         :lukiopainotukset lukiopainotukset
-                                         :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                         :osaamisala osaamisala}))))
+                                         :pohjakoulutusvaatimus pohjakoulutusvaatimus}))))
