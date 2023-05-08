@@ -300,6 +300,9 @@
 
 (def osaamisala
   {:id :osaamisala :make-query #(keyword-terms-query "osaamisala" %)
+   :aggs (fn [constraints current-time]
+           (rajain-aggregation (->field-key "osaamisalat.keyword")
+                               (common-filters-without-rajainkeys constraints current-time "osaamisala")))
    :desc "
    |        - in: query
    |          name: osaamisala
@@ -361,13 +364,13 @@
 
 (defn generate-jarjestajat-aggregations
   [tuleva? constraints]
-  (let [default-aggs (generate-default-aggs {} (current-time-as-kouta-format))]
+  (let [default-aggs (generate-default-aggs constraints (current-time-as-kouta-format))]
     (into
       {:inner_hits_agg
-       {:filter (inner-hits-filters tuleva? constraints)
+       {:filter (inner-hits-filters tuleva? {})
         :aggs
         (-> default-aggs
-            (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size 10000
+            (assoc :oppilaitos (rajain-aggregation "search_terms.oppilaitosOid.keyword" {} {:size          10000
                                                                                             :min_doc_count 1}))
             (dissoc :koulutusala :koulutustyyppi))}}
       (for [aggs [lukiopainotukset-aggs lukiolinjaterityinenkoulutustehtava-aggs osaamisala-aggs]]

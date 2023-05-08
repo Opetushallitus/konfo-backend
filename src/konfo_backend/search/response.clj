@@ -41,6 +41,7 @@
 
 (defn- ->doc_count-for-lukiolinjat-and-osaamisalat
   [response agg-key]
+  (println "!!!!!!!!!!!!!!!! respa: " + (get-in response [:aggregations :hits_aggregation]))
   (let [buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation (keyword (str agg-key "_aggs"))]) (keyword agg-key))
         mapper (fn [key] {key (get-in (key buckets) [:doc_count])})]
     (reduce-merge-map mapper (keys buckets))))
