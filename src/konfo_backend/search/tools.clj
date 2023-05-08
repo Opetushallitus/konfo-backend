@@ -99,7 +99,7 @@
 
 (defn do-search?
   [keyword constraints]
-  (or (not (empty keyword)) (constraints? constraints)))
+  (or (not (empty? keyword)) (constraints? constraints)))
 
 (defn match-all?
   [keyword constraints]
@@ -146,25 +146,40 @@
                           (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}}))]
     (when (seq tyoelama-should) {:bool {:should tyoelama-should}})))
 
+(defn boolean-query
+  [key bool]
+  {:bool {:should [{:term {(keyword (str "search_terms." key)) bool}}]}})
+
+(def constraint-definitions
+  [{:id :koulutustyyppi :make-query #(keyword-terms-query "koulutustyypit" %)}
+   {:id :opetuskieli :make-query #(keyword-terms-query "opetuskielet" %)}
+   {:id :sijainti :make-query #(keyword-terms-query "sijainti" %)}
+   {:id :koulutusala :make-query #(keyword-terms-query "koulutusalat" %)}
+   {:id :opetustapa :make-query #(keyword-terms-query "opetustavat" %)}
+   {:id :hakutapa :make-query #(hakutieto-query "hakutiedot" "hakutapa" %)}
+   {:id :jotpa :make-query #(boolean-query "hasJotpaRahoitus" %)}
+   {:id :pohjakoulutusvaatimus :make-query #(hakutieto-query "hakutiedot" "pohjakoulutusvaatimukset" %)}
+   {:id :oppilaitos :make-query #(keyword-terms-query "oppilaitosOid" %)}
+   {:id :valintatapa :make-query #(hakutieto-query "hakutiedot" "valintatavat" %)}
+   {:id :yhteishaku :make-query #(hakutieto-query "hakutiedot" "yhteishakuOid" %)}])
+
 (defn filters
   [constraints current-time]
-  (let [tyoelama-bool-filter (tyoelama-filters-query constraints)]
-    (cond-> []
-      (koulutustyyppi? constraints) (conj (keyword-terms-query "koulutustyypit" (:koulutustyyppi constraints)))
-      (opetuskieli? constraints) (conj (keyword-terms-query "opetuskielet" (:opetuskieli constraints)))
-      (sijainti? constraints) (conj (keyword-terms-query "sijainti" (:sijainti constraints)))
-      (koulutusala? constraints) (conj (keyword-terms-query "koulutusalat" (:koulutusala constraints)))
-      (opetustapa? constraints) (conj (keyword-terms-query "opetustavat" (:opetustapa constraints)))
-      (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
-      (not (nil? tyoelama-bool-filter)) (conj tyoelama-bool-filter)
-      (hakutapa? constraints) (conj (hakutieto-query "hakutiedot" "hakutapa" (:hakutapa constraints)))
-      (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
-                                                  "hakutiedot"
-                                                  "pohjakoulutusvaatimukset"
-                                                  (:pohjakoulutusvaatimus constraints)))
-      (oppilaitos? constraints) (conj (keyword-terms-query "oppilaitosOid" (:oppilaitos constraints)))
-      (valintatapa? constraints) (conj (hakutieto-query "hakutiedot" "valintatavat" (:valintatapa constraints)))
-      (yhteishaku? constraints) (conj (hakutieto-query "hakutiedot" "yhteishakuOid" (:yhteishaku constraints))))))
+  (println constraints)
+  (filterv
+   some?
+   (cond->
+    (mapv
+     #(let [values (constraints (get % :id))]
+        (when (or (boolean? values) (seq values))
+          ((get % :make-query) values)))
+     constraint-definitions)
+     (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
+     ))
+
+;; (cond-> []
+    ;;   (not (nil? tyoelama-bool-filter)) (conj tyoelama-bool-filter)
+  )
 
 (defn nested-filters
   [inner-query nested-path current-time constraints]
