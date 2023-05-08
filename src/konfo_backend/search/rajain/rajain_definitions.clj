@@ -18,7 +18,7 @@
   [constraints]
   (let [contains-non-boolean-rajaimet? (not-empty (filter #(constraint? constraints %) (map :id @common-rajain-definitions)))
         contains-boolean-true-rajaimet? (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))]
-    (or (contains-non-boolean-rajaimet?) (contains-boolean-true-rajaimet?))))
+    (or contains-non-boolean-rajaimet? contains-boolean-true-rajaimet?)))
 
 (defn common-filters
   [constraints current-time]
@@ -47,8 +47,7 @@
   [constraints current-time & rajain-keys]
   (let [constraints-wo-rajainkey (dissoc constraints (map keyword rajain-keys))]
     (when (constraints? constraints-wo-rajainkey)
-      common-filters constraints-wo-rajainkey current-time)))
-
+      (common-filters constraints-wo-rajainkey current-time))))
 
 (def koulutustyyppi
   {:id :koulutustyyppi :make-query #(keyword-terms-query "koulutustyypit" %)

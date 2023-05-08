@@ -76,13 +76,13 @@
 
 (defn single-tyoelama-boolean-query
   [key]
-  {:term {(str ":search_terms." key) true}})
+  {:term {(keyword (str "search_terms." key)) true}})
 
 (defn make-combined-boolean-filter-query
   [constraints sub-filters]
   (let [selected-sub-filters (filter #(true? (get constraints (:id %))) sub-filters)]
     (when (not-empty selected-sub-filters)
-      {:bool {:should (mapv #(:make-query %) selected-sub-filters)}})))
+      (mapv #((:make-query %)) selected-sub-filters))))
 
 (defn- lukio-filters [constraints]
   (cond-> []
@@ -130,7 +130,7 @@
 (defn rajain-aggregation
   ([field-name sub-filters agg-details]
    (let [default-agg {:field field-name
-                      :min-doc-count 0
+                      :min_doc_count 0
                       :size 1000}]
      {:terms (merge default-agg agg-details)
       :aggs (generate-sub-aggregation sub-filters)}))
@@ -138,7 +138,7 @@
 
 (defn single-tyoelama-agg-boolean-filter
   [key]
-  {:bool {:should [{:term {(str ":search_terms." key) true}}]}})
+  {:term {(keyword (str "search_terms." key)) true}})
 
 (defn bool-agg-filter [own-filter sub-filters]
   (with-real-hits {:filter {:bool
