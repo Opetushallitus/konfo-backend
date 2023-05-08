@@ -30,10 +30,10 @@
               (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query rajain-def) constraint-vals))))]
     (filterv
       some?
-      (conj
+      (concat
         (mapv make-constraint-query @common-rajain-definitions)
         ((:make-query @combined-tyoelama-rajain) constraints)
-        ((:make-query @hakukaynnissa-rajain) constraints current-time)))))
+        (seq ((:make-query @hakukaynnissa-rajain) constraints current-time))))))
 
 (defn inner-hits-filters
   [tuleva? constraints]
