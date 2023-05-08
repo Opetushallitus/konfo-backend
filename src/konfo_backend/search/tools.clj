@@ -108,9 +108,14 @@
 
 (defn ->terms-query
   [key coll]
-  (if (= 1 (count coll))
-    {:term {(keyword key) (lower-case (first coll))}}
-    {:terms {(keyword key) (->lower-case-vec coll)}}))
+  (let [search-field (keyword (str "search_terms." key))]
+    (if (= 1 (count coll))
+      {:term {search-field (lower-case (first coll))}}
+      {:terms {search-field (->lower-case-vec coll)}})))
+
+(defn keyword-terms-query
+  [field coll]
+  (->terms-query (str field ".keyword") coll))
 
 (defn some-hakuaika-kaynnissa
   [current-time]
@@ -127,12 +132,12 @@
   {:bool (some-hakuaika-kaynnissa current-time)})
 
 (defn hakutieto-query
-  [field constraint]
+  [nested-field-name field-name constraint]
   {:nested
    {:path "search_terms.hakutiedot"
     :query
     {:bool
-     {:filter (->terms-query field constraint)}}}})
+     {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
 
 (defn tyoelama-filters-query
   [constraints]
@@ -146,20 +151,21 @@
   [constraints current-time]
   (let [tyoelama-bool-filter (tyoelama-filters-query constraints)]
     (cond-> []
-      (koulutustyyppi? constraints) (conj (->terms-query :search_terms.koulutustyypit.keyword (:koulutustyyppi constraints)))
-      (opetuskieli? constraints) (conj (->terms-query :search_terms.opetuskielet.keyword (:opetuskieli constraints)))
-      (sijainti? constraints) (conj (->terms-query :search_terms.sijainti.keyword (:sijainti constraints)))
-      (koulutusala? constraints) (conj (->terms-query :search_terms.koulutusalat.keyword (:koulutusala constraints)))
-      (opetustapa? constraints) (conj (->terms-query :search_terms.opetustavat.keyword (:opetustapa constraints)))
+      (koulutustyyppi? constraints) (conj (keyword-terms-query "koulutustyypit" (:koulutustyyppi constraints)))
+      (opetuskieli? constraints) (conj (keyword-terms-query "opetuskielet" (:opetuskieli constraints)))
+      (sijainti? constraints) (conj (keyword-terms-query "sijainti" (:sijainti constraints)))
+      (koulutusala? constraints) (conj (keyword-terms-query "koulutusalat" (:koulutusala constraints)))
+      (opetustapa? constraints) (conj (keyword-terms-query "opetustavat" (:opetustapa constraints)))
       (haku-kaynnissa? constraints) (conj (hakuaika-filter-query current-time))
       (not (nil? tyoelama-bool-filter)) (conj tyoelama-bool-filter)
-      (hakutapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.hakutapa (:hakutapa constraints)))
+      (hakutapa? constraints) (conj (hakutieto-query "hakutiedot" "hakutapa" (:hakutapa constraints)))
       (pohjakoulutusvaatimus? constraints) (conj (hakutieto-query
-                                                  :search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                  "hakutiedot"
+                                                  "pohjakoulutusvaatimukset"
                                                   (:pohjakoulutusvaatimus constraints)))
-      (oppilaitos? constraints) (conj (->terms-query :search_terms.oppilaitosOid.keyword (:oppilaitos constraints)))
-      (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
-      (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))))))
+      (oppilaitos? constraints) (conj (keyword-terms-query "oppilaitosOid" (:oppilaitos constraints)))
+      (valintatapa? constraints) (conj (hakutieto-query "hakutiedot" "valintatavat" (:valintatapa constraints)))
+      (yhteishaku? constraints) (conj (hakutieto-query "hakutiedot" "yhteishakuOid" (:yhteishaku constraints))))))
 
 (defn nested-filters
   [inner-query nested-path current-time constraints]

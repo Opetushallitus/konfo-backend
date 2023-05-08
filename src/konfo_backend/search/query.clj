@@ -62,11 +62,11 @@
 
 (defn- lukio-filters [constraints]
   (cond-> []
-    (lukiopainotukset? constraints) (conj (->terms-query :search_terms.lukiopainotukset.keyword (:lukiopainotukset constraints)))
-    (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query :search_terms.lukiolinjaterityinenkoulutustehtava.keyword (:lukiolinjaterityinenkoulutustehtava constraints)))))
+    (lukiopainotukset? constraints) (conj (->terms-query "lukiopainotukset" (:lukiopainotukset constraints)))
+    (lukiolinjaterityinenkoulutustehtava? constraints) (conj (->terms-query "lukiolinjaterityinenkoulutustehtava" (:lukiolinjaterityinenkoulutustehtava constraints)))))
 
 (defn- osaamisala-filters [constraints]
-  [(->terms-query :search_terms.osaamisalat.keyword (:osaamisala constraints))])
+  [(->terms-query "osaamisalat" (:osaamisala constraints))])
 
 (defn- inner-hits-filters
   [tuleva? constraints]
