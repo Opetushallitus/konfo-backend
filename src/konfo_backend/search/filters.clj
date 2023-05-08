@@ -133,26 +133,6 @@
             {}
             yhteishaut)))
 
-(defn generate-filter-counts-external
-  ([filter-counts]
-   (let [filters (partial koodisto->filters filter-counts)]
-     {:opetuskieli (filters "oppilaitoksenopetuskieli")
-      :maakunta (filters "maakunta")
-      :kunta (filters "kunta")
-      :koulutustyyppi (konfo-koulutustyyppi filter-counts)
-      :koulutustyyppi-muu (konfo-koulutustyyppi-muu filter-counts)
-      :koulutusala (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
-      :opetustapa (filters "opetuspaikkakk")
-      :valintatapa (filters "valintatapajono")
-      :hakukaynnissa (hakukaynnissa filter-counts)
-      :hakutapa (filters "hakutapa")
-      :jotpa (jotpa filter-counts)
-      :tyovoimakoulutus (tyovoimakoulutus filter-counts)
-      :taydennyskoulutus (taydennyskoulutus filter-counts)
-      :yhteishaku (yhteishaku filter-counts)
-      :pohjakoulutusvaatimus (filters "pohjakoulutusvaatimuskonfo")}))
-  ([] (generate-filter-counts-external {})))
-
 (defn generate-default-filter-counts
   ([filter-counts]
    (let [filters (partial koodisto->filters filter-counts)]

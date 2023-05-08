@@ -74,7 +74,7 @@
     {:bool
      {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
 
-(defn single-tyoelama-boolean-query
+(defn single-tyoelama-boolean-term
   [key]
   {:term {(keyword (str "search_terms." key)) true}})
 
@@ -120,36 +120,32 @@
 (defn- with-real-hits [agg]
   (assoc agg :aggs {:real_hits {:reverse_nested {}}}))
 
-(defn- generate-sub-aggregation
-  [sub-filters]
-  {:constrained (with-real-hits (if (not-empty sub-filters)
-                                    {:filter {:bool {:filter sub-filters}}}
+(defn- generate-constrain-aggregation
+  [with-constraints]
+  {:constrained (with-real-hits (if (not-empty with-constraints)
+                                    {:filter {:bool {:filter with-constraints}}}
                                     ; Käytetään "reverse_nested":iä dummy-aggregaationa kun ei ole rajaimia, jotta aggregaation tulosten rakenne pysyy samanlaisena
                                     {:reverse_nested {}}))})
 
 (defn rajain-aggregation
-  ([field-name sub-filters agg-details]
-   (let [default-agg {:field field-name
+  ([field-name with-constraints term-details]
+   (let [default-terms {:field field-name
                       :min_doc_count 0
                       :size 1000}]
-     {:terms (merge default-agg agg-details)
-      :aggs (generate-sub-aggregation sub-filters)}))
-  ([field-name sub-filters] (rajain-aggregation field-name sub-filters nil)))
+     {:terms (merge default-terms term-details)
+      :aggs (generate-constrain-aggregation with-constraints)}))
+  ([field-name with-constraints] (rajain-aggregation field-name with-constraints nil)))
 
-(defn single-tyoelama-agg-boolean-filter
-  [key]
-  {:term {(keyword (str "search_terms." key)) true}})
-
-(defn bool-agg-filter [own-filter sub-filters]
+(defn bool-agg-filter [own-filter with-constraints]
   (with-real-hits {:filter {:bool
-                            {:filter (distinct (conj sub-filters own-filter))}}}))
+                            {:filter (vec (distinct (conj with-constraints own-filter)))}}}))
 
 (defn hakukaynnissa-aggregation
-  [current-time sub-filters]
-  (bool-agg-filter (hakuaika-filter-query current-time) sub-filters))
+  [current-time with-constraints]
+  (bool-agg-filter (hakuaika-filter-query current-time) with-constraints))
 
 (defn nested-rajain-aggregation
-  ([rajain-key field-name sub-filters agg-details]
+  ([rajain-key field-name with-constraints agg-details]
    {:nested {:path (-> field-name (replace-first ".keyword" "") (split #"\.") (drop-last) (#(join "." %)))}
-    :aggs {(keyword rajain-key) (rajain-aggregation field-name sub-filters agg-details)}})
-  ([rajain-key field-name sub-filters] (nested-rajain-aggregation rajain-key field-name sub-filters nil)))
+    :aggs {(keyword rajain-key) (rajain-aggregation field-name with-constraints agg-details)}})
+  ([rajain-key field-name with-constraints] (nested-rajain-aggregation rajain-key field-name with-constraints nil)))
