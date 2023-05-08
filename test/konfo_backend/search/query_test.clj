@@ -1,6 +1,6 @@
 (ns konfo-backend.search.query-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.query :refer [query hakutulos-aggregations]]
+            [konfo-backend.search.query :refer [query hakutulos-aggregations jarjestajat-aggregations tarjoajat-aggregations]]
             [konfo-backend.tools]))
 
 (deftest oppilaitos-query-test
@@ -57,7 +57,7 @@
                            {:search_terms.hakutiedot.hakuajat.paattyy
                             {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}})))))
 
-(deftest oppilaitos-aggregations-test
+(deftest hakutulos-aggregations-test
   (testing
    "Aggregations"
     (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
@@ -614,4 +614,428 @@
               :muu-amm-tutkinto {:bool {:filter
                            [{:term {:search_terms.koulutustyypit.keyword "muu-amm-tutkinto"}}
                             {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}}}
-            :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+              :aggs {:real_hits {:reverse_nested {}}}}}}})))))
+
+(deftest jarjestajat-aggregations-test
+  (testing "should form aggregations for jarjestajat query with selected filters"
+    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
+                                                                           (str x "_02")])
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
+                  konfo-backend.index.haku/list-yhteishaut
+                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+      (is
+        (= {:hits_aggregation
+            {:nested {:path "search_terms"}
+             :aggs
+             {:inner_hits_agg
+              {:filter {:bool
+                        {:must [{:term {"search_terms.onkoTuleva" false}} {:bool {}}],
+                         :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}},
+               :aggs
+               {:yhteishaku
+                {:filters
+                 {:filters
+                  {:1.2.246.562.29.00000000000000000001
+                   {:bool
+                    {:filter
+                     [{:nested {:path "search_terms.hakutiedot"
+                                :query
+                                {:bool {:filter
+                                        {:term {:search_terms.hakutiedot.yhteishakuOid "1.2.246.562.29.00000000000000000001"}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :kunta
+                {:filters
+                 {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                            :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_02"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :pohjakoulutusvaatimus
+                {:filters
+                 {:filters
+                  {:pohjakoulutusvaatimuskonfo_01
+                   {:bool
+                    {:filter
+                     [{:nested {:path "search_terms.hakutiedot"
+                                :query
+                                {:bool {:filter
+                                        {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_01"}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :pohjakoulutusvaatimuskonfo_02
+                   {:bool
+                    {:filter
+                     [{:nested {:path "search_terms.hakutiedot"
+                                :query {:bool {:filter
+                                               {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_02"}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :maakunta
+                {:filters
+                 {:filters
+                  {:maakunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_01"}}
+                                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :maakunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
+                                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :hakutapa
+                {:filters
+                 {:filters
+                  {:hakutapa_01
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query {:bool
+                                              {:filter
+                                               {:term {:search_terms.hakutiedot.hakutapa "hakutapa_01"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :hakutapa_02
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query {:bool
+                                              {:filter
+                                               {:term {:search_terms.hakutiedot.hakutapa "hakutapa_02"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :opetustapa
+                {:filters
+                 {:filters
+                  {:opetuspaikkakk_01
+                   {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :opetuspaikkakk_02
+                   {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :opetuskieli
+                {:filters
+                 {:filters
+                  {:oppilaitoksenopetuskieli_01
+                   {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :oppilaitoksenopetuskieli_02
+                   {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :hakukaynnissa
+                {:filters
+                 {:filters
+                  {:hakukaynnissa
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                      {:bool
+                       {:should
+                        [{:bool
+                          {:filter
+                           [{:range
+                             {:search_terms.toteutusHakuaika.alkaa
+                              {:lte "2020-01-01T01:01"}}}
+                            {:bool
+                             {:should
+                              [{:bool
+                                {:must_not
+                                 {:exists
+                                  {:field
+                                   "search_terms.toteutusHakuaika.paattyy"}}}}
+                               {:range
+                                {:search_terms.toteutusHakuaika.paattyy
+                                 {:gt "2020-01-01T01:01"}}}]}}]}}
+                         {:nested
+                          {:path "search_terms.hakutiedot.hakuajat"
+                           :query
+                           {:bool
+                            {:filter
+                             [{:range
+                               {:search_terms.hakutiedot.hakuajat.alkaa
+                                {:lte "2020-01-01T01:01"}}}
+                              {:bool
+                               {:should
+                                [{:bool
+                                  {:must_not
+                                   {:exists
+                                    {:field
+                                     "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                 {:range
+                                  {:search_terms.hakutiedot.hakuajat.paattyy
+                                   {:gt
+                                    "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :valintatapa
+                {:filters
+                 {:filters
+                  {:valintatapajono_01
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query
+                                      {:bool
+                                       {:filter
+                                        {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_01"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :valintatapajono_02
+                   {:bool {:filter
+                           [{:nested
+                             {:path "search_terms.hakutiedot"
+                              :query {:bool
+                                      {:filter
+                                       {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :oppilaitos
+                {:filters
+                 {:filters
+                  {:1.2.246.562.10.98873174761
+                   {:bool
+                    {:filter
+                     [{:term {"search_terms.oppilaitosOid.keyword" "1.2.246.562.10.98873174761"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+              :lukiopainotukset_aggs
+              {:filter
+               {:bool
+                {:must {:term {"search_terms.onkoTuleva" false}}
+                 :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+               :aggs
+               {"lukiopainotukset"
+                {:filters
+                 {:filters
+                  {:lukiopainotukset_01
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.lukiopainotukset.keyword "lukiopainotukset_01"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :lukiopainotukset_02
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.lukiopainotukset.keyword "lukiopainotukset_02"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+              :lukiolinjaterityinenkoulutustehtava_aggs
+              {:filter
+               {:bool
+                {:must {:term {"search_terms.onkoTuleva" false}}
+                 :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+               :aggs
+               {"lukiolinjaterityinenkoulutustehtava"
+                {:filters
+                 {:filters
+                  {:lukiolinjaterityinenkoulutustehtava_01
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava_01"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :lukiolinjaterityinenkoulutustehtava_02
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava_02"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+              :osaamisala_aggs
+              {:filter
+               {:bool
+                {:must {:term {"search_terms.onkoTuleva" false}}
+                 :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+               :aggs
+               {:osaamisala
+                {:filters
+                 {:filters
+                  {:osaamisala_01
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.osaamisalat.keyword "osaamisala_01"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :osaamisala_02
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.osaamisalat.keyword "osaamisala_02"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+              }}}
+           (jarjestajat-aggregations false {:sijainti ["kunta_564"]} ["1.2.246.562.10.98873174761"]))))))
+
+(deftest tarjoajat-aggregations-test
+  (testing "should form aggregations for tarjoajat query with selected filters"
+    (with-redefs [konfo-backend.koodisto.koodisto/list-koodi-urit (fn [x] [(str x "_01")
+                                                                           (str x "_02")])
+                  konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")
+                  konfo-backend.index.haku/list-yhteishaut
+                  (fn [] ["1.2.246.562.29.00000000000000000001"])]
+      (is
+        (= {:hits_aggregation
+            {:nested {:path "search_terms"}
+             :aggs
+             {:inner_hits_agg
+              {:filter {:bool
+                        {:must [{:term {"search_terms.onkoTuleva" false}} {:bool {}}]
+                         :filter [{:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+               :aggs
+               {:yhteishaku
+                {:filters {:filters
+                           {:1.2.246.562.29.00000000000000000001
+                            {:bool {:filter [{:nested
+                                              {:path "search_terms.hakutiedot"
+                                               :query
+                                               {:bool {:filter
+                                                       {:term {:search_terms.hakutiedot.yhteishakuOid
+                                                               "1.2.246.562.29.00000000000000000001"}}}}}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :kunta {:filters {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}
+                                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                                            :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_02"}}
+                                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :pohjakoulutusvaatimus
+                {:filters
+                 {:filters
+                  {:pohjakoulutusvaatimuskonfo_01
+                   {:bool {:filter [{:nested {:path "search_terms.hakutiedot"
+                                              :query {:bool {:filter
+                                                             {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                                     "pohjakoulutusvaatimuskonfo_01"}}}}}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :pohjakoulutusvaatimuskonfo_02
+                   {:bool {:filter [{:nested {:path "search_terms.hakutiedot"
+                                              :query {:bool {:filter
+                                                             {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
+                                                                     "pohjakoulutusvaatimuskonfo_02"}}}}}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :maakunta
+                {:filters {:filters
+                           {:maakunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_01"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                            :maakunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :hakutapa
+                {:filters
+                 {:filters
+                  {:hakutapa_01
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query {:bool
+                                              {:filter
+                                               {:term {:search_terms.hakutiedot.hakutapa "hakutapa_01"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :hakutapa_02
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query {:bool
+                                              {:filter
+                                               {:term {:search_terms.hakutiedot.hakutapa "hakutapa_02"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :opetustapa
+                {:filters
+                 {:filters
+                  {:opetuspaikkakk_01
+                   {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :opetuspaikkakk_02
+                   {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 }
+                :opetuskieli
+                {:filters
+                 {:filters
+                  {:oppilaitoksenopetuskieli_01
+                   {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :oppilaitoksenopetuskieli_02
+                   {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 }
+                :hakukaynnissa
+                {:filters
+                 {:filters
+                  {:hakukaynnissa
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                      {:bool
+                       {:should
+                        [{:bool
+                          {:filter
+                           [{:range
+                             {:search_terms.toteutusHakuaika.alkaa
+                              {:lte "2020-01-01T01:01"}}}
+                            {:bool
+                             {:should
+                              [{:bool
+                                {:must_not
+                                 {:exists
+                                  {:field
+                                   "search_terms.toteutusHakuaika.paattyy"}}}}
+                               {:range
+                                {:search_terms.toteutusHakuaika.paattyy
+                                 {:gt "2020-01-01T01:01"}}}]}}]}}
+                         {:nested
+                          {:path "search_terms.hakutiedot.hakuajat"
+                           :query
+                           {:bool
+                            {:filter
+                             [{:range
+                               {:search_terms.hakutiedot.hakuajat.alkaa
+                                {:lte "2020-01-01T01:01"}}}
+                              {:bool
+                               {:should
+                                [{:bool
+                                  {:must_not
+                                   {:exists
+                                    {:field
+                                     "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                 {:range
+                                  {:search_terms.hakutiedot.hakuajat.paattyy
+                                   {:gt
+                                    "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :valintatapa
+                {:filters
+                 {:filters
+                  {:valintatapajono_01
+                   {:bool {:filter
+                           [{:nested {:path "search_terms.hakutiedot"
+                                      :query
+                                      {:bool
+                                       {:filter
+                                        {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_01"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :valintatapajono_02
+                   {:bool {:filter
+                           [{:nested
+                             {:path "search_terms.hakutiedot"
+                              :query {:bool
+                                      {:filter
+                                       {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}}}}}
+                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :koulutustyyppitaso2 {:filters
+                                      {:filters
+                                       {:koulutustyyppi_01
+                                        {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}
+                                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                                        :koulutustyyppi_02
+                                        {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}
+                                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :koulutusala {:filters {:filters
+                                        {:kansallinenkoulutusluokitus2016koulutusalataso1_01
+                                         {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                                         :kansallinenkoulutusluokitus2016koulutusalataso1_02
+                                         {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :koulutusalataso2 {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01
+                                                       {:bool
+                                                        {:filter
+                                                         [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                                                       :kansallinenkoulutusluokitus2016koulutusalataso2_02
+                                                       {:bool
+                                                        {:filter
+                                                         [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :koulutustyyppi
+                {:filters
+                 {:filters
+                  {:amm-osaamisala {:bool {:filter
+                                           [{:term {:search_terms.koulutustyypit.keyword "amm-osaamisala"}}
+                                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm-tutkinnon-osa {:bool {:filter
+                                              [{:term {:search_terms.koulutustyypit.keyword "amm-tutkinnon-osa"}}
+                                               {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm {:bool {:filter
+                                [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm-muu {:bool {:filter
+                                    [{:term {:search_terms.koulutustyypit.keyword "amm-muu"}}
+                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}}}}
+           (tarjoajat-aggregations false {:sijainti ["kunta_564"]}))))))
