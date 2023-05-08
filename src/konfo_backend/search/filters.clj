@@ -78,7 +78,7 @@
         ope-pedag-opinnot-count (get filter-counts :ope-pedag-opinnot 0)
         erikoistumiskoulutus-count (get filter-counts :erikoistumiskoulutus 0)
         total-kk-muu-count (+ erikoislaakari-count kk-opintojakso-normal-count kk-opintojakso-avoin-count kk-opintokokonaisuus-normal-count kk-opintokokonaisuus-avoin-count ope-pedag-opinnot-count erikoistumiskoulutus-count)
-        muu-count (get filter-counts :muu)]
+        muu-count (get filter-counts :muu 0)]
     {:muut-ammatilliset (cond-> {:alakoodit {:amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
                                              :amm-osaamisala {:count amm-osaamisala-count}
                                              :amm-muu {:count amm-muu-count}
