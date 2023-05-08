@@ -1,8 +1,7 @@
 (ns konfo-backend.search.tools
   (:require
    [konfo-backend.tools :refer [not-blank? current-time-as-kouta-format ->lower-case-vec]]
-   [clojure.core :refer [keyword] :rename {keyword kw}]
-   [clojure.string :refer [lower-case split]]
+   [clojure.string :refer [lower-case]]
    [konfo-backend.config :refer [config]]))
 
 (defn- constraint?
