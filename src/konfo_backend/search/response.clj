@@ -1,12 +1,15 @@
 (ns konfo-backend.search.response
   (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-            [konfo-backend.search.filters :refer [buckets-to-map
-                                                  generate-default-filter-counts
+            [konfo-backend.search.filters :refer [generate-default-filter-counts
                                                   generate-filter-counts-for-jarjestajat]]
             [konfo-backend.search.rajain.rajain-definitions :refer [all-aggregation-defs]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
                                          reduce-merge-map rename-key]]))
+
+(defn buckets-to-map
+  [buckets]
+  (into {} (map (fn [x] [(keyword (:key x)) x]) buckets)))
 
 (defn- hits
   [response]
@@ -38,7 +41,7 @@
 
 (defn doc_count-by-filter
   [response count-path]
-    (reduce-merge-map #(->doc_count response % count-path) (map :id all-aggregation-defs)))
+  (reduce-merge-map #(->doc_count response % count-path) (map :id all-aggregation-defs)))
 
 (defn- filter-counts
   [response]
@@ -46,7 +49,8 @@
 
 (defn- filters-for-jarjestajat
   [response]
-  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response [:doc_count]) (get-in response [:aggregations :hits_aggregation])))
+  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response [:doc_count])
+                                          (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
 
 (defn parse
   [response]

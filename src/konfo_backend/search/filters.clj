@@ -2,11 +2,7 @@
   (:require [konfo-backend.index.haku :refer [get-yhteishaut]]
             [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.koodisto.koodisto :as k]
-            [konfo-backend.tools :refer [debug-pretty reduce-merge-map]]))
-
-(defn buckets-to-map
-  [buckets]
-  (into {} (map (fn [x] [(keyword (:key x)) x]) buckets)))
+            [konfo-backend.tools :refer [reduce-merge-map]]))
 
 (defn- koodi->filter
   [filter-counts koodi]
@@ -169,15 +165,11 @@
                                                 (assoc target-map oppilaitos-oid updated-oppilaitos))) {} oppilaitokset)]
     oppilaitokset-with-nimet))
 
-(defn- oppilaitos-filters
-  [aggs]
-  (add-oppilaitos-nimet (buckets-to-map (get-in aggs [:oppilaitos :buckets]))))
-
 (defn generate-filter-counts-for-jarjestajat
-  [filter-counts aggs]
+  [filter-counts oppilaitos-buckets]
   (assoc
     (generate-default-filter-counts filter-counts)
-    :oppilaitos (oppilaitos-filters aggs)))
+    :oppilaitos (add-oppilaitos-nimet oppilaitos-buckets)))
 
 (defn- filter->obj [suodatin koodi nimi] {:suodatin suodatin :koodi koodi :nimi nimi})
 
