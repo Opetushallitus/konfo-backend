@@ -828,10 +828,7 @@
                      {taydennyskoulutus     :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
-                     {pohjakoulutusvaatimus :- String nil}
-                     {lukiopainotukset      :- String nil}
-                     {lukiolinjaterityinenkoulutustehtava :- String nil}
-                     {osaamisala            :- String nil}]
+                     {pohjakoulutusvaatimus :- String nil}]
       (with-access-logging request (->search-with-validated-params
                                     koulutus-search/search
                                     keyword
@@ -852,10 +849,7 @@
                                      :taydennyskoulutus taydennyskoulutus
                                      :hakutapa hakutapa
                                      :yhteishaku yhteishaku
-                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                     :lukiopainotukset lukiopainotukset
-                                     :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                     :osaamisala osaamisala})))
+                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus})))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
       :path-params [oid :- String]
@@ -888,8 +882,7 @@
                                     size
                                     order
                                     tuleva
-                                    {:koulutustyyppi nil
-                                     :sijainti sijainti
+                                    {:sijainti sijainti
                                      :opetuskieli opetuskieli
                                      :koulutusala koulutusala
                                      :opetustapa opetustapa
@@ -925,10 +918,7 @@
                      {taydennyskoulutus     :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
-                     {pohjakoulutusvaatimus :- String nil}
-                     {lukiopainotukset      :- String nil}
-                     {lukiolinjaterityinenkoulutustehtava :- String nil}
-                     {osaamisala            :- String nil}]
+                     {pohjakoulutusvaatimus :- String nil}]
       (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                    keyword
                                                                    lng
@@ -948,10 +938,7 @@
                                                                     :taydennyskoulutus taydennyskoulutus
                                                                     :hakutapa hakutapa
                                                                     :yhteishaku yhteishaku
-                                                                    :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                                                    :lukiopainotukset lukiopainotukset
-                                                                    :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
-                                                                    :osaamisala osaamisala})))
+                                                                    :pohjakoulutusvaatimus pohjakoulutusvaatimus})))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
       :path-params [oid :- String]
@@ -976,15 +963,7 @@
                                                                                 :sijainti sijainti
                                                                                 :opetuskieli opetuskieli
                                                                                 :koulutusala koulutusala
-                                                                                :opetustapa opetustapa
-                                                                                :valintatapa nil
-                                                                                :hakukaynnissa nil
-                                                                                :hakutapa nil
-                                                                                :yhteishaku nil
-                                                                                :pohjakoulutusvaatimus nil
-                                                                                :lukiopainotukset nil
-                                                                                :lukiolinjaterityinenkoulutustehtava nil
-                                                                                :osaamisala nil})))
+                                                                                :opetustapa opetustapa})))
 
     (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
       :path-params [oid :- String]

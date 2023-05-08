@@ -1,32 +1,32 @@
 (ns konfo-backend.search.query-unit-test
   (:require [clojure.test :refer :all]
             [konfo-backend.search.query :refer [hakukaynnissa-filter jotpa-filter nested-rajain-aggregation ->default-rajain-aggregation]]
-            [konfo-backend.search.tools :refer [filters hakuaika-filter-query]]))
+            [konfo-backend.search.tools :refer [common-filters hakuaika-filter-query]]))
 
 (deftest filters-test
   (testing "Should form filter for the query with jotpa as the only constraint"
     (is (= [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]
-           (filters {:jotpa true} "2022-08-26T07:21"))))
+           (common-filters {:jotpa true} "2022-08-26T07:21"))))
 
   (testing "Should form filters for työelämä constraints"
     (is (= [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}
                              {:term {:search_terms.isTyovoimakoulutus true}}
                              {:term {:search_terms.isTaydennyskoulutus true}}]}}]
-           (filters {:jotpa true :tyovoimakoulutus true :taydennyskoulutus true} "2022-08-26T07:21"))))
+           (common-filters {:jotpa true :tyovoimakoulutus true :taydennyskoulutus true} "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with two terms queries"
     (is (= [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
             {:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_2"}}]
-           (filters {:koulutustyyppi ["koulutustyyppi_26"] :opetuskieli ["oppilaitoksenopetuskieli_2"]}
-                    "2022-08-26T07:21"))))
+           (common-filters {:koulutustyyppi ["koulutustyyppi_26"] :opetuskieli ["oppilaitoksenopetuskieli_2"]}
+                           "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with a hakutieto query"
     (is (= [{:nested {:path "search_terms.hakutiedot"
                       :query {:bool
                               {:filter
                                {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}}}]
-           (filters {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}
-                    "2022-08-26T07:21"))))
+           (common-filters {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}
+                           "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with a hakutieto query with several selected constraints"
     (is (= [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
@@ -56,21 +56,21 @@
                      {:should
                       [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]
-           (filters {:sijainti []
-                     :lukiopainotukset []
+           (common-filters {:sijainti                     []
+                     :lukiopainotukset                    []
                      :lukiolinjaterityinenkoulutustehtava []
-                     :koulutusala []
-                     :yhteishaku []
-                     :pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]
-                     :osaamisala []
-                     :jotpa true
-                     :hakutapa []
-                     :opetustapa []
-                     :opetuskieli ["oppilaitoksenopetuskieli_2"]
-                     :hakukaynnissa true
-                     :valintatapa []
-                     :koulutustyyppi ["koulutustyyppi_26"]}
-                    "2022-08-26T07:21")))))
+                     :koulutusala                         []
+                     :yhteishaku                          []
+                     :pohjakoulutusvaatimus               ["pohjakoulutusvaatimuskonfo_am"]
+                     :osaamisala                          []
+                     :jotpa                               true
+                     :hakutapa                            []
+                     :opetustapa                          []
+                     :opetuskieli                         ["oppilaitoksenopetuskieli_2"]
+                     :hakukaynnissa                       true
+                     :valintatapa                         []
+                     :koulutustyyppi                      ["koulutustyyppi_26"]}
+                           "2022-08-26T07:21")))))
 
 ;; (deftest hakuaika-filter-query-test
 ;;   (testing "Should form hakukaynnissa filter query with current time"

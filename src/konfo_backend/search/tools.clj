@@ -1,121 +1,12 @@
 (ns konfo-backend.search.tools
-  (:require [clojure.string :as str]
+  (:require [clojure.string :refer [lower-case split]]
             [konfo-backend.config :refer [config]]
-            [konfo-backend.search.filter.filterdefs :refer [combined-jarjestaja-filters
-                                                            combined-tyoelama-filter filter-definitions hakukaynnissa-filter]]
-            [konfo-backend.search.filter.query-tools :refer [constraint?]]
+            [konfo-backend.search.rajain.rajain-definitions :refer [constraints? common-filters]]
             [konfo-backend.tools :refer [current-time-as-kouta-format]]))
-
-(defn- sijainti?
-  [constraints]
-  (constraint? constraints :sijainti))
-
-(defn- koulutustyyppi?
-  [constraints]
-  (constraint? constraints :koulutustyyppi))
-
-(defn- opetuskieli?
-  [constraints]
-  (constraint? constraints :opetuskieli))
-
-(defn- koulutusala?
-  [constraints]
-  (constraint? constraints :koulutusala))
-
-(defn- opetustapa?
-  [constraints]
-  (constraint? constraints :opetustapa))
-
-(defn- valintatapa?
-  [constraints]
-  (constraint? constraints :valintatapa))
-
-(defn hakutapa?
-  [constraints]
-  (constraint? constraints :hakutapa))
-
-(defn- pohjakoulutusvaatimus?
-  [constraints]
-  (constraint? constraints :pohjakoulutusvaatimus))
-
-(defn- haku-kaynnissa?
-  [constraints]
-  (true? (:hakukaynnissa constraints)))
-
-(defn- has-jotpa-rahoitus?
-  [constraints]
-  (true? (:jotpa constraints)))
-
-(defn- tyovoimakoulutus?
-  [constraints]
-  (true? (:tyovoimakoulutus constraints)))
-
-(defn- taydennyskoulutus?
-  [constraints]
-  (true? (:taydennyskoulutus constraints)))
-
-(defn- yhteishaku?
-  [constraints]
-  (constraint? constraints :yhteishaku))
-
-(defn- oppilaitos?
-  [constraints]
-  (constraint? constraints :oppilaitos))
-
-; Onko hakurajaimia valittuna?
-(defn constraints?
-  [constraints]
-  (or (sijainti? constraints)
-      (koulutustyyppi? constraints)
-      (koulutusala? constraints)
-      (opetuskieli? constraints)
-      (opetustapa? constraints)
-      (valintatapa? constraints)
-      (haku-kaynnissa? constraints)
-      (hakutapa? constraints)
-      (has-jotpa-rahoitus? constraints)
-      (tyovoimakoulutus? constraints)
-      (taydennyskoulutus? constraints)
-      (yhteishaku? constraints)
-      (oppilaitos? constraints)
-      (pohjakoulutusvaatimus? constraints)))
 
 (defn ->lng-keyword
   [str lng]
   (keyword (format str lng)))
-
-(defn tyoelama-filters-query
-  [constraints]
-  (let [tyoelama-should (cond-> []
-                          (has-jotpa-rahoitus? constraints) (conj {:term {:search_terms.hasJotpaRahoitus true}})
-                          (tyovoimakoulutus? constraints) (conj {:term {:search_terms.isTyovoimakoulutus true}})
-                          (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}}))]
-    (when (seq tyoelama-should) {:bool {:should tyoelama-should}})))
-
-(defn filters
-  [constraints current-time]
-  (let [make-constraint-query
-        (fn [filter-def]
-          (let [constraint-vals (get constraints (:id filter-def))]
-            (cond
-              (and (boolean? constraint-vals) (true? constraint-vals)) (:make-query filter-def)
-              (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query filter-def) constraint-vals))))
-        tyoelama-filter ((:make-query combined-tyoelama-filter) constraints)
-        hakukaynnissa-filter ((:make-query hakukaynnissa-filter) constraints current-time)]
-    (filterv
-     some?
-     (conj
-      (mapv make-constraint-query filter-definitions)
-      tyoelama-filter
-      hakukaynnissa-filter))))
-
-(defn inner-hits-filters
-  [tuleva? constraints]
-  {:bool
-   {:must
-    [{:term {"search_terms.onkoTuleva" tuleva?}}
-     {:bool ((:make-query combined-jarjestaja-filters) constraints)}]
-    :filter (filters constraints (current-time-as-kouta-format))}})
 
 (defn- generate-search-params
   [suffixes search-params usr-lng]
@@ -152,7 +43,7 @@
         filter? (constraints? constraints)]
     (cond-> {}
       fields? (-> (assoc :must (make-search-term-query keyword user-lng suffixes)))
-      filter? (assoc :filter (filters constraints (current-time-as-kouta-format))))))
+      filter? (assoc :filter (common-filters constraints (current-time-as-kouta-format))))))
 
 (defn generate-wildcard-query
   [search-phrase-token user-lng]
@@ -163,5 +54,5 @@
   (let [search-phrase-tokens (split search-phrase #" ")
         query {:must (vec (map #(generate-wildcard-query % user-lng) search-phrase-tokens))}]
     (if (constraints? constraints)
-      (assoc query :filter (filters constraints (current-time-as-kouta-format)))
+      (assoc query :filter (common-filters constraints (current-time-as-kouta-format)))
       query)))
