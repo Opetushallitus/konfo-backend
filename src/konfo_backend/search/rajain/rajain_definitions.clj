@@ -3,6 +3,9 @@
     [konfo-backend.tools :refer [current-time-as-kouta-format]]
     [konfo-backend.search.rajain.query-tools :refer :all]))
 
+;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
+;; vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta myöhempänä. Ja common-filtersiä taas käytetään
+;; rajain-määritysten sisällä, eli se täytyy olla määriteltynä ennen rajain-määrityksiä.
 (def common-rajain-definitions (atom []))
 (def combined-tyoelama-rajain (atom {}))
 (def hakukaynnissa-rajain (atom {}))
@@ -53,25 +56,25 @@
            (rajain-aggregation (->field-key "koulutustyypit.keyword")
                                (common-filters-without-rajainkeys constraints current-time "koulutustyyppi") {:size   (count koulutustyypit)
                                                                                                               :include koulutustyypit}))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: koulutustyyppi\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu lista koulutustyyppejä\n"
-   "   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala")})
+   :desc "
+   |        - in: query
+   |          name: koulutustyyppi
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu lista koulutustyyppejä
+   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala"})
 
 (def sijainti
   {:id :sijainti :make-query #(keyword-terms-query "sijainti" %)
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: sijainti\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja\n"
-   "   |          example: kunta_091,maakunta_01,maakunta_03")})
+   :desc "
+   |        - in: query
+   |          name: sijainti
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
+   |          example: kunta_091,maakunta_01,maakunta_03"})
 
 (def maakunta
   {:id :maakunta
@@ -91,197 +94,197 @@
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "opetuskielet.keyword")
                                (common-filters-without-rajainkeys constraints current-time "opetuskieli")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: opetuskieli\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu opetuskielten koodeja\n"
-   "   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2")})
+   :desc "
+   |        - in: query
+   |          name: opetuskieli
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2"})
 
 (def koulutusala
   {:id :koulutusala :make-query #(keyword-terms-query "koulutusalat" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "koulutusalat.keyword")
                                (common-filters-without-rajainkeys constraints current-time "koulutusala")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: koulutusala\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu koulutusalojen koodeja\n"
-   "   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02")})
+   :desc "
+   |        - in: query
+   |          name: koulutusala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02"})
 
 (def opetustapa
   {:id :opetustapa :make-query #(keyword-terms-query "opetustavat" %)
    :aggs (fn [constraints current-time]
            (rajain-aggregation (->field-key "opetustavat.keyword")
                                (common-filters-without-rajainkeys constraints current-time "opetustapa")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: opetustapa\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu opetustapojen koodeja\n"
-   "   |          example: opetuspaikkakk_1, opetuspaikkakk_2")})
+   :desc "
+   |        - in: query
+   |          name: opetustapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          example: opetuspaikkakk_1, opetuspaikkakk_2"})
 
 (def valintatapa
   {:id :valintatapa :make-query #(hakutieto-query "hakutiedot" "valintatavat" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat"
                                       (common-filters-without-rajainkeys constraints current-time "valintatapa")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: valintatapa\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu valintatapojen koodeja\n"
-   "   |          example: valintatapajono_av, valintatapajono_tv")})
+   :desc "
+   |        - in: query
+   |          name: valintatapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu valintatapojen koodeja
+   |          example: valintatapajono_av, valintatapajono_tv"})
 
 (def hakutapa
   {:id :hakutapa :make-query #(hakutieto-query "hakutiedot" "hakutapa" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa"
                                       (common-filters-without-rajainkeys constraints current-time "hakutapa")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: hakutapa\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu hakutapojen koodeja\n"
-   "   |          example: hakutapa_01, hakutapa_03")})
+   :desc "
+   |        - in: query
+   |          name: hakutapa
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu hakutapojen koodeja
+   |          example: hakutapa_01, hakutapa_03"})
 
 (def jotpa
   {:id :jotpa :make-query #(single-tyoelama-boolean-query "hasJotpaRahoitus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-agg-boolean-filter "hasJotpaRahoitus")
                             (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: jotpa\n"
-   "   |          schema:\n"
-   "   |            type: boolean\n"
-   "   |            default: false\n"
-   "   |          required: false\n"
-   "   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus")})
+   :desc "
+   |        - in: query
+   |          name: jotpa
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus"})
 
 (def tyovoimakoulutus
   {:id :tyovoimakoulutus :make-query #(single-tyoelama-boolean-query "isTyovoimakoulutus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-agg-boolean-filter "isTyovoimakoulutus")
                             (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: tyovoimakoulutus\n"
-   "   |          schema:\n"
-   "   |            type: boolean\n"
-   "   |            default: false\n"
-   "   |          required: false\n"
-   "   |          description: Haetaanko koulutuksia jotka ovat työvoimakoulutusta")})
+   :desc "
+   |        - in: query
+   |          name: tyovoimakoulutus
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia jotka ovat työvoimakoulutusta"})
 
 (def taydennyskoulutus
   {:id :taydennyskoulutus :make-query #(single-tyoelama-boolean-query "isTaydennyskoulutus")
    :aggs (fn [constraints current-time]
            (bool-agg-filter (single-tyoelama-agg-boolean-filter "isTaydennyskoulutus")
                             (common-filters-without-rajainkeys constraints current-time "jotpa" "tyovoimakoulutus" "taydennyskoulutus")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: taydennyskoulutus\n"
-   "   |          schema:\n"
-   "   |            type: boolean\n"
-   "   |            default: false\n"
-   "   |          required: false\n"
-   "   |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta")})
+   :desc "
+   |        - in: query
+   |          name: taydennyskoulutus
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta"})
 
 (def yhteishaku
   {:id :yhteishaku :make-query #(hakutieto-query "hakutiedot" "yhteishakuOid" %)
    :aggs (fn [constraints current-time]
            (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
                                       (common-filters-without-rajainkeys constraints current-time "yhteishaku")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: yhteishaku\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu lista yhteishakujen oideja\n"
-   "   |          example: 1.2.246.562.29.00000000000000000800")})
+   :desc "
+   |        - in: query
+   |          name: yhteishaku
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu lista yhteishakujen oideja
+   |          example: 1.2.246.562.29.00000000000000000800"})
 
 (def pohjakoulutusvaatimus
   {:id :pohjakoulutusvaatimus :make-query #(hakutieto-query "hakutiedot" "pohjakoulutusvaatimukset" %)
    :aggs (fn [constraints current-time]
             (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                        (common-filters-without-rajainkeys constraints current-time "pohjakoulutusvaatimus")))
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: pohjakoulutusvaatimus\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja\n"
-   "   |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102")})
+   :desc "
+   |        - in: query
+   |          name: pohjakoulutusvaatimus
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
+   |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102"})
 
 (def oppilaitos
   {:id :oppilaitos :make-query #(keyword-terms-query "oppilaitosOid" %)
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: oppilaitos\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltuna lista toteutusten oppilaitoksista\n"
-   "   |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356")})
+   :desc "
+   |        - in: query
+   |          name: oppilaitos
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lista toteutusten oppilaitoksista
+   |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356"})
 
 (def lukiopainotukset
   {:id :lukiopainotukset :make-query #(keyword-terms-query "lukiopainotukset" %)
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: lukiopainotukset\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltuna lukiopainotusten koodeja\n"
-   "   |          example: lukiopainotukset_0111, lukiopainotukset_001")})
+   :desc "
+   |        - in: query
+   |          name: lukiopainotukset
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lukiopainotusten koodeja
+   |          example: lukiopainotukset_0111, lukiopainotukset_001"})
 
 (def lukiolinjaterityinenkoulutustehtava
   {:id :lukiolinjaterityinenkoulutustehtava :make-query #(keyword-terms-query "lukiolinjaterityinenkoulutustehtava" %)
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: lukiolinjaterityinenkoulutustehtava\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja\n"
-   "   |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126")})
+   :desc "
+   |        - in: query
+   |          name: lukiolinjaterityinenkoulutustehtava
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja
+   |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126"})
 
 (def osaamisala
   {:id :osaamisala :make-query #(keyword-terms-query "osaamisala" %)
-   :desc (str
-   "   |        - in: query\n"
-   "   |          name: osaamisala\n"
-   "   |          schema:\n"
-   "   |            type: string\n"
-   "   |          required: false\n"
-   "   |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja\n"
-   "   |          example: osaamisala_1756, osaamisala_3076")})
+   :desc "
+   |        - in: query
+   |          name: osaamisala
+   |          schema:
+   |            type: string
+   |          required: false
+   |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
+   |          example: osaamisala_1756, osaamisala_3076"})
 
 (def hakukaynnissa
   {:id :hakukaynnissa :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakuaika-filter-query current-time)))
    :aggs (fn [constraints current-time]
            (hakukaynnissa-aggregation current-time (common-filters constraints current-time)))
-   :desc (str
-           "   |        - in: query\n"
-           "   |          name: hakukaynnissa\n"
-           "   |          schema:\n"
-           "   |            type: boolean\n"
-           "   |            default: false\n"
-           "   |          required: false\n"
-           "   |          description: Haetaanko koulutuksia joilla on haku käynnissä")})
+   :desc "
+   |        - in: query
+   |          name: hakukaynnissa
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia joilla on haku käynnissä"})
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa yhteishaku pohjakoulutusvaatimus)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
