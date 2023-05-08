@@ -84,10 +84,6 @@
   [str lng]
   (keyword (format str lng)))
 
-(defn blank-search?
-  [keyword constraints]
-  (and (empty? keyword) (not (constraints? constraints))))
-
 (defn tyoelama-filters-query
   [constraints]
   (let [tyoelama-should (cond-> []

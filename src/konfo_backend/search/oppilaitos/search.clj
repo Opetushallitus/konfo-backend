@@ -1,8 +1,9 @@
 (ns konfo-backend.search.oppilaitos.search
   (:require [konfo-backend.elastic-tools :as e]
-            [konfo-backend.search.query :refer [hakutulos-aggregations
-                                                inner-hits-query
-                                                inner-hits-query-osat match-all-query query sorts tarjoajat-aggregations]]
+            [konfo-backend.search.query :refer [constraints-post-filter-query
+                                                hakutulos-aggregations
+                                                inner-hits-query inner-hits-query-osat query search-term-query sorts
+                                                tarjoajat-aggregations]]
             [konfo-backend.search.response :refer [parse parse-inner-hits]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [log-pretty]]))
@@ -13,19 +14,17 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (let [query (if (blank-search? keyword constraints)
-                (match-all-query)
-                (query keyword constraints lng ["words"]))
+  (let [search-term-query (search-term-query keyword lng ["words"])
+        post-filter-query (constraints-post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
-    (log-pretty query)
-    (log-pretty aggs)
     (oppilaitos-kouta-search
      page
      size
      parse
      :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
      :sort (sorts sort order lng)
-     :query query
+     :query search-term-query
+     :post_filter post-filter-query
      :aggs aggs)))
 
 (defn search-oppilaitoksen-tarjonta
