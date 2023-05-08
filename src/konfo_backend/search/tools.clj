@@ -161,10 +161,10 @@
       (valintatapa? constraints) (conj (hakutieto-query :search_terms.hakutiedot.valintatavat (:valintatapa constraints)))
       (yhteishaku? constraints) (conj (hakutieto-query :search_terms.hakutiedot.yhteishakuOid (:yhteishaku constraints))))))
 
-(defn hakutieto-filters
-  [inner-query current-time constraints]
+(defn nested-filters
+  [inner-query nested-path current-time constraints]
   (vec (distinct (concat
-                  [{:nested {:path "search_terms.hakutiedot" :query {:bool {:filter inner-query}}}}]
+                  [{:nested {:path (str "search_terms." nested-path) :query {:bool {:filter inner-query}}}}]
                   (filters constraints current-time)))))
 
 (defn terms-filters
