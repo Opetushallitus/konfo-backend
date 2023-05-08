@@ -6,7 +6,7 @@
             [konfo-backend.tools :refer [assoc-if current-time-as-kouta-format
                                          remove-nils]]))
 
-(defonce koulutustyypit ["amm"
+(def koulutustyypit ["amm"
                          "amm-muu"
                          "amm-tutkinnon-osa"
                          "amm-osaamisala"
@@ -35,8 +35,11 @@
                          "vapaa-sivistystyo-muu"
                          "aikuisten-perusopetus"
                          "taiteen-perusopetus"
-                         "muu"])
-
+                         "muu"
+                         "koulutustyyppi_26"
+                         "koulutustyyppi_4"
+                         "koulutustyyppi_11"
+                         "koulutustyyppi_12"])
 
 (defn match-all-query
   []
