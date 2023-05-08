@@ -649,7 +649,8 @@
                  {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}
                                                        {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
                             :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_02"}}
-                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :pohjakoulutusvaatimus
                 {:filters
                  {:filters
@@ -675,7 +676,8 @@
                   {:maakunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_01"}}
                                                  {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
                    :maakunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
-                                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :hakutapa
                 {:filters
                  {:filters
@@ -702,7 +704,8 @@
                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
                    :opetuspaikkakk_02
                    {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_02"}}
-                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :opetuskieli
                 {:filters
                  {:filters
@@ -711,7 +714,8 @@
                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
                    :oppilaitoksenopetuskieli_02
                    {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}
-                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :hakukaynnissa
                 {:filters
                  {:filters
@@ -783,7 +787,8 @@
                    {:bool
                     {:filter
                      [{:term {"search_terms.oppilaitosOid.keyword" "1.2.246.562.10.98873174761"}}
-                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}}}
               :lukiopainotukset_aggs
               {:filter
                {:bool
@@ -802,7 +807,8 @@
                    {:bool
                     {:filter
                      [{:term {:search_terms.lukiopainotukset.keyword "lukiopainotukset_02"}}
-                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}}}
               :lukiolinjaterityinenkoulutustehtava_aggs
               {:filter
                {:bool
@@ -821,7 +827,8 @@
                    {:bool
                     {:filter
                      [{:term {:search_terms.lukiolinjaterityinenkoulutustehtava.keyword "lukiolinjaterityinenkoulutustehtava_02"}}
-                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}}}
               :osaamisala_aggs
               {:filter
                {:bool
@@ -840,7 +847,8 @@
                    {:bool
                     {:filter
                      [{:term {:search_terms.osaamisalat.keyword "osaamisala_02"}}
-                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}}}
               }}}
            (jarjestajat-aggregations false {:sijainti ["kunta_564"]} ["1.2.246.562.10.98873174761"]))))))
 
@@ -870,10 +878,12 @@
                                                        {:term {:search_terms.hakutiedot.yhteishakuOid
                                                                "1.2.246.562.29.00000000000000000001"}}}}}}]}}}}
                  :aggs {:real_hits {:reverse_nested {}}}}
-                :kunta {:filters {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}
-                                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                                            :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_02"}}
-                                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :kunta
+                {:filters {:filters {:kunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_01"}}
+                                                                {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                                     :kunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "kunta_02"}}
+                                                                {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :pohjakoulutusvaatimus
                 {:filters
                  {:filters
@@ -895,7 +905,8 @@
                            {:maakunta_01 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_01"}}
                                                           {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
                             :maakunta_02 {:bool {:filter [{:term {:search_terms.sijainti.keyword "maakunta_02"}}
-                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :hakutapa
                 {:filters
                  {:filters
@@ -923,7 +934,7 @@
                    :opetuspaikkakk_02
                    {:bool {:filter [{:term {:search_terms.opetustavat.keyword "opetuspaikkakk_02"}}
                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
-                 }
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :opetuskieli
                 {:filters
                  {:filters
@@ -933,7 +944,7 @@
                    :oppilaitoksenopetuskieli_02
                    {:bool {:filter [{:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_02"}}
                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
-                 }
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :hakukaynnissa
                 {:filters
                  {:filters
@@ -998,44 +1009,100 @@
                                        {:term {:search_terms.hakutiedot.valintatavat "valintatapajono_02"}}}}}}
                             {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
                  :aggs {:real_hits {:reverse_nested {}}}}
-                :koulutustyyppitaso2 {:filters
-                                      {:filters
-                                       {:koulutustyyppi_01
-                                        {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}
-                                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                                        :koulutustyyppi_02
-                                        {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}
-                                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
-                :koulutusala {:filters {:filters
-                                        {:kansallinenkoulutusluokitus2016koulutusalataso1_01
-                                         {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
-                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                                         :kansallinenkoulutusluokitus2016koulutusalataso1_02
-                                         {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}
-                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
-                :koulutusalataso2 {:filters {:filters {:kansallinenkoulutusluokitus2016koulutusalataso2_01
-                                                       {:bool
-                                                        {:filter
-                                                         [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
-                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                                                       :kansallinenkoulutusluokitus2016koulutusalataso2_02
-                                                       {:bool
-                                                        {:filter
-                                                         [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}
-                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}
+                :koulutustyyppitaso2
+                {:filters
+                 {:filters
+                  {:koulutustyyppi_01
+                   {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :koulutustyyppi_02
+                   {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :koulutusala
+                {:filters
+                 {:filters
+                  {:kansallinenkoulutusluokitus2016koulutusalataso1_01
+                   {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_01"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kansallinenkoulutusluokitus2016koulutusalataso1_02
+                   {:bool {:filter [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso1_02"}}
+                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
+                :koulutusalataso2
+                {:filters
+                 {:filters
+                  {:kansallinenkoulutusluokitus2016koulutusalataso2_01
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_01"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kansallinenkoulutusluokitus2016koulutusalataso2_02
+                   {:bool
+                    {:filter
+                     [{:term {:search_terms.koulutusalat.keyword "kansallinenkoulutusluokitus2016koulutusalataso2_02"}}
+                      {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}
                 :koulutustyyppi
                 {:filters
                  {:filters
-                  {:amm-osaamisala {:bool {:filter
-                                           [{:term {:search_terms.koulutustyypit.keyword "amm-osaamisala"}}
-                                            {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                   :amm-tutkinnon-osa {:bool {:filter
-                                              [{:term {:search_terms.koulutustyypit.keyword "amm-tutkinnon-osa"}}
-                                               {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                   :amm {:bool {:filter
-                                [{:term {:search_terms.koulutustyypit.keyword "amm"}}
-                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
-                   :amm-muu {:bool {:filter
-                                    [{:term {:search_terms.koulutustyypit.keyword "amm-muu"}}
-                                     {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}}}}}}}
+                  {:amm-osaamisala {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm-osaamisala"}}
+                                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kandi {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kandi"}}
+                                           {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amk-ylempi {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amk-ylempi"}}
+                                                {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :tohtori {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "tohtori"}}
+                                             {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm-tutkinnon-osa {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm-tutkinnon-osa"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :lk {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "lk"}}
+                                        {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :maisteri {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "maisteri"}}
+                                              {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amk {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amk"}}
+                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amk-muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amk-muu"}}
+                                             {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amk-alempi {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amk-alempi"}}
+                                                {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kandi-ja-maisteri {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kandi-ja-maisteri"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :yo {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "yo"}}
+                                        {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm-muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm-muu"}}
+                                             {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :tuva {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "tuva"}}
+                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :tuva-normal {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "tuva-normal"}}
+                                                 {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :tuva-erityisopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "tuva-erityisopetus"}}
+                                                        {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :telma {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "telma"}}
+                                           {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :amm-ope-erityisope-ja-opo {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "amm-ope-erityisope-ja-opo"}}
+                                                               {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :ope-pedag-opinnot {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "ope-pedag-opinnot"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :vapaa-sivistystyo {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo"}}
+                                                       {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :vapaa-sivistystyo-opistovuosi {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-opistovuosi"}}
+                                                                   {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :vapaa-sivistystyo-muu {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "vapaa-sivistystyo-muu"}}
+                                                           {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :aikuisten-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "aikuisten-perusopetus"}}
+                                                           {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kk-opintojakso {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kk-opintojakso"}}
+                                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :kk-opintokokonaisuus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "kk-opintokokonaisuus"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :erikoislaakari {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoislaakari"}}
+                                                    {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :erikoistumiskoulutus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "erikoistumiskoulutus"}}
+                                                          {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}
+                   :taiteen-perusopetus {:bool {:filter [{:term {:search_terms.koulutustyypit.keyword "taiteen-perusopetus"}}
+                                                         {:term {:search_terms.sijainti.keyword "kunta_564"}}]}}}}
+                 :aggs {:real_hits {:reverse_nested {}}}}}}}}}
            (tarjoajat-aggregations false {:sijainti ["kunta_564"]}))))))
