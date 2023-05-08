@@ -171,7 +171,7 @@
 
 (defn- oppilaitos-filters
   [aggs]
-  (add-oppilaitos-nimet (buckets-to-map (get-in aggs [:inner_hits_agg :oppilaitos :buckets]))))
+  (add-oppilaitos-nimet (buckets-to-map (get-in aggs [:oppilaitos :buckets]))))
 
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts aggs]

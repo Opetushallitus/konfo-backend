@@ -1,11 +1,12 @@
 (ns konfo-backend.search.response
-  (:require [konfo-backend.elastic-tools :as e]
-            [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-            [konfo-backend.search.filters :refer [buckets-to-map generate-default-filter-counts
+  (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
+            [konfo-backend.search.filters :refer [buckets-to-map
+                                                  generate-default-filter-counts
                                                   generate-filter-counts-for-jarjestajat]]
+            [konfo-backend.search.rajain.rajain-definitions :refer [all-aggregation-defs]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [debug-pretty hit-haku-kaynnissa?
-                                         log-pretty reduce-merge-map rename-key]]))
+            [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
+                                         reduce-merge-map rename-key]]))
 
 (defn- hits
   [response]
@@ -30,48 +31,22 @@
       (buckets-to-map agg-buckets))))
 
 (defn- ->doc_count
-  [response agg-key]
+  [response agg-key count-path]
   (let [hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation agg-key]) agg-key)
-        inner-hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :inner_hits_agg agg-key]) agg-key)
-        [buckets get-count] (if (not-empty inner-hits-buckets)
-                              [inner-hits-buckets (fn [key] (get-in inner-hits-buckets [(keyword key) :doc_count]))]
-                              [hits-buckets (fn [key] (get-in hits-buckets [(keyword key) :real_hits :doc_count]))])
-        mapper (fn [key] {key (get-count key)})]
-    (reduce-merge-map mapper (keys buckets))))
+        mapper (fn [key] {key (get-in hits-buckets (concat [(keyword key)] count-path))})]
+    (reduce-merge-map mapper (keys hits-buckets))))
 
 (defn doc_count-by-filter
-  [response]
-  (let [agg-keys
-        [:koulutustyyppi
-         :opetuskieli
-         :maakunta
-         :kunta
-         :koulutusala
-         :opetustapa
-         :valintatapa
-         :hakukaynnissa
-         :jotpa
-         :tyovoimakoulutus
-         :taydennyskoulutus
-         :hakutapa
-         :yhteishaku
-         :pohjakoulutusvaatimus]]
-    (reduce-merge-map #(->doc_count response %) agg-keys)))
-
-(defn doc_count-by-koodi-uri-for-jarjestajat
-  [response]
-  (let [jarjestajat-agg-keys [:lukiopainotukset :lukiolinjaterityinenkoulutustehtava :osaamisala]]
-    (merge
-     (doc_count-by-filter response)
-     (reduce-merge-map #(->doc_count response %) jarjestajat-agg-keys))))
+  [response count-path]
+    (reduce-merge-map #(->doc_count response % count-path) (map :id all-aggregation-defs)))
 
 (defn- filter-counts
   [response]
-  (generate-default-filter-counts (doc_count-by-filter response)))
+  (generate-default-filter-counts (doc_count-by-filter response [:real_hits :doc_count])))
 
 (defn- filters-for-jarjestajat
   [response]
-  (generate-filter-counts-for-jarjestajat (doc_count-by-koodi-uri-for-jarjestajat response) (get-in response [:aggregations :hits_aggregation])))
+  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response [:doc_count]) (get-in response [:aggregations :hits_aggregation])))
 
 (defn parse
   [response]
