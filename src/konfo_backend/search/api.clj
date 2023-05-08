@@ -730,24 +730,24 @@
    |          description: Bad request")
 
 
-(defn- create-constraints [suodatin-params]
-  {:koulutustyyppi        (->> (:koulutustyyppi suodatin-params) (comma-separated-string->vec))
-   :sijainti              (comma-separated-string->vec (:sijainti suodatin-params))
-   :opetuskieli           (comma-separated-string->vec (:opetuskieli suodatin-params))
-   :koulutusala           (comma-separated-string->vec (:koulutusala suodatin-params))
-   :opetustapa            (comma-separated-string->vec (:opetustapa suodatin-params))
-   :valintatapa           (comma-separated-string->vec (:valintatapa suodatin-params))
-   :hakukaynnissa         (:hakukaynnissa suodatin-params)
-   :hakutapa              (comma-separated-string->vec (:hakutapa suodatin-params))
-   :jotpa                 (:jotpa suodatin-params)
-   :tyovoimakoulutus      (:tyovoimakoulutus suodatin-params)
-   :taydennyskoulutus     (:taydennyskoulutus suodatin-params)
-   :yhteishaku            (comma-separated-string->vec (:yhteishaku suodatin-params))
-   :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus suodatin-params))
-   :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset suodatin-params))
-   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava suodatin-params))
-   :osaamisala            (comma-separated-string->vec (:osaamisala suodatin-params))
-   :oppilaitos            (comma-separated-string->vec (:oppilaitos suodatin-params))})
+(defn- create-constraints [rajain-params]
+  {:koulutustyyppi        (->> (:koulutustyyppi rajain-params) (comma-separated-string->vec))
+   :sijainti              (comma-separated-string->vec (:sijainti rajain-params))
+   :opetuskieli           (comma-separated-string->vec (:opetuskieli rajain-params))
+   :koulutusala           (comma-separated-string->vec (:koulutusala rajain-params))
+   :opetustapa            (comma-separated-string->vec (:opetustapa rajain-params))
+   :valintatapa           (comma-separated-string->vec (:valintatapa rajain-params))
+   :hakukaynnissa         (:hakukaynnissa rajain-params)
+   :hakutapa              (comma-separated-string->vec (:hakutapa rajain-params))
+   :jotpa                 (:jotpa rajain-params)
+   :tyovoimakoulutus      (:tyovoimakoulutus rajain-params)
+   :taydennyskoulutus     (:taydennyskoulutus rajain-params)
+   :yhteishaku            (comma-separated-string->vec (:yhteishaku rajain-params))
+   :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus rajain-params))
+   :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset rajain-params))
+   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
+   :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
+   :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))})
 
 (defn ->search-with-validated-params
   [do-search keyword lng page size sort order suodatin-params]
