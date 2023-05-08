@@ -7,7 +7,7 @@
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
                                          reduce-merge-map rename-key]]))
 
-(defn buckets-to-map
+(defn- buckets-to-map
   [buckets]
   (into {} (map (fn [x] [(keyword (:key x)) x]) buckets)))
 
@@ -34,22 +34,22 @@
       (buckets-to-map agg-buckets))))
 
 (defn- ->doc_count
-  [response agg-key count-path]
+  [response agg-key]
   (let [hits-buckets (get-uniform-buckets (get-in response [:aggregations :hits_aggregation agg-key]) agg-key)
-        mapper (fn [key] {key (get-in hits-buckets (concat [(keyword key)] count-path))})]
+        mapper (fn [key] {key (get-in hits-buckets (concat [(keyword key)] [:real_hits :doc_count]))})]
     (reduce-merge-map mapper (keys hits-buckets))))
 
 (defn doc_count-by-filter
-  [response count-path]
-  (reduce-merge-map #(->doc_count response % count-path) (map :id all-aggregation-defs)))
+  [response]
+  (reduce-merge-map #(->doc_count response %) (map :id all-aggregation-defs)))
 
 (defn- filter-counts
   [response]
-  (generate-default-filter-counts (doc_count-by-filter response [:real_hits :doc_count])))
+  (generate-default-filter-counts (doc_count-by-filter response)))
 
 (defn- filters-for-jarjestajat
   [response]
-  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response [:doc_count])
+  (generate-filter-counts-for-jarjestajat (doc_count-by-filter response)
                                           (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
 
 (defn parse

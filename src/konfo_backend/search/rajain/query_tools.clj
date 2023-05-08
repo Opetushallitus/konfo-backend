@@ -39,32 +39,14 @@
                      "koulutustyyppi_11"
                      "koulutustyyppi_12"])
 
-(defn constraint?
-  [constraints key]
-  (not-empty (key constraints)))
+(defn ->terms-query [key value]
+  (if (vector? value)
+    {:terms  {(keyword (str "search_terms." key)) (->lower-case-vec value)}}
+    {:term {(keyword (str "search_terms." key)) (if (string? value) (lower-case value) value)}}))
 
-(defn lukiopainotukset?
-  [constraints]
-  (constraint? constraints :lukiopainotukset))
-
-(defn lukiolinjaterityinenkoulutustehtava?
-  [constraints]
-  (constraint? constraints :lukiolinjaterityinenkoulutustehtava))
-
-(defn osaamisala?
-  [constraints]
-  (constraint? constraints :osaamisala))
-
-(defn ->terms-query
+(defn ->str-terms-query
   [key coll]
-  (let [search-field (keyword (str "search_terms." key))]
-    (if (= 1 (count coll))
-      {:term {search-field (lower-case (first coll))}}
-      {:terms {search-field (->lower-case-vec coll)}})))
-
-(defn keyword-terms-query
-  [field coll]
-  (->terms-query (str field ".keyword") coll))
+  (->terms-query key coll))
 
 (defn hakutieto-query
   [nested-field-name field-name constraint]
@@ -72,11 +54,15 @@
    {:path "search_terms.hakutiedot"
     :query
     {:bool
-     {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
+     {:filter (->str-terms-query (str nested-field-name "." field-name) constraint)}}}})
 
-(defn single-tyoelama-boolean-term
+
+(defn ->boolean-term-query
   [key]
-  {:term {(keyword (str "search_terms." key)) true}})
+  (->terms-query key true))
+
+(defn onkoTuleva-query [tuleva?]
+  {:term {:search_terms.onkoTuleva tuleva?}})
 
 (defn make-combined-boolean-filter-query
   [constraints sub-filters]
@@ -97,46 +83,47 @@
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))
 
-(defn- with-real-hits [agg]
-  (assoc agg :aggs {:real_hits {:reverse_nested {}}}))
+(defn- with-real-hits
+  ([agg rajain-context]
+   (let [reverse-nested-path (get-in rajain-context [:reverse-nested-path])]
+     (assoc agg :aggs {:real_hits {:reverse_nested (if reverse-nested-path {:path reverse-nested-path} {})}})))
+  ([agg]
+   (with-real-hits agg nil)))
 
-(defn- rajain-terms-agg [field-name term-details]
-  (let [default-terms {:field field-name
-                       :min_doc_count 0
-                       :size 1000}]
-    (with-real-hits {:terms (merge default-terms term-details)})))
+(defn- rajain-terms-agg
+  ([field-name rajain-context]
+   (let [default-terms {:field field-name
+                        :min_doc_count 0
+                        :size 1000}]
+     (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context))))
 
-(defn- constrained-agg [with-constraints filtered-aggs plain-aggs]
-  (if (not-empty with-constraints)
-    {:filter {:bool {:filter with-constraints}}
+(defn- constrained-agg [constraints filtered-aggs plain-aggs]
+  (if (not-empty constraints)
+    {:filter {:bool {:filter constraints}}
      :aggs filtered-aggs}
     plain-aggs))
 
 (defn rajain-aggregation
-  ([field-name with-constraints term-details]
-   (constrained-agg
-    with-constraints
-    {:rajain (rajain-terms-agg field-name term-details)}
-    (rajain-terms-agg field-name term-details)))
-  ([field-name with-constraints] (rajain-aggregation field-name with-constraints nil)))
+  [field-name contraints rajain-context]
+  (constrained-agg
+   contraints
+   {:rajain (rajain-terms-agg field-name rajain-context)}
+   (rajain-terms-agg field-name rajain-context)))
 
-(defn bool-agg-filter [own-filter with-constraints]
-  (with-real-hits {:filter {:bool
-                            {:filter (vec (distinct (conj with-constraints own-filter)))}}}))
-
-(defn hakukaynnissa-aggregation
-  [current-time with-constraints]
-  (bool-agg-filter (hakuaika-filter-query current-time) with-constraints))
+(defn bool-agg-filter [own-filter constraints rajain-context]
+  (with-real-hits
+    {:filter {:bool
+              {:filter (vec (distinct (conj constraints own-filter)))}}}
+    rajain-context))
 
 (defn nested-rajain-aggregation
-  ([rajain-key field-name with-constraints term-details]
-   (let [nested-agg {:nested  {:path (-> field-name
-                                         (replace-first ".keyword" "")
-                                         (split #"\.")
-                                         (drop-last) (#(join "." %)))}
-                     :aggs {:rajain (rajain-terms-agg field-name term-details)}}]
-     (constrained-agg
-      with-constraints
-      {(keyword rajain-key) nested-agg}
-      nested-agg)))
-  ([rajain-key field-name with-constraints] (nested-rajain-aggregation rajain-key field-name with-constraints nil)))
+  [rajain-key field-name constraints rajain-context]
+  (let [nested-agg {:nested  {:path (-> field-name
+                                        (replace-first ".keyword" "")
+                                        (split #"\.")
+                                        (drop-last) (#(join "." %)))}
+                    :aggs {:rajain (rajain-terms-agg field-name rajain-context)}}]
+    (constrained-agg
+     constraints
+     {(keyword rajain-key) nested-agg}
+     nested-agg)))

@@ -6,6 +6,7 @@
                                                 hakutulos-aggregations
                                                 jarjestajat-aggregations koulutus-wildcard-query search-term-query sorts
                                                 toteutukset-inner-hits toteutukset-query]]
+            [konfo-backend.search.rajain.query-tools :refer [onkoTuleva-query]]
             [konfo-backend.search.response :refer [parse parse-external
                                                    parse-for-autocomplete
                                                    parse-inner-hits-for-jarjestajat]]
@@ -36,7 +37,7 @@
   (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
         aggs (jarjestajat-aggregations constraints tuleva?)
-        post-filter-query (constraints-post-filter-query constraints inner-hits tuleva?)]
+        post-filter-query (constraints-post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))]
     (e/search index
               parse-inner-hits-for-jarjestajat
               :_source ["oid", "koulutukset", "nimi"]
