@@ -27,7 +27,7 @@
                  :koulutustyyppi_12])
    {:muu-amm-tutkinto {:count (get filter-counts :muu-amm-tutkinto 0)}}))
 
-(defn- konfo-koulutustyyppi
+(defn- koulutustyyppi
   [filter-counts]
   (let [ammatillinen-count (get filter-counts :amm 0)
         amm-alakoodi-counts (get-koulutustyyppi-amm-alakoodi-counts filter-counts)
@@ -52,7 +52,7 @@
                               :tohtori {:count tohtori-count}}}
            yo-count (assoc :count yo-count))}))
 
-(defn- konfo-koulutustyyppi-muu
+(defn- koulutustyyppi-muu
   [filter-counts]
   (let [amm-osaamisala-count (get filter-counts :amm-osaamisala 0)
         amm-tutkinnon-osa-count (get filter-counts :amm-tutkinnon-osa 0)
@@ -155,8 +155,8 @@
      {:opetuskieli (filters "oppilaitoksenopetuskieli")
       :maakunta (filters "maakunta")
       :kunta (filters "kunta")
-      :koulutustyyppi (konfo-koulutustyyppi filter-counts)
-      :koulutustyyppi-muu (konfo-koulutustyyppi-muu filter-counts)
+      :koulutustyyppi (koulutustyyppi filter-counts)
+      :koulutustyyppi-muu (koulutustyyppi-muu filter-counts)
       :koulutusala (filters "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa (filters "opetuspaikkakk")
       :valintatapa (filters "valintatapajono")
