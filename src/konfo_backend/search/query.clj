@@ -1,10 +1,10 @@
 (ns konfo-backend.search.query
-  (:require
-   [konfo-backend.elastic-tools :refer [->from ->size]]
-   [konfo-backend.index.haku :refer [list-yhteishaut]]
-   [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
-   [konfo-backend.search.tools :refer :all]
-   [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+  (:require [konfo-backend.elastic-tools :refer [->from ->size]]
+            [konfo-backend.index.haku :refer [list-yhteishaut]]
+            [konfo-backend.koodisto.koodisto :refer [list-koodi-urit]]
+            [konfo-backend.search.filter.query-tools :refer [hakuaika-filter-query]]
+            [konfo-backend.search.tools :refer :all]
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 (def koulutustyypit ["amm"
                      "amm-muu"

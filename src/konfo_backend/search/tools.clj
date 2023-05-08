@@ -1,14 +1,10 @@
 (ns konfo-backend.search.tools
-  (:require
-   [konfo-backend.tools :refer [not-blank? ->lower-case-vec current-time-as-kouta-format]]
-   [konfo-backend.search.filter.filterdefs :refer [filter-definitions combined-tyoelama-filter hakukaynnissa-filter combined-jarjestaja-filters]]
-   [clojure.string :refer [lower-case]]
-
-   [konfo-backend.config :refer [config]]))
-
-(defn- constraint?
-  [constraints key]
-  (not (empty? (key constraints))))
+  (:require [konfo-backend.config :refer [config]]
+            [konfo-backend.search.filter.filterdefs :refer [combined-jarjestaja-filters
+                                                            combined-tyoelama-filter filter-definitions hakukaynnissa-filter]]
+            [konfo-backend.search.filter.query-tools :refer [constraint?]]
+            [konfo-backend.tools :refer [current-time-as-kouta-format
+                                         not-blank?]]))
 
 (defn sijainti?
   [constraints]
@@ -62,18 +58,6 @@
   [constraints]
   (constraint? constraints :yhteishaku))
 
-(defn lukiopainotukset?
-  [constraints]
-  (constraint? constraints :lukiopainotukset))
-
-(defn lukiolinjaterityinenkoulutustehtava?
-  [constraints]
-  (constraint? constraints :lukiolinjaterityinenkoulutustehtava))
-
-(defn osaamisala?
-  [constraints]
-  (constraint? constraints :osaamisala))
-
 (defn oppilaitos?
   [constraints]
   (constraint? constraints :oppilaitos))
@@ -99,20 +83,13 @@
   [str lng]
   (keyword (format str lng)))
 
-(defn- do-search?
+(defn do-search?
   [keyword constraints]
   (or (not (empty? keyword)) (constraints? constraints)))
 
 (defn match-all?
   [keyword constraints]
   (not (do-search? keyword constraints)))
-
-(defn ->terms-query
-  [key coll]
-  (let [search-field (keyword (str "search_terms." key))]
-    (if (= 1 (count coll))
-      {:term {search-field (lower-case (first coll))}}
-      {:terms {search-field (->lower-case-vec coll)}})))
 
 (defn tyoelama-filters-query
   [constraints]
@@ -121,20 +98,6 @@
                           (tyovoimakoulutus? constraints) (conj {:term {:search_terms.isTyovoimakoulutus true}})
                           (taydennyskoulutus? constraints) (conj {:term {:search_terms.isTaydennyskoulutus true}}))]
     (when (seq tyoelama-should) {:bool {:should tyoelama-should}})))
-
-(defn- some-hakuaika-kaynnissa
-  [current-time]
-  {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
-                             {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                              {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
-            {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                      :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
-                                              {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                                               {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]})
-
-(defn hakuaika-filter-query
-  [current-time]
-  {:bool (some-hakuaika-kaynnissa current-time)})
 
 (defn filters
   [constraints current-time]
@@ -154,7 +117,7 @@
     tyoelama-filter
     hakukaynnissa-filter))))
 
-(defn- inner-hits-filters
+(defn inner-hits-filters
   [tuleva? constraints]
   {:bool
    {:must

@@ -1,8 +1,7 @@
 (ns konfo-backend.search.filter.filterdefs
-  (:require
-    [konfo-backend.search.filter.query-tools :refer [keyword-terms-query hakutieto-query single-tyoelama-boolean-query make-combined-boolean-filter-query lukiolinjat-and-osaamisala-filters]]
-    [konfo-backend.search.tools :refer [hakuaika-filter-query]]
-    [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+  (:require [konfo-backend.search.filter.query-tools :refer [hakuaika-filter-query
+                                                             hakutieto-query keyword-terms-query lukiolinjat-and-osaamisala-filters
+                                                             make-combined-boolean-filter-query single-tyoelama-boolean-query]]))
 
 (def koulutustyyppi
   {:id :koulutustyyppi :make-query #(keyword-terms-query "koulutustyypit" %)})
@@ -65,10 +64,11 @@
   [jotpa tyovoimakoulutus taydennyskoulutus])
 
 (def hakukaynnissa-filter
-  {:make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints))(hakuaika-filter-query current-time)))})
+  {:make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakuaika-filter-query current-time)))})
 
 (def combined-tyoelama-filter
   {:make-query #(make-combined-boolean-filter-query % tyoelama-sub-filters)})
 
 (def combined-jarjestaja-filters
   {:make-query #(lukiolinjat-and-osaamisala-filters %)})
+
