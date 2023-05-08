@@ -60,7 +60,7 @@
         amm-muu-count (get rajain-counts :amm-muu 0)
         muut-ammatilliset-count (get rajain-counts :muut-ammatilliset 0)
         amm-ope-erityisope-ja-opo-count (get rajain-counts :amm-ope-erityisope-ja-opo 0)
-        total-amk-muu-count (get rajain-counts :amk-muu)
+        total-amk-muu-count (get rajain-counts :amk-muu 0)
         tuva-normal-count (get rajain-counts :tuva-normal 0)
         tuva-erityisopetus-count (get rajain-counts :tuva-erityisopetus 0)
         total-tuva-count (get rajain-counts :tuva 0)
