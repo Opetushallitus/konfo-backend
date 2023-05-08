@@ -187,8 +187,7 @@
 
 (defn- oppilaitos-filters
   [aggs]
-  (let [oppilaitokset-with-nimet (add-oppilaitos-nimet (get-in aggs [:inner_hits_agg :oppilaitos :buckets]))]
-    oppilaitokset-with-nimet))
+  (add-oppilaitos-nimet (get-in aggs [:inner_hits_agg :oppilaitos :buckets])))
 
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts aggs]
