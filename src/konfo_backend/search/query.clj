@@ -165,14 +165,6 @@
     :koulutusala (rajain-aggregation "koulutusala" (->field-key "koulutusalat.keyword") current-time constraints)
     :koulutustyyppi (rajain-aggregation "koulutustyyppi" (->field-key "koulutustyypit.keyword") current-time constraints koulutustyypit)}))
 
-(defn- generate-aggs-for
-  [filter-name filter-aggs tuleva? constraints current-time]
-  {:filter {:bool
-            {:must   {:term {"search_terms.onkoTuleva" tuleva?}}
-             :filter (filters constraints current-time)}}
-   :aggs   (if (nil? filter-aggs)
-             {}
-             {filter-name filter-aggs})})
 
 (defn- hakutulos-aggs
   [constraints]
@@ -194,20 +186,16 @@
 (defn- jarjestajat-aggs
   [tuleva? constraints oppilaitos-oids]
   (let [current-time (current-time-as-kouta-format)
-        default-aggs (generate-default-aggs {} current-time)
-        lukiopainotukset-aggs (rajain-aggregation "lukiopainotukset" (->field-key "koulutustyypit") current-time {})
-        lukiolinjat-er-aggs (rajain-aggregation "lukiolinjaterityinenkoulutustehtava" (->field-key "lukiolinjaterityinenkoulutustehtava") current-time {})
-        osaamisala-aggs (rajain-aggregation "osaamisala" (->field-key "osaamisala") current-time {})]
+        default-aggs (generate-default-aggs {} current-time)]
     {:inner_hits_agg
      {:filter (inner-hits-filters tuleva? constraints)
       :aggs
       (-> default-aggs
           (add-oppilaitos-aggs oppilaitos-oids current-time)
-          (dissoc :koulutusala
-                  :koulutustyyppi))}
-     :lukiopainotukset_aggs (generate-aggs-for "lukiopainotukset" lukiopainotukset-aggs tuleva? constraints current-time)
-     :lukiolinjaterityinenkoulutustehtava_aggs (generate-aggs-for "lukiolinjaterityinenkoulutustehtava" lukiolinjat-er-aggs tuleva? constraints current-time)
-     :osaamisala_aggs (generate-aggs-for :osaamisala osaamisala-aggs tuleva? constraints current-time)}))
+          (dissoc :koulutusala :koulutustyyppi))}
+     :lukiopainotukset_aggs (rajain-aggregation "lukiopainotukset" (->field-key "lukiopainotukset.keyword") current-time {})
+     :lukiolinjaterityinenkoulutustehtava_aggs (rajain-aggregation "lukiolinjaterityinenkoulutustehtava.keyword" (->field-key "lukiolinjaterityinenkoulutustehtava.keyword") current-time {})
+     :osaamisala_aggs (rajain-aggregation "osaamisala" (->field-key "osaamisalat.keyword") current-time {})}))
 
 (defn- aggregations
   [aggs-generator]
@@ -218,8 +206,7 @@
   (let [current-time (current-time-as-kouta-format)]
     {:inner_hits_agg
      {:filter (inner-hits-filters tuleva? constraints)
-      :aggs
-      (generate-default-aggs {} current-time)}}))
+      :aggs (generate-default-aggs {} current-time)}}))
 
 (defn hakutulos-aggregations
   [constraints]

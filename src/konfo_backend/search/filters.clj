@@ -1,8 +1,12 @@
 (ns konfo-backend.search.filters
-  (:require [konfo-backend.koodisto.koodisto :as k]
+  (:require [konfo-backend.index.haku :refer [get-yhteishaut]]
             [konfo-backend.index.oppilaitos :as oppilaitos]
-            [konfo-backend.index.haku :refer [get-yhteishaut]]
-            [konfo-backend.tools :refer [reduce-merge-map]]))
+            [konfo-backend.koodisto.koodisto :as k]
+            [konfo-backend.tools :refer [debug-pretty reduce-merge-map]]))
+
+(defn buckets-to-map
+  [buckets]
+  (into {} (map (fn [x] [(keyword (:key x)) x]) buckets)))
 
 (defn- koodi->filter
   [filter-counts koodi]
@@ -187,7 +191,7 @@
 
 (defn- oppilaitos-filters
   [aggs]
-  (add-oppilaitos-nimet (get-in aggs [:inner_hits_agg :oppilaitos :buckets])))
+  (add-oppilaitos-nimet (buckets-to-map (get-in aggs [:inner_hits_agg :oppilaitos :buckets]))))
 
 (defn generate-filter-counts-for-jarjestajat
   [filter-counts aggs]
