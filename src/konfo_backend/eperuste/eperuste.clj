@@ -15,7 +15,7 @@
 
 (defn get-tutkinnonosa-by-id
   [id]
-  (id tutkinnonosa-index/get id))
+  (tutkinnonosa-index/get id))
 
 (defn in?
   [value coll]
