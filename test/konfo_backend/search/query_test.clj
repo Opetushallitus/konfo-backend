@@ -105,7 +105,14 @@
                              {:hits_aggregation
                               {:nested {:path "search_terms"}
                                :aggs
-                               {:koulutusala (default-agg "search_terms.koulutusalat.keyword")
+                               {:koulutuksenkestokuukausina {:filter
+                                                             {:bool
+                                                              {:filter
+                                                               [{:range
+                                                                 {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                                  {:gte 0}}}]}},
+                                                             :aggs {:real_hits {:reverse_nested {}}}}
+                                :koulutusala (default-agg "search_terms.koulutusalat.keyword")
                                 :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid")
                                 :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
                                 :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
@@ -174,15 +181,23 @@
    "aggregations with selected filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
-       (match?
+        (match? (m/match-with [map? m/equals]
         {:hits_aggregation
          {:nested {:path "search_terms"}
           :aggs
-          {:koulutusala (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
+          {:koulutuksenkestokuukausina {:filter
+                                        {:bool
+                                         {:filter
+                                          [jotpa-term
+                                           {:range
+                                            {:search_terms.metadata.suunniteltuKestoKuukausina
+                                             {:gte 0}}}]}},
+                                        :aggs {:real_hits {:reverse_nested {}}}}
+           :koulutusala (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
            :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" jotpa-bool-filter nil nil)
-           :kunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter)
+           :kunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "kunta.*"} nil)
            :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset" jotpa-bool-filter nil nil)
-           :maakunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter)
+           :maakunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "maakunta.*"} nil)
            :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" jotpa-bool-filter nil nil)
            :opetustapa (default-agg "search_terms.opetustavat.keyword" jotpa-bool-filter)
            :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" jotpa-bool-filter)
@@ -241,7 +256,7 @@
            :taydennyskoulutus {:filter
                                {:bool
                                 {:filter [{:term {:search_terms.isTaydennyskoulutus true}}]}}
-                               :aggs {:real_hits {:reverse_nested {}}}}}}}
+                               :aggs {:real_hits {:reverse_nested {}}}}}}})
         (hakutulos-aggregations {:jotpa true}))))))
 
 (def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
@@ -252,7 +267,7 @@
   (testing "should form aggregations for jarjestajat query with selected filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
-       (match?
+       (match? (m/match-with [map? m/equals]
         {:hits_aggregation
          {:nested {:path "search_terms"}
           :aggs
@@ -267,6 +282,16 @@
            :opetuskieli                         (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :opetusaika                          (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :valintatapa                         (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
+           :koulutuksenkestokuukausina          {:filter
+                                                  {:bool
+                                                   {:filter
+                                                    [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                                                     {:term {:search_terms.onkoTuleva false}}
+                                                     {:range
+                                                      {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                       {:gte 0}}}]}},
+                                                  :aggs
+                                                  {:real_hits {:reverse_nested {:path "search_terms"}}}}
            :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
@@ -311,14 +336,15 @@
                                                                 {:search_terms.hakutiedot.hakuajat.paattyy
                                                                  {:gt
                                                                   "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
-                                                 :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}
+                                                 :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}})
         (jarjestajat-aggregations {:sijainti ["kunta_564"]} false))))))
 
 (deftest tarjoajat-aggregations-test
   (testing "should form aggregations for tarjoajat query with selected filters"
     (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
       (is
-       (match? {:hits_aggregation
+        (match? (m/match-with [map? m/equals]
+               {:hits_aggregation
                 {:nested {:path "search_terms"}
                  :aggs
                  {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
@@ -330,6 +356,16 @@
                   :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                   :opetuskieli (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                   :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
+                  :koulutuksenkestokuukausina {:filter
+                                                {:bool
+                                                 {:filter
+                                                  [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                                                   {:term {:search_terms.onkoTuleva false}}
+                                                   {:range
+                                                    {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                     {:gte 0}}}]}},
+                                                :aggs
+                                                {:real_hits {:reverse_nested {:path "search_terms"}}}}
                   :koulutusala (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                   :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter {:size (count koulutustyypit) :include koulutustyypit} "search_terms")
                   :hakukaynnissa {:filter
@@ -373,5 +409,5 @@
                                                  {:search_terms.hakutiedot.hakuajat.paattyy
                                                   {:gt
                                                    "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
-                                  :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}
+                                  :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}})
                (tarjoajat-aggregations {:sijainti ["kunta_564"]} false))))))
