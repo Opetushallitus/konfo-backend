@@ -171,6 +171,25 @@
    |          description: Pilkulla eroteltu opetustapojen koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2"})
 
+(def koulutuksenkestokuukausina
+  {:id :koulutuksenkestokuukausina
+   :make-query #(number-range-query "metadata.suunniteltuKestoKuukausina" %)
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (number-range-query "metadata.suunniteltuKestoKuukausina" (or (:koulutuksenkestokuukausina constraints) 0))
+                                (aggregation-filters-without-rajainkeys
+                                  constraints ["koulutuksenkestokuukausina"] rajain-context) rajain-context))
+   :desc "
+   |        - in: query
+   |          name: koulutuksenkestokuukausina
+   |          style: form
+   |          explode: false
+   |          schema:
+   |            type: array
+   |            items:
+   |              type: number
+   |          description: Koulutuksen suunnitellun keston ala- ja yläraja kuukausina, pilkulla erotettuna
+   |          example: 0, 12"})
+
 (def valintatapa
   {:id :valintatapa
    :make-query #(hakutieto-query "hakutiedot" "valintatavat" %)
@@ -400,7 +419,7 @@
    |          required: false
    |          description: Haetaanko koulutuksia joilla on haku käynnissä"})
 
-(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa yhteishaku pohjakoulutusvaatimus)
+(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa valintatapa hakutapa yhteishaku pohjakoulutusvaatimus koulutuksenkestokuukausina)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
@@ -408,7 +427,7 @@
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
 (def default-aggregation-defs
-  [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi])
+  [maakunta kunta opetuskieli opetustapa hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi koulutuksenkestokuukausina])
 
 (def all-aggregation-defs (concat default-aggregation-defs [jotpa tyovoimakoulutus taydennyskoulutus oppilaitos osaamisala lukiopainotukset lukiolinjaterityinenkoulutustehtava]))
 
