@@ -118,6 +118,8 @@
 
 (defn- tyovoimakoulutus [rajain-counts] {:count (get rajain-counts :tyovoimakoulutus 0)})
 
+(defn- koulutuksenkesto [rajain-counts] {:count (get rajain-counts :koulutuksenkestokuukausina 0)})
+
 (defn- yhteishaku
   [aggs]
   (let [yhteishaut (get-yhteishaut)]
@@ -142,6 +144,7 @@
       :koulutusala (koodisto-counts "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa (koodisto-counts "opetuspaikkakk")
       :opetusaika (koodisto-counts "opetusaikakk")
+      :koulutuksenkestokuukausina (koulutuksenkesto rajain-counts)
       :valintatapa (koodisto-counts "valintatapajono")
       :hakukaynnissa (hakukaynnissa rajain-counts)
       :hakutapa (koodisto-counts "hakutapa")
