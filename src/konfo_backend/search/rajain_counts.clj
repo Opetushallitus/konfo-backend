@@ -124,7 +124,7 @@
                        yhteishakuKey
                        (-> yhteishaku
                            (dissoc :oid)
-                           (assoc :count (yhteishakuKey aggs))))))
+                           (assoc :count (get-in aggs [yhteishakuKey] 0))))))
             {}
             yhteishaut)))
 
