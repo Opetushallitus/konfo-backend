@@ -95,11 +95,6 @@
       (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
         (is (match? 19 (count (:hits r))))))
 
-    ;; (testing "koulutustyyppi amm"
-    ;;   (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
-    ;;     (is (match? 20 (count (:hits r))))
-    ;;     (is (match? 20 (get-in r [:filters :koulutustyyppi :amm :count])))))
-
     (testing "koulutustyyppi amm-osaamisala"
       (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
         (is (match? 1 (count (:hits r))))
@@ -291,17 +286,8 @@
         (testing "ammattitutkinto <-> EI ammattioppilaitos tai ammattikorkeakoulu"
           (is (= [keyword-koulutus-oid14 keyword-koulutus-oid10 keyword-koulutus-oid9 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "ammattitutkinto"))))
 
-        (comment testing "sosiaaliala <-> sosiaali- ja terveysala" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-                 (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaaliala"))))
-
         (testing "terveys <-> sosiaali- ja terveysala"
           (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "terveys"))))
-
-        (comment testing "musiikkioppilaitos <-> musiikkioppilaitokset" ;Ei toimi enää multi_match-queryllä
-                 (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikkioppilaitos"))))
-
-        (comment testing "musiikki <-> musiikkioppilaitokset" ;Ei toimi enää multi_match-queryllä
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikki"))))
 
         (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
           (is (= [keyword-koulutus-oid12 keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
@@ -309,29 +295,14 @@
         (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri, EI autoalan perustutkintoa"
           (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatio"))))
 
-        (comment testing "humanismi <-> humanistinen" ;Ei toimi enää multi_match-queryllä
-                 (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanismi"))))
-
         (testing "humanisti <-> humanistinen"
           (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanisti"))))
-
-        (comment testing "lääketiede <-> lääketieteen"          ;Ei toimi enää multi_match-queryllä.
-                 (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääketiede"))))
 
         (testing "lääkäri <-> lääketieteen"
           (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääkäri"))))
 
         (testing "muusikko <-> muusikon koulutus"
           (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikko"))))
-
-        (comment testing "musikko <-> muusikko" ;Ei toimi enää multi_match-queryllä.
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikki"))))
-
-        (comment testing "insinööri <-> automaatioinsinööri" ;Ei toimi enää multi_match-queryllä
-          (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "insinööri"))))
-
-        (comment testing "insinöö <-> automaatioinsinööri" ;Ei toimi enää multi_match-queryllä
-          (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "insinöö"))))
 
         (testing "tekniikka <-> automaatiotekniikka"
           (is (= [keyword-koulutus-oid4 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "tekniikka"))))
@@ -348,23 +319,14 @@
         (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
           (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittauS%20peruS"))))
 
-        (comment testing "tietojenkäsittelytiede <-> tietojenkäsittelytieteen" ;Ei toimi enää multi_match-queryllä
-                 (is (= [keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittelytiede"))))
-
         (testing "tietojenkäsittely <-> tietojenkäsittelytieteen"
           (is (= [keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittely"))))
-
-        (comment testing "automaatiikka <-> automaatioinsinööri"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-                 (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatiikka"))))
 
         (testing "hius <-> Hius- ja kauneudenhoitoalan perustutkinto"
           (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "hius"))))
 
         (testing "kauneudenhoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
           (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "kauneudenhoito"))))
-
-        (comment testing "hoito <-> Eläintenhoidon ammattitutkinto sekä Hius- ja kauneudenhoitoalan perustutkinto"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-                 (is (= [keyword-koulutus-oid14 keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "hoito"))))
 
         (testing "psykologia <-> Psykologi"
           (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologia"))))
@@ -378,10 +340,6 @@
         (testing "amk <-> ylempi (AMK)"
           (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "amk"))))
 
-        (comment testing "psygologia <-> psykologia"            ;Ei toimi enää multi_match-queryn kanssa
-                 (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psygologia"))))
-
-
         (testing "psykologi <-> psykologia"
           (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologi"))))
 
@@ -390,12 +348,6 @@
 
         (testing "perustutkinto <-> kaikki perustutkinnot"
           (is (= [keyword-koulutus-oid12 keyword-koulutus-oid13 keyword-koulutus-oid17 keyword-koulutus-oid11 keyword-koulutus-oid7 keyword-koulutus-oid18 keyword-koulutus-oid8 keyword-koulutus-oid6 keyword-koulutus-oid16] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto"))))
-
-        (comment testing "teknikko <-> tekniikka"  ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-                 (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "teknikko"))))
-
-        (comment testing "tiede <-> lääketiede ja tietojenkäsittelytiede" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-                 (is (= [keyword-koulutus-oid1 keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tiede"))))
 
         (testing "eläin <-> eläintenhoito EI elintarviketta"
           (is (= [keyword-koulutus-oid14] (search-and-get-oids :sort "name" :order "asc" :keyword "eläin"))))
@@ -413,16 +365,4 @@
           (is (= [] (search-and-get-oids :sort "name" :order "asc" :keyword "ensihoitaja"))))
 
         (testing "seppä <-> seppä"
-          (is (= [keyword-koulutus-oid17] (search-and-get-oids :sort "name" :order "asc" :keyword "seppä"))))
-
-        (comment testing "tie <-> lääketiede ja tietojenkäsittelytiede" ;Ei toimi enää kun on haluttu lisätä haun tarkkuutta
-          (is (= [keyword-koulutus-oid1 keyword-koulutus-oid15 keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tie"))))
-
-        (comment testing "haluan opiskella lääkäriksi <-> lääkäri"
-                 (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20lääkäriksi"))))
-
-        (comment testing "musiikin opiskelu <-> muusikon koulutus"
-                 (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "musiikin%20opiskelu"))))
-
-        (comment testing "haluan opiskella psykologiaa <-> psykologi"
-                 (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "haluan%20opiskella%20psykologiaa")))))))
+          (is (= [keyword-koulutus-oid17] (search-and-get-oids :sort "name" :order "asc" :keyword "seppä")))))))
