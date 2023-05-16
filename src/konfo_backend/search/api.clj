@@ -3,7 +3,8 @@
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                            valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                            hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
-                                                           lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]]
+                                                           lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
+                                                           opetusaika]]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -99,6 +100,7 @@
   (:desc opetuskieli) "\n"
   (:desc koulutusala) "\n"
   (:desc opetustapa) "\n"
+  (:desc opetusaika) "\n"
   (:desc valintatapa) "\n"
   (:desc hakukaynnissa) "\n"
   (:desc jotpa) "\n"
@@ -174,6 +176,7 @@
   (:desc opetuskieli) "\n"
   (:desc koulutusala) "\n"
   (:desc opetustapa) "\n"
+  (:desc opetusaika) "\n"
   (:desc valintatapa) "\n"
   (:desc hakukaynnissa) "\n"
   (:desc jotpa) "\n"
@@ -251,6 +254,7 @@
   (:desc opetuskieli) "\n"
   (:desc koulutusala) "\n"
   (:desc opetustapa) "\n"
+  (:desc opetusaika) "\n"
   (:desc valintatapa) "\n"
   (:desc hakukaynnissa) "\n"
   (:desc jotpa) "\n"
@@ -327,6 +331,7 @@
   (:desc opetuskieli) "\n"
   (:desc koulutusala) "\n"
   (:desc opetustapa) "\n"
+  (:desc opetusaika) "\n"
   "
    |      responses:
    |        '200':
@@ -441,6 +446,7 @@
   (:desc opetuskieli) "\n"
   (:desc koulutusala) "\n"
   (:desc opetustapa) "\n"
+  (:desc opetusaika) "\n"
   (:desc valintatapa) "\n"
   (:desc hakukaynnissa) "\n"
   (:desc jotpa) "\n"
@@ -469,6 +475,7 @@
    :opetuskieli           (comma-separated-string->vec (:opetuskieli rajain-params))
    :koulutusala           (comma-separated-string->vec (:koulutusala rajain-params))
    :opetustapa            (comma-separated-string->vec (:opetustapa rajain-params))
+   :opetusaika            (comma-separated-string->vec (:opetusaika rajain-params))
    :valintatapa           (comma-separated-string->vec (:valintatapa rajain-params))
    :hakukaynnissa         (:hakukaynnissa rajain-params)
    :hakutapa              (comma-separated-string->vec (:hakutapa rajain-params))
@@ -554,6 +561,7 @@
                      {opetuskieli           :- String nil}
                      {koulutusala           :- String nil}
                      {opetustapa            :- String nil}
+                     {opetusaika            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
                      {jotpa                 :- Boolean false}
@@ -575,6 +583,7 @@
                                      :opetuskieli opetuskieli
                                      :koulutusala koulutusala
                                      :opetustapa opetustapa
+                                     :opetusaika opetusaika
                                      :valintatapa valintatapa
                                      :hakukaynnissa hakukaynnissa
                                      :jotpa jotpa
@@ -595,6 +604,7 @@
                      {opetuskieli           :- String nil}
                      {koulutusala           :- String nil}
                      {opetustapa            :- String nil}
+                     {opetusaika            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
                      {jotpa                 :- Boolean false}
@@ -619,6 +629,7 @@
                                      :opetuskieli opetuskieli
                                      :koulutusala koulutusala
                                      :opetustapa opetustapa
+                                     :opetusaika opetusaika
                                      :valintatapa valintatapa
                                      :hakukaynnissa hakukaynnissa
                                      :jotpa jotpa
@@ -644,6 +655,7 @@
                      {opetuskieli           :- String nil}
                      {koulutusala           :- String nil}
                      {opetustapa            :- String nil}
+                     {opetusaika            :- String nil}
                      {valintatapa           :- String nil}
                      {hakukaynnissa         :- Boolean false}
                      {jotpa                 :- Boolean false}
@@ -664,6 +676,7 @@
                                                                     :opetuskieli opetuskieli
                                                                     :koulutusala koulutusala
                                                                     :opetustapa opetustapa
+                                                                    :opetusaika opetusaika
                                                                     :valintatapa valintatapa
                                                                     :hakukaynnissa hakukaynnissa
                                                                     :jotpa jotpa
@@ -722,6 +735,7 @@
                        {opetuskieli           :- String nil}
                        {koulutusala           :- String nil}
                        {opetustapa            :- String nil}
+                       {opetusaika            :- String nil}
                        {valintatapa           :- String nil}
                        {hakukaynnissa         :- Boolean false}
                        {jotpa                 :- Boolean false}
@@ -740,6 +754,7 @@
                                          :opetuskieli opetuskieli
                                          :koulutusala koulutusala
                                          :opetustapa opetustapa
+                                         :opetusaika opetusaika
                                          :valintatapa valintatapa
                                          :hakukaynnissa hakukaynnissa
                                          :jotpa jotpa

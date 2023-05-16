@@ -50,10 +50,10 @@
       (coll? value) {:terms {term-key (->lower-case-vec value)}}
       :else {:term {term-key (->lower-case value)}})))
 
-(defn hakutieto-query
+(defn nested-query
   [nested-field-name field-name constraint]
   {:nested
-   {:path "search_terms.hakutiedot"
+   {:path (str "search_terms." nested-field-name)
     :query
     {:bool
      {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
