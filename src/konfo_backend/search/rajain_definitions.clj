@@ -85,8 +85,8 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu kuntien ja maakuntien koodeja
-   |          example: kunta_091,maakunta_01,maakunta_03"})
+   |          description: Pilkulla eroteltuna kuntien ja maakuntien koodeja (koodistot \"kunta\" ja \"maakunta\")
+   |          example: kunta_091,maakunta_01"})
 
 (def maakunta
   {:id :maakunta
@@ -117,7 +117,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu opetuskielten koodeja
+   |          description: Pilkulla eroteltuna \"oppilaitoksenopetuskieli\"-koodiston koodeja
    |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2"})
 
 (def koulutusala
@@ -136,7 +136,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu koulutusalojen koodeja
+   |          description: Pilkulla eroteltuna koulutusalojen koodeja (koodistot \"kansallinenkoulutusluokitus2016koulutusalataso1\" ja \"kansallinenkoulutusluokitus2016koulutusalataso2\")
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02"})
 
 (def opetustapa
@@ -155,15 +155,16 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu opetustapojen koodeja
+   |          description: Pilkulla eroteltuna \"opetuspaikkakk\"-koodiston koodeja
    |          example: opetuspaikkakk_1, opetuspaikkakk_2"})
 
 (def opetusaika
-  {:id :opetusaika :make-query #(->terms-query "metadata.opetusajat.koodiUri" %)
+  {:id :opetusaika
+   :make-query #(->terms-query "metadata.opetusajat.koodiUri" %)
    :make-agg (fn [constraints rajain-context]
-           (rajain-aggregation (->field-key "metadata.opetusajat.koodiUri.keyword")
-                               (aggregation-filters-without-rajainkeys constraints ["opetusaika"] rajain-context)
-                               rajain-context))
+               (rajain-aggregation (->field-key "metadata.opetusajat.koodiUri.keyword")
+                                   (aggregation-filters-without-rajainkeys constraints ["opetusaika"] rajain-context)
+                                   rajain-context))
    :desc "
    |        - in: query
    |          name: opetusaika
@@ -174,7 +175,7 @@
    |            items:
    |              type: string
    |          required: false
-   |          description: Pilkulla eroteltu opetusaikojen koodeja
+   |          description: Pilkulla eroteltuna \"opetusaikakk\"-koodiston koodeja
    |          example: opetusaikakk_1,opetusaikakk_2"})
 
 (def valintatapa
@@ -193,7 +194,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu valintatapojen koodeja
+   |          description: Pilkulla eroteltuna \"valintatapajono\"-koodiston koodeja
    |          example: valintatapajono_av, valintatapajono_tv"})
 
 (def hakutapa
@@ -212,7 +213,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu hakutapojen koodeja
+   |          description: Pilkulla eroteltuna \"hakutapa\"-koodiston koodeja
    |          example: hakutapa_01, hakutapa_03"})
 
 (def jotpa
@@ -229,7 +230,7 @@
    |            type: boolean
    |            default: false
    |          required: false
-   |          description: Haetaanko koulutuksia joilla on JOTPA-rahoitus"})
+   |          description: Haetaanko koulutuksia, joilla on JOTPA-rahoitus?"})
 
 (def tyovoimakoulutus
   {:id :tyovoimakoulutus
@@ -245,7 +246,7 @@
    |            type: boolean
    |            default: false
    |          required: false
-   |          description: Haetaanko koulutuksia jotka ovat työvoimakoulutusta"})
+   |          description: Haetaanko koulutuksia, jotka ovat työvoimakoulutusta?"})
 
 (def taydennyskoulutus
   {:id :taydennyskoulutus
@@ -261,7 +262,7 @@
    |            type: boolean
    |            default: false
    |          required: false
-   |          description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta"})
+   |          description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
 
 (def yhteishaku
   {:id :yhteishaku
@@ -279,7 +280,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu lista yhteishakujen oideja
+   |          description: Pilkulla eroteltuna yhteishakujen oideja
    |          example: 1.2.246.562.29.00000000000000000800"})
 
 (def pohjakoulutusvaatimus
@@ -298,7 +299,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltu lista pohjakoulutusvaatimusten koodeja
+   |          description: Pilkulla eroteltuna \"pohjakoulutusvaatimuskonfo\"-koodiston koodeja
    |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102"})
 
 (def oppilaitos
@@ -318,7 +319,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltuna lista toteutusten oppilaitoksista
+   |          description: Pilkulla eroteltuna toteutusten oppilaitosten oideja
    |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356"})
 
 (def lukiopainotukset
@@ -337,7 +338,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltuna lukiopainotusten koodeja
+   |          description: Pilkulla eroteltuna \"lukiopainotukset\"-koodiston koodeja
    |          example: lukiopainotukset_0111, lukiopainotukset_001"})
 
 (def lukiolinjaterityinenkoulutustehtava
@@ -356,7 +357,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltuna lukiolinjaterityinenkoulutustehtava-koodeja
+   |          description: Pilkulla eroteltuna \"lukiolinjaterityinenkoulutustehtava\"-koodiston koodeja
    |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126"})
 
 (def osaamisala
@@ -375,7 +376,7 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltuna ammatillisten osaamisalojen koodeja
+   |          description: Pilkulla eroteltuna ammatillisten koulutusten \"osaamisala\"-koodiston koodeja
    |          example: osaamisala_1756, osaamisala_3076"})
 
 (def hakukaynnissa
@@ -392,7 +393,7 @@
    |            type: boolean
    |            default: false
    |          required: false
-   |          description: Haetaanko koulutuksia joilla on haku käynnissä"})
+   |          description: Haetaanko koulutukset, joilla on haku käynnissä?"})
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
