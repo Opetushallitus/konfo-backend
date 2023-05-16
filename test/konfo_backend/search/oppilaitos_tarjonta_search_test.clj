@@ -22,7 +22,7 @@
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
-(def helsingin-yliopisto      "1.2.246.562.10.000005")
+(def helsingin-yliopisto      "1.2.246.562.10.39218317368")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 
@@ -60,7 +60,7 @@
 
     (testing "Filtering tarjonta"
       (testing "Can filter by sijainti"
-        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_091")]
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_220")]
           (is (= 3 (:total r)))
           (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
           (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
@@ -107,7 +107,7 @@
       (testing "nykyinen"
         (let [r (search helsingin-yliopisto :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:oppilaitosOid     "1.2.246.562.10.000005"
+          (is (= {:oppilaitosOid     "1.2.246.562.10.39218317368"
                   ;:maksunMaara nil,
                   :kuvaus            {},
                   :koulutusOid       traktoriala-oid
@@ -115,7 +115,7 @@
                   :nimi              {:fi "Massikkakoulutus fi" ,
                                       :sv "Massikkakoulutus sv"},
                   ;:maksullisuustyyppi nil,
-                  :kunnat            [],
+                  :kunnat            [{:koodiUri "kunta_091", :nimi {:fi "kunta_091 nimi fi", :sv "kunta_091 nimi sv"}}],
                   :tutkintonimikkeet [],
                   :opetuskielet      ["oppilaitoksenopetuskieli_01"],
                   :koulutustyyppi    "amm",

@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.koulutus.search :refer [index]]
             [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
@@ -89,7 +88,7 @@
         (let [r (search traktoriala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
           (is (= 1 (:total r)))
           (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
-          (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
+          (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 1 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
@@ -135,17 +134,18 @@
         (let [r (search hevosala-oid :tuleva true)]
           (is (= 1 (:total r)))
           (is (= {:koulutusOid "1.2.246.562.13.000011"
-                  :oppilaitosOid "1.2.246.562.10.000005",
+                  :oppilaitosOid "1.2.246.562.10.39218317368",
                   :nimi {:fi "Helsingin yliopisto",
-                         :sv "Helsingin yliopisto sv"},
+                         :sv "Helsingfors universitet"
+                         :en "University of Helsinki"},
                   ;:oppilaitosTila nil,
                   :koulutustyyppi "yo",
                   ;:opetuskielet [],
                   :kunnat [{:koodiUri "kunta_091",
                             :nimi {:fi "kunta_091 nimi fi",
                                    :sv "kunta_091 nimi sv"}}],
-                  :kuvaus {}
                   :hakuAuki false
+                  :kuvaus {}
                   } (first (:hits r)))))))))
 
   (def traktoriala-oid2 "1.2.246.562.13.000012")

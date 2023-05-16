@@ -20,18 +20,15 @@
                      :suoritustapa       (:suoritustapa source)
                      :kuvaus             (:teksti source)}) (map :_source (some-> result :hits :hits))))
 
-(defn get-kuvaukset-by-eperuste-id
-  [eperuste-id]
-  (osaamisalakuvaus-search kuvaus-result-mapper
-                           :_source [:id, :eperuste-oid :suoritustapa :osaamisala.nimi, :osaamisala.uri, :teksti.fi, :teksti.sv, :teksti.en]
-                           :size 100
-                           :query {:bool {:must {:term {:eperuste-oid eperuste-id}}}}))
 
 (defn get-kuvaukset-by-eperuste-ids
   [eperuste-ids]
-  (if (= 1 (count eperuste-ids))
-    (get-kuvaukset-by-eperuste-id (first eperuste-ids))
+  (when (not-empty eperuste-ids)
     (osaamisalakuvaus-search kuvaus-result-mapper
                              :_source [:id, :eperuste-oid, :suoritustapa :osaamisala.nimi, :osaamisala.uri, :teksti.fi, :teksti.sv, :teksti.en]
                              :size 1000
                              :query {:bool {:must {:terms {:eperuste-oid (vec eperuste-ids)}}}})))
+
+(defn get-kuvaukset-by-eperuste-id
+  [eperuste-id]
+  (get-kuvaukset-by-eperuste-ids (vec eperuste-id)))

@@ -1,10 +1,13 @@
 (ns konfo-backend.search.oppilaitos.search
-  (:require
-    [konfo-backend.tools :refer [log-pretty]]
-    [konfo-backend.search.tools :refer :all]
-    [konfo-backend.search.query :refer [query hakutulos-aggregations tarjoajat-aggregations inner-hits-query inner-hits-query-osat sorts]]
-    [konfo-backend.search.response :refer [parse parse-inner-hits parse-inner-hits-for-tarjoajat]]
-    [konfo-backend.elastic-tools :as e]))
+  (:require [konfo-backend.elastic-tools :as e]
+            [konfo-backend.search.query :refer [post-filter-query
+                                                hakutulos-aggregations
+                                                inner-hits-query-osat search-term-query sorts tarjoajat-aggregations
+                                                toteutukset-inner-hits toteutukset-query]]
+            [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
+            [konfo-backend.search.response :refer [parse parse-inner-hits
+                                                   parse-inner-hits-for-jarjestajat]]
+            [konfo-backend.search.tools :refer :all]))
 
 (defonce index "oppilaitos-kouta-search")
 
@@ -12,28 +15,30 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (when (do-search? keyword constraints)
-    (let [query (query keyword constraints lng ["words"])
-          aggs (hakutulos-aggregations constraints)]
-      (log-pretty query)
-      (log-pretty aggs)
-      (oppilaitos-kouta-search
-        page
-        size
-        parse
-        :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
-        :sort (sorts sort order lng)
-        :query query
-        :aggs aggs))))
+  (let [search-term-query (search-term-query keyword lng ["words"])
+        post-filter-query (post-filter-query constraints)
+        aggs (hakutulos-aggregations constraints)]
+    (oppilaitos-kouta-search
+     page
+     size
+     parse
+     :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
+     :sort (sorts sort order lng)
+     :query search-term-query
+     :post_filter post-filter-query
+     :aggs aggs)))
 
 (defn search-oppilaitoksen-tarjonta
   [oid lng page size order tuleva? constraints]
-  (let [query (inner-hits-query oid lng page size order tuleva? constraints)
-        aggs (tarjoajat-aggregations tuleva? constraints)]
+  (let [query (toteutukset-query oid)
+        inner-hits (toteutukset-inner-hits lng page size order)
+        post-filter-query (post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))
+        aggs (tarjoajat-aggregations constraints tuleva?)]
     (e/search index
-              parse-inner-hits-for-tarjoajat
+              parse-inner-hits-for-jarjestajat
               :_source ["oid"]
               :query query
+              :post_filter post-filter-query
               :aggs aggs)))
 
 (defn search-oppilaitoksen-osan-tarjonta

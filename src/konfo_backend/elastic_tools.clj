@@ -8,9 +8,10 @@
 
 (defn get-source
   ([index id excludes]
-   (let [result (e/get-document index id :_source_excludes (clojure.string/join "," excludes))]
-     (when (:found result)
-       (:_source result))))
+   (when id
+     (let [result (e/get-document index id :_source_excludes (clojure.string/join "," excludes))]
+       (when (:found result)
+         (:_source result)))))
   ([index id]
    (get-source index id [])))
 
@@ -22,10 +23,11 @@
 
 (defn search
   [index mapper & query-parts]
-  (->> (apply e/search
-              index
-              query-parts)
-       mapper))
+  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
+    (->> (apply e/search
+                index
+                query-parts-without-nils)
+         mapper)))
 
 (defn count
   [index & query-parts]
