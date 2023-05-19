@@ -527,14 +527,14 @@
             (ok result)
             (not-found "Not found"))))
 
-(defn with-validated-params [search-phrase lng sort order or-else]
+(defn with-validated-params [search-phrase lng sort order or-else-fn]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
-    :else (ok or-else)))
+    :else (ok (or-else-fn))))
 
 (def routes
   (context "/search" []
@@ -747,25 +747,30 @@
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}]
-      (let [search-params [searchPhrase
-                           lng
-                           size
-                           sort
-                           order
-                           {:koulutustyyppi koulutustyyppi
-                            :sijainti sijainti
-                            :opetuskieli opetuskieli
-                            :koulutusala koulutusala
-                            :opetustapa opetustapa
-                            :opetusaika opetusaika
-                            :valintatapa valintatapa
-                            :hakukaynnissa hakukaynnissa
-                            :jotpa jotpa
-                            :tyovoimakoulutus tyovoimakoulutus
-                            :taydennyskoulutus taydennyskoulutus
-                            :hakutapa hakutapa
-                            :yhteishaku yhteishaku
-                            :pohjakoulutusvaatimus pohjakoulutusvaatimus}]
-            koulutus-response (apply koulutus-search/autocomplete-search search-params)
-            oppilaitos-response (apply oppilaitos-search/autocomplete-search search-params)]
-        (with-validated-params searchPhrase lng sort order {:koulutukset koulutus-response :oppilaitokset oppilaitos-response})))))
+      (with-validated-params
+        searchPhrase
+        lng
+        sort
+        order
+        (fn []
+          (let [search-params [searchPhrase
+                               lng
+                               size
+                               sort
+                               order
+                               {:koulutustyyppi koulutustyyppi
+                                :sijainti sijainti
+                                :opetuskieli opetuskieli
+                                :koulutusala koulutusala
+                                :opetustapa opetustapa
+                                :opetusaika opetusaika
+                                :valintatapa valintatapa
+                                :hakukaynnissa hakukaynnissa
+                                :jotpa jotpa
+                                :tyovoimakoulutus tyovoimakoulutus
+                                :taydennyskoulutus taydennyskoulutus
+                                :hakutapa hakutapa
+                                :yhteishaku yhteishaku
+                                :pohjakoulutusvaatimus pohjakoulutusvaatimus}]]
+            {:koulutukset (apply koulutus-search/autocomplete-search search-params)
+             :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))
