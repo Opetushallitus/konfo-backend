@@ -147,7 +147,9 @@
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
           (is (= {:nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010105",
                          :sv "Oppilaitos sv 1.2.246.562.10.00101010105"},
-                  :koulutusohjelmia 1,
+                  :koulutusohjelmatLkm {:kaikki 1
+                                        :tutkintoonJohtavat 1
+                                        :eiTutkintoonJohtavat 0}
                   :paikkakunnat [{:koodiUri "kunta_618",
                                   :nimi {:fi "kunta_618 nimi fi",
                                          :sv "kunta_618 nimi sv"}}],
