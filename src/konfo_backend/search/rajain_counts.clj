@@ -2,7 +2,7 @@
   (:require [konfo-backend.index.haku :refer [get-yhteishaut]]
             [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.koodisto.koodisto :as k]
-            [konfo-backend.tools :refer [reduce-merge-map]]))
+            [konfo-backend.tools :refer [koodi-uri-no-version reduce-merge-map]]))
 
 (defn- koodi->rajain-counts
   [rajain-counts koodi]
@@ -17,8 +17,11 @@
 
 (defn- koodisto->rajain-counts
   [rajain-counts koodisto]
-  (reduce-merge-map #(koodi->rajain-counts rajain-counts %)
-                    (:koodit (k/get-koodisto-with-cache koodisto))))
+  (let [rajain-counts-no-koodi-versions (into {} (map (fn [item] [(keyword (koodi-uri-no-version (name (first item))))
+                                                                  (second item)]) rajain-counts))
+        koodit (:koodit (k/get-koodisto-with-cache koodisto))]
+    (reduce-merge-map #(koodi->rajain-counts rajain-counts-no-koodi-versions %)
+                      koodit)))
 
 (defn- get-koulutustyyppi-amm-alakoodi-counts [rajain-counts]
   (merge
@@ -138,6 +141,7 @@
       :koulutustyyppi-muu (koulutustyyppi-muu rajain-counts)
       :koulutusala (koodisto-counts "kansallinenkoulutusluokitus2016koulutusalataso1")
       :opetustapa (koodisto-counts "opetuspaikkakk")
+      :opetusaika (koodisto-counts "opetusaikakk")
       :valintatapa (koodisto-counts "valintatapajono")
       :hakukaynnissa (hakukaynnissa rajain-counts)
       :hakutapa (koodisto-counts "hakutapa")
