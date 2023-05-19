@@ -1,10 +1,10 @@
 (ns konfo-backend.search.api
   (:require
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
-                                                           valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
-                                                           hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
-                                                           lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
-                                                           opetusaika]]
+                                                    valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
+                                                    hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
+                                                    lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
+                                                    opetusaika]]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -520,19 +520,14 @@
             (ok result)
             (not-found "Not found"))))
 
-(defn ->autocomplete-search-with-validated-params
-  [search-fn search-phrase lng sort order rajain-params]
+(defn with-validated-params [search-phrase lng sort order or-else]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
-    :else (ok (search-fn search-phrase
-                 lng
-                 sort
-                 order
-                 (create-constraints rajain-params)))))
+    :else (ok or-else)))
 
 (def routes
   (context "/search" []
@@ -725,41 +720,61 @@
                                              (ok result)
                                              (not-found "Not found")))))
 
-   (GET "/autocomplete" [:as request]
-        :query-params [{searchPhrase          :- String nil}
-                       {lng                   :- String "fi"}
-                       {sort                  :- String "name"}
-                       {order                 :- String "asc"}
-                       {koulutustyyppi        :- String nil}
-                       {sijainti              :- String nil}
-                       {opetuskieli           :- String nil}
-                       {koulutusala           :- String nil}
-                       {opetustapa            :- String nil}
-                       {opetusaika            :- String nil}
-                       {valintatapa           :- String nil}
-                       {hakukaynnissa         :- Boolean false}
-                       {jotpa                 :- Boolean false}
-                       {tyovoimakoulutus      :- Boolean false}
-                       {taydennyskoulutus     :- Boolean false}
-                       {hakutapa              :- String nil}
-                       {yhteishaku            :- String nil}
-                       {pohjakoulutusvaatimus :- String nil}]
-        (->autocomplete-search-with-validated-params koulutus-search/autocomplete-search
-                                        searchPhrase
-                                        lng
-                                        sort
-                                        order
-                                        {:koulutustyyppi koulutustyyppi
-                                         :sijainti sijainti
-                                         :opetuskieli opetuskieli
-                                         :koulutusala koulutusala
-                                         :opetustapa opetustapa
-                                         :opetusaika opetusaika
-                                         :valintatapa valintatapa
-                                         :hakukaynnissa hakukaynnissa
-                                         :jotpa jotpa
-                                         :tyovoimakoulutus tyovoimakoulutus
-                                         :taydennyskoulutus taydennyskoulutus
-                                         :hakutapa hakutapa
-                                         :yhteishaku yhteishaku
-                                         :pohjakoulutusvaatimus pohjakoulutusvaatimus}))))
+    (GET "/autocomplete" [:as request]
+      :query-params [{searchPhrase          :- String nil}
+                     {lng                   :- String "fi"}
+                     {sort                  :- String "name"}
+                     {order                 :- String "asc"}
+                     {koulutustyyppi        :- String nil}
+                     {sijainti              :- String nil}
+                     {opetuskieli           :- String nil}
+                     {koulutusala           :- String nil}
+                     {opetustapa            :- String nil}
+                     {opetusaika            :- String nil}
+                     {valintatapa           :- String nil}
+                     {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean false}
+                     {tyovoimakoulutus      :- Boolean false}
+                     {taydennyskoulutus     :- Boolean false}
+                     {hakutapa              :- String nil}
+                     {yhteishaku            :- String nil}
+                     {pohjakoulutusvaatimus :- String nil}]
+      (let [koulutus-response (koulutus-search/autocomplete-search
+                               searchPhrase
+                               lng
+                               sort
+                               order
+                               {:koulutustyyppi koulutustyyppi
+                                :sijainti sijainti
+                                :opetuskieli opetuskieli
+                                :koulutusala koulutusala
+                                :opetustapa opetustapa
+                                :opetusaika opetusaika
+                                :valintatapa valintatapa
+                                :hakukaynnissa hakukaynnissa
+                                :jotpa jotpa
+                                :tyovoimakoulutus tyovoimakoulutus
+                                :taydennyskoulutus taydennyskoulutus
+                                :hakutapa hakutapa
+                                :yhteishaku yhteishaku
+                                :pohjakoulutusvaatimus pohjakoulutusvaatimus})
+            oppilaitos-response (oppilaitos-search/autocomplete-search
+                                 searchPhrase
+                                 lng
+                                 sort
+                                 order
+                                 {:koulutustyyppi koulutustyyppi
+                                  :sijainti sijainti
+                                  :opetuskieli opetuskieli
+                                  :koulutusala koulutusala
+                                  :opetustapa opetustapa
+                                  :opetusaika opetusaika
+                                  :valintatapa valintatapa
+                                  :hakukaynnissa hakukaynnissa
+                                  :jotpa jotpa
+                                  :tyovoimakoulutus tyovoimakoulutus
+                                  :taydennyskoulutus taydennyskoulutus
+                                  :hakutapa hakutapa
+                                  :yhteishaku yhteishaku
+                                  :pohjakoulutusvaatimus pohjakoulutusvaatimus})]
+        (with-validated-params searchPhrase lng sort order {:koulutukset koulutus-response :oppilaitokset oppilaitos-response})))))

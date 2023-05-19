@@ -1,7 +1,7 @@
 (ns konfo-backend.search.response
   (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
             [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
-                                                  generate-rajain-counts-for-jarjestajat]]
+                                                        generate-rajain-counts-for-jarjestajat]]
             [konfo-backend.search.rajain-definitions :refer [all-aggregation-defs]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
@@ -17,8 +17,12 @@
 
 (defn- autocomplete-hits
   [response lng]
-  (map (fn [x] (let [res (:_source x)]
-                 {:label (get-in res [:nimi (keyword lng)])
+  (map (fn [x] (let [res (:_source x)
+                     nimi (get-in res [:nimi])]
+                 {:label (or (get-in nimi [(keyword lng)])
+                             (get-in nimi [:fi])
+                             (get-in nimi [:sv])
+                             (get-in nimi [:en]))
                   :id (:oid res)}))
        (get-in response [:hits :hits])))
 
@@ -61,7 +65,8 @@
 
 (defn parse-for-autocomplete
   [lng response]
-  {:hits    (autocomplete-hits response lng)})
+  {:total   (get-in response [:hits :total :value])
+   :hits    (autocomplete-hits response lng)})
 
 (defn- inner-hit->toteutus-hit
   [inner-hit]
