@@ -58,12 +58,13 @@
      :query query)))
 
 (defn autocomplete-search
-  [search-phrase lng sort order constraints]
+  [search-phrase lng size sort order constraints]
   (let [query (search-term-query search-phrase lng ["words"])
         post-filter-query (post-filter-query constraints)]
     (e/search index
               #(parse-for-autocomplete lng %)
-              :_source ["oid", "nimi"]
+              :_source ["oid", "nimi", "toteutustenTarjoajat"]
+              :size size
               :sort (sorts sort order lng)
               :post_filter post-filter-query
               :query query)))

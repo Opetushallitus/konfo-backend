@@ -16,14 +16,9 @@
   (map (fn [x] (-> (:_source x) (assoc :_score (:_score x)))) (get-in response [:hits :hits])))
 
 (defn- autocomplete-hits
-  [response lng]
-  (map (fn [x] (let [res (:_source x)
-                     nimi (get-in res [:nimi])]
-                 {:label (or (get-in nimi [(keyword lng)])
-                             (get-in nimi [:fi])
-                             (get-in nimi [:sv])
-                             (get-in nimi [:en]))
-                  :id (:oid res)}))
+  [response]
+  (map (fn [x] (let [res (:_source x)]
+                 (select-keys res [:oid :nimi :toteutustenTarjoajat])))
        (get-in response [:hits :hits])))
 
 (defn get-uniform-buckets [agg agg-key]
@@ -66,7 +61,7 @@
 (defn parse-for-autocomplete
   [lng response]
   {:total   (get-in response [:hits :total :value])
-   :hits    (autocomplete-hits response lng)})
+   :hits    (autocomplete-hits response)})
 
 (defn- inner-hit->toteutus-hit
   [inner-hit]

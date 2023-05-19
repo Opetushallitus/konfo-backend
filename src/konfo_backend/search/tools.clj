@@ -1,8 +1,5 @@
 (ns konfo-backend.search.tools
-  (:require [clojure.string :refer [blank? lower-case split]]
-            [konfo-backend.config :refer [config]]
-            [konfo-backend.search.rajain-definitions :refer [constraints? common-filters]]
-            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+  (:require [konfo-backend.config :refer [config]]))
 
 (defn ->lng-keyword
   [str lng]
@@ -36,15 +33,3 @@
                  :tie_breaker 0.9
                  :operator    "and"
                  :type        "cross_fields"}})
-
-(defn generate-wildcard-query
-  [search-phrase-token user-lng]
-  {:wildcard {(keyword (str "search_terms.koulutusnimi." user-lng ".keyword")) {:value (str "*" (lower-case search-phrase-token) "*")}}})
-
-(defn wildcard-query-fields
-  [search-phrase constraints user-lng]
-  (let [search-phrase-tokens (split search-phrase #" ")
-        query {:must (vec (map #(generate-wildcard-query % user-lng) search-phrase-tokens))}]
-    (if (constraints? constraints)
-      (assoc query :filter (common-filters constraints (current-time-as-kouta-format)))
-      query)))

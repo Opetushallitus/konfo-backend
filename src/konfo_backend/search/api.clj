@@ -14,7 +14,7 @@
    [konfo-backend.tools :refer [comma-separated-string->vec]]))
 
 (def paths (str
-  "|  /search/filters:
+            "|  /search/filters:
    |    get:
    |      tags:
    |        - internal-search
@@ -95,21 +95,21 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    "
-  (:desc koulutustyyppi) "\n"
-  (:desc sijainti) "\n"
-  (:desc opetuskieli) "\n"
-  (:desc koulutusala) "\n"
-  (:desc opetustapa) "\n"
-  (:desc opetusaika) "\n"
-  (:desc valintatapa) "\n"
-  (:desc hakukaynnissa) "\n"
-  (:desc jotpa) "\n"
-  (:desc tyovoimakoulutus) "\n"
-  (:desc taydennyskoulutus) "\n"
-  (:desc hakutapa) "\n"
-  (:desc yhteishaku) "\n"
-  (:desc pohjakoulutusvaatimus) "\n"
-  "
+            (:desc koulutustyyppi) "\n"
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            (:desc valintatapa) "\n"
+            (:desc hakukaynnissa) "\n"
+            (:desc jotpa) "\n"
+            (:desc tyovoimakoulutus) "\n"
+            (:desc taydennyskoulutus) "\n"
+            (:desc hakutapa) "\n"
+            (:desc yhteishaku) "\n"
+            (:desc pohjakoulutusvaatimus) "\n"
+            "
    |      responses:
    |        '200':
    |          description: Ok
@@ -172,21 +172,21 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    "
-  (:desc sijainti) "\n"
-  (:desc opetuskieli) "\n"
-  (:desc koulutusala) "\n"
-  (:desc opetustapa) "\n"
-  (:desc opetusaika) "\n"
-  (:desc valintatapa) "\n"
-  (:desc hakukaynnissa) "\n"
-  (:desc jotpa) "\n"
-  (:desc tyovoimakoulutus) "\n"
-  (:desc taydennyskoulutus) "\n"
-  (:desc lukiopainotukset) "\n"
-  (:desc lukiolinjaterityinenkoulutustehtava) "\n"
-  (:desc osaamisala) "\n"
-  (:desc oppilaitos) "\n"
-  "
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            (:desc valintatapa) "\n"
+            (:desc hakukaynnissa) "\n"
+            (:desc jotpa) "\n"
+            (:desc tyovoimakoulutus) "\n"
+            (:desc taydennyskoulutus) "\n"
+            (:desc lukiopainotukset) "\n"
+            (:desc lukiolinjaterityinenkoulutustehtava) "\n"
+            (:desc osaamisala) "\n"
+            (:desc oppilaitos) "\n"
+            "
    |      responses:
    |        '200':
    |          description: Ok
@@ -249,21 +249,21 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    "
-  (:desc koulutustyyppi) "\n"
-  (:desc sijainti) "\n"
-  (:desc opetuskieli) "\n"
-  (:desc koulutusala) "\n"
-  (:desc opetustapa) "\n"
-  (:desc opetusaika) "\n"
-  (:desc valintatapa) "\n"
-  (:desc hakukaynnissa) "\n"
-  (:desc jotpa) "\n"
-  (:desc tyovoimakoulutus) "\n"
-  (:desc taydennyskoulutus) "\n"
-  (:desc hakutapa) "\n"
-  (:desc yhteishaku) "\n"
-  (:desc pohjakoulutusvaatimus) "\n"
-  "
+            (:desc koulutustyyppi) "\n"
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            (:desc valintatapa) "\n"
+            (:desc hakukaynnissa) "\n"
+            (:desc jotpa) "\n"
+            (:desc tyovoimakoulutus) "\n"
+            (:desc taydennyskoulutus) "\n"
+            (:desc hakutapa) "\n"
+            (:desc yhteishaku) "\n"
+            (:desc pohjakoulutusvaatimus) "\n"
+            "
    |      responses:
    |        '200':
    |          description: Ok
@@ -326,13 +326,13 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    "
-  (:desc koulutustyyppi) "\n"
-  (:desc sijainti) "\n"
-  (:desc opetuskieli) "\n"
-  (:desc koulutusala) "\n"
-  (:desc opetustapa) "\n"
-  (:desc opetusaika) "\n"
-  "
+            (:desc koulutustyyppi) "\n"
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            "
    |      responses:
    |        '200':
    |          description: Ok
@@ -409,15 +409,15 @@
    |    get:
    |      tags:
    |        - internal-search
-   |      summary: Hae koulutuksia
-   |      description: Hakee koulutuksia annetulla koulutuksen nimen osalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      summary: Hae koulutuksia ja oppilaitoksia ennakoivaa hakua varten
+   |      description: Hakee koulutuksia ja oppilaitoksia hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: query
    |          name: searchPhrase
    |          schema:
    |            type: string
    |          required: false
-   |          description: Hakufraasi (nimen osa). Vähimmäispituus on 3 merkkiä.
+   |          description: Hakusanat. Vähimmäispituus on 3 merkkiä.
    |          example: Hevostalous
    |        - in: query
    |          name: lng
@@ -434,6 +434,13 @@
    |          required: false
    |          description: Järjestysperuste. 'name' tai 'score'
    |        - in: query
+   |          name: size
+   |          schema:
+   |            type: integer
+   |            default: 5
+   |          required: false
+   |          description: Montako koulutusta ja oppilaitosta noudetaan. Oletuksena noudetaan siis 5 koulutusta ja 5 oppilaitosta.
+   |        - in: query
    |          name: order
    |          schema:
    |            type: string
@@ -441,21 +448,21 @@
    |          required: false
    |          description: Järjestys. 'asc' tai 'desc'
    "
-  (:desc koulutustyyppi) "\n"
-  (:desc sijainti) "\n"
-  (:desc opetuskieli) "\n"
-  (:desc koulutusala) "\n"
-  (:desc opetustapa) "\n"
-  (:desc opetusaika) "\n"
-  (:desc valintatapa) "\n"
-  (:desc hakukaynnissa) "\n"
-  (:desc jotpa) "\n"
-  (:desc tyovoimakoulutus) "\n"
-  (:desc taydennyskoulutus) "\n"
-  (:desc hakutapa) "\n"
-  (:desc yhteishaku) "\n"
-  (:desc pohjakoulutusvaatimus) "\n"
-  "
+            (:desc koulutustyyppi) "\n"
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            (:desc valintatapa) "\n"
+            (:desc hakukaynnissa) "\n"
+            (:desc jotpa) "\n"
+            (:desc tyovoimakoulutus) "\n"
+            (:desc taydennyskoulutus) "\n"
+            (:desc hakutapa) "\n"
+            (:desc yhteishaku) "\n"
+            (:desc pohjakoulutusvaatimus) "\n"
+            "
    |      responses:
    |        '200':
    |          description: Ok
@@ -723,8 +730,9 @@
     (GET "/autocomplete" [:as request]
       :query-params [{searchPhrase          :- String nil}
                      {lng                   :- String "fi"}
-                     {sort                  :- String "name"}
-                     {order                 :- String "asc"}
+                     {size                  :- Long 5}
+                     {sort                  :- String "score"}
+                     {order                 :- String "desc"}
                      {koulutustyyppi        :- String nil}
                      {sijainti              :- String nil}
                      {opetuskieli           :- String nil}
@@ -739,42 +747,25 @@
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}]
-      (let [koulutus-response (koulutus-search/autocomplete-search
-                               searchPhrase
-                               lng
-                               sort
-                               order
-                               {:koulutustyyppi koulutustyyppi
-                                :sijainti sijainti
-                                :opetuskieli opetuskieli
-                                :koulutusala koulutusala
-                                :opetustapa opetustapa
-                                :opetusaika opetusaika
-                                :valintatapa valintatapa
-                                :hakukaynnissa hakukaynnissa
-                                :jotpa jotpa
-                                :tyovoimakoulutus tyovoimakoulutus
-                                :taydennyskoulutus taydennyskoulutus
-                                :hakutapa hakutapa
-                                :yhteishaku yhteishaku
-                                :pohjakoulutusvaatimus pohjakoulutusvaatimus})
-            oppilaitos-response (oppilaitos-search/autocomplete-search
-                                 searchPhrase
-                                 lng
-                                 sort
-                                 order
-                                 {:koulutustyyppi koulutustyyppi
-                                  :sijainti sijainti
-                                  :opetuskieli opetuskieli
-                                  :koulutusala koulutusala
-                                  :opetustapa opetustapa
-                                  :opetusaika opetusaika
-                                  :valintatapa valintatapa
-                                  :hakukaynnissa hakukaynnissa
-                                  :jotpa jotpa
-                                  :tyovoimakoulutus tyovoimakoulutus
-                                  :taydennyskoulutus taydennyskoulutus
-                                  :hakutapa hakutapa
-                                  :yhteishaku yhteishaku
-                                  :pohjakoulutusvaatimus pohjakoulutusvaatimus})]
+      (let [search-params [searchPhrase
+                           lng
+                           size
+                           sort
+                           order
+                           {:koulutustyyppi koulutustyyppi
+                            :sijainti sijainti
+                            :opetuskieli opetuskieli
+                            :koulutusala koulutusala
+                            :opetustapa opetustapa
+                            :opetusaika opetusaika
+                            :valintatapa valintatapa
+                            :hakukaynnissa hakukaynnissa
+                            :jotpa jotpa
+                            :tyovoimakoulutus tyovoimakoulutus
+                            :taydennyskoulutus taydennyskoulutus
+                            :hakutapa hakutapa
+                            :yhteishaku yhteishaku
+                            :pohjakoulutusvaatimus pohjakoulutusvaatimus}]
+            koulutus-response (apply koulutus-search/autocomplete-search search-params)
+            oppilaitos-response (apply oppilaitos-search/autocomplete-search search-params)]
         (with-validated-params searchPhrase lng sort order {:koulutukset koulutus-response :oppilaitokset oppilaitos-response})))))

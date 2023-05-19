@@ -11,10 +11,6 @@
   []
   {:match_all {}})
 
-(defn koulutus-wildcard-query
-  [search-phrase user-lng constraints]
-  {:nested {:path "search_terms" :query {:bool (wildcard-query-fields search-phrase constraints user-lng)}}})
-
 (defn search-term-query [search-term user-lng suffixes]
   (if (not (str/blank? search-term))
     {:nested {:path "search_terms" :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
