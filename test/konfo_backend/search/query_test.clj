@@ -93,7 +93,7 @@
                                nested-agg)))
   ([rajain-key field-name] (default-nested-agg rajain-key field-name nil nil nil)))
 
-(def jotpa-term {:term {:search_terms.hasJotpaRahoitus true}})
+(def jotpa-term {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}})
 (def jotpa-bool-filter {:bool {:filter [jotpa-term]}})
 
 (deftest hakutulos-aggregations-test
@@ -105,7 +105,14 @@
                              {:hits_aggregation
                               {:nested {:path "search_terms"}
                                :aggs
-                               {:koulutusala (default-agg "search_terms.koulutusalat.keyword")
+                               {:koulutuksenkestokuukausina {:filter
+                                                             {:bool
+                                                              {:filter
+                                                               [{:range
+                                                                 {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                                  {:gte 0}}}]}},
+                                                             :aggs {:real_hits {:reverse_nested {}}}}
+                                :koulutusala (default-agg "search_terms.koulutusalat.keyword")
                                 :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid")
                                 :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
                                 :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
