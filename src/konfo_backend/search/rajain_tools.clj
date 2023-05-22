@@ -72,11 +72,11 @@
     {:range {(keyword (str "search_terms." key))
              (if (not (nil? max)) {:gte min :lte max} {:gte min})}}))
 
-(defn make-combined-boolean-filter-query
+(defn make-combined-boolean-should-filter-query
   [constraints sub-filters]
   (let [selected-sub-filters (filter #(true? (get constraints (:id %))) sub-filters)]
     (when (not-empty selected-sub-filters)
-      (mapv #((:make-query %)) selected-sub-filters))))
+      {:bool {:should (mapv #((:make-query %)) selected-sub-filters)}})))
 
 (defn hakuaika-filter-query
   [current-time]

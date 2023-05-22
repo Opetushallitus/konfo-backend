@@ -23,13 +23,13 @@
     (is (= {:terms {:search_terms.sijainti.keyword ["kunta_01", "kunta_02"]}}
            (->terms-query "sijainti.keyword" ["kunta_01", "KUNTA_02"]))))
   (testing "Should form filter for the query with jotpa as the only constraint"
-    (is (= [{:term {:search_terms.hasJotpaRahoitus true}}]
+    (is (= [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]
            (common-filters {:jotpa true} "2022-08-26T07:21"))))
 
   (testing "Should form filters for työelämä constraints"
-    (is (= [{:term {:search_terms.hasJotpaRahoitus true}}
+    (is (= [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}
                              {:term {:search_terms.isTyovoimakoulutus true}}
-                             {:term {:search_terms.isTaydennyskoulutus true}}]
+                             {:term {:search_terms.isTaydennyskoulutus true}}]}}]
            (common-filters {:jotpa true :tyovoimakoulutus true :taydennyskoulutus true} "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with two terms queries"
@@ -88,7 +88,7 @@
                           :min_doc_count 0
                           :size 1000}}}
                 :nested {:path "search_terms.hakutiedot"}}}
-              :filter {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}})
+              :filter {:bool {:filter [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}})
              ((:make-agg pohjakoulutusvaatimus) {:jotpa true} default-ctx))))
 
      (testing "Should form aggregation for hakutapa with hakukaynnissa and pohjakoulutusvaatimus as selected filters"
@@ -174,7 +174,7 @@
                 :filter
                  {:bool
                   {:filter
-                   [{:term {:search_terms.hasJotpaRahoitus true}}
+                   [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
                     {:bool
                      {:should
                       [{:bool
@@ -253,7 +253,7 @@
                       {:bool
                        {:filter
                         {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}}}
-            {:term {:search_terms.hasJotpaRahoitus true}}
+            {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
             {:bool
              {:should
               [{:bool

@@ -93,7 +93,7 @@
                                nested-agg)))
   ([rajain-key field-name] (default-nested-agg rajain-key field-name nil nil nil)))
 
-(def jotpa-term {:term {:search_terms.hasJotpaRahoitus true}})
+(def jotpa-term {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}})
 (def jotpa-bool-filter {:bool {:filter [jotpa-term]}})
 
 (deftest hakutulos-aggregations-test

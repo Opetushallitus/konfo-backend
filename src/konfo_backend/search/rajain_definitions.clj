@@ -418,7 +418,7 @@
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
-(reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
+(reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-should-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
 (def default-aggregation-defs
