@@ -1,6 +1,9 @@
 (ns konfo-backend.elastic-tools
   (:require
     [clj-elasticsearch.elastic-connect :as e]
+    [clj-elasticsearch.elastic-utils :as u]
+    [clj-log.error-log :refer [with-error-logging]]
+    [clojure.tools.logging :as log]
     [clojure.string :as str]))
 
 (def limit-to-use-search-after 10000)
@@ -29,7 +32,12 @@
 
 (defn search
   [index mapper & query-parts]
-  (mapper (search-without-mapper index query-parts)))
+  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
+    (->> (apply e/search
+                index
+                query-parts-without-nils)
+         mapper)))
+  ;(mapper (search-without-mapper index query-parts)))
 
 (defn count
   [index & query-parts]
@@ -45,34 +53,50 @@
   [page size]
   (if (pos? page) (* (- page 1) size) 0))
 
-; https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after
-(defn do-search-after [search-fn index mapper from size query-parts]
-  (let [initial-from   (- limit-to-use-search-after size)
-        initial-search (apply search-fn index :from initial-from :size size query-parts)
-        search-with-do-after (fn [sort]
+(defn- do-search-after
+  [search-fn index from size query-parts initial-search result-gatherer-fn]
+  (let [search-with-do-after (fn [sort]
                                (apply search-fn index :from 0 :size size :search_after sort query-parts))
         take-last-sort (fn [results] (->> (:hits results)
                                           :hits
                                           last
                                           :sort))
         last-sort      (atom (take-last-sort initial-search))
-        final-result (atom initial-search)]
+        final-result (atom [])]
+    (doseq [_ (range (/ (- from limit-to-use-search-after) size))]
+      (when (not (nil? @last-sort))
+        (let [result (search-with-do-after @last-sort)]
+          (reset! last-sort (take-last-sort result))
+          (result-gatherer-fn final-result result))))
+    @final-result))
+
+; https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after
+(defn do-search-after-concanate-results [search-fn index mapper to size query-parts]
+  (let [initial-from   (- limit-to-use-search-after size)
+        initial-search (apply search-fn index :from initial-from :size size query-parts)]
+        (do-search-after search-fn index to size query-parts initial-search
+                         (fn [atom-obj result] (reset! atom-obj (concat @atom-obj (mapper result)))))))
+
+(defn search-all-with-do-after [index mapper to & query-parts]
+  (let [initial-results (apply search index mapper :size limit-to-use-search-after query-parts)
+        rest-of-results (do-search-after-concanate-results search-without-mapper index mapper to max-size query-parts)]
+    (concat initial-results rest-of-results)))
+
+; https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after
+(defn do-search-after-paged [search-fn index mapper from size & query-parts]
+  (let [initial-from   (- limit-to-use-search-after size)
+        initial-search (apply search-fn index :from initial-from :size size query-parts)]
     (if (< (get-in initial-search [:hits :total :value] 0) from)
       (-> initial-search
           (assoc :hits [])
           mapper)
-      (do
-        (doseq [_ (range (/ (- from limit-to-use-search-after) size))]
-          (when (not (nil? @last-sort))
-            (let [result (search-with-do-after @last-sort)]
-              (reset! last-sort (take-last-sort result))
-              (reset! final-result result))))
-        (mapper @final-result)))))
+      (mapper
+        (do-search-after search-fn index from size query-parts initial-search (fn [atom-obj result] (reset! atom-obj result)))))))
 
 (defn search-with-pagination
   [index page size mapper & query-parts]
   (let [size (->size size)
         from (->from page size)]
     (if (< limit-to-use-search-after (+ from size))
-      (do-search-after search-without-mapper index mapper from size query-parts)
+      (do-search-after-paged search-without-mapper index mapper from size query-parts)
       (apply search index mapper :from from :size size query-parts))))
