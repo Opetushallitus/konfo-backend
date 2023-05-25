@@ -35,7 +35,7 @@
         index
         parse-entities
         :_source ["oid", "nimi"]
-        :size (count-docs index query)
+        :size total
         :query query))))
 
 (defn get-koulutus-entities

@@ -1,9 +1,7 @@
 (ns konfo-backend.elastic-tools
   (:require
     [clj-elasticsearch.elastic-connect :as e]
-    [clj-elasticsearch.elastic-utils :as u]
     [clj-log.error-log :refer [with-error-logging]]
-    [clojure.tools.logging :as log]
     [clojure.string :as str]))
 
 (def limit-to-use-search-after 10000)
@@ -37,7 +35,6 @@
                 index
                 query-parts-without-nils)
          mapper)))
-  ;(mapper (search-without-mapper index query-parts)))
 
 (defn count
   [index & query-parts]
