@@ -22,7 +22,7 @@
      page
      size
      parse
-     :_source ["oid", "nimi", "koulutusohjelmia", "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
+     :_source ["oid", "nimi", "koulutusohjelmatLkm" "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
      :sort (sorts sort order lng)
      :query search-term-query
      :post_filter post-filter-query
