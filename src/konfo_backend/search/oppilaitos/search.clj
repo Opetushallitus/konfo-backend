@@ -1,11 +1,12 @@
 (ns konfo-backend.search.oppilaitos.search
   (:require [konfo-backend.elastic-tools :as e]
-            [konfo-backend.search.query :refer [post-filter-query
-                                                hakutulos-aggregations
-                                                inner-hits-query-osat search-term-query sorts tarjoajat-aggregations
-                                                toteutukset-inner-hits toteutukset-query]]
+            [konfo-backend.search.query :refer [hakutulos-aggregations
+                                                inner-hits-query-osat
+                                                post-filter-query search-term-query sorts tarjoajat-aggregations toteutukset-inner-hits
+                                                toteutukset-query]]
             [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
-            [konfo-backend.search.response :refer [parse parse-inner-hits
+            [konfo-backend.search.response :refer [parse
+                                                   parse-for-autocomplete parse-inner-hits
                                                    parse-inner-hits-for-jarjestajat]]
             [konfo-backend.search.tools :refer :all]))
 
@@ -47,3 +48,15 @@
             parse-inner-hits
             :_source ["oid"]
             :query (inner-hits-query-osat oid lng page size order tuleva?)))
+
+(defn autocomplete-search
+  [search-phrase lng size sort order constraints]
+  (let [query (search-term-query search-phrase lng ["words"])
+        post-filter-query (post-filter-query constraints)]
+    (e/search index
+              #(parse-for-autocomplete lng %)
+              :_source ["oid", "nimi"]
+              :size size
+              :sort (sorts sort order lng)
+              :post_filter post-filter-query
+              :query query)))
