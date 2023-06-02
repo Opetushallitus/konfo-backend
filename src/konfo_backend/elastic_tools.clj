@@ -47,12 +47,15 @@
 
 (defn ->size
   [size]
-  (if (pos? size) (if (< size max-size) size max-size) 0))
+  (if (pos? size) (min size max-size) 0))
 
 (defn ->from
   [page size]
   (if (pos? page) (* (- page 1) size) 0))
 
+
+; pit is automatically deleted after keep_alive expires by elastic_search, so we skip deleting it through REST
+; since library does not support using DELETE with body
 (defn- get-pit
   [index]
   (let [json-request {:as :json
