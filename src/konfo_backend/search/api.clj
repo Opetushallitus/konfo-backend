@@ -552,7 +552,6 @@
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
-    (invalid-koulutuksenkesto? rajain-params) (bad-request "Virheellinen koulutuksen kesto")
     :else (ok (or-else-fn))))
 
 (def routes
