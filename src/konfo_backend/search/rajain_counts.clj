@@ -140,7 +140,7 @@
 (defn- get-alkamiskausi-parts [value] (re-find #"^(\d{4})-(kevat|syksy)$" (name value)))
 
 (defn- alkamiskausi-value? [value]
-  (or (contains? [:henkilokohtainen] value)
+  (or (= value :henkilokohtainen)
       (kausi-ja-vuosi-value? value)))
 
 (defn map-values [mapper m] (into {} (for [[k v] m] [k (mapper v)])))
@@ -162,9 +162,6 @@
               (if (alkamiskausi-value? rajain-value)
                 (assoc result rajain-value {:count (or rajain-count 0)
                                             :nimi (let [[_ vuosi kausi] (get-alkamiskausi-parts rajain-value)]
-                                                    (println rajain-value)
-                                                    (println nimi-kevat)
-                                                    (println nimi-syksy)
                                                     (cond
                                                       (= rajain-value :henkilokohtainen) nimi-henkilokohtainen
                                                       (= kausi "kevat") (map-values #(str % " " vuosi) nimi-kevat)
