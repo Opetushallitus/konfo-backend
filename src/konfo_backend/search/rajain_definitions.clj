@@ -414,7 +414,27 @@
    |          required: false
    |          description: Haetaanko koulutukset, joilla on haku käynnissä?"})
 
-(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus koulutuksenkestokuukausina)
+
+(def alkamiskausi
+  {:id :alkamiskausi
+   :make-query #(->terms-query "paatellytAlkamiskaudet.keyword" %)
+   :make-agg (fn [constraints rajain-context]
+               (rajain-aggregation (->field-key "paatellytAlkamiskaudet.keyword")
+                                   (aggregation-filters-without-rajainkeys constraints ["alkamiskausi"] rajain-context)
+                                   (merge rajain-context {:term-params {:missing "ei-alkamiskausia"}})))
+   :desc "
+   |        - in: query
+   |          name: alkamiskausi
+   |          style: form
+   |          explode: false
+   |          schema:
+   |            type: array
+   |            items:
+   |              type: string
+   |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\" )
+   |          example: henkilokohtainen, 2022-kevat"})
+
+(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
@@ -422,7 +442,7 @@
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
 (def default-aggregation-defs
-  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi koulutuksenkestokuukausina])
+  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi alkamiskausi koulutuksenkestokuukausina])
 
 (def all-aggregation-defs (concat default-aggregation-defs [jotpa tyovoimakoulutus taydennyskoulutus oppilaitos osaamisala lukiopainotukset lukiolinjaterityinenkoulutustehtava]))
 

@@ -133,6 +133,19 @@
             {}
             yhteishaut)))
 
+
+(defn- alkamiskausi-value? [value]
+  (or (contains? [:henkilokohtainen :ei-alkamiskausia] value)
+      (re-matches #"^\d{4}-(kevat|syksy)$" (name value))))
+
+(defn- alkamiskausi-counts [rajain-counts]
+  (reduce (fn [result [rajain-value rajain-count]]
+            (if (alkamiskausi-value? rajain-value)
+              (assoc result rajain-value {:count (or rajain-count 0)})
+              result))
+          {}
+          rajain-counts))
+
 (defn generate-default-rajain-counts
   ([rajain-counts]
    (let [koodisto-counts (partial koodisto->rajain-counts rajain-counts)]
@@ -155,8 +168,10 @@
       :pohjakoulutusvaatimus (koodisto-counts "pohjakoulutusvaatimuskonfo")
       :osaamisala (koodisto-counts "osaamisala")
       :lukiolinjaterityinenkoulutustehtava (koodisto-counts "lukiolinjaterityinenkoulutustehtava")
-      :lukiopainotukset (koodisto-counts "lukiopainotukset")}))
+      :lukiopainotukset (koodisto-counts "lukiopainotukset")
+      :alkamiskausi (alkamiskausi-counts rajain-counts)}))
   ([] (generate-default-rajain-counts {})))
+
 
 (defn- create-oppilaitos-counts
   [oppilaitokset]

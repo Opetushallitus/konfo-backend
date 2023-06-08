@@ -4,7 +4,7 @@
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
-                                                    opetusaika koulutuksenkestokuukausina]]
+                                                    opetusaika alkamiskausi koulutuksenkestokuukausina]]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -111,6 +111,7 @@
             (:desc hakutapa) "\n"
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
+            (:desc alkamiskausi) "\n"
             "
    |      responses:
    |        '200':
@@ -189,6 +190,7 @@
             (:desc lukiolinjaterityinenkoulutustehtava) "\n"
             (:desc osaamisala) "\n"
             (:desc oppilaitos) "\n"
+            (:desc alkamiskausi) "\n"
             "
    |      responses:
    |        '200':
@@ -267,6 +269,7 @@
             (:desc hakutapa) "\n"
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
+            (:desc alkamiskausi) "\n"
             "
    |      responses:
    |        '200':
@@ -468,6 +471,7 @@
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
             (:desc koulutuksenkestokuukausina) "\n"
+            (:desc alkamiskausi) "\n"
             "
    |      responses:
    |        '200':
@@ -501,6 +505,7 @@
    :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
    :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
    :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))
+   :alkamiskausi          (comma-separated-string->vec (:alkamiskausi rajain-params))
    :koulutuksenkestokuukausina (let [numbers (map #(Integer/parseInt %) (comma-separated-string->vec (:koulutuksenkestokuukausina rajain-params)))]
                                  (when (> (count numbers) 0)
                                    (if (> (count numbers) 1)
@@ -590,7 +595,8 @@
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
-                     {koulutuksenkestokuukausina :- String nil}]
+                     {koulutuksenkestokuukausina :- String nil}
+                     {alkamiskausi          :- String nil}]
       (with-access-logging request (->search-with-validated-params
                                     koulutus-search/search
                                     keyword
@@ -613,7 +619,8 @@
                                      :hakutapa hakutapa
                                      :yhteishaku yhteishaku
                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                     :koulutuksenkestokuukausina koulutuksenkestokuukausina})))
+                                     :koulutuksenkestokuukausina koulutuksenkestokuukausina
+                                     :alkamiskausi alkamiskausi})))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
       :path-params [oid :- String]
@@ -639,7 +646,8 @@
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
                      {osaamisala            :- String nil}
-                     {oppilaitos            :- String nil}]
+                     {oppilaitos            :- String nil}
+                     {alkamiskausi          :- String nil}]
       (with-access-logging request (->search-subentities-with-validated-params
                                     koulutus-search/search-koulutuksen-jarjestajat
                                     oid
@@ -665,7 +673,8 @@
                                      :lukiopainotukset lukiopainotukset
                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
                                      :osaamisala osaamisala
-                                     :oppilaitos oppilaitos})))
+                                     :oppilaitos oppilaitos
+                                     :alkamiskausi alkamiskausi})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
@@ -688,7 +697,8 @@
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
-                     {koulutuksenkestokuukausina :- String nil}]
+                     {koulutuksenkestokuukausina :- String nil}
+                     {alkamiskausi          :- String nil}]
       (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                    keyword
                                                                    lng
@@ -710,7 +720,8 @@
                                                                     :hakutapa hakutapa
                                                                     :yhteishaku yhteishaku
                                                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                                                    :koulutuksenkestokuukausina koulutuksenkestokuukausina})))
+                                                                    :koulutuksenkestokuukausina koulutuksenkestokuukausina
+                                                                    :alkamiskausi alkamiskausi})))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
       :path-params [oid :- String]
@@ -773,7 +784,8 @@
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
-                     {koulutuksenkestokuukausina :- String nil}]
+                     {koulutuksenkestokuukausina :- String nil}
+                     {alkamiskausi          :- String nil}]
       (with-validated-params
         searchPhrase
         lng
@@ -799,6 +811,7 @@
                                 :hakutapa hakutapa
                                 :yhteishaku yhteishaku
                                 :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                :koulutuksenkestokuukausina koulutuksenkestokuukausina}]]
+                                :koulutuksenkestokuukausina koulutuksenkestokuukausina
+                                :alkamiskausi alkamiskausi}]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
              :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))

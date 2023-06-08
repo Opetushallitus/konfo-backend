@@ -122,6 +122,7 @@
                                 :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword")
                                 :opetuskieli (default-agg "search_terms.opetuskielet.keyword")
                                 :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat")
+                                :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:missing "ei-alkamiskausia"} nil)
                                 :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" nil {:size (count koulutustyypit) :include koulutustyypit} nil)
                                 :hakukaynnissa {:filter
                                                 {:bool
@@ -196,6 +197,7 @@
            :opetuskieli (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
            :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" jotpa-bool-filter nil nil)
            :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter {:size (count koulutustyypit) :include koulutustyypit} nil)
+           :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:missing "ei-alkamiskausia"} nil)
            :hakukaynnissa {:filter
                            {:bool
                             {:filter
@@ -276,6 +278,7 @@
            :valintatapa                         (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
            :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+           :alkamiskausi                        (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:missing "ei-alkamiskausia"} "search_terms")
            :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :hakukaynnissa                       {:filter
                                                  {:bool
@@ -339,6 +342,7 @@
                   :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
                   :koulutusala (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                   :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter {:size (count koulutustyypit) :include koulutustyypit} "search_terms")
+                  :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:missing "ei-alkamiskausia"} "search_terms")
                   :hakukaynnissa {:filter
                                   {:bool
                                    {:filter
