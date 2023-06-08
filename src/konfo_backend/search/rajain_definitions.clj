@@ -420,10 +420,10 @@
   (< (time/month date) 8))
 
 (defn get-alkamiskausi-terms-include []
-  (let [current-time (time/now)
-        current-year (time/year current-time)
-        kaudet (take 5 (cycle (if (kevat-date? current-time) ["kevat" "syksy"] ["syksy" "kevat"])))
-        vuodet (map (partial + current-year) (if (kevat-date? current-time) [0 0 1 1 2] [0 1 1 2 2]))]
+  (let [current-date (time/today)
+        current-year (time/year current-date)
+        kaudet (take 5 (cycle (if (kevat-date? current-date) ["kevat" "syksy"] ["syksy" "kevat"])))
+        vuodet (map (partial + current-year) (if (kevat-date? current-date) [0 0 1 1 2] [0 1 1 2 2]))]
     (->> (map vector vuodet kaudet)
          (map (fn [[vuosi kausi]] (str vuosi "-" kausi)))
          (concat ["henkilokohtainen"]))))
