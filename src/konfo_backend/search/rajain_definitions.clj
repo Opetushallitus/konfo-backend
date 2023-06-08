@@ -1,6 +1,7 @@
 (ns konfo-backend.search.rajain-definitions
   (:require
    [konfo-backend.tools :refer [current-time-as-kouta-format]]
+   [clj-time.core :as time]
    [konfo-backend.search.rajain-tools :refer :all]))
 
 ;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
@@ -415,13 +416,25 @@
    |          description: Haetaanko koulutukset, joilla on haku käynnissä?"})
 
 
+(defn kevat-date? [date]
+  (< (time/month date) 8))
+
+(defn get-alkamiskausi-terms-include []
+  (let [current-time (time/now)
+        current-year (time/year current-time)
+        kaudet (take 5 (cycle (if (kevat-date? current-time) ["kevat" "syksy"] ["syksy" "kevat"])))
+        vuodet (map (partial + current-year) (if (kevat-date? current-time) [0 0 1 1 2] [0 1 1 2 2]))]
+    (->> (map vector vuodet kaudet)
+         (map (fn [[vuosi kausi]] (str vuosi "-" kausi)))
+         (concat ["henkilokohtainen"]))))
+
 (def alkamiskausi
   {:id :alkamiskausi
    :make-query #(->terms-query "paatellytAlkamiskaudet.keyword" %)
    :make-agg (fn [constraints rajain-context]
                (rajain-aggregation (->field-key "paatellytAlkamiskaudet.keyword")
                                    (aggregation-filters-without-rajainkeys constraints ["alkamiskausi"] rajain-context)
-                                   (merge rajain-context {:term-params {:missing "ei-alkamiskausia"}})))
+                                   (merge rajain-context {:term-params {:include (get-alkamiskausi-terms-include)}})))
    :desc "
    |        - in: query
    |          name: alkamiskausi
