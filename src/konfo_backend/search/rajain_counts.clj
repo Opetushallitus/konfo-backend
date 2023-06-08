@@ -2,7 +2,8 @@
   (:require [konfo-backend.index.haku :refer [get-yhteishaut]]
             [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.koodisto.koodisto :as k]
-            [konfo-backend.tools :refer [koodi-uri-no-version reduce-merge-map]]))
+            [konfo-backend.tools :refer [koodi-uri-no-version reduce-merge-map]]
+            [konfo-backend.index.lokalisointi :as lokalisointi]))
 
 (defn- koodi->rajain-counts
   [rajain-counts koodi]
@@ -134,17 +135,44 @@
             yhteishaut)))
 
 
+(defn- kausi-ja-vuosi-value? [value] (re-matches #"^\d{4}-(kevat|syksy)$" (name value)))
+
+(defn- get-alkamiskausi-parts [value] (re-find #"^(\d{4})-(kevat|syksy)$" (name value)))
+
 (defn- alkamiskausi-value? [value]
-  (or (contains? [:henkilokohtainen :ei-alkamiskausia] value)
-      (re-matches #"^\d{4}-(kevat|syksy)$" (name value))))
+  (or (contains? [:henkilokohtainen] value)
+      (kausi-ja-vuosi-value? value)))
+
+(defn map-values [mapper m] (into {} (for [[k v] m] [k (mapper v)])))
 
 (defn- alkamiskausi-counts [rajain-counts]
-  (reduce (fn [result [rajain-value rajain-count]]
-            (if (alkamiskausi-value? rajain-value)
-              (assoc result rajain-value {:count (or rajain-count 0)})
-              result))
-          {}
-          rajain-counts))
+  (let [lokalisoinnit-fi (lokalisointi/get "fi")
+        lokalisoinnit-sv (lokalisointi/get "sv")
+        lokalisoinnit-en (lokalisointi/get "en")
+        nimi-kevat {:fi (get-in lokalisoinnit-fi [:haku :kevat])
+                    :sv (get-in lokalisoinnit-sv [:haku :kevat])
+                    :en (get-in lokalisoinnit-en [:haku :kevat])}
+        nimi-syksy {:fi (get-in lokalisoinnit-fi [:haku :syksy])
+                    :sv (get-in lokalisoinnit-sv [:haku :syksy])
+                    :en (get-in lokalisoinnit-en [:haku :syksy])}
+        nimi-henkilokohtainen {:fi (get-in lokalisoinnit-fi [:haku :henkilokohtainen])
+                               :sv (get-in lokalisoinnit-sv [:haku :henkilokohtainen])
+                               :en (get-in lokalisoinnit-en [:haku :henkilokohtainen])}]
+    (reduce (fn [result [rajain-value rajain-count]]
+              (if (alkamiskausi-value? rajain-value)
+                (assoc result rajain-value {:count (or rajain-count 0)
+                                            :nimi (let [[_ vuosi kausi] (get-alkamiskausi-parts rajain-value)]
+                                                    (println rajain-value)
+                                                    (println nimi-kevat)
+                                                    (println nimi-syksy)
+                                                    (cond
+                                                      (= rajain-value :henkilokohtainen) nimi-henkilokohtainen
+                                                      (= kausi "kevat") (map-values #(str % " " vuosi) nimi-kevat)
+                                                      (= kausi "syksy") (map-values #(str % " " vuosi) nimi-syksy)
+                                                      :else {}))})
+                result))
+            {}
+            rajain-counts)))
 
 (defn generate-default-rajain-counts
   ([rajain-counts]
