@@ -1,16 +1,18 @@
 (ns konfo-backend.test-tools
   (:require
-    [clojure.test :refer :all]
-    [clojure.java.shell :refer [sh]]
-    [clj-elasticsearch.elastic-connect :as e]
-    [clj-elasticsearch.elastic-utils :as e-utils]
-    [ring.mock.request :as mock]
-    [konfo-backend.core :refer :all]
-    [cheshire.core :refer [parse-string, generate-string]]
-    [clojure.walk :refer [keywordize-keys]]
-    [clj-time.coerce :as coerce]
-    [clj-time.core :as time]
-    [clojure.string :as string]))
+   [clojure.test :refer :all]
+   [clojure.java.shell :refer [sh]]
+   [clj-elasticsearch.elastic-connect :as e]
+   [clj-elasticsearch.elastic-utils :as e-utils]
+   [ring.mock.request :as mock]
+   [konfo-backend.core :refer :all]
+   [cheshire.core :refer [parse-string, generate-string]]
+   [clojure.walk :refer [keywordize-keys]]
+   [clj-time.coerce :as coerce]
+   [clj-time.core :as time]
+   [clj-time.format :as format]
+   [clojure.string :as string])
+  (:import (org.joda.time DateTimeUtils)))
 
 (defn ->keywordized-response-body
   [response]
@@ -97,3 +99,13 @@
   [test]
   (prepare-elastic-test-data)
   (test))
+
+(defonce formatter (format/with-zone (format/formatter "yyyy-MM-dd'T'HH:mm:ss") (time/time-zone-for-id "Europe/Helsinki")))
+
+; Muunnetaan lokaali timestamp UTC-millisekunneiksi, jotta voidaan väärentää järjestelmän kello olemaan
+; UTC-ajassa antamalla lokaali timestamp
+(defn local-timestamp-to-utc-millis [timestamp]
+  (coerce/to-long (time/to-time-zone (format/parse formatter timestamp) time/utc)))
+
+(defn set-fixed-time [timestamp]
+  (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis timestamp)))

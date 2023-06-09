@@ -1,6 +1,7 @@
 (ns konfo-backend.search.rajain-definitions
   (:require
    [konfo-backend.tools :refer [current-time-as-kouta-format]]
+   [clj-time.core :as time]
    [konfo-backend.search.rajain-tools :refer :all]))
 
 ;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
@@ -414,7 +415,39 @@
    |          required: false
    |          description: Haetaanko koulutukset, joilla on haku käynnissä?"})
 
-(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus koulutuksenkestokuukausina)
+
+(defn kevat-date? [date]
+  (< (time/month date) 8))
+
+(defn get-alkamiskausi-terms-include []
+  (let [current-date (time/today)
+        current-year (time/year current-date)
+        kaudet (take 5 (cycle (if (kevat-date? current-date) ["kevat" "syksy"] ["syksy" "kevat"])))
+        vuodet (map (partial + current-year) (if (kevat-date? current-date) [0 0 1 1 2] [0 1 1 2 2]))]
+    (->> (map vector vuodet kaudet)
+         (map (fn [[vuosi kausi]] (str vuosi "-" kausi)))
+         (concat ["henkilokohtainen"]))))
+
+(def alkamiskausi
+  {:id :alkamiskausi
+   :make-query #(->terms-query "paatellytAlkamiskaudet.keyword" %)
+   :make-agg (fn [constraints rajain-context]
+               (rajain-aggregation (->field-key "paatellytAlkamiskaudet.keyword")
+                                   (aggregation-filters-without-rajainkeys constraints ["alkamiskausi"] rajain-context)
+                                   (merge rajain-context {:term-params {:include (get-alkamiskausi-terms-include)}})))
+   :desc "
+   |        - in: query
+   |          name: alkamiskausi
+   |          style: form
+   |          explode: false
+   |          schema:
+   |            type: array
+   |            items:
+   |              type: string
+   |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\" )
+   |          example: henkilokohtainen, 2022-kevat"})
+
+(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina)
 (swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
@@ -422,7 +455,7 @@
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
 (def default-aggregation-defs
-  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi koulutuksenkestokuukausina])
+  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi alkamiskausi koulutuksenkestokuukausina])
 
 (def all-aggregation-defs (concat default-aggregation-defs [jotpa tyovoimakoulutus taydennyskoulutus oppilaitos osaamisala lukiopainotukset lukiolinjaterityinenkoulutustehtava]))
 

@@ -1,7 +1,7 @@
 (ns konfo-backend.tools
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
-            [clojure.string :refer [blank? split lower-case trim replace]]
+            [clojure.string :as str]
             [clj-time.format :as format]
             [clj-time.coerce :as coerce]
             [clj-time.core :as time]))
@@ -85,7 +85,7 @@
 
 (defn now-in-millis [] (coerce/to-long (time/now)))
 
-(defn koodi-uri-no-version [koodi-uri] (replace koodi-uri #"#\d*$" ""))
+(defn koodi-uri-no-version [koodi-uri] (str/replace koodi-uri #"#\d*$" ""))
 
 (defn ammatillinen? [e] (= "amm" (:koulutustyyppi e)))
 
@@ -96,9 +96,9 @@
 (defn comma-separated-string->vec
   [s]
   (->> (some-> s
-               (split #","))
-       (remove blank?)
-       (map trim)
+               (str/split #","))
+       (remove str/blank?)
+       (map str/trim)
        (vec)))
 
 (defn contains-element? [coll e] (some? (first (filter #(= e %) coll))))
@@ -107,7 +107,7 @@
 
 (defn ->koodi-with-version-wildcard [koodi] (str koodi "#*"))
 
-(defn ->lower-case-vec [coll] (vec (map lower-case coll)))
+(defn ->lower-case-vec [coll] (vec (map str/lower-case coll)))
 
 (defn rename-key
   [coll old new]
