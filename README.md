@@ -85,17 +85,10 @@ ole välttämätön.
 Jos täytyy debugata tai kehittää konfo-backendin generoimia elasticsearch kyselyitä, tähän yksi keino on 
 lisätä queryn generoivaan koodiin printtausta (esim. `(println (chesire.core/generate-string query))`),
 laittaa konfo-backend ajoon ja tehdä haluttu request swaggerista. Sen jälkeen printatun elastic kyselyn voi kopioida haluamaansa
-http clientiin, jossa kyselyn kehitystä voi jatkaa. Http clientin kyselyitä voi tehdä halutessaan jonkin testiympäristön
-elasticia vasten SSH-porttiohjauksella.
+http clientiin, jossa kyselyn kehitystä voi jatkaa. 
 
-SSH-porttiohjaus onnistuu seuraavilla komennoilla:
-
-- ssh -N -L 9200:konfoes7.es.untuvaopintopolku.fi:80 testityy@bastion.untuvaopintopolku.fi
-- ssh -N -L 9200:konfoes7.es.hahtuvaopintopolku.fi:80 testityy@bastion.hahtuvaopintopolku.fi
-- ssh -N -L 9200:konfoes7.es.testiopintopolku.fi:80 testityy@bastion.testiopintopolku.fi
-
-Missä bastionin edessä oleva käyttäjätunnus muodostuu AWS IAM-tunnuksesi kahdeksasta ensimmäisestä kirjaimesta.
-Esim. `testi.tyyppi@firma.com`: `testityy`
+Http clientin kyselyitä voi tehdä halutessaan jonkin testiympäristön
+elasticia vastaa. Testiympäristön elasticien linkit löytyy Confluencesta ja autentikointia varten saat tiedon cloud-basen secretseistä
 
 ## 4. Hakurajaimet
 
