@@ -22,12 +22,21 @@
 
 (defn- get-entities
   [index query]
-  (e/search
-    index
-    parse-entities
-    :_source ["oid", "nimi"]
-    :size (count-docs index query)
-    :query query))
+  (let [total (count-docs index query)]
+    (if (< e/limit-to-use-search-after total)
+      (e/search-all-with-do-after
+        index
+        parse-entities
+        total
+        :_source ["oid", "nimi"]
+        :sort [{:oid.keyword "asc"}]
+        :query query)
+      (e/search
+        index
+        parse-entities
+        :_source ["oid", "nimi"]
+        :size total
+        :query query))))
 
 (defn get-koulutus-entities
   []
