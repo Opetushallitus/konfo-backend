@@ -26,17 +26,19 @@
     (reduce-merge-map #(koodi->rajain-counts rajain-counts-no-koodi-versions %)
                       koodit)))
 
-(defn- get-koulutustyyppi-amm-alakoodi-counts [rajain-counts]
+(defn- get-amm-erityisopetus-count [rajain-counts]
+  (select-keys (koodisto->rajain-counts rajain-counts "koulutustyyppi") [:koulutustyyppi_4]))
+
+(defn- get-amm-alakoodi-without-erityisopetus-counts [rajain-counts]
   (merge
    (select-keys (koodisto->rajain-counts rajain-counts "koulutustyyppi")
-                [:koulutustyyppi_26 :koulutustyyppi_4 :koulutustyyppi_11
-                 :koulutustyyppi_12])
+                [:koulutustyyppi_26 :koulutustyyppi_11 :koulutustyyppi_12])
    {:muu-amm-tutkinto {:count (get rajain-counts :muu-amm-tutkinto 0)}}))
 
 (defn- koulutustyyppi
   [rajain-counts]
   (let [ammatillinen-count (get rajain-counts :amm 0)
-        amm-alakoodi-counts (get-koulutustyyppi-amm-alakoodi-counts rajain-counts)
+        amm-alakoodi-counts (get-amm-alakoodi-without-erityisopetus-counts rajain-counts)
         lukio-count (get rajain-counts :lk 0)
         amk-count (get rajain-counts :amk 0)
         yo-count (get rajain-counts :yo 0)
@@ -57,6 +59,50 @@
                               :maisteri {:count maisteri-count}
                               :tohtori {:count tohtori-count}}}
            yo-count (assoc :count yo-count))}))
+
+(defn- koulutustyyppi-new
+  [rajain-counts]
+  (let [aikuisten-perusopetus-count (get rajain-counts :aikuisten-perusopetus 0)
+        taiteen-perusopetus-count (get rajain-counts :taiteen-perusopetus 0)
+        tuva-erityisopetus-count (get rajain-counts :tuva-erityisopetus 0)
+        amm-erityisopetus-count (get-amm-erityisopetus-count rajain-counts)
+        amm-alakoodi-wo-erityisoepetus-count (get-amm-alakoodi-without-erityisopetus-counts rajain-counts)
+        amm-osaamisala-count (get rajain-counts :amm-osaamisala 0)
+        amm-tutkinnon-osa-count (get rajain-counts :amm-tutkinnon-osa 0)
+        amm-muu-count (get rajain-counts :amm-muu 0)
+        total-amm-count (+ (:count amm-alakoodi-wo-erityisoepetus-count)
+                           amm-osaamisala-count amm-tutkinnon-osa-count amm-muu-count)
+        total-vaativan-tuen-koulutus-count (+ tuva-erityisopetus-count (:count amm-erityisopetus-count))
+        tuva-normal-count (get rajain-counts :tuva-normal 0)
+        telma-count (get rajain-counts :telma 0)
+        vapaa-sivistystyo-opistovuosi-count (get rajain-counts :vapaa-sivistystyo-opistovuosi 0)
+        total-valmentavat-koulutukset-count (+ tuva-normal-count telma-count vapaa-sivistystyo-opistovuosi-count)
+        lukio-count (get rajain-counts :lk 0)
+        amk-alempi-count (get rajain-counts :amk-alempi 0)
+        amk-ylempi-count (get rajain-counts :amk-ylempi 0)
+        amm-ope-erityisope-ja-opo-count (get rajain-counts :amm-ope-erityisope-ja-opo 0)
+
+        ]
+    {:aikuisten-perusopetus {:count aikuisten-perusopetus-count}
+     :taiteen-perusopetus {:count taiteen-perusopetus-count}
+     :vaativan-tuen-koulutukset (cond-> {:alakoodit amm-erityisopetus-count
+                                                    {:tuva-erityisopetus {:count tuva-erityisopetus-count}}}
+                                  total-vaativan-tuen-koulutus-count (assoc :count total-vaativan-tuen-koulutus-count))
+     :valmentavat-koulutukset (cond-> {:alakoodit {:tuva-normal {:count tuva-normal-count}
+                                                   :telma {:count telma-count}
+                                                   :vapaa-sivistystyo-opistovuosi {:count vapaa-sivistystyo-opistovuosi-count}}}
+                                total-valmentavat-koulutukset-count (assoc :count total-valmentavat-koulutukset-count))
+     :amm (cond-> {:alakoodit amm-alakoodi-wo-erityisoepetus-count
+                              {:amm-osaamisala {:count amm-osaamisala-count}
+                               :amm-tutkinnon-osa {:count amm-tutkinnon-osa-count}
+                               :amm-muu {:count amm-muu-count}}}
+            total-amm-count (assoc :count total-amm-count))
+     :lk {:count lukio-count}
+     :amk (cond-> {:alakoodit {:amk-alempi {:count amk-alempi-count}
+                               :amk-ylempi {:count amk-ylempi-count}
+                               :amm-ope-erityisope-ja-opo {:count amm-ope-erityisope-ja-opo-count}}}
+                  amk-count (assoc :count amk-count))
+     }))
 
 (defn- koulutustyyppi-muu
   [rajain-counts]
