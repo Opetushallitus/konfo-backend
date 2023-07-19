@@ -9,14 +9,13 @@
   [rajain-counts koodi]
   (let [koodiUri (keyword (:koodiUri koodi))
         nimi (get-in koodi [:nimi])
-        only-one-alakoodit-and-it-has-same-name (and (contains? koodi :alakoodit)
-                                                     (= 1 (count (:alakoodit koodi)))
-                                                     (= nimi (get-in koodi [:alakoodit 0 :nimi])))
-        count-from-only-alakoodit (if only-one-alakoodit-and-it-has-same-name
+        only-one-alakoodit (and (contains? koodi :alakoodit)
+                                (= 1 (count (:alakoodit koodi))))
+        count-from-only-alakoodit (if only-one-alakoodit
                                     (get rajain-counts (get-in koodi [:alakoodit 0 :koodiUri]) 0)
                                     0)
         count (+ (get rajain-counts koodiUri 0) count-from-only-alakoodit)
-        alakoodit (when (and (contains? koodi :alakoodit) (not only-one-alakoodit-and-it-has-same-name))
+        alakoodit (when (and (contains? koodi :alakoodit) (not only-one-alakoodit))
                     (reduce-merge-map #(koodi->rajain-counts rajain-counts %) (:alakoodit koodi)))]
     {koodiUri (cond-> {:nimi nimi}
                 count (assoc :count count)
