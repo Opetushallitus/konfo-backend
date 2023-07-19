@@ -11,10 +11,7 @@
         nimi (get-in koodi [:nimi])
         only-one-alakoodit (and (contains? koodi :alakoodit)
                                 (= 1 (count (:alakoodit koodi))))
-        count-from-only-alakoodit (if only-one-alakoodit
-                                    (get rajain-counts (get-in koodi [:alakoodit 0 :koodiUri]) 0)
-                                    0)
-        count (+ (get rajain-counts koodiUri 0) count-from-only-alakoodit)
+        count (get rajain-counts koodiUri 0)
         alakoodit (when (and (contains? koodi :alakoodit) (not only-one-alakoodit))
                     (reduce-merge-map #(koodi->rajain-counts rajain-counts %) (:alakoodit koodi)))]
     {koodiUri (cond-> {:nimi nimi}

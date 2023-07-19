@@ -70,9 +70,9 @@
                      :opetustapa {:opetuspaikkakk_01 {:count 1}
                                   :opetuspaikkakk_02 {:count 7}}
                      :koulutusala {:kansallinenkoulutusluokitus2016koulutusalataso1_01
-                                   {:count 51}
+                                   {:count 22}
                                    :kansallinenkoulutusluokitus2016koulutusalataso1_02
-                                   {:count 51}}
+                                   {:count 22}}
                      :valintatapa {:valintatapajono_av {:count 3}
                                    :valintatapajono_tv {:count 3}}
                      :hakukaynnissa {:count 1}
