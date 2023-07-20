@@ -9,8 +9,10 @@
   [rajain-counts koodi]
   (let [koodiUri (keyword (:koodiUri koodi))
         nimi (get-in koodi [:nimi])
+        only-one-alakoodit (and (contains? koodi :alakoodit)
+                                (= 1 (count (:alakoodit koodi))))
         count (get rajain-counts koodiUri 0)
-        alakoodit (when (contains? koodi :alakoodit)
+        alakoodit (when (and (contains? koodi :alakoodit) (not only-one-alakoodit))
                     (reduce-merge-map #(koodi->rajain-counts rajain-counts %) (:alakoodit koodi)))]
     {koodiUri (cond-> {:nimi nimi}
                 count (assoc :count count)
