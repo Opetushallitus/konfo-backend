@@ -165,15 +165,15 @@
     rajain-context))
 
 (defn max-agg-filter
-  ([field-name own-filter constraints]
+  ([field-name own-filter]
    (let [max-agg {:max {:field field-name}}]
-     (if (or own-filter (not-empty constraints))
+     (if own-filter
        {:filter {:bool
-                 {:filter (filterv some? (distinct (conj constraints own-filter)))}}
+                 {:filter [own-filter]}}
         :aggs {:max-val max-agg}}
        max-agg)))
-  ([field-name constraints]
-  (max-agg-filter field-name nil constraints)))
+  ([field-name]
+  (max-agg-filter field-name nil)))
 
 (defn nested-rajain-aggregation
   [rajain-key field-name constraints rajain-context]

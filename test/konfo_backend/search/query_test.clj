@@ -266,12 +266,12 @@
                                              {:search_terms.metadata.suunniteltuKestoKuukausina
                                               {:gte 0}}}]}},
                                          :aggs {:real_hits {:reverse_nested {}}}}
-           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" jotpa-term)
+           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
            :maksuton (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" jotpa-term)
            :maksullinen (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" jotpa-term)
-           :maksullinen-max (max-agg "search_terms.metadata.maksunMaara" [jotpa-term maksullinen-term])
+           :maksullinen-max (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
            :lukuvuosimaksu (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" jotpa-term)
-           :lukuvuosimaksu-max (max-agg "search_terms.metadata.maksunMaara" [jotpa-term lukuvuosimaksu-term])
+           :lukuvuosimaksu-max (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
            :jotpa (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
            :tyovoimakoulutus (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
            :taydennyskoulutus (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
@@ -313,7 +313,7 @@
                                             {:search_terms.metadata.suunniteltuKestoKuukausina
                                              {:gte 0}}}]}},
                                         :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
-           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" [sijainti-term onkotuleva-term])
+           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
            :hakukaynnissa                       {:filter
                                                  {:bool
                                                   {:filter
@@ -386,7 +386,7 @@
                                                    {:search_terms.metadata.suunniteltuKestoKuukausina
                                                     {:gte 0}}}]}},
                                                :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
-                  :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" [sijainti-term onkotuleva-term])
+                  :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
                   :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
                   :hakukaynnissa {:filter
                                   {:bool

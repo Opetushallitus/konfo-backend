@@ -178,10 +178,7 @@
                                   (aggregation-filters-without-rajainkeys constraints ["koulutuksenkestokuukausina"]
                                                                           rajain-context)
                                   rajain-context)))
-   :make-max-agg (fn [constraints rajain-context]
-                   (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina" nil
-                                    (aggregation-filters-without-rajainkeys
-                                      constraints ["koulutuksenkestokuukausina"] rajain-context)))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina"))
    :desc "
    |        - in: query
    |          name: koulutuksenkestokuukausina_min
@@ -360,12 +357,8 @@
                                 (aggregation-filters-without-rajainkeys
                                   constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [constraints rajain-context]
-                   (max-agg-filter "search_terms.metadata.maksunMaara"
-                                   (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
-                                    (aggregation-filters-without-rajainkeys
-                                      constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)))
-   })
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
+                                   (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
 
 (def lukuvuosimaksu
   {:id :lukuvuosimaksu
@@ -380,13 +373,10 @@
                                 (aggregation-filters-without-rajainkeys
                                   constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [constraints rajain-context]
-                   (max-agg-filter "search_terms.metadata.maksunMaara"
+   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
                                    (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
                                               (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
-                                    (aggregation-filters-without-rajainkeys
-                                      constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)))
-   })
+                                    ))})
 
 (def yhteishaku
   {:id :yhteishaku
@@ -583,7 +573,7 @@
   (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
   (-> {}
       (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
-      (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints rajain-context)})))))
+      (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
 
 (defn generate-hakutulos-aggregations
   [constraints]
