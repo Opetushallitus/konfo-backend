@@ -2,7 +2,7 @@
   (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
             [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
                                                         generate-rajain-counts-for-jarjestajat]]
-            [konfo-backend.search.rajain-definitions :refer [all-aggregation-defs]]
+            [konfo-backend.search.rajain-definitions :refer [all-aggregation-defs max-agg-defs ->max-agg-id]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
                                          reduce-merge-map rename-key]]))
@@ -21,7 +21,7 @@
                  (select-keys res [:oid :nimi :toteutustenTarjoajat])))
        (get-in response [:hits :hits])))
 
-(defn get-uniform-buckets [agg agg-key]
+(defn- get-uniform-buckets [agg agg-key]
   ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on yksi ylimääräinen aggregaatiokerros
   (let [rajain-agg (get-in agg [agg-key] agg)
         ;Jos aggregaatiolla on rajaimia, on lisäksi "rajain"-aggregaatiokerros
@@ -38,17 +38,26 @@
         mapper (fn [key] {key (get-in hits-buckets (concat [(keyword key)] [:real_hits :doc_count]))})]
     (reduce-merge-map mapper (keys hits-buckets))))
 
-(defn doc_count-by-filter
-  [response]
-  (reduce-merge-map #(->doc_count response %) (map :id all-aggregation-defs)))
+(defn- ->max-number
+  [response max-agg-key]
+  (let [agg-item (get-in response [:aggregations :hits_aggregation max-agg-key])]
+    {max-agg-key (or (get-in agg-item [:value])
+                     (get-in agg-item [:max-val :value])
+                     0)}))
 
-(defn- rajain-counts
+(defn- numbers-by-filter
   [response]
-  (generate-default-rajain-counts (doc_count-by-filter response)))
+  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map :id all-aggregation-defs))
+        max-numbers (reduce-merge-map #(->max-number response %) (map #(->max-agg-id (:id %)) max-agg-defs))]
+    (merge doc-counts max-numbers)))
+
+(defn- rajain-numbers
+  [response]
+  (generate-default-rajain-counts (numbers-by-filter response)))
 
 (defn- filters-for-jarjestajat
   [response]
-  (generate-rajain-counts-for-jarjestajat (doc_count-by-filter response)
+  (generate-rajain-counts-for-jarjestajat (numbers-by-filter response)
                                           (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
 
 (defn parse
@@ -56,7 +65,7 @@
   (log-pretty response)
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
-   :filters (rajain-counts response)})
+   :filters (rajain-numbers response)})
 
 (defn parse-for-autocomplete
   [lng response]
@@ -119,7 +128,7 @@
 
 (defn parse-inner-hits
   ([response]
-   (parse-inner-hits response rajain-counts))
+   (parse-inner-hits response rajain-numbers))
   ([response filter-generator]
    (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
          total-inner-hits (:value (:total inner-hits))]

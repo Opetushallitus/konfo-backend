@@ -141,11 +141,11 @@
    (with-real-hits agg nil)))
 
 (defn- rajain-terms-agg
-  ([field-name rajain-context]
+  [field-name rajain-context]
    (let [default-terms {:field field-name
                         :min_doc_count 0
                         :size 1000}]
-     (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context))))
+     (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
 
 (defn- constrained-agg [constraints filtered-aggs plain-aggs]
   (if (not-empty constraints)
@@ -165,6 +165,17 @@
     {:filter {:bool
               {:filter (vec (distinct (conj constraints own-filter)))}}}
     rajain-context))
+
+(defn max-agg-filter
+  ([field-name own-filter constraints]
+   (let [max-agg {:max {:field field-name}}]
+     (if (or own-filter (not-empty constraints))
+       {:filter {:bool
+                 {:filter (filterv some? (distinct (conj constraints own-filter)))}}
+        :aggs {:max-val max-agg}}
+       max-agg)))
+  ([field-name constraints]
+  (max-agg-filter field-name nil constraints)))
 
 (defn nested-rajain-aggregation
   [rajain-key field-name constraints rajain-context]

@@ -2,6 +2,7 @@
   (:require
    [konfo-backend.tools :refer [current-time-as-kouta-format]]
    [clj-time.core :as time]
+   [clojure.string :refer [replace-first]]
    [konfo-backend.search.rajain-tools :refer :all]))
 
 ;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
@@ -177,6 +178,10 @@
                                   (aggregation-filters-without-rajainkeys constraints ["koulutuksenkestokuukausina"]
                                                                           rajain-context)
                                   rajain-context)))
+   :make-max-agg (fn [constraints rajain-context]
+                   (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina" nil
+                                    (aggregation-filters-without-rajainkeys
+                                      constraints ["koulutuksenkestokuukausina"] rajain-context)))
    :desc "
    |        - in: query
    |          name: koulutuksenkestokuukausina_min
@@ -184,7 +189,7 @@
    |          schema:
    |            type: number
    |          description: Koulutuksen suunnitellun keston alaraja.
-   |          example: 0
+   |          example: 10
    |        - in: query
    |          name: koulutuksenkestokuukausina_max
    |          style: form
@@ -354,7 +359,13 @@
                                                                (get-in constraints [:maksullinen :maksunmaara]))])
                                 (aggregation-filters-without-rajainkeys
                                   constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
-                                rajain-context))})
+                                rajain-context))
+   :make-max-agg (fn [constraints rajain-context]
+                   (max-agg-filter "search_terms.metadata.maksunMaara"
+                                   (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+                                    (aggregation-filters-without-rajainkeys
+                                      constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)))
+   })
 
 (def lukuvuosimaksu
   {:id :lukuvuosimaksu
@@ -368,7 +379,14 @@
                                            (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :onkoApuraha]))])
                                 (aggregation-filters-without-rajainkeys
                                   constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
-                                rajain-context))})
+                                rajain-context))
+   :make-max-agg (fn [constraints rajain-context]
+                   (max-agg-filter "search_terms.metadata.maksunMaara"
+                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                              (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :onkoApuraha]))])
+                                    (aggregation-filters-without-rajainkeys
+                                      constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)))
+   })
 
 (def yhteishaku
   {:id :yhteishaku
@@ -554,10 +572,18 @@
   (concat common-aggregation-defs [koulutusala koulutustyyppi]))
 
 (def all-aggregation-defs (concat hakutulos-aggregation-defs @jarjestaja-rajain-definitions))
+(def max-agg-defs (filter #(not (nil? (:make-max-agg %))) all-aggregation-defs))
+
+(defn ->max-agg-id
+  [agg-id]
+  (keyword (replace-first (str agg-id "-max") ":" "")))
 
 (defn- generate-aggs
   [agg-defs constraints rajain-context]
-  (into {} (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)})))
+  (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
+  (-> {}
+      (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
+      (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints rajain-context)})))))
 
 (defn generate-hakutulos-aggregations
   [constraints]

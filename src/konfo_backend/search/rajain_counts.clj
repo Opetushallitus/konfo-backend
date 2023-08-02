@@ -116,12 +116,17 @@
 (defn- hakukaynnissa [rajain-counts] {:count (get rajain-counts :hakukaynnissa 0)})
 
 (defn- jotpa [rajain-counts] {:count (get rajain-counts :jotpa 0)})
-
 (defn- taydennyskoulutus [rajain-counts] {:count (get rajain-counts :taydennyskoulutus 0)})
-
 (defn- tyovoimakoulutus [rajain-counts] {:count (get rajain-counts :tyovoimakoulutus 0)})
 
-(defn- koulutuksenkesto [rajain-counts] {:count (get rajain-counts :koulutuksenkestokuukausina 0)})
+(defn- koulutuksenkesto [rajain-counts] {:count (get rajain-counts :koulutuksenkestokuukausina 0)
+                                         :max (get rajain-counts :koulutuksenkestokuukausina-max)})
+
+(defn- maksuton [rajain-counts] {:count (get rajain-counts :maksuton 0)})
+(defn- maksullinen [rajain-counts] {:count (get rajain-counts :maksullinen 0)
+                                    :max (get rajain-counts :maksullinen-max 0)})
+(defn- lukuvuosimaksu [rajain-counts] {:count (get rajain-counts :lukuvuosimaksu 0)
+                                       :max (get rajain-counts :lukuvuosimaksu-max 0)})
 
 (defn- yhteishaku
   [aggs]
@@ -196,7 +201,10 @@
       :osaamisala (koodisto-counts "osaamisala")
       :lukiolinjaterityinenkoulutustehtava (koodisto-counts "lukiolinjaterityinenkoulutustehtava")
       :lukiopainotukset (koodisto-counts "lukiopainotukset")
-      :alkamiskausi (alkamiskausi-counts rajain-counts)}))
+      :alkamiskausi (alkamiskausi-counts rajain-counts)
+      :maksuton (maksuton rajain-counts)
+      :maksullinen (maksullinen rajain-counts)
+      :lukuvuosimaksu (lukuvuosimaksu rajain-counts)}))
   ([] (generate-default-rajain-counts {})))
 
 
