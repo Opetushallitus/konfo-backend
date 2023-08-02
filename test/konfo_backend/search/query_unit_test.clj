@@ -60,7 +60,7 @@
                                        [{:bool {:filter
                                                 [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
                                                  {:range {:search_terms.metadata.maksunMaara {:gte 0, :lte 10000}}}
-                                                 {:term {:search_terms.onkoApuraha true}}]}}]}}])
+                                                 {:term {:search_terms.metadata.onkoApuraha true}}]}}]}}])
            (common-filters {:lukuvuosimaksu {:maksunmaara [0,10000] :apuraha true}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for maksullisuus -rajaingroup"
