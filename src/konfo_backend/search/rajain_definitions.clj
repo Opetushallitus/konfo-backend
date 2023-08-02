@@ -376,14 +376,14 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
                                            (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
-                                           (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :onkoApuraha]))])
+                                           (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
                                 (aggregation-filters-without-rajainkeys
                                   constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))
    :make-max-agg (fn [constraints rajain-context]
                    (max-agg-filter "search_terms.metadata.maksunMaara"
                                    (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                              (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :onkoApuraha]))])
+                                              (->conditional-boolean-term-query "onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
                                     (aggregation-filters-without-rajainkeys
                                       constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)))
    })
