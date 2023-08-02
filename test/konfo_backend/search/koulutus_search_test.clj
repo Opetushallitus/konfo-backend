@@ -88,7 +88,8 @@
                                     :maksunmaara {:count 3
                                                   :max 200.5}
                                     :lukuvuosimaksunmaara {:count 2
-                                                           :max 500.0}}}
+                                                           :max 500.0}
+                                    :apuraha {:count 2}}}
                     (:filters r)))))
 
     (testing "Search koulutukset, filter with..."

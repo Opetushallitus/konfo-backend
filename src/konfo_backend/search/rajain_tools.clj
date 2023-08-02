@@ -42,8 +42,6 @@
                      "koulutustyyppi_11"
                      "koulutustyyppi_12"])
 
-(def maksullisuustyypit ["maksuton", "maksullinen", "lukuvuosimaksu"])
-
 (defn by-rajaingroup
   [rajaimet rajain-group]
   (mapv :id (filter #(= (:rajainGroupId %) rajain-group) rajaimet)))

@@ -130,7 +130,8 @@
    :maksunmaara {:count (get rajain-counts :maksullinen 0)
                  :max (get rajain-counts :maksullinen-max 0)}
    :lukuvuosimaksunmaara {:count (get rajain-counts :lukuvuosimaksu 0)
-                          :max (get rajain-counts :lukuvuosimaksu-max 0)}})
+                          :max (get rajain-counts :lukuvuosimaksu-max 0)}
+   :apuraha {:count (get rajain-counts :lukuvuosimaksu 0)}})
 
 (defn- yhteishaku
   [aggs]
