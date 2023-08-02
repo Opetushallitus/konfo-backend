@@ -81,9 +81,14 @@
                      :pohjakoulutusvaatimus {:pohjakoulutusvaatimuskonfo_01 {:count 0}
                                              :pohjakoulutusvaatimuskonfo_am {:count 4}}
                      :koulutuksenkestokuukausina {:count 20, :max 46.0}
-                     :maksuton {:count 0}
-                     :maksullinen {:count 3, :max 200.5}
-                     :lukuvuosimaksu {:count 2, :max 500.0}}
+                     :maksullisuus {:maksullisuustyyppi
+                                    {:maksuton {:count 0}
+                                     :maksullinen {:count 3}
+                                     :lukuvuosimaksu {:count 2}}
+                                    :maksunmaara {:count 3
+                                                  :max 200.5}
+                                    :lukuvuosimaksunmaara {:count 2
+                                                           :max 500.0}}}
                     (:filters r)))))
 
     (testing "Search koulutukset, filter with..."
