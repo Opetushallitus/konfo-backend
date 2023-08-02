@@ -542,7 +542,7 @@
 
 (def common-aggregation-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus
-   koulutuksenkestokuukausina valintatapa yhteishaku])
+   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi])
 
 (def hakutulos-aggregation-defs
   (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus

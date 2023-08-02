@@ -5,6 +5,7 @@
                                                 jarjestajat-aggregations
                                                 tarjoajat-aggregations]]
             [konfo-backend.search.rajain-tools :refer [koulutustyypit]]
+            [konfo-backend.test-tools :refer [set-fixed-time]]
             [konfo-backend.tools]
             [clojure.string :refer [replace-first split join]]
             [matcher-combinators.matchers :as m]
@@ -20,7 +21,7 @@
                                      {:term {:search_terms.sijainti.keyword "kunta_091"}}]}}}})))
   (testing
    "Query with hakukaynnissa filters"
-    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+    (set-fixed-time "2020-01-01T01:01:00")
       (is
        (= (post-filter-query {:hakukaynnissa true})
           {:nested
@@ -62,7 +63,7 @@
                               "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                           {:range
                            {:search_terms.hakutiedot.hakuajat.paattyy
-                            {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}})))))
+                            {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}))))
 
 (defn- make-terms-agg [field-name term-props reverse-nested-path]
   {:terms (merge {:field field-name
@@ -104,10 +105,12 @@
 (def jotpa-term {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}})
 (def jotpa-bool-filter {:bool {:filter [jotpa-term]}})
 
+(def alkamiskaudet-include ["henkilokohtainen" "2020-kevat" "2020-syksy" "2021-kevat" "2021-syksy" "2022-kevat"])
+
 (deftest hakutulos-aggregations-test
   (testing
    "Aggregations"
-    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+    (set-fixed-time "2020-01-01T01:01:00")
       (is
        (match? (m/match-with [map? m/equals]
                              {:hits_aggregation
@@ -133,6 +136,7 @@
                                 :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword")
                                 :opetuskieli (default-agg "search_terms.opetuskielet.keyword")
                                 :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat")
+                                :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:include alkamiskaudet-include} nil)
                                 :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" nil {:size (count koulutustyypit) :include koulutustyypit} nil)
                                 :hakukaynnissa {:filter
                                                 {:bool
@@ -177,11 +181,11 @@
                                 :jotpa (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                                 :tyovoimakoulutus (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
                                 :taydennyskoulutus (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
-               (hakutulos-aggregations {})))))
+               (hakutulos-aggregations {}))))
 
   (testing
    "aggregations with selected filters"
-    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+    (set-fixed-time "2020-01-01T01:01:00")
       (is
        (match? (m/match-with [map? m/equals]
         {:hits_aggregation
@@ -198,6 +202,7 @@
            :opetuskieli (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
            :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" jotpa-bool-filter nil nil)
            :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter {:size (count koulutustyypit) :include koulutustyypit} nil)
+           :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:include alkamiskaudet-include} nil)
            :hakukaynnissa {:filter
                            {:bool
                             {:filter
@@ -253,7 +258,7 @@
            :jotpa (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
            :tyovoimakoulutus (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
            :taydennyskoulutus (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
-        (hakutulos-aggregations {:jotpa true}))))))
+        (hakutulos-aggregations {:jotpa true})))))
 
 (def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
 (def onkotuleva-term {:term {:search_terms.onkoTuleva false}})
@@ -261,7 +266,7 @@
 
 (deftest jarjestajat-aggregations-test
   (testing "should form aggregations for jarjestajat query with selected filters"
-    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+    (set-fixed-time "2020-01-01T01:01:00")
       (is
        (match? (m/match-with [map? m/equals]
         {:hits_aggregation
@@ -280,6 +285,7 @@
            :valintatapa                         (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
            :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+           :alkamiskausi                        (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
            :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
            :koulutuksenkestokuukausina {:filter
                                         {:bool
@@ -332,11 +338,11 @@
                                                                  {:gt
                                                                   "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
                                                  :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}})
-        (jarjestajat-aggregations {:sijainti ["kunta_564"]} false))))))
+        (jarjestajat-aggregations {:sijainti ["kunta_564"]} false)))))
 
 (deftest tarjoajat-aggregations-test
   (testing "should form aggregations for tarjoajat query with selected filters"
-    (with-redefs [konfo-backend.tools/current-time-as-kouta-format (fn [] "2020-01-01T01:01")]
+    (set-fixed-time "2020-01-01T01:01:00")
       (is
        (match? (m/match-with [map? m/equals]
               {:hits_aggregation
@@ -362,6 +368,7 @@
                                                    {:search_terms.metadata.suunniteltuKestoKuukausina
                                                     {:gte 0}}}]}},
                                                :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
+                  :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
                   :hakukaynnissa {:filter
                                   {:bool
                                    {:filter
@@ -404,4 +411,4 @@
                                                   {:gt
                                                    "2020-01-01T01:01"}}}]}}]}}}}]}}]}}
                                   :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}})
-               (tarjoajat-aggregations {:sijainti ["kunta_564"]} false))))))
+               (tarjoajat-aggregations {:sijainti ["kunta_564"]} false)))))
