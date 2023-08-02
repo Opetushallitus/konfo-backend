@@ -42,6 +42,12 @@
                      "koulutustyyppi_11"
                      "koulutustyyppi_12"])
 
+(def maksullisuustyypit ["maksuton", "maksullinen", "lukuvuosimaksu"])
+
+(defn by-rajaingroup
+  [rajaimet rajain-group]
+  (mapv :id (filter #(= (:rajainGroupId %) rajain-group) rajaimet)))
+
 (defn ->terms-query [key value]
   (let [term-key (keyword (str "search_terms." key))
         ->lower-case (fn [val] (if (string? val) (lower-case val) val))]
@@ -62,21 +68,49 @@
   [key]
   (->terms-query key true))
 
+(defn ->conditional-boolean-term-query
+  [key required-val val]
+  (when (= val required-val)
+    (->terms-query key val)))
+
 (defn onkoTuleva-query [tuleva?]
   {:term {:search_terms.onkoTuleva tuleva?}})
 
 (defn number-range-query
   [key value]
-  (let [min (if (vector? value) (first value) value)
-        max (if (vector? value) (get value 1 nil) nil)]
-    {:range {(keyword (str "search_terms." key))
-             (if (not (nil? max)) {:gte min :lte max} {:gte min})}}))
+  (when (and (vector? value)(not-empty value))
+    (let [min (first value)
+          max (if (> (count value) 1) (get value 1 nil) nil)]
+      {:range {(keyword (str "search_terms." key))
+              (if (not (nil? max)) {:gte min :lte max} {:gte min})}})))
 
-(defn make-combined-boolean-should-filter-query
-  [constraints sub-filters]
-  (let [selected-sub-filters (filter #(true? (get constraints (:id %))) sub-filters)]
-    (when (not-empty selected-sub-filters)
-      {:bool {:should (mapv #((:make-query %)) selected-sub-filters)}})))
+(defn- boolean-constraint? [constraint-val]
+  (and (boolean? constraint-val)(true? constraint-val)))
+
+(defn- vector-constraint? [constraint-val]
+  (and (vector? constraint-val) (not-empty constraint-val)))
+
+(defn- object-constraint? [constraint-val]
+  (and (map? constraint-val) (not-empty (keys constraint-val))))
+
+(defn make-query-for-rajain
+  [constraints rajain]
+  (let [constraint-vals (get constraints (:id rajain))]
+    (cond
+      (boolean-constraint? constraint-vals) ((:make-query rajain))
+      (vector-constraint? constraint-vals) ((:make-query rajain) constraint-vals)
+      (object-constraint? constraint-vals) ((:make-query rajain) constraint-vals))))
+
+(defn constraint? [constraints key]
+  (let [constraint-val (key constraints)]
+    (or (boolean-constraint? constraint-val)(vector-constraint? constraint-val)(object-constraint? constraint-val))))
+
+(defn make-combined-should-filter-query
+  [constraints rajain-items]
+  (let [conditions (map #(make-query-for-rajain constraints %) rajain-items)
+        active-conditions (filter some? conditions)]
+    (when (not-empty active-conditions)
+      {:bool {:should (vec active-conditions)}})))
 
 (defn hakuaika-filter-query
   [current-time]
@@ -90,6 +124,14 @@
 
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))
+
+(defn all-must
+  [conditions]
+  (let [active-conditions (filter some? conditions)]
+    (when (not-empty active-conditions)
+      (if (> (count active-conditions) 1)
+        {:bool {:filter (vec active-conditions)}}
+        (first active-conditions)))))
 
 (defn- with-real-hits
   ([agg rajain-context]
