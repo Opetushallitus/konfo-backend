@@ -550,11 +550,10 @@
 
 (def common-aggregation-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus
-   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi])
+   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu])
 
 (def hakutulos-aggregation-defs
-  (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus
-                                   maksuton maksullinen lukuvuosimaksu]))
+  (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
 
 (def jarjestaja-aggregation-defs (concat common-aggregation-defs @jarjestaja-rajain-definitions))
 
