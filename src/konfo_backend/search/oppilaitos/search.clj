@@ -25,7 +25,9 @@
      parse
      :_source ["oid", "nimi", "koulutusohjelmatLkm" "kielivalinta", "kuvaus", "paikkakunnat", "logo"]
      :sort (sorts sort order lng)
-     :query search-term-query
+     :query {:bool {:must search-term-query
+                    ; Otetaan vastaukseen mukaan pelkät oppilaitokset (=organisaatiotyyppi_02)
+                    :filter {:match {:organisaatiotyypit "organisaatiotyyppi_02"}}}}
      :post_filter post-filter-query
      :aggs aggs)))
 
