@@ -35,7 +35,7 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitoksen tarjonta with bad requests:"
       (testing "Invalid lng"
-        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :lng "foo") "Virheellinen kieli" )))
+        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :lng "foo") "Virheellinen kieli")))
       (testing "Invalid order"
         (is (starts-with? (->bad-request-body punkaharjun-yliopisto :order "foo") "Virheellinen järjestys"))))
 
@@ -123,4 +123,6 @@
                   :hakuAuki          false,
                   :jarjestaaUrheilijanAmmKoulutusta false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
-                                 :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
+                                      :sv "Massikkakoulutus sv"}
+                  :suunniteltuKestoKuukausina 0
+                  } (first (:hits r)))))))))

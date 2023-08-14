@@ -128,6 +128,7 @@
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "amm"
                   :hakuAuki true
+                  :suunniteltuKestoKuukausina 0
                   } (first (:hits r))))))
 
       (testing "tulevat"
