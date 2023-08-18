@@ -73,7 +73,7 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
     (testing "multiple sijainti"
-      (let [r (search :sijainti "%20kunta_618%20,%20kunta_091" :sort "name" :order "asc")]
+      (let [r (search :sijainti " kunta_618 , kunta_091" :sort "name" :order "asc")]
         (is (= 10 (count (:hits r))))))
 
     (testing "koulutustyyppi amm"
@@ -210,4 +210,4 @@
       (is (= [oppilaitos-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
 
     (testing "muusikon koulutus"
-      (is (= [oppilaitos-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))))
+      (is (= [oppilaitos-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon koulutus"))))))

@@ -100,7 +100,7 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
     (testing "multiple sijainti"
-      (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
+      (let [r (search :sijainti " kunta_618 , kunta_220" :sort "name" :order "asc")]
         (is (match? 19 (count (:hits r))))))
 
     (testing "koulutustyyppi amm-osaamisala"
@@ -316,16 +316,16 @@
           (is (= [keyword-koulutus-oid4 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "tekniikka"))))
 
         (testing "muusikon koulutus <-> EI muita koulutuksia"
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))
+          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon koulutus"))))
 
         (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittausalan%20perustutkinto"))))
+          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittausalan perustutkinto"))))
 
         (testing "perustutkinto maanmittaus <-> EI muita perustutkintoja"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto%20maanmittaus"))))
+          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto maanmittaus"))))
 
         (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittauS%20peruS"))))
+          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittauS peruS"))))
 
         (testing "tietojenkäsittely <-> tietojenkäsittelytieteen"
           (is (= [keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittely"))))
