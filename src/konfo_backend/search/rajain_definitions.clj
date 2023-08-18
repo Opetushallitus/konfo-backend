@@ -48,9 +48,7 @@
    :make-agg (fn [constraints rajain-context]
                (rajain-aggregation (->field-key "koulutustyypit.keyword")
                                    (aggregation-filters-without-rajainkeys constraints ["koulutustyyppi"] rajain-context)
-                                   (merge rajain-context
-                                          {:term-params {:size (count koulutustyypit)
-                                                         :include koulutustyypit}})))
+                                   rajain-context))
    :desc "
    |        - in: query
    |          name: koulutustyyppi

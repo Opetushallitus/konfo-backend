@@ -2,46 +2,6 @@
   (:require [clojure.string :refer [lower-case replace-first split join]]
             [konfo-backend.tools :refer [->lower-case-vec]]))
 
-(def koulutustyypit ["amm"
-                     "amm-muu"
-                     "amm-tutkinnon-osa"
-                     "amm-osaamisala"
-                     "lk"
-                     "amk"
-                     "amk-muu"
-                     "amm-ope-erityisope-ja-opo"
-                     "ope-pedag-opinnot"
-                     "yo"
-                     "kk-opintojakso-normal"
-                     "kk-opintojakso-avoin"
-                     "kk-opintokokonaisuus-avoin"
-                     "kk-opintokokonaisuus-normal"
-                     "erikoislaakari"
-                     "erikoistumiskoulutus"
-                     "amk-alempi"
-                     "amk-ylempi"
-                     "kandi"
-                     "kandi-ja-maisteri"
-                     "maisteri"
-                     "tohtori"
-                     "tuva"
-                     "tuva-normal"
-                     "tuva-erityisopetus"
-                     "telma"
-                     "vapaa-sivistystyo"
-                     "vapaa-sivistystyo-opistovuosi"
-                     "vapaa-sivistystyo-muu"
-                     "aikuisten-perusopetus"
-                     "taiteen-perusopetus"
-                     "muu"
-                     "kk-muu"
-                     "muut-ammatilliset"
-                     ; ammatilliset koulutus-koodit
-                     "koulutustyyppi_26"
-                     "koulutustyyppi_4"
-                     "koulutustyyppi_11"
-                     "koulutustyyppi_12"])
-
 (defn by-rajaingroup
   [rajaimet rajain-group]
   (mapv :id (filter #(= (:rajainGroupId %) rajain-group) rajaimet)))
