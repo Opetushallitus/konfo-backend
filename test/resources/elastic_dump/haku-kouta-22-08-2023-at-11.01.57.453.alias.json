@@ -1,1 +1,5 @@
+<<<<<<< HEAD:test/resources/elastic_dump/haku-kouta-22-08-2023-at-11.01.57.453.alias.json
 "{\"haku-kouta-22-08-2023-at-11.01.57.453\":{\"aliases\":{\"haku-kouta\":{\"is_write_index\":false},\"haku-kouta-virkailija\":{\"is_write_index\":true}}}}"
+=======
+"{\"haku-kouta-18-08-2023-at-08.15.13.177\":{\"aliases\":{\"haku-kouta\":{\"is_write_index\":false},\"haku-kouta-virkailija\":{\"is_write_index\":true}}}}"
+>>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/haku-kouta-18-08-2023-at-08.15.13.177.alias.json
