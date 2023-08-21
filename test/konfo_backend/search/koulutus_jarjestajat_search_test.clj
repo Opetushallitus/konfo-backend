@@ -110,6 +110,7 @@
                   :nimi {:fi "Punkaharjun yliopisto",
                          :sv "Punkaharjun yliopisto sv"},
                   :oppilaitosOid "1.2.246.562.10.000002",
+                  :suunniteltuKestoKuukausina 0,
                   ;:maksullisuustyyppi nil,
                   :kunnat [{:koodiUri "kunta_220",
                             :nimi {:fi "kunta_220 nimi fi",
@@ -128,7 +129,6 @@
                   :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
                   :koulutustyyppi "amm"
                   :hakuAuki true
-                  :suunniteltuKestoKuukausina 0
                   } (first (:hits r))))))
 
       (testing "tulevat"

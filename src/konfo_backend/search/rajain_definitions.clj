@@ -2,44 +2,33 @@
   (:require
    [konfo-backend.tools :refer [current-time-as-kouta-format]]
    [clj-time.core :as time]
+   [clojure.string :refer [replace-first]]
    [konfo-backend.search.rajain-tools :refer :all]))
 
 ;; Seuraavat toteutettu atomeina ristikkäisten riippuvuuksien vuoksi: Näitä käytetään heti alussa esim. common-filtersissä,
 ;; vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta myöhempänä. Ja common-filtersiä taas käytetään
 ;; rajain-määritysten sisällä, eli se täytyy olla määriteltynä ennen rajain-määrityksiä.
 (def common-rajain-definitions (atom []))
-(def combined-tyoelama-rajain (atom {}))
 (def hakukaynnissa-rajain (atom {}))
-(def boolean-type-rajaimet (atom []))
 (def jarjestaja-rajain-definitions (atom []))
-
-(defn constraint?
-  [constraints key]
-  (not-empty (key constraints)))
 
 (defn constraints?
   [constraints]
-  (let [contains-non-boolean-rajaimet (not-empty (filter #(constraint? constraints %) (map :id @common-rajain-definitions)))
-        contains-boolean-true-rajaimet (not-empty (filter #(true? (% constraints)) @boolean-type-rajaimet))
+  (let [contains-default-rajaimet (not-empty (filter #(constraint? constraints %) (map :id (conj @common-rajain-definitions @hakukaynnissa-rajain))))
         contains-jarjestaja-rajaimet (not-empty (filter #(constraint? constraints %) (map :id @jarjestaja-rajain-definitions)))]
-    (or contains-non-boolean-rajaimet contains-boolean-true-rajaimet contains-jarjestaja-rajaimet)))
+    (or contains-default-rajaimet contains-jarjestaja-rajaimet)))
 
 (defn common-filters
   [constraints current-time]
-  (let [make-constraint-query
-        (fn [rajain-def]
-          (let [constraint-vals (get constraints (:id rajain-def))]
-            (cond
-              (and (boolean? constraint-vals) (true? constraint-vals)) (:make-query rajain-def)
-              (and (vector? constraint-vals) (not-empty constraint-vals)) ((:make-query rajain-def) constraint-vals))))]
+  (let [rajain-groups (group-by :rajainGroupId (filter #(not (nil? (:rajainGroupId %))) @common-rajain-definitions))]
     (filterv
      some?
      (flatten
       (conj
-       (mapv make-constraint-query @common-rajain-definitions)
-       ((:make-query @combined-tyoelama-rajain) constraints)
+       (mapv #(make-query-for-rajain constraints %) (filter #(nil? (:rajainGroupId %)) @common-rajain-definitions))
+       (mapv #(make-combined-should-filter-query constraints %) (vals rajain-groups))
        ((:make-query @hakukaynnissa-rajain) constraints current-time)
-       (mapv make-constraint-query @jarjestaja-rajain-definitions))))))
+       (mapv #(make-query-for-rajain constraints %) @jarjestaja-rajain-definitions))))))
 
 
 (defn aggregation-filters-without-rajainkeys
@@ -183,20 +172,28 @@
   {:id :koulutuksenkestokuukausina
    :make-query #(number-range-query "metadata.suunniteltuKestoKuukausina" %)
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (number-range-query "metadata.suunniteltuKestoKuukausina" (or (:koulutuksenkestokuukausina constraints) 0))
-                                (aggregation-filters-without-rajainkeys
-                                  constraints ["koulutuksenkestokuukausina"] rajain-context) rajain-context))
+               (let [kesto (if (not-empty (:koulutuksenkestokuukausina constraints))
+                             (:koulutuksenkestokuukausina constraints) [0])]
+                 (bool-agg-filter (number-range-query "metadata.suunniteltuKestoKuukausina" kesto)
+                                  (aggregation-filters-without-rajainkeys constraints ["koulutuksenkestokuukausina"]
+                                                                          rajain-context)
+                                  rajain-context)))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina"))
    :desc "
    |        - in: query
-   |          name: koulutuksenkestokuukausina
+   |          name: koulutuksenkestokuukausina_min
    |          style: form
-   |          explode: false
    |          schema:
-   |            type: array
-   |            items:
-   |              type: number
-   |          description: Koulutuksen suunnitellun keston ala- ja yläraja kuukausina, pilkulla erotettuna
-   |          example: [1,12]"})
+   |            type: number
+   |          description: Koulutuksen suunnitellun keston alaraja.
+   |          example: 10
+   |        - in: query
+   |          name: koulutuksenkestokuukausina_max
+   |          style: form
+   |          schema:
+   |            type: number
+   |          description: Koulutuksen suunnitellun keston yläraja.
+   |          example: 100"})
 
 (def valintatapa
   {:id :valintatapa
@@ -238,10 +235,12 @@
 
 (def jotpa
   {:id :jotpa
+   :rajainGroupId :tyoelama
    :make-query #(->boolean-term-query "hasJotpaRahoitus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "hasJotpaRahoitus")
-                                (aggregation-filters-without-rajainkeys constraints ["jotpa" "tyovoimakoulutus" "taydennyskoulutus"] rajain-context)
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -254,10 +253,12 @@
 
 (def tyovoimakoulutus
   {:id :tyovoimakoulutus
+   :rajainGroupId :tyoelama
    :make-query #(->boolean-term-query "isTyovoimakoulutus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTyovoimakoulutus")
-                                (aggregation-filters-without-rajainkeys constraints ["jotpa" "tyovoimakoulutus" "taydennyskoulutus"] rajain-context)
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -270,10 +271,12 @@
 
 (def taydennyskoulutus
   {:id :taydennyskoulutus
+   :rajainGroupId :tyoelama
    :make-query #(->boolean-term-query "isTaydennyskoulutus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTaydennyskoulutus")
-                                (aggregation-filters-without-rajainkeys constraints ["jotpa" "tyovoimakoulutus" "taydennyskoulutus"] rajain-context)
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -283,6 +286,97 @@
    |            default: false
    |          required: false
    |          description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
+
+(def maksullisuus
+  {:desc "
+   |        - in: query
+   |          name: maksullisuustyyppi
+   |          style: form
+   |          explode: false
+   |          schema:
+   |            type: array
+   |            items:
+   |              type: string
+   |          description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
+   |          example: maksuton,maksullinen,lukuvuosimaksu
+   |        - in: query
+   |          name: maksunmaara_min
+   |          style: form
+   |          schema:
+   |            type: number
+   |          description: Koulutuksen maksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+   |          example: 100
+   |        - in: query
+   |          name: maksunmaara_max
+   |          style: form
+   |          schema:
+   |            type: number
+   |          description: Koulutuksen maksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+   |          example: 100
+   |        - in: query
+   |          name: lukuvuosimaksunmaara_min
+   |          style: form
+   |          schema:
+   |            type: number
+   |          description: Koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+   |          example: 100
+   |        - in: query
+   |          name: lukuvuosimaksunmaara_max
+   |          style: form
+   |          schema:
+   |            type: number
+   |          description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+   |          example: 100
+   |        - in: query
+   |          name: apuraha
+   |          schema:
+   |            type: boolean
+   |            default: false
+   |          required: false
+   |          description: Haetaanko koulutuksia, joilla on käytössä apuraha? Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\""})
+
+(def maksuton
+  {:id :maksuton
+   :rajainGroupId :maksullisuus
+   :make-query (fn [_] (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton"))
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                rajain-context))})
+
+(def maksullinen
+  {:id :maksullinen
+   :rajainGroupId :maksullisuus
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))])
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+                                           (number-range-query "metadata.maksunMaara"
+                                                               (get-in constraints [:maksullinen :maksunmaara]))])
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
+                                   (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
+
+(def lukuvuosimaksu
+  {:id :lukuvuosimaksu
+   :rajainGroupId :maksullisuus
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))
+                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (:apuraha %))])
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
+                                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
+                                (aggregation-filters-without-rajainkeys
+                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
+                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
+                                    ))})
 
 (def yhteishaku
   {:id :yhteishaku
@@ -447,46 +541,54 @@
    |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\" )
    |          example: [henkilokohtainen, 2022-kevat]"})
 
-(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina)
-(swap! boolean-type-rajaimet conj (:id hakukaynnissa) (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))
+(swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa
+       hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina
+       jotpa tyovoimakoulutus taydennyskoulutus maksuton maksullinen lukuvuosimaksu)
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
-(reset! combined-tyoelama-rajain {:make-query #(make-combined-boolean-should-filter-query % [jotpa tyovoimakoulutus taydennyskoulutus])})
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
-(def default-aggregation-defs
-  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus valintatapa yhteishaku koulutusala koulutustyyppi alkamiskausi koulutuksenkestokuukausina])
+(def common-aggregation-defs
+  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus
+   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu])
 
-(def all-aggregation-defs (concat default-aggregation-defs [jotpa tyovoimakoulutus taydennyskoulutus oppilaitos osaamisala lukiopainotukset lukiolinjaterityinenkoulutustehtava]))
+(def hakutulos-aggregation-defs
+  (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
 
-(defn- generate-default-aggs
-  [constraints rajain-context]
-  (into {} (for [agg default-aggregation-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)})))
+(def jarjestaja-aggregation-defs (concat common-aggregation-defs @jarjestaja-rajain-definitions))
 
-(defn- generate-tyoelama-aggregations
-  [constraints rajain-context]
-  (let [constraints-wo-tyoelama (dissoc constraints conj (:id jotpa) (:id tyovoimakoulutus) (:id taydennyskoulutus))]
-    (into {} (for [agg [jotpa tyovoimakoulutus taydennyskoulutus]]
-               {(:id agg) ((:make-agg agg) constraints-wo-tyoelama rajain-context)}))))
+(def tarjoaja-aggregation-defs
+  (concat common-aggregation-defs [koulutusala koulutustyyppi]))
+
+(def all-aggregation-defs (concat hakutulos-aggregation-defs @jarjestaja-rajain-definitions))
+(def max-agg-defs (filter #(not (nil? (:make-max-agg %))) all-aggregation-defs))
+
+(defn ->max-agg-id
+  [agg-id]
+  (keyword (replace-first (str agg-id "-max") ":" "")))
+
+(defn- generate-aggs
+  [agg-defs constraints rajain-context]
+  (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
+  (-> {}
+      (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
+      (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
 
 (defn generate-hakutulos-aggregations
   [constraints]
   (let [rajain-context {:current-time (current-time-as-kouta-format)}]
-    (merge (generate-default-aggs constraints rajain-context)
-           (generate-tyoelama-aggregations constraints rajain-context))))
+    (generate-aggs hakutulos-aggregation-defs constraints rajain-context)))
 
 (defn generate-jarjestajat-aggregations
   [constraints tuleva?]
   (let [rajain-context {:current-time (current-time-as-kouta-format)
                         :extra-filter (onkoTuleva-query tuleva?)
-                        :reverse-nested-path "search_terms"}
-        default-aggs (generate-default-aggs constraints rajain-context)]
-    (-> default-aggs
-        (into (for [agg @jarjestaja-rajain-definitions] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
-        (dissoc :koulutusala :koulutustyyppi))))
+                        :reverse-nested-path "search_terms"}]
+    (generate-aggs jarjestaja-aggregation-defs constraints rajain-context)))
 
 (defn generate-tarjoajat-aggregations
   [constraints tuleva?]
-  (generate-default-aggs constraints {:current-time (current-time-as-kouta-format)
-                                      :extra-filter (onkoTuleva-query tuleva?)
-                                      :reverse-nested-path "search_terms"}))
+  (generate-aggs tarjoaja-aggregation-defs constraints
+                 {:current-time (current-time-as-kouta-format)
+                  :extra-filter (onkoTuleva-query tuleva?)
+                  :reverse-nested-path "search_terms"}))

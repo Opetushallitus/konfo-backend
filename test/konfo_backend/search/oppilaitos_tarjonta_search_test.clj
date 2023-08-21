@@ -114,7 +114,8 @@
                   :toteutusOid       massikkakoulu-oid,
                   :nimi              {:fi "Massikkakoulutus fi" ,
                                       :sv "Massikkakoulutus sv"},
-                  ;:maksullisuustyyppi nil,
+                  :maksullisuustyyppi "lukuvuosimaksu",
+                  :suunniteltuKestoKuukausina 40,
                   :kunnat            [{:koodiUri "kunta_091", :nimi {:fi "kunta_091 nimi fi", :sv "kunta_091 nimi sv"}}],
                   :tutkintonimikkeet [],
                   :opetuskielet      ["oppilaitoksenopetuskieli_01"],
@@ -124,5 +125,4 @@
                   :jarjestaaUrheilijanAmmKoulutusta false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
                                       :sv "Massikkakoulutus sv"}
-                  :suunniteltuKestoKuukausina 0
                   } (first (:hits r)))))))))
