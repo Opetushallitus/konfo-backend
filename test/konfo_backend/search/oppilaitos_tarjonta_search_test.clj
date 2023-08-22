@@ -22,7 +22,7 @@
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
-(def helsingin-yliopisto      "1.2.246.562.10.39218317368")
+(def helsingin-yliopisto "1.2.246.562.10.39218317368")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 
