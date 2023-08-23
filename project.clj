@@ -54,7 +54,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.3.2"]
-                                   [oph/clj-test-utils "0.5.4-SNAPSHOT"]
+                                   [oph/clj-test-utils "0.5.6-SNAPSHOT"]
                                    [org.mockito/mockito-all "1.9.5"]
                                    [clj-http-fake "1.0.3"]
                                    [net.java.dev.jna/jna "5.12.1"]
