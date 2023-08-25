@@ -476,7 +476,7 @@
 
 (def osaamisala
   {:id :osaamisala
-   :make-query #(->terms-query "osaamisala.keyword" %)
+   :make-query #(->terms-query "osaamisalat.keyword" %)
    :make-agg (fn [constraints rajain-context]
                (rajain-aggregation (->field-key "osaamisalat.keyword")
                                    (aggregation-filters-without-rajainkeys constraints ["osaamisala"] rajain-context)
