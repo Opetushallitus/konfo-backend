@@ -31,4 +31,4 @@
 
 (defn get-kuvaukset-by-eperuste-id
   [eperuste-id]
-  (get-kuvaukset-by-eperuste-ids (vec eperuste-id)))
+  (get-kuvaukset-by-eperuste-ids [eperuste-id]))
