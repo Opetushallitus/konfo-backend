@@ -62,19 +62,6 @@
      :size    size
      :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}))
 
-; TODO: Eikö oppilaitoksen ja osan tarjonnan pitäisi toimia samanlaisella querylla?
-(defn inner-hits-query-osat
-  [oid lng page size order tuleva?]
-  (let [size (->size size)
-        from (->from page size)]
-    {:nested {:inner_hits {:_source ["search_terms.koulutusOid", "search_terms.toteutusOid", "search_terms.oppilaitosOid", "search_terms.kuva", "search_terms.nimi", "search_terms.metadata"]
-                           :from    from
-                           :size    size
-                           :sort    {(str "search_terms.nimi." lng ".keyword") {:order order :unmapped_type "string"}}}
-              :path       "search_terms"
-              :query      {:bool {:filter [{:term {"search_terms.onkoTuleva" tuleva?}}
-                                           {:term {"search_terms.tarjoajat" oid}}]}}}}))
-
 (defn- aggregations
   [aggs-generator]
   {:hits_aggregation {:nested {:path "search_terms"}, :aggs (aggs-generator)}})

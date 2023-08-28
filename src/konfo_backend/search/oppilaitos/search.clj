@@ -1,13 +1,10 @@
 (ns konfo-backend.search.oppilaitos.search
   (:require [konfo-backend.elastic-tools :as e]
             [konfo-backend.search.query :refer [hakutulos-aggregations
-                                                inner-hits-query-osat
                                                 post-filter-query search-term-query sorts tarjoajat-aggregations toteutukset-inner-hits
                                                 toteutukset-query]]
             [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
-            [konfo-backend.search.response :refer [parse
-                                                   parse-for-autocomplete parse-inner-hits
-                                                   parse-inner-hits-for-jarjestajat]]
+            [konfo-backend.search.response :refer [parse parse-for-autocomplete parse-inner-hits-for-jarjestajat]]
             [konfo-backend.search.tools :refer :all]))
 
 (defonce index "oppilaitos-kouta-search")
@@ -43,13 +40,6 @@
               :query query
               :post_filter post-filter-query
               :aggs aggs)))
-
-(defn search-oppilaitoksen-osan-tarjonta
-  [oid lng page size order tuleva?]
-  (e/search index
-            parse-inner-hits
-            :_source ["oid"]
-            :query (inner-hits-query-osat oid lng page size order tuleva?)))
 
 (defn autocomplete-search
   [search-phrase lng size sort order constraints]
