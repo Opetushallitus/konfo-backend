@@ -316,6 +316,3 @@
                            :valintatapa                         []
                            :koulutustyyppi                      ["koulutustyyppi_26"]}
                           "2022-08-26T07:21"))))
-
-(use 'clojure.test)
-(run-tests)

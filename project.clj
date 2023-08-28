@@ -48,6 +48,7 @@
             [lein-auto "0.1.3"]
             [lein-zprint "1.2.0"]
             [lein-cljfmt "0.8.0"]
+            [lein-shell "0.5.0"]
             [com.jakemccrary/lein-test-refresh "0.24.1"]]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
@@ -65,11 +66,22 @@
                     :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
                     :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
                                  (require '[clj-elasticsearch.elastic-utils :as eutils])
-                                 (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
-                                   (do
-                                     (prn "Using Elastic from port " elasticPort)
-                                     (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
-                                   (utils/global-docker-elastic-fixture))]}
+                                 (when (not (System/getenv "WITHOUT_ELASTIC"))
+                                   (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
+                                     (do
+                                       (prn "Using Elastic from port " elasticPort)
+                                       (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
+                                     (utils/global-docker-elastic-fixture)))]}
+             :only-unit-tests {:test-selectors {:default (fn [m]
+                                                           (or (clojure.string/includes? (str (:ns m))
+                                                                                         "unit-test")
+                                                               (clojure.string/includes? (str (:name m))
+                                                                                         "unit-test")))}}
+             :only-integration-tests {:test-selectors {:default (fn [m]
+                                                                  (not (or (clojure.string/includes? (str (:ns m))
+                                                                                                     "unit-test")
+                                                                           (clojure.string/includes? (str (:name m))
+                                                                                                     "unit-test"))))}}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
                        :resource-paths ["oph-configuration" "resources"]}}
@@ -77,7 +89,10 @@
             "run-updater" ["with-profile" "+updater" "run"]
             "uberjar" ["do" "clean" ["uberjar"]]
             "test" ["with-profile" "+test" "test"]
+            "test-unit" ["shell" "without-elastic" "with-profile" "+test,+only-unit-tests" "test"]
+            "test-integration" ["with-profile" "+test,+only-integration-tests", "test"]
             "auto-test" ["with-profile" "+test" "auto" "test"]
             "test-reload" ["with-profile" "+test" "test-refresh"]
             "cloverage" ["with-profile" "+test" "cloverage"]}
+  :shell {:commands {"without-elastic" {:default-command "lein" :env {"WITHOUT_ELASTIC" "true"}}}}
   :zprint {:width 100 :old? false :style :community :map {:comma? false}})

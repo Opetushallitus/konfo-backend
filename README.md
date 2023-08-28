@@ -47,6 +47,7 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
                          :ammattinimikkeet 3
                          :koulutus_organisaationimi 2
                          :toteutus_organisaationimi 1
+                         :kunta 1
                          :language-default 1
                          :default 0.1}
  }

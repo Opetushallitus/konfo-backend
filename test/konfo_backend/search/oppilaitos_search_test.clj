@@ -73,7 +73,7 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
     (testing "multiple sijainti"
-      (let [r (search :sijainti "%20kunta_618%20,%20kunta_091" :sort "name" :order "asc")]
+      (let [r (search :sijainti " kunta_618 , kunta_091" :sort "name" :order "asc")]
         (is (= 10 (count (:hits r))))))
 
     (testing "koulutustyyppi amm"
@@ -143,26 +143,25 @@
         (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
         (is (= 1 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
-      (testing "Search oppilaitokset, get correct result"
-        (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
-          (is (= {:nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010105",
-                         :sv "Oppilaitos sv 1.2.246.562.10.00101010105"},
-                  :koulutusohjelmatLkm {:kaikki 1
-                                        :tutkintoonJohtavat 1
-                                        :eiTutkintoonJohtavat 0}
-                  :paikkakunnat [{:koodiUri "kunta_618",
-                                  :nimi {:fi "kunta_618 nimi fi",
-                                         :sv "kunta_618 nimi sv"}}],
-                  :oid "1.2.246.562.10.00101010105"} (dissoc (last (:hits r)) :_score)))))))
+    (testing "Search oppilaitokset, get correct result"
+      (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
+        (is (= {:nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010105",
+                       :sv "Oppilaitos sv 1.2.246.562.10.00101010105"},
+                :koulutusohjelmatLkm {:kaikki 1
+                                      :tutkintoonJohtavat 1
+                                      :eiTutkintoonJohtavat 0}
+                :paikkakunnat [{:koodiUri "kunta_618",
+                                :nimi {:fi "kunta_618 nimi fi",
+                                       :sv "kunta_618 nimi sv"}}],
+                :oid "1.2.246.562.10.00101010105"} (dissoc (last (:hits r)) :_score)))))))
+
+(def aakkostus-oppilaitos-oid1 "1.2.246.562.10.0000011")
+(def aakkostus-oppilaitos-oid2 "1.2.246.562.10.0000012")
+(def aakkostus-oppilaitos-oid3 "1.2.246.562.10.0000013")
+(def aakkostus-oppilaitos-oid4 "1.2.246.562.10.0000014")
+(def aakkostus-oppilaitos-oid5 "1.2.246.562.10.0000015")
 
 (deftest oppilaitos-paging-and-sorting-test
-
-  (def aakkostus-oppilaitos-oid1 "1.2.246.562.10.0000011")
-  (def aakkostus-oppilaitos-oid2 "1.2.246.562.10.0000012")
-  (def aakkostus-oppilaitos-oid3 "1.2.246.562.10.0000013")
-  (def aakkostus-oppilaitos-oid4 "1.2.246.562.10.0000014")
-  (def aakkostus-oppilaitos-oid5 "1.2.246.562.10.0000015")
-
   (testing "Oppilaitos search ordering"
     (testing "by default order"
       (let [hits (:hits (search :keyword "aakkosissa"))]
@@ -185,17 +184,16 @@
     (testing "returns correct total count"
       (is (= 5 (:total (get-ok (oppilaitos-search-url :keyword "aakkosissa" :size 2 :sort "name" :order "asc"))))))))
 
+(def oppilaitos-oid1 "1.2.246.562.10.00101010101")
+(def oppilaitos-oid2 "1.2.246.562.10.00101010102")
+(def oppilaitos-oid3 "1.2.246.562.10.00101010103")
+(def oppilaitos-oid4 "1.2.246.562.10.00101010104")
+(def oppilaitos-oid5 "1.2.246.562.10.00101010105")
+(def oppilaitos-oid6 "1.2.246.562.10.00101010106")
+
 (deftest oppilaitos-keyword-search
-  (def oppilaitos-oid1 "1.2.246.562.10.00101010101")
-  (def oppilaitos-oid2 "1.2.246.562.10.00101010102")
-  (def oppilaitos-oid3 "1.2.246.562.10.00101010103")
-  (def oppilaitos-oid4 "1.2.246.562.10.00101010104")
-  (def oppilaitos-oid5 "1.2.246.562.10.00101010105")
-  (def oppilaitos-oid6 "1.2.246.562.10.00101010106")
 
   (testing "Searching with keyword"
-    (comment testing "lääketiede <-> lääketieteen" ;Ei toimi enää multi_match-queryllä.
-             (is (= [oppilaitos-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääketiede"))))
 
     (testing "lääkäri <-> lääketieteen"
       (is (= [oppilaitos-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääkäri"))))
@@ -210,4 +208,8 @@
       (is (= [oppilaitos-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
 
     (testing "muusikon koulutus"
-      (is (= [oppilaitos-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))))
+      (is (= [oppilaitos-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon koulutus"))))
+
+    (testing "kunta_220 nimi"
+      ; TODO: Lisätään dumppeihin kuntien oikeat nimet, jotta voidaan tehdä realistisempia testihakuja
+      (is (= 11 (count (search-and-get-oids :sort "name" :order "asc" :keyword "kunta_220")))))))

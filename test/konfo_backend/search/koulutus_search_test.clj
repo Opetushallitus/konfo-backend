@@ -100,7 +100,7 @@
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
     (testing "multiple sijainti"
-      (let [r (search :sijainti "%20kunta_618%20,%20kunta_220" :sort "name" :order "asc")]
+      (let [r (search :sijainti " kunta_618 , kunta_220" :sort "name" :order "asc")]
         (is (match? 19 (count (:hits r))))))
 
     (testing "koulutustyyppi amm-osaamisala"
@@ -227,12 +227,13 @@
                      :eperuste 1234,
                      :koulutustyyppi "amm"} (dissoc (first (:hits r)) :_score)))))))
 
+(def aakkostus-koulutus-oid1 "1.2.246.562.13.000020")
+(def aakkostus-koulutus-oid2 "1.2.246.562.13.000021")
+(def aakkostus-koulutus-oid3 "1.2.246.562.13.000022")
+(def aakkostus-koulutus-oid4 "1.2.246.562.13.000023")
+(def aakkostus-koulutus-oid5 "1.2.246.562.13.000024")
+
 (deftest koulutus-paging-and-sorting-test
-  (def aakkostus-koulutus-oid1 "1.2.246.562.13.000020")
-  (def aakkostus-koulutus-oid2 "1.2.246.562.13.000021")
-  (def aakkostus-koulutus-oid3 "1.2.246.562.13.000022")
-  (def aakkostus-koulutus-oid4 "1.2.246.562.13.000023")
-  (def aakkostus-koulutus-oid5 "1.2.246.562.13.000024")
 
   (testing "Koulutus search ordering"
     (testing "by default order"
@@ -258,119 +259,125 @@
     (testing "returns correct total count"
       (is (= 5 (:total (get-ok (koulutus-search-url :keyword "aakkosissa" :sort "name" :order "asc" :size 2))))))))
 
-  (deftest koulutus-keyword-search
-    (with-redefs [konfo-backend.index.eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
+(def keyword-koulutus-oid1 "1.2.246.562.13.000030")
+(def keyword-koulutus-oid2 "1.2.246.562.13.000031")
+(def keyword-koulutus-oid3 "1.2.246.562.13.000032")
+(def keyword-koulutus-oid4 "1.2.246.562.13.000033")
+(def keyword-koulutus-oid5 "1.2.246.562.13.000034")
+(def keyword-koulutus-oid6 "1.2.246.562.13.000035")
+(def keyword-koulutus-oid7 "1.2.246.562.13.000036")
+(def keyword-koulutus-oid8 "1.2.246.562.13.000037")
+(def keyword-koulutus-oid9 "1.2.246.562.13.000038")
+(def keyword-koulutus-oid10 "1.2.246.562.13.000039")
+(def keyword-koulutus-oid11 "1.2.246.562.13.000040")
+(def keyword-koulutus-oid12 "1.2.246.562.13.000041")
+(def keyword-koulutus-oid13 "1.2.246.562.13.000042")
+(def keyword-koulutus-oid14 "1.2.246.562.13.000043")
+(def keyword-koulutus-oid15 "1.2.246.562.13.000044")
+(def keyword-koulutus-oid16 "1.2.246.562.13.000045")
+(def keyword-koulutus-oid17 "1.2.246.562.13.000046")
+(def keyword-koulutus-oid18 "1.2.246.562.13.000047")
+;(def traktorialan-koulutus-oid "1.2.246.562.13.000010")
+;(def hevosalan-koulutus-oid "1.2.246.562.13.000011")
+;(def hevosalan-osaamisala-oid "1.2.246.562.13.000014")
 
-      (def keyword-koulutus-oid1 "1.2.246.562.13.000030")
-      (def keyword-koulutus-oid2 "1.2.246.562.13.000031")
-      (def keyword-koulutus-oid3 "1.2.246.562.13.000032")
-      (def keyword-koulutus-oid4 "1.2.246.562.13.000033")
-      (def keyword-koulutus-oid5 "1.2.246.562.13.000034")
-      (def keyword-koulutus-oid6 "1.2.246.562.13.000035")
-      (def keyword-koulutus-oid7 "1.2.246.562.13.000036")
-      (def keyword-koulutus-oid8 "1.2.246.562.13.000037")
-      (def keyword-koulutus-oid9 "1.2.246.562.13.000038")
-      (def keyword-koulutus-oid10 "1.2.246.562.13.000039")
-      (def keyword-koulutus-oid11 "1.2.246.562.13.000040")
-      (def keyword-koulutus-oid12 "1.2.246.562.13.000041")
-      (def keyword-koulutus-oid13 "1.2.246.562.13.000042")
-      (def keyword-koulutus-oid14 "1.2.246.562.13.000043")
-      (def keyword-koulutus-oid15 "1.2.246.562.13.000044")
-      (def keyword-koulutus-oid16 "1.2.246.562.13.000045")
-      (def keyword-koulutus-oid17 "1.2.246.562.13.000046")
-      (def keyword-koulutus-oid18 "1.2.246.562.13.000047")
+(deftest koulutus-keyword-search
+  (with-redefs [konfo-backend.index.eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
 
-      (testing "Searching with keyword"
+    (testing "Searching with keyword"
 
-        (testing "maalari <-> Pintakäsittelyala (EI maanmittausala)"
-          (is (= [keyword-koulutus-oid12 keyword-koulutus-oid8] (search-and-get-oids :sort "name" :order "asc" :keyword "maalari"))))
+      (testing "maalari <-> Pintakäsittelyala (EI maanmittausala)"
+        (is (= [keyword-koulutus-oid12 keyword-koulutus-oid8] (search-and-get-oids :sort "name" :order "asc" :keyword "maalari"))))
 
-        (testing "puhtaus <-> Puhtaus- ja kiinteistöpalveluala (EI puhevammaisten)"
-          (is (= [keyword-koulutus-oid9] (search-and-get-oids :sort "name" :order "asc" :keyword "puhtaus"))))
+      (testing "puhtaus <-> Puhtaus- ja kiinteistöpalveluala (EI puhevammaisten)"
+        (is (= [keyword-koulutus-oid9] (search-and-get-oids :sort "name" :order "asc" :keyword "puhtaus"))))
 
-        (testing "palvelu <-> Puhtaus- ja kiinteistöpalveluala"
-          (is (= [keyword-koulutus-oid9] (search-and-get-oids :sort "name" :order "asc" :keyword "palvelu"))))
+      (testing "palvelu <-> Puhtaus- ja kiinteistöpalveluala"
+        (is (= [keyword-koulutus-oid9] (search-and-get-oids :sort "name" :order "asc" :keyword "palvelu"))))
 
-        (testing "ammattitutkinto <-> EI ammattioppilaitos tai ammattikorkeakoulu"
-          (is (= [keyword-koulutus-oid14 keyword-koulutus-oid10 keyword-koulutus-oid9 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "ammattitutkinto"))))
+      (testing "ammattitutkinto <-> EI ammattioppilaitos tai ammattikorkeakoulu"
+        (is (= [keyword-koulutus-oid14 keyword-koulutus-oid10 keyword-koulutus-oid9 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "ammattitutkinto"))))
 
-        (testing "terveys <-> sosiaali- ja terveysala"
-          (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "terveys"))))
+      (testing "terveys <-> sosiaali- ja terveysala"
+        (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "terveys"))))
 
-        (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
-          (is (= [keyword-koulutus-oid12 keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
+      (testing "auto <-> automaatiotekniikka/automaatioinsinööri"
+        (is (= [keyword-koulutus-oid12 keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "auto"))))
 
-        (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri, EI autoalan perustutkintoa"
-          (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatio"))))
+      (testing "automaatio <-> automaatiotekniikka/automaatioinsinööri, EI autoalan perustutkintoa"
+        (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "automaatio"))))
 
-        (testing "humanisti <-> humanistinen"
-          (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanisti"))))
+      (testing "humanisti <-> humanistinen"
+        (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "humanisti"))))
 
-        (testing "lääkäri <-> lääketieteen"
-          (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääkäri"))))
+      (testing "lääkäri <-> lääketieteen"
+        (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääkäri"))))
 
-        (testing "muusikko <-> muusikon koulutus"
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikko"))))
+      (testing "muusikko <-> muusikon koulutus"
+        (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikko"))))
 
-        (testing "tekniikka <-> automaatiotekniikka"
-          (is (= [keyword-koulutus-oid4 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "tekniikka"))))
+      (testing "tekniikka <-> automaatiotekniikka"
+        (is (= [keyword-koulutus-oid4 keyword-koulutus-oid15] (search-and-get-oids :sort "name" :order "asc" :keyword "tekniikka"))))
 
-        (testing "muusikon koulutus <-> EI muita koulutuksia"
-          (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon%20koulutus"))))
+      (testing "muusikon koulutus <-> EI muita koulutuksia"
+        (is (= [keyword-koulutus-oid5] (search-and-get-oids :sort "name" :order "asc" :keyword "muusikon koulutus"))))
 
-        (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittausalan%20perustutkinto"))))
+      (testing "Maanmittausalan perustutkinto <-> EI muita perustutkintoja"
+        (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittausalan perustutkinto"))))
 
-        (testing "perustutkinto maanmittaus <-> EI muita perustutkintoja"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto%20maanmittaus"))))
+      (testing "perustutkinto maanmittaus <-> EI muita perustutkintoja"
+        (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto maanmittaus"))))
 
-        (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
-          (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittauS%20peruS"))))
+      (testing "Maanmittaus perus <-> maanmittausalan perustutkinto"
+        (is (= [keyword-koulutus-oid7] (search-and-get-oids :sort "name" :order "asc" :keyword "maanmittauS peruS"))))
 
-        (testing "tietojenkäsittely <-> tietojenkäsittelytieteen"
-          (is (= [keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittely"))))
+      (testing "tietojenkäsittely <-> tietojenkäsittelytieteen"
+        (is (= [keyword-koulutus-oid3] (search-and-get-oids :sort "name" :order "asc" :keyword "tietojenkäsittely"))))
 
-        (testing "hius <-> Hius- ja kauneudenhoitoalan perustutkinto"
-          (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "hius"))))
+      (testing "hius <-> Hius- ja kauneudenhoitoalan perustutkinto"
+        (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "hius"))))
 
-        (testing "kauneudenhoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
-          (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "kauneudenhoito"))))
+      (testing "kauneudenhoito <-> Hius- ja kauneudenhoitoalan perustutkinto"
+        (is (= [keyword-koulutus-oid11] (search-and-get-oids :sort "name" :order "asc" :keyword "kauneudenhoito"))))
 
-        (testing "psykologia <-> Psykologi"
-          (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologia"))))
+      (testing "psykologia <-> Psykologi"
+        (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologia"))))
 
-        (testing "lääke <-> lääketieteen"
-          (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääke"))))
+      (testing "lääke <-> lääketieteen"
+        (is (= [keyword-koulutus-oid1] (search-and-get-oids :sort "name" :order "asc" :keyword "lääke"))))
 
-        (comment testing "ylemp <-> ylempi (AMK)" ;Ei toimi enää, kun on haluttu lisätä haun tarkkuutta
-          (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "ylemp"))))
+      (testing "amk <-> ylempi (AMK)"
+        (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "amk"))))
 
-        (testing "amk <-> ylempi (AMK)"
-          (is (= [keyword-koulutus-oid4] (search-and-get-oids :sort "name" :order "asc" :keyword "amk"))))
+      (testing "psykologi <-> psykologia"
+        (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologi"))))
 
-        (testing "psykologi <-> psykologia"
-          (is (= [keyword-koulutus-oid2] (search-and-get-oids :sort "name" :order "asc" :keyword "psykologi"))))
+      (testing "perus <-> kaikki perustutkinnot"
+        (is (= [keyword-koulutus-oid12 keyword-koulutus-oid13 keyword-koulutus-oid17 keyword-koulutus-oid11 keyword-koulutus-oid7 keyword-koulutus-oid18 keyword-koulutus-oid8 keyword-koulutus-oid6 keyword-koulutus-oid16] (search-and-get-oids :sort "name" :order "asc" :keyword "perus"))))
 
-        (testing "perus <-> kaikki perustutkinnot"
-          (is (= [keyword-koulutus-oid12 keyword-koulutus-oid13 keyword-koulutus-oid17 keyword-koulutus-oid11 keyword-koulutus-oid7 keyword-koulutus-oid18 keyword-koulutus-oid8 keyword-koulutus-oid6 keyword-koulutus-oid16] (search-and-get-oids :sort "name" :order "asc" :keyword "perus"))))
+      (testing "perustutkinto <-> kaikki perustutkinnot"
+        (is (= [keyword-koulutus-oid12 keyword-koulutus-oid13 keyword-koulutus-oid17 keyword-koulutus-oid11 keyword-koulutus-oid7 keyword-koulutus-oid18 keyword-koulutus-oid8 keyword-koulutus-oid6 keyword-koulutus-oid16] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto"))))
 
-        (testing "perustutkinto <-> kaikki perustutkinnot"
-          (is (= [keyword-koulutus-oid12 keyword-koulutus-oid13 keyword-koulutus-oid17 keyword-koulutus-oid11 keyword-koulutus-oid7 keyword-koulutus-oid18 keyword-koulutus-oid8 keyword-koulutus-oid6 keyword-koulutus-oid16] (search-and-get-oids :sort "name" :order "asc" :keyword "perustutkinto"))))
+      (testing "eläin <-> eläintenhoito EI elintarviketta"
+        (is (= [keyword-koulutus-oid14] (search-and-get-oids :sort "name" :order "asc" :keyword "eläin"))))
 
-        (testing "eläin <-> eläintenhoito EI elintarviketta"
-          (is (= [keyword-koulutus-oid14] (search-and-get-oids :sort "name" :order "asc" :keyword "eläin"))))
+      (testing "eläinten <-> eläintenhoito EI tieto- ja viestintätekniikan"
+        (is (= [keyword-koulutus-oid14] (search-and-get-oids :sort "name" :order "asc" :keyword "eläinten"))))
 
-        (testing "eläinten <-> eläintenhoito EI tieto- ja viestintätekniikan"
-          (is (= [keyword-koulutus-oid14] (search-and-get-oids :sort "name" :order "asc" :keyword "eläinten"))))
+      (testing "merimies <-> merimies EI esimiestä"
+        (is (= [keyword-koulutus-oid8] (search-and-get-oids :sort "name" :order "asc" :keyword "merimies"))))
 
-        (testing "merimies <-> merimies EI esimiestä"
-          (is (= [keyword-koulutus-oid8] (search-and-get-oids :sort "name" :order "asc" :keyword "merimies"))))
+      (testing "sosiaali <-> ei tanssialaa"
+        (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaali"))))
 
-        (testing "sosiaali <-> ei tanssialaa"
-          (is (= [keyword-koulutus-oid6] (search-and-get-oids :sort "name" :order "asc" :keyword "sosiaali"))))
+      (testing "ensihoitaja <-> ei eläinten- eikä hevostenhoitajaa"
+        (is (= [] (search-and-get-oids :sort "name" :order "asc" :keyword "ensihoitaja"))))
 
-        (testing "ensihoitaja <-> ei eläinten- eikä hevostenhoitajaa"
-          (is (= [] (search-and-get-oids :sort "name" :order "asc" :keyword "ensihoitaja"))))
+      (testing "seppä <-> seppä"
+        (is (= [keyword-koulutus-oid17] (search-and-get-oids :sort "name" :order "asc" :keyword "seppä"))))
 
-        (testing "seppä <-> seppä"
-          (is (= [keyword-koulutus-oid17] (search-and-get-oids :sort "name" :order "asc" :keyword "seppä")))))))
+      (testing "kunta_220 nimi"
+        ; Ennen kunta-tiedon lisäämistä keyword-hakuun löydettiin vain yksi. Koska dumpeissa on nyt kuntien nimet tyyliin "kunta_220 nimi fi"
+        ; on hyvin vaikea tehdä hakua, joka kohdistuisi juuri siihen kenttään ("kunta_220" pilkotaan osiin "kunta" ja "220", joista "220" ilmeisesti hylätään)
+        ; TODO: Lisätään dumppeihin kuntien oikeat nimet, jotta voidaan tehdä realistisempia testihakuja
+        (is (= 20 (count (search-and-get-oids :sort "name" :order "asc" :keyword "kunta_220"))))))))

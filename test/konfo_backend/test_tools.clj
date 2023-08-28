@@ -5,6 +5,7 @@
    [clj-elasticsearch.elastic-connect :as e]
    [clj-elasticsearch.elastic-utils :as e-utils]
    [ring.mock.request :as mock]
+   [ring.util.codec :as codec]
    [konfo-backend.core :refer :all]
    [cheshire.core :refer [parse-string, generate-string]]
    [clojure.walk :refer [keywordize-keys]]
@@ -67,15 +68,9 @@
   [url]
   (->keywordized-response-body (post-and-check-status url 200)))
 
-(defn query-params->string
-  [& {:as query-params}]
-  (if (not (empty? query-params))
-    (str "?" (clojure.string/join "&" (map #(str (name (key %)) "=" (val %)) query-params)))
-    ""))
-
 (defn url-with-query-params
-  [url & query-params]
-  (str url (apply query-params->string query-params)))
+  [url & query-params] 
+  (str url (if query-params (str "?" (codec/form-encode (apply array-map query-params))) "")))
 
 (defn now-in-millis
   []
