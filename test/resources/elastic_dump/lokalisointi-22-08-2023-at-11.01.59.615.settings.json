@@ -1,0 +1,1 @@
+"{\"lokalisointi-22-08-2023-at-11.01.59.615\":{\"settings\":{\"index\":{\"routing\":{\"allocation\":{\"include\":{\"_tier_preference\":\"data_content\"}}},\"mapping\":{\"total_fields\":{\"limit\":\"2000\"}},\"number_of_shards\":\"1\",\"number_of_replicas\":\"1\"}}}}"

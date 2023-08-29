@@ -807,20 +807,6 @@
                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
                                                                                 :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max})))
 
-    (GET "/oppilaitoksen-osa/:oid/tarjonta" [:as request]
-      :path-params [oid :- String]
-      :query-params [{tuleva         :- Boolean false}
-                     {page           :- Long 1}
-                     {size           :- Long 20}
-                     {lng            :- String "fi"}
-                     {order          :- String "asc"}]
-      (with-access-logging request (cond
-                                     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
-                                     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys")
-                                     :else (if-let [result (oppilaitos-search/search-oppilaitoksen-osan-tarjonta oid lng page size order tuleva)]
-                                             (ok result)
-                                             (not-found "Not found")))))
-
     (GET "/autocomplete" [:as request]
       :query-params [{searchPhrase          :- String nil}
                      {lng                   :- String "fi"}

@@ -22,7 +22,7 @@
   (:body (get-bad-request (apply jarjestajat-search-url oid query-params))))
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
-(def helsingin-yliopisto      "1.2.246.562.10.39218317368")
+(def helsingin-yliopisto "1.2.246.562.10.39218317368")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 
@@ -35,7 +35,7 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search oppilaitoksen tarjonta with bad requests:"
       (testing "Invalid lng"
-        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :lng "foo") "Virheellinen kieli" )))
+        (is (starts-with? (->bad-request-body punkaharjun-yliopisto :lng "foo") "Virheellinen kieli")))
       (testing "Invalid order"
         (is (starts-with? (->bad-request-body punkaharjun-yliopisto :order "foo") "Virheellinen järjestys"))))
 
@@ -124,4 +124,5 @@
                   :hakuAuki          false,
                   :jarjestaaUrheilijanAmmKoulutusta false,
                   :toteutusNimi      {:fi "Massikkakoulutus fi",
-                                 :sv "Massikkakoulutus sv"}} (first (:hits r)))))))))
+                                      :sv "Massikkakoulutus sv"}
+                  } (first (:hits r)))))))))

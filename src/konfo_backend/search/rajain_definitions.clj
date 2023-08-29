@@ -61,7 +61,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala"})
+   |          example: [amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala]"})
 
 (def sijainti
   {:id :sijainti
@@ -76,7 +76,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna kuntien ja maakuntien koodeja (koodistot \"kunta\" ja \"maakunta\")
-   |          example: kunta_091,maakunta_01"})
+   |          example: [kunta_091,maakunta_01]"})
 
 (def maakunta
   {:id :maakunta
@@ -108,7 +108,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"oppilaitoksenopetuskieli\"-koodiston koodeja
-   |          example: oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2"})
+   |          example: [oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2]"})
 
 (def koulutusala
   {:id :koulutusala
@@ -127,7 +127,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna koulutusalojen koodeja (koodistot \"kansallinenkoulutusluokitus2016koulutusalataso1\" ja \"kansallinenkoulutusluokitus2016koulutusalataso2\")
-   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02"})
+   |          example: [kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02]"})
 
 (def opetustapa
   {:id :opetustapa
@@ -146,7 +146,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"opetuspaikkakk\"-koodiston koodeja
-   |          example: opetuspaikkakk_1, opetuspaikkakk_2"})
+   |          example: [opetuspaikkakk_1, opetuspaikkakk_2]"})
 
 (def opetusaika
   {:id :opetusaika
@@ -166,7 +166,7 @@
    |              type: string
    |          required: false
    |          description: Pilkulla eroteltuna \"opetusaikakk\"-koodiston koodeja
-   |          example: opetusaikakk_1,opetusaikakk_2"})
+   |          example: [opetusaikakk_1,opetusaikakk_2]"})
 
 (def koulutuksenkestokuukausina
   {:id :koulutuksenkestokuukausina
@@ -212,7 +212,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"valintatapajono\"-koodiston koodeja
-   |          example: valintatapajono_av, valintatapajono_tv"})
+   |          example: [valintatapajono_av, valintatapajono_tv]"})
 
 (def hakutapa
   {:id :hakutapa
@@ -231,7 +231,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"hakutapa\"-koodiston koodeja
-   |          example: hakutapa_01, hakutapa_03"})
+   |          example: [hakutapa_01, hakutapa_03]"})
 
 (def jotpa
   {:id :jotpa
@@ -395,7 +395,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna yhteishakujen oideja
-   |          example: 1.2.246.562.29.00000000000000000800"})
+   |          example: [1.2.246.562.29.00000000000000000800]"})
 
 (def pohjakoulutusvaatimus
   {:id :pohjakoulutusvaatimus
@@ -414,7 +414,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"pohjakoulutusvaatimuskonfo\"-koodiston koodeja
-   |          example: pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102"})
+   |          example: [pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102]"})
 
 (def oppilaitos
   {:id :oppilaitos
@@ -434,7 +434,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna toteutusten oppilaitosten oideja
-   |          example: 1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356"})
+   |          example: [1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356]"})
 
 (def lukiopainotukset
   {:id :lukiopainotukset
@@ -453,7 +453,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"lukiopainotukset\"-koodiston koodeja
-   |          example: lukiopainotukset_0111, lukiopainotukset_001"})
+   |          example: [lukiopainotukset_0111, lukiopainotukset_001]"})
 
 (def lukiolinjaterityinenkoulutustehtava
   {:id :lukiolinjaterityinenkoulutustehtava
@@ -472,7 +472,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna \"lukiolinjaterityinenkoulutustehtava\"-koodiston koodeja
-   |          example: lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126"})
+   |          example: [lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126]"})
 
 (def osaamisala
   {:id :osaamisala
@@ -491,7 +491,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna ammatillisten koulutusten \"osaamisala\"-koodiston koodeja
-   |          example: osaamisala_1756, osaamisala_3076"})
+   |          example: [osaamisala_1756, osaamisala_3076]"})
 
 (def hakukaynnissa
   {:id :hakukaynnissa
@@ -539,7 +539,7 @@
    |            items:
    |              type: string
    |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\" )
-   |          example: henkilokohtainen, 2022-kevat"})
+   |          example: [henkilokohtainen, 2022-kevat]"})
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa
        hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina
