@@ -1,5 +1,0 @@
-<<<<<<< HEAD:test/resources/elastic_dump/koulutus-kouta-search-22-08-2023-at-11.01.58.265.alias.json
-"{\"koulutus-kouta-search-22-08-2023-at-11.01.58.265\":{\"aliases\":{\"koulutus-kouta-search\":{\"is_write_index\":false},\"koulutus-kouta-search-virkailija\":{\"is_write_index\":true}}}}"
-=======
-"{\"koulutus-kouta-search-18-08-2023-at-08.15.14.449\":{\"aliases\":{\"koulutus-kouta-search\":{\"is_write_index\":false},\"koulutus-kouta-search-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/koulutus-kouta-search-18-08-2023-at-08.15.14.449.alias.json

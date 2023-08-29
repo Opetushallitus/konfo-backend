@@ -1,5 +1,0 @@
-<<<<<<< HEAD:test/resources/elastic_dump/osaamisalakuvaus-22-08-2023-at-11.01.59.211.alias.json
-"{\"osaamisalakuvaus-22-08-2023-at-11.01.59.211\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
-=======
-"{\"osaamisalakuvaus-18-08-2023-at-08.15.15.648\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/osaamisalakuvaus-18-08-2023-at-08.15.15.648.alias.json

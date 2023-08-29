@@ -1,5 +1,0 @@
-<<<<<<< HEAD:test/resources/elastic_dump/tutkinnonosa-22-08-2023-at-11.01.58.993.alias.json
-"{\"tutkinnonosa-22-08-2023-at-11.01.58.993\":{\"aliases\":{\"tutkinnonosa\":{\"is_write_index\":false},\"tutkinnonosa-virkailija\":{\"is_write_index\":true}}}}"
-=======
-"{\"tutkinnonosa-18-08-2023-at-08.15.15.366\":{\"aliases\":{\"tutkinnonosa\":{\"is_write_index\":false},\"tutkinnonosa-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/tutkinnonosa-18-08-2023-at-08.15.15.366.alias.json

@@ -1,5 +1,0 @@
-<<<<<<< HEAD:test/resources/elastic_dump/oppilaitos-kouta-22-08-2023-at-11.01.57.712.alias.json
-"{\"oppilaitos-kouta-22-08-2023-at-11.01.57.712\":{\"aliases\":{\"oppilaitos-kouta\":{\"is_write_index\":false},\"oppilaitos-kouta-virkailija\":{\"is_write_index\":true}}}}"
-=======
-"{\"oppilaitos-kouta-18-08-2023-at-08.15.13.493\":{\"aliases\":{\"oppilaitos-kouta\":{\"is_write_index\":false},\"oppilaitos-kouta-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/oppilaitos-kouta-18-08-2023-at-08.15.13.493.alias.json

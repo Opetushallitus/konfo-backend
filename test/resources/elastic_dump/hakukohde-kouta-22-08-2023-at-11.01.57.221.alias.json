@@ -1,5 +1,0 @@
-<<<<<<< HEAD:test/resources/elastic_dump/hakukohde-kouta-22-08-2023-at-11.01.57.221.alias.json
-"{\"hakukohde-kouta-22-08-2023-at-11.01.57.221\":{\"aliases\":{\"hakukohde-kouta\":{\"is_write_index\":false},\"hakukohde-kouta-virkailija\":{\"is_write_index\":true}}}}"
-=======
-"{\"hakukohde-kouta-18-08-2023-at-08.15.12.822\":{\"aliases\":{\"hakukohde-kouta\":{\"is_write_index\":false},\"hakukohde-kouta-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>> f413f0a (OPHJOD-66: Päivitetty elasticdumpit):test/resources/elastic_dump/hakukohde-kouta-18-08-2023-at-08.15.12.822.alias.json
