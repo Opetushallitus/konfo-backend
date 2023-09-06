@@ -3,6 +3,7 @@
             [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.search.koulutus.search :refer [index]]
+            [matcher-combinators.test]
             [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
@@ -89,8 +90,7 @@
           (is (= 2 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
           (is (= 2 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-          (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi-muu :muut-ammatilliset :count])))
+          (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))
           (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
           (is (= 3 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
       (testing "Filtering reduces counts"
@@ -107,7 +107,7 @@
       (testing "nykyinen"
         (let [r (search helsingin-yliopisto :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:oppilaitosOid     "1.2.246.562.10.39218317368"
+          (is (match? {:oppilaitosOid     "1.2.246.562.10.39218317368"
                   ;:maksunMaara nil,
                   :kuvaus            {},
                   :koulutusOid       traktoriala-oid

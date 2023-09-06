@@ -53,16 +53,11 @@
     (testing "Search all koulutukset"
       (let [r (search :sort "name" :order "asc")]
         (is (match? 20 (count (:hits r))))
-        (is (match? {:koulutustyyppi {:amm {:count 20}
-                                      :amk {:count 2}
-                                      :yo {:count 5}}
-                     :koulutustyyppi-muu {:muut-ammatilliset
-                                          {:count 3
-                                           :alakoodit
-                                           {:amm-osaamisala {:count 1}
-                                            :amm-tutkinnon-osa {:count 1}
-                                            :amm-muu {:count 1}}}
-                                          :aikuisten-perusopetus {:count 5}}
+        (is (match? {:koulutustyyppi {:amm {:count 23}
+                                      :amk {:count 0}
+                                      :yo {:count 0}
+                                      :lk {:count 2}
+                                      :aikuisten-perusopetus {:count 5}}
                      :opetuskieli {:oppilaitoksenopetuskieli_01 {:count 1}
                                    :oppilaitoksenopetuskieli_02 {:count 7}}
                      :maakunta {:maakunta_01 {:count 36}
@@ -106,45 +101,45 @@
     (testing "koulutustyyppi amm-osaamisala"
       (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
         (is (match? 1 (count (:hits r))))
-        (is (match? {:koulutustyyppi {:amm {:count 20}}
-                     :koulutustyyppi-muu
-                     {:muut-ammatilliset {:count 3
-                                          :alakoodit {:amm-osaamisala {:count 1}
-                                                      :amm-tutkinnon-osa {:count 1}
-                                                      :amm-muu {:count 1}}}}}
+        (is (match? {:koulutustyyppi
+                     {:amm {:count 23
+                            :alakoodit {:muu-amm-tutkinto {:count 20}
+                                        :amm-osaamisala {:count 1}
+                                        :amm-tutkinnon-osa {:count 1}
+                                        :amm-muu {:count 1}}}}}
                     (:filters r)))))
 
     (testing "koulutustyyppi amm-tutkinnon-osa"
       (let [r (search :koulutustyyppi "amm-tutkinnon-osa" :sort "name" :order "asc")]
         (is (match? 1 (count (:hits r))))
-        (is (match? {:koulutustyyppi {:amm {:count 20}}
-                     :koulutustyyppi-muu
-                     {:muut-ammatilliset {:count 3
-                                          :alakoodit {:amm-osaamisala {:count 1}
-                                                      :amm-tutkinnon-osa {:count 1}
-                                                      :amm-muu {:count 1}}}}}
+        (is (match? {:koulutustyyppi
+                     {:amm {:count 23
+                            :alakoodit {:muu-amm-tutkinto {:count 20}
+                                        :amm-osaamisala {:count 1}
+                                        :amm-tutkinnon-osa {:count 1}
+                                        :amm-muu {:count 1}}}}}
                     (:filters r)))))
 
     (testing "koulutustyyppi amm-muu"
       (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]
         (is (= 1 (count (:hits r))))
-        (is (match? {:koulutustyyppi {:amm {:count 20}}
-                     :koulutustyyppi-muu
-                     {:muut-ammatilliset {:count 3
-                                          :alakoodit {:amm-osaamisala {:count 1}
-                                                      :amm-tutkinnon-osa {:count 1}
-                                                      :amm-muu {:count 1}}}}}
+        (is (match? {:koulutustyyppi
+                     {:amm {:count 23
+                            :alakoodit {:muu-amm-tutkinto {:count 20}
+                                        :amm-osaamisala {:count 1}
+                                        :amm-tutkinnon-osa {:count 1}
+                                        :amm-muu {:count 1}}}}}
                     (:filters r)))))
 
     (testing "koulutustyyppi yo"
       (let [r (search :koulutustyyppi "yo" :sort "name" :order "asc")]
         (is (= 5 (count (:hits r))))
-        (is (= 5 (get-in r [:filters :koulutustyyppi :yo :count])))))
+        (is (= 0 (get-in r [:filters :koulutustyyppi :yo :count])))))
 
     (testing "koulutustyyppi amk"
       (let [r (search :koulutustyyppi "amk" :sort "name" :order "asc")]
         (is (= 2 (count (:hits r))))
-        (is (= 2 (get-in r [:filters :koulutustyyppi :amk :count])))))
+        (is (= 0 (get-in r [:filters :koulutustyyppi :amk :count])))))
 
     (testing "koulutustyyppi lukio"
       (let [r (search :koulutustyyppi "lk" :sort "name" :order "asc")]
@@ -164,12 +159,12 @@
       (let [r (search :opetustapa "opetuspaikkakk_02" :sort "name" :order "asc")]
         (is (= 7 (count (:hits r))))
         (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))
-        (is (= 5 (get-in r [:filters :koulutustyyppi-muu :aikuisten-perusopetus :count])))))
+        (is (= 5 (get-in r [:filters :koulutustyyppi :aikuisten-perusopetus :count])))))
 
     (testing "valintatapa"
       (let [r (search :valintatapa "valintatapajono_av" :sort "name" :order "asc")]
         (is (= 3 (count (:hits r))))
-        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+        (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))))
 
     (testing "hakukaynnissa"
       (let [r (search :hakukaynnissa true :sort "name" :order "asc")]
@@ -179,7 +174,7 @@
     (testing "hakutapa"
       (let [r (search :hakutapa "hakutapa_03" :sort "name" :order "asc")]
         (is (= 3 (count (:hits r))))
-        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+        (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))))
 
     (testing "yhteishaku"
       (let [r (search :yhteishaku haku-oid-2 :sort "name" :order "asc")]
@@ -193,7 +188,7 @@
     (testing "pohjakoulutusvaatimus"
       (let [r (search :pohjakoulutusvaatimus "pohjakoulutusvaatimuskonfo_am" :sort "name" :order "asc")]
         (is (= 4 (count (:hits r))))
-        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+        (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))))
 
     (testing "Search koulutukset, get correct result"
       (let [r (search :sijainti "kunta_220" :koulutustyyppi "amm" :sort "name" :order "asc")]

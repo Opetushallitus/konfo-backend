@@ -5,7 +5,7 @@
             [konfo-backend.search.rajain-definitions :refer [constraints? common-filters jotpa
                                                                     pohjakoulutusvaatimus hakutapa
                                                                     koulutustyyppi opetuskieli]]
-            [konfo-backend.search.rajain-tools :refer [->terms-query koulutustyypit make-query-for-rajain]]))
+            [konfo-backend.search.rajain-tools :refer [->terms-query]]))
 
 (defonce default-ctx {:current-time "2022-08-26T07:21"})
 (deftest filters-test
@@ -225,52 +225,48 @@
                                     ]}}})
                   ((:make-agg opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
 
-    (testing "Should form aggregation for koulutustyyppi without any selected filters"
-      (is (match? (m/match-with [map? m/equals]
-                                {:aggs  {:real_hits {:reverse_nested {}}}
-                                 :terms {:field         "search_terms.koulutustyypit.keyword"
-                                         :include       koulutustyypit
-                                         :min_doc_count 0
-                                         :size          (count koulutustyypit)}})
-                  ((:make-agg koulutustyyppi) {} default-ctx))))
+       (testing "Should form aggregation for koulutustyyppi without any selected filters"
+         (is (match? (m/match-with [map? m/equals]
+                {:aggs  {:real_hits {:reverse_nested {}}}
+                 :terms {:field         "search_terms.koulutustyypit.keyword"
+                         :min_doc_count 0
+                         :size          1000}})
+                ((:make-agg koulutustyyppi) {} default-ctx))))
 
-    (testing "Should form aggregation for koulutustyyppi with opetustapa filters"
-      (is (match? (m/match-with [map? m/equals]
-                                {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
-                                                   :terms {:field         "search_terms.koulutustyypit.keyword"
-                                                           :include       koulutustyypit
-                                                           :min_doc_count 0
-                                                           :size          (count koulutustyypit)}}}
-                                 :filter {:bool {:filter [{:terms {:search_terms.opetustavat.keyword ["opetuspaikkakk_3"
-                                                                                                      "opetuspaikkakk_4"]}}]}}})
-                  ((:make-agg koulutustyyppi) {:opetustapa ["opetuspaikkakk_3" "opetuspaikkakk_4"]} default-ctx))))
+       (testing "Should form aggregation for koulutustyyppi with opetustapa filters"
+         (is (match? (m/match-with [map? m/equals]
+                {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
+                                   :terms {:field         "search_terms.koulutustyypit.keyword"
+                                           :min_doc_count 0
+                                           :size          1000}}}
+                 :filter {:bool {:filter [{:terms {:search_terms.opetustavat.keyword ["opetuspaikkakk_3"
+                                                                                      "opetuspaikkakk_4"]}}]}}})
+                ((:make-agg koulutustyyppi) {:opetustapa ["opetuspaikkakk_3" "opetuspaikkakk_4"]} default-ctx))))
 
-    (testing "Should form aggregation for koulutustyyppi with yhteishaku filter"
-      (is (match? (m/match-with [map? m/equals]
-                                {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
-                                                   :terms {:field         "search_terms.koulutustyypit.keyword"
-                                                           :include       koulutustyypit
-                                                           :min_doc_count 0
-                                                           :size          (count koulutustyypit)}}}
-                                 :filter {:bool {:filter [{:nested {:path  "search_terms.hakutiedot"
-                                                                    :query {:bool
-                                                                            {:filter
-                                                                             {:terms
-                                                                              {:search_terms.hakutiedot.yhteishakuOid
-                                                                               ["1.2.246.562.29.00000000000000000001"
-                                                                                "1.2.246.562.29.00000000000000000002"]}}}}}}]}}})
-                  ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
-                                                            "1.2.246.562.29.00000000000000000002"]} default-ctx))))
+       (testing "Should form aggregation for koulutustyyppi with yhteishaku filter"
+         (is (match? (m/match-with [map? m/equals]
+                {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
+                                   :terms {:field         "search_terms.koulutustyypit.keyword"
+                                           :min_doc_count 0
+                                           :size          1000}}}
+                 :filter {:bool {:filter [{:nested {:path  "search_terms.hakutiedot"
+                                                    :query {:bool
+                                                            {:filter
+                                                             {:terms
+                                                              {:search_terms.hakutiedot.yhteishakuOid
+                                                               ["1.2.246.562.29.00000000000000000001"
+                                                                "1.2.246.562.29.00000000000000000002"]}}}}}}]}}})
+                ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
+                                                      "1.2.246.562.29.00000000000000000002"]} default-ctx))))
 
 
-    (testing "Should not filter koulutustyypit inside aggregation when it is also the selected filter"
-      (is (match? (m/match-with [map? m/equals]
-                                {:aggs  {:real_hits {:reverse_nested {}}}
-                                 :terms {:field         "search_terms.koulutustyypit.keyword"
-                                         :include       koulutustyypit
-                                         :min_doc_count 0
-                                         :size          (count koulutustyypit)}})
-                  ((:make-agg koulutustyyppi) {:koulutustyyppi ["amm"]} default-ctx))))
+       (testing "Should not filter koulutustyypit inside aggregation when it is also the selected filter"
+         (is (match? (m/match-with [map? m/equals]
+                {:aggs  {:real_hits {:reverse_nested {}}}
+                 :terms {:field         "search_terms.koulutustyypit.keyword"
+                         :min_doc_count 0
+                         :size          1000}})
+                ((:make-agg koulutustyyppi) {:koulutustyyppi ["amm"]} default-ctx))))
     )
   (testing "Should form filter for the query with a hakutieto query with several selected constraints"
     (is (match?

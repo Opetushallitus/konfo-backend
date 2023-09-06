@@ -4,7 +4,6 @@
                                                 hakutulos-aggregations
                                                 jarjestajat-aggregations
                                                 tarjoajat-aggregations]]
-            [konfo-backend.search.rajain-tools :refer [koulutustyypit]]
             [konfo-backend.test-tools :refer [set-fixed-time]]
             [konfo-backend.tools]
             [clojure.string :refer [replace-first split join]]
@@ -152,7 +151,7 @@
                               :opetuskieli (default-agg "search_terms.opetuskielet.keyword")
                               :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat")
                               :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:include alkamiskaudet-include} nil)
-                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" nil {:size (count koulutustyypit) :include koulutustyypit} nil)
+                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" nil nil nil)
                               :hakukaynnissa {:filter
                                               {:bool
                                                {:filter
@@ -216,7 +215,7 @@
                               :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" jotpa-bool-filter)
                               :opetuskieli (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
                               :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" jotpa-bool-filter nil nil)
-                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter {:size (count koulutustyypit) :include koulutustyypit} nil)
+                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter nil nil)
                               :alkamiskausi (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:include alkamiskaudet-include} nil)
                               :hakukaynnissa {:filter
                                               {:bool
@@ -382,7 +381,7 @@
                               :opetuskieli (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :valintatapa (default-nested-agg :valintatapa "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :koulutusala (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter {:size (count koulutustyypit) :include koulutustyypit} "search_terms")
+                              :koulutustyyppi (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :maksuton (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
                               :maksullinen (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
                               :maksullinen-max (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
