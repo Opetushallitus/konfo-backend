@@ -1,7 +1,7 @@
 (ns konfo-backend.test-tools
   (:require
    [clojure.test :refer :all]
-   [clojure.java.shell :refer [sh]]
+   [clj-test-utils.generic :refer [run-proc]]
    [clj-elasticsearch.elastic-connect :as e]
    [clj-elasticsearch.elastic-utils :as e-utils]
    [ring.mock.request :as mock]
@@ -85,9 +85,7 @@
   (let [e-host (string/replace e-utils/elastic-host #"127\.0\.0\.1|localhost" "host.docker.internal")]
     (println "Importing elasticsearch data...")
     (if (elastic-empty?)
-      (let [p (sh "test/resources/load_elastic_dump.sh" e-host (str (if (:no-data args) "" "data,") "mapping,alias,settings,template"))]
-        (println (:err p))
-        (println (:out p)))
+      (run-proc "test/resources/load_elastic_dump.sh" e-host (str (if (:no-data args) "" "data,") "mapping,alias,settings,template"))
       (println "Elasticsearch not empty. Data already imported. Doing nothing."))))
 
 (defn with-elastic-dump
