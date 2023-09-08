@@ -71,7 +71,7 @@
    :filters (rajain-numbers response)})
 
 (defn parse-for-autocomplete
-  [lng response]
+  [response]
   {:total   (get-in response [:hits :total :value])
    :hits    (autocomplete-hits response)})
 

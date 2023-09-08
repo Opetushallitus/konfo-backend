@@ -46,7 +46,7 @@
   (let [query (search-term-query search-phrase lng ["words"])
         post-filter-query (post-filter-query constraints)]
     (e/search index
-              #(parse-for-autocomplete lng %)
+              #(parse-for-autocomplete %)
               :_source ["oid", "nimi"]
               :size size
               :sort (sorts sort order lng)
