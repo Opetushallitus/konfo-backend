@@ -4,7 +4,8 @@
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
-                                                    opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus]]
+                                                    opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
+                                                    hakualkaapaivissa]]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -14,7 +15,7 @@
    [konfo-backend.tools :refer [comma-separated-string->vec]]
    [clojure.string :as string]))
 
-(def paths (str
+(def paths (str 
   "|  /search/filters:
    |    get:
    |      tags:
@@ -113,6 +114,7 @@
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
             (:desc alkamiskausi) "\n"
+            (:desc hakualkaapaivissa) "\n"
             "
    |      responses:
    |        '200':
@@ -193,6 +195,7 @@
             (:desc osaamisala) "\n"
             (:desc oppilaitos) "\n"
             (:desc alkamiskausi) "\n"
+            (:desc hakualkaapaivissa) "\n"
             "
    |      responses:
    |        '200':
@@ -273,6 +276,7 @@
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
             (:desc alkamiskausi) "\n"
+            (:desc hakualkaapaivissa) "\n"
             "
    |      responses:
    |        '200':
@@ -343,6 +347,7 @@
             (:desc opetustapa) "\n"
             (:desc opetusaika) "\n"
             (:desc koulutuksenkestokuukausina) "\n"
+            (:desc hakualkaapaivissa) "\n"
             "
    |      responses:
    |        '200':
@@ -476,6 +481,7 @@
             (:desc koulutuksenkestokuukausina) "\n"
             (:desc alkamiskausi) "\n"
             (:desc maksullisuus) "\n"
+            (:desc hakualkaapaivissa) "\n"
             "
    |      responses:
    |        '200':
@@ -493,7 +499,7 @@
 (defn- parse-number-range
   [min-number max-number]
   (cond
-    (and min-number max-number) [(min min-number max-number)(max min-number max-number)]
+    (and min-number max-number) [(min min-number max-number) (max min-number max-number)]
     (and (nil? min-number) max-number) [0 max-number]
     (and min-number (nil? max-number)) [min-number]
     :else []))
@@ -530,7 +536,7 @@
                       :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
                                                        (:lukuvuosimaksunmaara_max rajain-params))
                       :apuraha (if (:apuraha rajain-params) true nil)})
-   })
+   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)})
 
 (defn ->search-with-validated-params
   [do-search keyword lng page size sort order rajain-params]
@@ -563,14 +569,14 @@
             (ok result)
             (not-found "Not found"))))
 
-(defn with-validated-params [search-phrase lng sort order or-else-fn]
+(defn with-validated-params [search-phrase lng sort order ok-fn]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli ('fi'/'sv'/'en')")
     (not (some #{sort} ["name" "score"])) (bad-request "Virheellinen järjestys ('name'/'score')")
     (not (some #{order} ["asc" "desc"])) (bad-request "Virheellinen järjestys ('asc'/'desc')")
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
-    :else (ok (or-else-fn))))
+    :else (ok (ok-fn))))
 
 (def routes
   (context "/search" []
@@ -616,7 +622,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
-                     {apuraha               :- Boolean false}]
+                     {apuraha               :- Boolean false}
+                     {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params
                                     koulutus-search/search
                                     keyword
@@ -647,7 +654,8 @@
                                      :maksunmaara_max maksunmaara_max
                                      :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                      :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
-                                     :apuraha apuraha})))
+                                     :apuraha apuraha
+                                     :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/koulutus/:oid/jarjestajat" [:as request]
       :path-params [oid :- String]
@@ -681,7 +689,8 @@
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
                      {osaamisala            :- String nil}
                      {oppilaitos            :- String nil}
-                     {alkamiskausi          :- String nil}]
+                     {alkamiskausi          :- String nil}
+                     {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params
                                     koulutus-search/search-koulutuksen-jarjestajat
                                     oid
@@ -715,7 +724,8 @@
                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
                                      :osaamisala osaamisala
                                      :oppilaitos oppilaitos
-                                     :alkamiskausi alkamiskausi})))
+                                     :alkamiskausi alkamiskausi
+                                     :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
@@ -746,7 +756,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
-                     {apuraha               :- Boolean false}]
+                     {apuraha               :- Boolean false}
+                     {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params oppilaitos-search/search
                                                                    keyword
                                                                    lng
@@ -776,7 +787,8 @@
                                                                     :maksunmaara_max maksunmaara_max
                                                                     :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                                                     :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
-                                                                    :apuraha apuraha})))
+                                                                    :apuraha apuraha
+                                                                    :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/oppilaitos/:oid/tarjonta" [:as request]
       :path-params [oid :- String]
@@ -791,7 +803,8 @@
                      {koulutusala    :- String nil}
                      {opetustapa     :- String nil}
                      {koulutuksenkestokuukausina_min :- Number nil}
-                     {koulutuksenkestokuukausina_max :- Number nil}]
+                     {koulutuksenkestokuukausina_max :- Number nil}
+                     {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
                                                                                oid
                                                                                lng
@@ -805,7 +818,8 @@
                                                                                 :koulutusala koulutusala
                                                                                 :opetustapa opetustapa
                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
-                                                                                :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max})))
+                                                                                :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                                                                :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/autocomplete" [:as request]
       :query-params [{searchPhrase          :- String nil}
@@ -835,7 +849,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
-                     {apuraha               :- Boolean false}]
+                     {apuraha               :- Boolean false}
+                     {hakualkaapaivissa     :- Long nil}]
       (with-validated-params
         searchPhrase
         lng
@@ -869,6 +884,7 @@
                                 :maksunmaara_max maksunmaara_max
                                 :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                 :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
-                                :apuraha apuraha}]]
+                                :apuraha apuraha
+                                :hakualkaapaivissa hakualkaapaivissa}]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
              :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))
