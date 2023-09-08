@@ -22,47 +22,50 @@
    "Query with hakukaynnissa filters"
     (set-fixed-time "2020-01-01T01:01:00")
     (is
-     (= (post-filter-query {:hakukaynnissa true})
-        {:nested
-         {:path "search_terms"
-          :query
-          {:bool
-           {:filter
-            [{:bool
-              {:should
-               [{:bool
-                 {:filter
-                  [{:range
-                    {:search_terms.toteutusHakuaika.alkaa
-                     {:lte "2020-01-01T01:01"}}}
-                   {:bool
-                    {:should
-                     [{:bool
-                       {:must_not
-                        {:exists
-                         {:field
-                          "search_terms.toteutusHakuaika.paattyy"}}}}
-                      {:range
-                       {:search_terms.toteutusHakuaika.paattyy
-                        {:gt "2020-01-01T01:01"}}}]}}]}}
-                {:nested
-                 {:path "search_terms.hakutiedot.hakuajat",
-                  :query
-                  {:bool
-                   {:filter
-                    [{:range
-                      {:search_terms.hakutiedot.hakuajat.alkaa
-                       {:lte "2020-01-01T01:01"}}}
-                     {:bool
-                      {:should
-                       [{:bool
-                         {:must_not
-                          {:exists
-                           {:field
-                            "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                        {:range
-                         {:search_terms.hakutiedot.hakuajat.paattyy
-                          {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}]}}}}))))
+     (match?
+      (m/match-with
+       [map? m/equals vector? m/in-any-order]
+       {:nested
+        {:path "search_terms"
+         :query
+         {:bool
+          {:filter
+           [{:bool
+            {:should [{:bool {:should
+                              [{:bool
+                                {:filter
+                                 [{:range
+                                   {:search_terms.toteutusHakuaika.alkaa
+                                    {:lte "2020-01-01T01:01"}}}
+                                  {:bool
+                                   {:should
+                                    [{:bool
+                                      {:must_not
+                                       {:exists
+                                        {:field
+                                         "search_terms.toteutusHakuaika.paattyy"}}}}
+                                     {:range
+                                      {:search_terms.toteutusHakuaika.paattyy
+                                       {:gt "2020-01-01T01:01"}}}]}}]}}
+                               {:nested
+                                {:path "search_terms.hakutiedot.hakuajat",
+                                 :query
+                                 {:bool
+                                  {:filter
+                                   [{:range
+                                     {:search_terms.hakutiedot.hakuajat.alkaa
+                                      {:lte "2020-01-01T01:01"}}}
+                                    {:bool
+                                     {:should
+                                      [{:bool
+                                        {:must_not
+                                         {:exists
+                                          {:field
+                                           "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                       {:range
+                                        {:search_terms.hakutiedot.hakuajat.paattyy
+                                         {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}]}}]}}}})
+      (post-filter-query {:hakukaynnissa true})))))
 
 (defn- make-terms-agg [field-name term-props reverse-nested-path]
   {:terms (merge {:field field-name

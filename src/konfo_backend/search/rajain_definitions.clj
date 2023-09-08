@@ -488,10 +488,11 @@
 
 (def hakukaynnissa
   {:id :hakukaynnissa
+   :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (when (true? value) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
-                                (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
+                                (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -506,10 +507,11 @@
 
 (def hakualkaapaivissa
   {:id :hakualkaapaivissa
+   :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (hakualkaapaivissa-filter-query current-time value))
    :make-agg (fn [constraints rajain-context]
                (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
-                                        (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
+                                        (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
                                         rajain-context))
    :desc "
    |        - in: query
