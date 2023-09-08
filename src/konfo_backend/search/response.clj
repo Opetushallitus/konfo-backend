@@ -2,7 +2,7 @@
   (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
             [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
                                                         generate-rajain-counts-for-jarjestajat]]
-            [konfo-backend.search.rajain-definitions :refer [all-aggregation-defs max-agg-defs ->max-agg-id]]
+            [konfo-backend.search.rajain-definitions :refer [all-agg-defs max-agg-defs ->max-agg-id]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
                                          reduce-merge-map rename-key]]))
@@ -50,7 +50,7 @@
 
 (defn- numbers-by-filter
   [response]
-  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map :id all-aggregation-defs))
+  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map :id all-agg-defs))
         max-numbers (reduce-merge-map #(->max-number response %) (map #(->max-agg-id (:id %)) max-agg-defs))]
     (merge doc-counts max-numbers)))
 
