@@ -9,12 +9,11 @@
 ;; vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta myöhempänä. Ja common-filtersiä taas käytetään
 ;; rajain-määritysten sisällä, eli se täytyy olla määriteltynä ennen rajain-määrityksiä.
 (def common-rajain-definitions (atom []))
-(def hakukaynnissa-rajain (atom {}))
 (def jarjestaja-rajain-definitions (atom []))
 
 (defn constraints?
   [constraints]
-  (let [contains-default-rajaimet (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id (conj @common-rajain-definitions @hakukaynnissa-rajain))))
+  (let [contains-default-rajaimet (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id @common-rajain-definitions)))
         contains-jarjestaja-rajaimet (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id @jarjestaja-rajain-definitions)))]
     (or contains-default-rajaimet contains-jarjestaja-rajaimet)))
 
@@ -27,7 +26,6 @@
       (conj
        (mapv #(make-query-for-rajain constraints % current-time) (filter #(nil? (:rajainGroupId %)) @common-rajain-definitions))
        (mapv #(make-combined-should-filter-query constraints % current-time) (vals rajain-groups))
-       ((:make-query @hakukaynnissa-rajain) constraints current-time)
        (mapv #(make-query-for-rajain constraints % current-time) @jarjestaja-rajain-definitions))))))
 
 
@@ -492,7 +490,7 @@
 
 (def hakukaynnissa
   {:id :hakukaynnissa
-   :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakukaynnissa-filter-query current-time)))
+   :make-query (fn [value current-time] (when (true? value) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
                                 (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
@@ -510,7 +508,7 @@
 
 (def hakualkaapaivissa
   {:id :hakualkaapaivissa
-   :make-query (fn [constraints current-time] (hakualkaapaivissa-filter-query current-time (:hakualkaapaivissa constraints)))
+   :make-query (fn [value current-time] (hakualkaapaivissa-filter-query current-time value))
    :make-agg (fn [constraints rajain-context]
                (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
                                 (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
@@ -557,16 +555,14 @@
    |          example: [henkilokohtainen, 2022-kevat]"})
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa
-       hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina
-       jotpa tyovoimakoulutus taydennyskoulutus maksuton maksullinen lukuvuosimaksu hakualkaapaivissa)
+       hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina jotpa tyovoimakoulutus 
+       taydennyskoulutus maksuton maksullinen lukuvuosimaksu hakukaynnissa hakualkaapaivissa)
 
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
-(reset! hakukaynnissa-rajain hakukaynnissa)
-
 (def common-aggregation-defs
-  [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus
-   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu hakualkaapaivissa])
+  [maakunta kunta opetuskieli opetustapa opetusaika  hakutapa pohjakoulutusvaatimus koulutuksenkestokuukausina 
+   valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
 
 (def hakutulos-aggregation-defs
   (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
