@@ -238,7 +238,7 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "hasJotpaRahoitus")
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -256,7 +256,7 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTyovoimakoulutus")
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -274,7 +274,7 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTaydennyskoulutus")
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -336,11 +336,11 @@
 (def maksuton
   {:id :maksuton
    :rajainGroupId :maksullisuus
-   :make-query (fn [_] (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton"))
+   :make-query #(->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))})
 
 (def maksullinen
@@ -353,10 +353,10 @@
                                            (number-range-query "metadata.maksunMaara"
                                                                (get-in constraints [:maksullinen :maksunmaara]))])
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                   (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
+                                         (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
 
 (def lukuvuosimaksu
   {:id :lukuvuosimaksu
@@ -369,12 +369,11 @@
                                            (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
                                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
                                 (aggregation-filters-without-rajainkeys
-                                  constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
+                                 constraints (by-rajaingroup @common-rajain-definitions :maksullisuus) rajain-context)
                                 rajain-context))
    :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
-                                    ))})
+                                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
 
 (def yhteishaku
   {:id :yhteishaku
@@ -493,10 +492,11 @@
 
 (def hakukaynnissa
   {:id :hakukaynnissa
-   :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakuaika-filter-query current-time)))
+   :rajainGroupId :hakuaika
+   :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (hakuaika-filter-query (:current-time rajain-context))
-                                (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa"] rajain-context)
+               (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
+                                (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
                                 rajain-context))
    :desc "
    |        - in: query
@@ -505,7 +505,24 @@
    |            type: boolean
    |            default: false
    |          required: false
-   |          description: Haetaanko koulutukset, joilla on haku käynnissä?"})
+   |          description: Palautetaan koulutukset, joiden haku on käynissä"})
+
+(def hakualkaapaivissa
+  {:id :hakualkaapaivissa
+   :rajainGroupId :hakuaika
+   :make-query (fn [constraints current-time] (hakualkaapaivissa-filter-query current-time (:hakualkaapaivissa constraints)))
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (hakualkaapaivissa-filter-query (:current-time rajain-context) (:hakualkaapaivissa constraints))
+                                (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
+                                rajain-context))
+   :desc "
+   |        - in: query
+   |          name: hakualkaapaivissa
+   |          schema:
+   |            type: number
+   |            default: 30
+   |          required: false
+   |          description: Palautetaan koulutukset, joiden hakuaika alkaa x vuorokauden sisällä."})
 
 
 (defn kevat-date? [date]
@@ -536,19 +553,20 @@
    |            type: array
    |            items:
    |              type: string
-   |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\" )
+   |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\"
    |          example: [henkilokohtainen, 2022-kevat]"})
 
 (swap! common-rajain-definitions conj koulutustyyppi sijainti opetuskieli koulutusala opetustapa opetusaika valintatapa
        hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi koulutuksenkestokuukausina
-       jotpa tyovoimakoulutus taydennyskoulutus maksuton maksullinen lukuvuosimaksu)
+       jotpa tyovoimakoulutus taydennyskoulutus maksuton maksullinen lukuvuosimaksu hakualkaapaivissa)
+
 (swap! jarjestaja-rajain-definitions conj lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos)
 
 (reset! hakukaynnissa-rajain hakukaynnissa)
 
 (def common-aggregation-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakukaynnissa hakutapa pohjakoulutusvaatimus
-   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu])
+   koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen lukuvuosimaksu hakualkaapaivissa])
 
 (def hakutulos-aggregation-defs
   (concat common-aggregation-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
@@ -568,9 +586,9 @@
 (defn- generate-aggs
   [agg-defs constraints rajain-context]
   (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
-  (-> {}
-      (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
-      (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
+    (-> {}
+        (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
+        (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
 
 (defn generate-hakutulos-aggregations
   [constraints]

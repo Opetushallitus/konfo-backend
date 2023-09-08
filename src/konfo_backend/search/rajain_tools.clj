@@ -1,5 +1,6 @@
 (ns konfo-backend.search.rajain-tools
   (:require [clojure.string :refer [lower-case replace-first split join]]
+            [clj-time.core :as time]
             [konfo-backend.tools :refer [->lower-case-vec]]))
 
 (defn by-rajaingroup
@@ -36,14 +37,14 @@
 
 (defn number-range-query
   [key value]
-  (when (and (vector? value)(not-empty value))
+  (when (and (vector? value) (not-empty value))
     (let [min (first value)
           max (if (> (count value) 1) (get value 1 nil) nil)]
       {:range {(keyword (str "search_terms." key))
-              (if (not (nil? max)) {:gte min :lte max} {:gte min})}})))
+               (if (not (nil? max)) {:gte min :lte max} {:gte min})}})))
 
 (defn- boolean-constraint? [constraint-val]
-  (and (boolean? constraint-val)(true? constraint-val)))
+  (and (boolean? constraint-val) (true? constraint-val)))
 
 (defn- vector-constraint? [constraint-val]
   (and (vector? constraint-val) (not-empty constraint-val)))
@@ -61,7 +62,7 @@
 
 (defn constraint? [constraints key]
   (let [constraint-val (key constraints)]
-    (or (boolean-constraint? constraint-val)(vector-constraint? constraint-val)(object-constraint? constraint-val))))
+    (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val))))
 
 (defn make-combined-should-filter-query
   [constraints rajain-items]
@@ -70,15 +71,24 @@
     (when (not-empty active-conditions)
       {:bool {:should (vec active-conditions)}})))
 
-(defn hakuaika-filter-query
+(defn hakukaynnissa-filter-query
   [current-time]
   {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
                                                      {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
-                   {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                   {:nested {:path "search_terms.hakutiedot.hakuajat"
                              :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
                                                      {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
                                                                       {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]}})
+
+(defn hakualkaapaivissa-filter-query
+  [current-time days]
+  (when days
+    (let [max-time (time/plus current-time (time/days days))]
+      {:bool {:should [{:bool {:filter {:range {:search_terms.toteutusHakuaika.alkaa {:gt current-time :lte max-time}}}}}
+                       {:nested {:path "search_terms.hakutiedot.hakuajat"
+                                 :query {:bool {:filter {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}}}}]}})))
+
 
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))
@@ -100,10 +110,10 @@
 
 (defn- rajain-terms-agg
   [field-name rajain-context]
-   (let [default-terms {:field field-name
-                        :min_doc_count 0
-                        :size 1000}]
-     (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
+  (let [default-terms {:field field-name
+                       :min_doc_count 0
+                       :size 1000}]
+    (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
 
 (defn- constrained-agg [constraints filtered-aggs plain-aggs]
   (if (not-empty constraints)
@@ -121,7 +131,7 @@
 (defn bool-agg-filter [own-filter constraints rajain-context]
   (with-real-hits
     {:filter {:bool
-              {:filter (vec (distinct (conj constraints own-filter)))}}}
+              {:filter (remove nil? (vec (distinct (conj constraints own-filter))))}}}
     rajain-context))
 
 (defn max-agg-filter
@@ -133,7 +143,7 @@
         :aggs {:max-val max-agg}}
        max-agg)))
   ([field-name]
-  (max-agg-filter field-name nil)))
+   (max-agg-filter field-name nil)))
 
 (defn nested-rajain-aggregation
   [rajain-key field-name constraints rajain-context]
