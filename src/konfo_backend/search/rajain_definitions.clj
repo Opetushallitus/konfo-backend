@@ -336,7 +336,7 @@
 (def maksuton
   {:id :maksuton
    :rajainGroupId :maksullisuus
-   :make-query #(->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+   :make-query (fn [_] (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton"))
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
                                 (aggregation-filters-without-rajainkeys
@@ -492,7 +492,6 @@
 
 (def hakukaynnissa
   {:id :hakukaynnissa
-   :rajainGroupId :hakuaika
    :make-query (fn [constraints current-time] (when (true? (:hakukaynnissa constraints)) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
@@ -507,12 +506,13 @@
    |          required: false
    |          description: Palautetaan koulutukset, joiden haku on käynissä"})
 
+(defonce hakualkaapaivissa-buckets [30])
+
 (def hakualkaapaivissa
   {:id :hakualkaapaivissa
-   :rajainGroupId :hakuaika
    :make-query (fn [constraints current-time] (hakualkaapaivissa-filter-query current-time (:hakualkaapaivissa constraints)))
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (hakualkaapaivissa-filter-query (:current-time rajain-context) (:hakualkaapaivissa constraints))
+               (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
                                 (aggregation-filters-without-rajainkeys constraints ["hakukaynnissa" "hakualkaapaivissa"] rajain-context)
                                 rajain-context))
    :desc "

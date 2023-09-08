@@ -9,7 +9,10 @@
 
 (defn- buckets-to-map
   [buckets]
-  (into {} (map (fn [x] [(keyword (:key x)) x]) buckets)))
+  ; filters-aggregaatioilla bucketit palautuu objektina eikä taulukkona!
+  (if (map? buckets)
+    buckets
+    (into {} (map (fn [x] [(keyword (:key x)) x]) buckets))))
 
 (defn- hits
   [response]

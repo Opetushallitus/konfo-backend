@@ -1,7 +1,7 @@
 (ns konfo-backend.search.rajain-tools
   (:require [clojure.string :refer [lower-case replace-first split join]]
             [clj-time.core :as time]
-            [konfo-backend.tools :refer [->lower-case-vec]]))
+            [konfo-backend.tools :refer [->lower-case-vec kouta-date-time-string->date-time ->kouta-date-time-string]]))
 
 (defn by-rajaingroup
   [rajaimet rajain-group]
@@ -84,10 +84,10 @@
 (defn hakualkaapaivissa-filter-query
   [current-time days]
   (when days
-    (let [max-time (time/plus current-time (time/days days))]
-      {:bool {:should [{:bool {:filter {:range {:search_terms.toteutusHakuaika.alkaa {:gt current-time :lte max-time}}}}}
+    (let [max-time (->kouta-date-time-string (time/plus (kouta-date-time-string->date-time current-time) (time/days days)))]
+      {:bool {:should [{:range {:search_terms.toteutusHakuaika.alkaa {:gt current-time :lte max-time}}}
                        {:nested {:path "search_terms.hakutiedot.hakuajat"
-                                 :query {:bool {:filter {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}}}}]}})))
+                                 :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}}]}})))
 
 
 (defn ->field-key [field-name]
@@ -127,6 +127,10 @@
    contraints
    {:rajain (rajain-terms-agg field-name rajain-context)}
    (rajain-terms-agg field-name rajain-context)))
+
+(defn multi-bucket-rajain-agg [own-filters-with-bucket constraints rajain-context]
+  (let [own-aggs (with-real-hits {:filters {:filters own-filters-with-bucket}} rajain-context)]
+    (constrained-agg constraints {:rajain own-aggs} own-aggs)))
 
 (defn bool-agg-filter [own-filter constraints rajain-context]
   (with-real-hits
