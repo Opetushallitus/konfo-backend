@@ -14,8 +14,8 @@
 
 (defn constraints?
   [constraints]
-  (let [contains-default-rajaimet (not-empty (filter #(constraint? constraints %) (map :id (conj @common-rajain-definitions @hakukaynnissa-rajain))))
-        contains-jarjestaja-rajaimet (not-empty (filter #(constraint? constraints %) (map :id @jarjestaja-rajain-definitions)))]
+  (let [contains-default-rajaimet (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id (conj @common-rajain-definitions @hakukaynnissa-rajain))))
+        contains-jarjestaja-rajaimet (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id @jarjestaja-rajain-definitions)))]
     (or contains-default-rajaimet contains-jarjestaja-rajaimet)))
 
 (defn common-filters
@@ -25,10 +25,10 @@
      some?
      (flatten
       (conj
-       (mapv #(make-query-for-rajain constraints %) (filter #(nil? (:rajainGroupId %)) @common-rajain-definitions))
-       (mapv #(make-combined-should-filter-query constraints %) (vals rajain-groups))
+       (mapv #(make-query-for-rajain constraints % current-time) (filter #(nil? (:rajainGroupId %)) @common-rajain-definitions))
+       (mapv #(make-combined-should-filter-query constraints % current-time) (vals rajain-groups))
        ((:make-query @hakukaynnissa-rajain) constraints current-time)
-       (mapv #(make-query-for-rajain constraints %) @jarjestaja-rajain-definitions))))))
+       (mapv #(make-query-for-rajain constraints % current-time) @jarjestaja-rajain-definitions))))))
 
 
 (defn aggregation-filters-without-rajainkeys

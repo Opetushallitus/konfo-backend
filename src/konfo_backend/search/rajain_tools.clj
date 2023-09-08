@@ -44,7 +44,7 @@
                (if (not (nil? max)) {:gte min :lte max} {:gte min})}})))
 
 (defn- boolean-constraint? [constraint-val]
-  (and (boolean? constraint-val) (true? constraint-val)))
+  (true? constraint-val))
 
 (defn- vector-constraint? [constraint-val]
   (and (vector? constraint-val) (not-empty constraint-val)))
@@ -52,24 +52,25 @@
 (defn- object-constraint? [constraint-val]
   (and (map? constraint-val) (not-empty (keys constraint-val))))
 
-(defn make-query-for-rajain
-  [constraints rajain]
-  (let [constraint-vals (get constraints (:id rajain))]
-    (cond
-      (boolean-constraint? constraint-vals) ((:make-query rajain))
-      (vector-constraint? constraint-vals) ((:make-query rajain) constraint-vals)
-      (object-constraint? constraint-vals) ((:make-query rajain) constraint-vals))))
+(defn constraint? [constraint-val]
+  (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val)))
 
-(defn constraint? [constraints key]
-  (let [constraint-val (key constraints)]
-    (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val))))
+(defn arg-count [f]
+  {:pre [(instance? clojure.lang.AFunction f)]}
+  (-> f class .getDeclaredMethods first .getParameterTypes alength))
+
+(defn make-query-for-rajain
+  [constraints rajain current-time]
+  (let [constraint-vals (get constraints (:id rajain))
+        make-query-arg-count (arg-count (:make-query rajain))]
+    (when (constraint? constraint-vals)
+      ; Sallitaan make-query-funktioiden määrittely rajain_definitions:ssa joustavasti eri parametrimäärillä (0-2)
+      (apply (:make-query rajain) (take make-query-arg-count [constraint-vals current-time])))))
 
 (defn make-combined-should-filter-query
-  [constraints rajain-items]
-  (let [conditions (map #(make-query-for-rajain constraints %) rajain-items)
-        active-conditions (filter some? conditions)]
-    (when (not-empty active-conditions)
-      {:bool {:should (vec active-conditions)}})))
+  [constraints rajain-items current-time]
+  (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
+    {:bool {:should (vec active-conditions)}}))
 
 (defn hakukaynnissa-filter-query
   [current-time]
