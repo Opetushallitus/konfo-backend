@@ -197,7 +197,7 @@
                                               :aggs {:real_hits {:reverse_nested {}}}}
                               :hakualkaapaivissa {:filters
                                                   {:filters
-                                                   {:30
+                                                   {:hakualkaapaivissa_30
                                                     {:bool
                                                      {:should
                                                       [{:range
@@ -279,7 +279,7 @@
                               :hakualkaapaivissa {:filter {:bool {:filter [jotpa-term]}}
                                                   :aggs {:rajain {:filters
                                                                   {:filters
-                                                                   {:30
+                                                                   {:hakualkaapaivissa_30
                                                                     {:bool
                                                                      {:should
                                                                       [{:range
@@ -398,7 +398,7 @@
                               :hakualkaapaivissa {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
                                                   :aggs {:rajain {:filters
                                                                   {:filters
-                                                                   {:30
+                                                                   {:hakualkaapaivissa_30
                                                                     {:bool
                                                                      {:should
                                                                       [{:range
@@ -493,7 +493,7 @@
                               :hakualkaapaivissa {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
                                                   :aggs {:rajain {:filters
                                                                   {:filters
-                                                                   {:30
+                                                                   {:hakualkaapaivissa_30
                                                                     {:bool
                                                                      {:should
                                                                       [{:range

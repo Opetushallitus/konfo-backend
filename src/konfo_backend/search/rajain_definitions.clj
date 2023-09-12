@@ -510,7 +510,7 @@
    :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (hakualkaapaivissa-filter-query current-time value))
    :make-agg (fn [constraints rajain-context]
-               (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
+               (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str "hakualkaapaivissa_" %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
                                         (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
                                         rajain-context))
    :desc "
