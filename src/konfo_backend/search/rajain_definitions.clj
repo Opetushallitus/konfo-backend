@@ -53,7 +53,7 @@
    |          schema:
    |            type: array
    |            items:
-   |              type: string
+   |              $ref: '#/components/schemas/KonfoKoulutustyyppi'
    |          description: Pilkulla eroteltu lista koulutustyyppejä
    |          example: [amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala]"})
 

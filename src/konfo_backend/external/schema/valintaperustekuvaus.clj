@@ -23,14 +23,7 @@
    |          description: Valintaperustekuvauksen julkaisutila. Aina julkaistu
    |        koulutustyyppi:
    |          type: string
-   |          description: Minkä tyyppisille koulutuksille valintaperustekuvaus on tarkoitettu käytettäväksi?
-   |          enum:
-   |            - amm
-   |            - yo
-   |            - amk
-   |            - lk
-   |            - muu
-   |          example: amm
+   |          $ref: '#/components/schemas/KoutaKoulutustyyppi'
    |        hakutapa:
    |          type: object
    |          description: Valintaperustekuvaukseen liittyvä hakutapa

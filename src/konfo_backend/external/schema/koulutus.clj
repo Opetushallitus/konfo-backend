@@ -21,17 +21,7 @@
      |          description: Onko koulutus tutkintoon johtavaa
      |        koulutustyyppi:
      |          type: string
-     |          description: \"Koulutuksen tyyppi. Sallitut arvot: 'amm' (ammatillinen), 'yo' (yliopisto), 'lk' (lukio), 'amk' (ammattikorkea), 'muu' (muu koulutus)\"
-     |          enum:
-     |            - amm
-     |            - yo
-     |            - amk
-     |            - lk
-     |            - erikoislaakari
-     |            - kk-opintojakso
-     |            - kk-opintokokonaisuus
-     |            - muu
-     |          example: amm
+     |          $ref: '#/components/schemas/KoutaKoulutustyyppi'
      |        koulutukset:
      |          type: array
      |          description: Koulutusten koodi URIt ja nimet

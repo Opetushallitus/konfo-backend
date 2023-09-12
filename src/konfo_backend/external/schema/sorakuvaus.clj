@@ -14,14 +14,7 @@
    |          example: ea596a9c-5940-497e-b5b7-aded3a2352a7
    |        koulutustyyppi:
    |          type: string
-   |          description: Minkä tyyppisiin koulutuksiin SORA-kuvaus liittyy
-   |          enum:
-   |            - amm
-   |            - yo
-   |            - amk
-   |            - lk
-   |            - muu
-   |          example: amm
+   |          $ref: '#/components/schemas/KoutaKoulutustyyppi'
    |        tila:
    |          type: string
    |          example: julkaistu

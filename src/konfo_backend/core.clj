@@ -104,7 +104,7 @@
                        "
                        | <html>
                        |   <head>
-                       |     <titleKonfo-backend: API Documentation</title>
+                       |     <title>Konfo-backend: API Documentation</title>
                        |   </head>
                        |   <body>
                        |     <redoc spec-url=\"/konfo-backend/swagger.yaml\"></redoc>
