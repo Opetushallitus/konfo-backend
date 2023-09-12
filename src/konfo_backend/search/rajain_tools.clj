@@ -52,8 +52,11 @@
 (defn- object-constraint? [constraint-val]
   (and (map? constraint-val) (not-empty (keys constraint-val))))
 
+(defn- number-constraint? [constraint-val]
+  (number? constraint-val))
+
 (defn constraint? [constraint-val]
-  (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val)))
+  (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val) (number-constraint? constraint-val)))
 
 (defn arg-count [f]
   {:pre [(instance? clojure.lang.AFunction f)]}
