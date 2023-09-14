@@ -39,7 +39,7 @@
   [key value]
   (when (and (vector? value) (not-empty value))
     (let [min (first value)
-          max (if (> (count value) 1) (get value 1 nil) nil)]
+          max (second value)]
       {:range {(keyword (str "search_terms." key))
                (if (not (nil? max)) {:gte min :lte max} {:gte min})}})))
 
@@ -56,7 +56,7 @@
   (number? constraint-val))
 
 (defn constraint? [constraint-val]
-  (or (boolean-constraint? constraint-val) (vector-constraint? constraint-val) (object-constraint? constraint-val) (number-constraint? constraint-val)))
+  ((some-fn boolean-constraint? vector-constraint? object-constraint? number-constraint?) constraint-val))
 
 (defn arg-count [f]
   {:pre [(instance? clojure.lang.AFunction f)]}
@@ -99,11 +99,10 @@
 
 (defn all-must
   [conditions]
-  (let [active-conditions (filter some? conditions)]
-    (when (not-empty active-conditions)
+  (when-let [active-conditions (not-empty (filter some? conditions))]
       (if (> (count active-conditions) 1)
         {:bool {:filter (vec active-conditions)}}
-        (first active-conditions)))))
+        (first active-conditions))))
 
 (defn- with-real-hits
   ([agg rajain-context]
