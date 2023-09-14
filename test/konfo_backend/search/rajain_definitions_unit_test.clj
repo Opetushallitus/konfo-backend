@@ -264,6 +264,7 @@
                                        :min_doc_count 0
                                        :size          1000}})
                 ((:make-agg koulutustyyppi) {:koulutustyyppi ["amm"]} default-ctx)))))
+
 (testing "Should form filter for the query with a hakutieto query with several selected constraints"
   (is (match? (m/in-any-order
                [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
@@ -292,7 +293,18 @@
                                          {:bool
                                           {:should
                                            [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}])
+                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
+                           {:bool
+                            {:should
+                             [{:range
+                               {:search_terms.toteutusHakuaika.alkaa
+                                {:gt "2022-08-26T07:21"
+                                 :lte "2022-09-25T07:21"}}}
+                              {:nested {:path "search_terms.hakutiedot.hakuajat"
+                                        :query {:range
+                                                {:search_terms.hakutiedot.hakuajat.alkaa
+                                                 {:gt "2022-08-26T07:21"
+                                                  :lte "2022-09-25T07:21"}}}}}]}}]}}])
               (common-filters {:sijainti                            []
                                :lukiopainotukset                    []
                                :lukiolinjaterityinenkoulutustehtava []
@@ -305,6 +317,7 @@
                                :opetustapa                          []
                                :opetuskieli                         ["oppilaitoksenopetuskieli_2"]
                                :hakukaynnissa                       true
+                               :hakualkaapaivissa                   30
                                :valintatapa                         []
                                :koulutustyyppi                      ["koulutustyyppi_26"]}
                               "2022-08-26T07:21"))))
