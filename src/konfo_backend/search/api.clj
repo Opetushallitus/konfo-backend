@@ -15,8 +15,8 @@
    [konfo-backend.tools :refer [comma-separated-string->vec]]
    [clojure.string :as string]))
 
-(def paths (str 
-  "|  /search/filters:
+(def paths (str
+            "|  /search/filters:
    |    get:
    |      tags:
    |        - internal-search
@@ -862,29 +862,29 @@
                                size
                                sort
                                order
-                               {:koulutustyyppi koulutustyyppi
-                                :sijainti sijainti
-                                :opetuskieli opetuskieli
-                                :koulutusala koulutusala
-                                :opetustapa opetustapa
-                                :opetusaika opetusaika
-                                :valintatapa valintatapa
-                                :hakukaynnissa hakukaynnissa
-                                :jotpa jotpa
-                                :tyovoimakoulutus tyovoimakoulutus
-                                :taydennyskoulutus taydennyskoulutus
-                                :hakutapa hakutapa
-                                :yhteishaku yhteishaku
-                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                :alkamiskausi alkamiskausi
-                                :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
-                                :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
-                                :maksullisuustyyppi maksullisuustyyppi
-                                :maksunmaara_min maksunmaara_min
-                                :maksunmaara_max maksunmaara_max
-                                :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
-                                :apuraha apuraha
-                                :hakualkaapaivissa hakualkaapaivissa}]]
+                               (create-constraints {:koulutustyyppi koulutustyyppi
+                                                    :sijainti sijainti
+                                                    :opetuskieli opetuskieli
+                                                    :koulutusala koulutusala
+                                                    :opetustapa opetustapa
+                                                    :opetusaika opetusaika
+                                                    :valintatapa valintatapa
+                                                    :hakukaynnissa hakukaynnissa
+                                                    :jotpa jotpa
+                                                    :tyovoimakoulutus tyovoimakoulutus
+                                                    :taydennyskoulutus taydennyskoulutus
+                                                    :hakutapa hakutapa
+                                                    :yhteishaku yhteishaku
+                                                    :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                    :alkamiskausi alkamiskausi
+                                                    :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
+                                                    :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                                    :maksullisuustyyppi maksullisuustyyppi
+                                                    :maksunmaara_min maksunmaara_min
+                                                    :maksunmaara_max maksunmaara_max
+                                                    :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
+                                                    :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                                    :apuraha apuraha
+                                                    :hakualkaapaivissa hakualkaapaivissa})]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
              :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))
