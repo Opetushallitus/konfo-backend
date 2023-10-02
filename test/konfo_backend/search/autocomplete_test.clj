@@ -37,7 +37,7 @@
 (defonce koulutus-oid12 "1.2.246.562.13.000041")
 
 (deftest autocomplete-with-params-test
-  (testing "Autocomplete with keyword"
+  (testing "Autocomplete with search phrase"
     (is (match? {:koulutukset {:total 2
                                :hits [{:oid koulutus-oid12
                                        :nimi {:fi "Autoalan perustutkinto fi"
@@ -53,4 +53,13 @@
                                  :hits [{:oid oppilaitos-oid4
                                          :nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010104"
                                                 :sv "Oppilaitos sv 1.2.246.562.10.00101010104"}}]}}
-                (autocomplete-search :sort "name" :order "asc" :searchPhrase "auto")))))
+                (autocomplete-search :sort "name" :order "asc" :searchPhrase "auto")))
+    (testing "Autocomplete with search phrase and sijainti"
+      (is (match? {:koulutukset {:total 1
+                                 :hits [{:oid koulutus-oid12
+                                         :nimi {:fi "Autoalan perustutkinto fi"
+                                                :sv "Autoalan perustutkinto sv"}
+                                         :toteutustenTarjoajat {:count 2}}]}
+                   :oppilaitokset {:total 0
+                                   :hits []}}
+                  (autocomplete-search :sort "name" :order "asc" :searchPhrase "auto" :sijainti "kunta_297"))))))

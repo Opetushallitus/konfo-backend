@@ -1,6 +1,7 @@
 (ns konfo-backend.external.schema.common
   (:require
    [schema.core :as s]
+   [clojure.string :as string]
    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def kieli-schema
@@ -95,7 +96,36 @@
 
 (def OrganisaatioOid #"^1.2.246.562.10.\d+$")
 
-(def Koulutustyyppi (s/enum "amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "kk-opintojakso" "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "lk" "telma" "tuva" "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus" "taiteen-perusopetus"))
+(def kouta-koulutustyypit ["amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "kk-opintojakso"
+                           "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "lk" "telma" "tuva"
+                           "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala"
+                           "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus" "taiteen-perusopetus"])
+
+(def Koulutustyyppi (apply s/enum kouta-koulutustyypit))
+
+(def kouta-koulutustyyppi-schema
+  (str "|    KoutaKoulutustyyppi:
+   |      type: string
+   |      description: Koulutuksen tyyppi
+   |      enum:\n" (string/join (map #(str "|        - " % "\n") kouta-koulutustyypit))))
+
+; Search-rajapinnoissa parametrina käytetty koulutustyyppi
+(defonce konfo-koulutustyypit ["aikuisten-perusopetus"
+                               "taiteen-perusopetus"
+                               "vaativan-tuen-koulutukset" "koulutustyyppi_4" "tuva-erityisopetus"
+                               "valmentavat-koulutukset" "tuva-normal" "telma" "vapaa-sivistystyo-opistovuosi"
+                               "amm" "koulutustyyppi_26" "koulutustyyppi_11" "koulutustyyppi_12" "muu-amm-tutkinto" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu"
+                               "lk"
+                               "amk" "amk-alempi" "amk-ylempi" "amm-ope-erityisope-ja-opo" "amk-opintojakso-avoin" "amk-opintojakso" "amk-opintokokonaisuus-avoin" "amk-opintokokonaisuus" "amk-erikoistumiskoulutus"
+                               "yo" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "yo-opintojakso-avoin" "yo-opintojakso" "yo-opintokokonaisuus" "yo-opintokokonaisuus-avoin" "ope-pedag-opinnot" "erikoislaakari" "yo-erikoistumiskoulutus"
+                               "vapaa-sivistystyo-muu"
+                               "muu"])
+
+(def konfo-koulutustyyppi-schema
+  (str "|    KonfoKoulutustyyppi:
+   |      type: string
+   |      description: Koulutuksen tyyppi
+   |      enum:\n" (string/join (map #(str "|        - " % "\n") konfo-koulutustyypit))))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 
@@ -271,7 +301,9 @@
    :postinumero (->Koodi PostinumeroKoodi)})
 
 (def schemas
-  (str kieli-schema "\n"
+  (str kouta-koulutustyyppi-schema "\n"
+       konfo-koulutustyyppi-schema "\n"
+       kieli-schema "\n"
        kuvaus-schema "\n"
        nimi-schema "\n"
        teksti-schema "\n"

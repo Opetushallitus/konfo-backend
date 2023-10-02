@@ -1,4 +1,4 @@
-(ns konfo-backend.swagger-test
+(ns konfo-backend.swagger-unit-test
   (:require [clojure.test :refer :all]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.core :refer :all]
