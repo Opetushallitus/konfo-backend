@@ -18,7 +18,7 @@
   (let [terms (if (= 1 (count eperuste-ids))
                 {:term  {:id (first eperuste-ids)}}
                 {:terms {:id (vec eperuste-ids)}})]
-    {:bool {:must terms, :filter {:term {:tila "valmis"}}}}))
+    {:bool {:must terms}}))
 
 (defn- parse-kuvaukset
   [result]
