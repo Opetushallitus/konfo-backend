@@ -3,14 +3,14 @@
   (:require [konfo-backend.tools :refer :all]
             [konfo-backend.search.response :refer [parse-inner-hits filters-for-jarjestajat hits]]
             [konfo-backend.elastic-tools :refer [get-source search get-sources]]
-            [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
+            [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]
+            [konfo-backend.index.oppilaitos :as oppilaitos]
+            [konfo-backend.index.koulutus :as koulutus]))
 
 (defonce index "toteutus-kouta")
 
 (defn- filter-unallowed-hakukohteet
   [hakutieto draft?]
-  (println "hakutieto")
-  (println hakutieto)
   (update hakutieto
           :hakukohteet
           (fn [hakukohteet] (filter #(allowed-to-view % draft?) hakukohteet))))
@@ -89,30 +89,44 @@
   [response]
   (parse-inner-hits response filters-for-jarjestajat toteutus-inner-hits-with-kuvaukset))
 
+
 (defn search-by-hakukohde-oids
   [hakukohde-oids-seq]
-  (let [
-        hakukohde-oids (set hakukohde-oids-seq)
+  (let [hakukohde-oids (set hakukohde-oids-seq)
         toteutukset (search index
                             hits
-                            :_source ["toteutusOid",
-                                      "tila",
-                                      "metadata.hakuaika",
-                                      "hakutiedot.hakukohteet.nimi",
-                                      "hakutiedot.hakukohteet.jarjestyspaikka",
-                                      "hakutiedot.hakukohteet.hakuajat",
-                                      "hakutiedot.hakukohteet.tila",
+                            :_source ["oppilaitokset"
+                                      "koulutusOid"
+                                      "toteutusOid"
+                                      "tila"
+                                      "metadata.hakuaika"
+                                      "hakutiedot.hakukohteet.nimi"
+                                      "hakutiedot.hakukohteet.jarjestyspaikka"
+                                      "hakutiedot.hakukohteet.hakuajat"
+                                      "hakutiedot.hakukohteet.tila"
                                       "hakutiedot.hakukohteet.hakukohdeOid"]
                             :size (count hakukohde-oids)
                             :query {:bool {:filter [{:term {:tila "julkaistu"}}
-                                                    {:terms {:hakutiedot.hakukohteet.hakukohdeOid hakukohde-oids}}]}})]
+                                                    {:terms {:hakutiedot.hakukohteet.hakukohdeOid hakukohde-oids}}]}})
+        koulutukset (into {} (map #(vec [(:oid %) %]) (koulutus/get-many (distinct (map :koulutusOid toteutukset)))))
+        oppilaitokset-res (oppilaitos/get-many (distinct (mapcat :oppilaitokset toteutukset)) false)
+        osat-by-oid (mapcat #(map (fn [osa] [(:oid osa) %]) (:osat %)) oppilaitokset-res)
+        oppilaitokset-by-oid (map (fn [oppilaitos] [(:oid oppilaitos) oppilaitos]) oppilaitokset-res)
+        orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
     (->> toteutukset
          (map #(filter-haut-and-hakukohteet % false))
          (map (fn [toteutus] (-> toteutus
                                  (#(assoc % :hakuAuki (toteutus-haku-kaynnissa? %)))
                                  (#(assoc % :hakutiedot (with-is-haku-auki (:hakutiedot %)))))))
-         (mapcat #(get-in % [:hakutiedot]))
-         (mapcat #(get-in % [:hakukohteet]))
+         (map (fn [t]
+                (->> (:hakutiedot t)
+                     (mapcat :hakukohteet)
+                     (map (fn [hk] (let [oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
+                                     (-> hk
+                                         (assoc :esittely (get-in oppilaitos [:metadata :esittely]))
+                                         (assoc :logo (get-in oppilaitos [:logo]))
+                                         (assoc :tutkintonimikkeet (get-in koulutukset [(:koulutusOid t) :metadata :tutkintonimike])))))))))
+         (flatten)
          (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
   
   
