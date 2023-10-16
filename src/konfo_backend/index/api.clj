@@ -8,8 +8,8 @@
    [konfo-backend.index.oppilaitos :as oppilaitos]
    [konfo-backend.eperuste.eperuste :as eperuste]
    [konfo-backend.index.lokalisointi :as lokalisointi]
-   [compojure.api.core :as c :refer [GET POST]]
-   [ring.util.http-response :refer :all]
+   [compojure.api.core :as c :refer [GET]]
+   [ring.util.http-response :refer [bad-request ok not-found]]
    [clj-log.access-log :refer [with-access-logging]]
    [konfo-backend.tools :refer [comma-separated-string->vec]]
    [konfo-backend.ataru.service :as ataru]
@@ -426,34 +426,6 @@
    |              schema:
    |                type: json
    |        '404':
-   |          description: Not found
-   |  /suosikit:
-   |    get:
-   |      tags:
-   |        - internal
-   |      summary: Hae suosikeille tietoja
-   |      description: Hae annetuilla hakukohde-oideilla tietoja suosikit-listausta varten
-   |        Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: query
-   |          name: hakukohde-oids
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          required: true
-   |          description: Pilkulla erotettu lista hakukohteiden oideja
-   |          example: kielivalikoima
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
    |          description: Not found")
 
 (def routes
@@ -498,14 +470,6 @@
      (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                     (ok result)
                                     (not-found "Not found")))) 
-   
-   (GET "/suosikit" [:as request]
-     :query-params [{draft :- Boolean false}
-                    {hakukohde-oids :- String nil}]
-     (with-access-logging request 
-       (if-let [result (toteutus/search-by-hakukohde-oids (comma-separated-string->vec hakukohde-oids))]
-                                    (ok result)
-                                    (not-found "Not found"))))
 
    (GET "/valintaperuste/:id" [:as request]
      :query-params [{draft :- Boolean false}]
