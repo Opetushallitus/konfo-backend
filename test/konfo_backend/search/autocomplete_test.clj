@@ -49,8 +49,12 @@
                                        :toteutustenTarjoajat {:count 1
                                                               :nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010104",
                                                                      :sv "Oppilaitos sv 1.2.246.562.10.00101010104"}}}]}
-                 :oppilaitokset {:total 1
-                                 :hits [{:oid oppilaitos-oid4
+                 :oppilaitokset {:total 2
+                                 :hits [{:oid "1.2.246.562.10.67476956288",
+                                         :nimi
+                                         {:fi "Jokin järjestyspaikka",
+                                          :sv "Jokin järjestyspaikka sv"}}
+                                        {:oid oppilaitos-oid4
                                          :nimi {:fi "Oppilaitos fi 1.2.246.562.10.00101010104"
                                                 :sv "Oppilaitos sv 1.2.246.562.10.00101010104"}}]}}
                 (autocomplete-search :sort "name" :order "asc" :searchPhrase "auto")))
@@ -60,6 +64,9 @@
                                          :nimi {:fi "Autoalan perustutkinto fi"
                                                 :sv "Autoalan perustutkinto sv"}
                                          :toteutustenTarjoajat {:count 2}}]}
-                   :oppilaitokset {:total 0
-                                   :hits []}}
+                   :oppilaitokset {:total 1
+                                   :hits [{:oid "1.2.246.562.10.67476956288",
+                                           :nimi
+                                           {:fi "Jokin järjestyspaikka",
+                                            :sv "Jokin järjestyspaikka sv"}}]}}
                   (autocomplete-search :sort "name" :order "asc" :searchPhrase "auto" :sijainti "kunta_297"))))))

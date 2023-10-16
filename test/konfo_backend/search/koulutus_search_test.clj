@@ -4,7 +4,6 @@
             [matcher-combinators.matchers :as m]
             [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.search.koulutus.search :refer [index]]
             [konfo-backend.test-mock-data :refer :all]
             [cheshire.core :refer [generate-string]]))
 

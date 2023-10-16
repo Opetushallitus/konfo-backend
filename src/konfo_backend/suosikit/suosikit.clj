@@ -31,7 +31,7 @@
         oppilaitokset-res (oppilaitos/get-many (distinct (mapcat :oppilaitokset toteutukset)) false)
         osat-by-oid (mapcat #(map (fn [osa] [(:oid osa) %]) (:osat %)) oppilaitokset-res)
         oppilaitokset-by-oid (map (fn [oppilaitos] [(:oid oppilaitos) oppilaitos]) oppilaitokset-res)
-        orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
+        orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))] 
     (->> toteutukset
          (map #(toteutus/filter-haut-and-hakukohteet % false))
          (map (fn [toteutus] (-> toteutus
