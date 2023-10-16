@@ -1,10 +1,9 @@
 (ns konfo-backend.search.response
-  (:require [konfo-backend.index.toteutus :refer [get-kuvaukset]]
-            [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
+  (:require [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
                                                         generate-rajain-counts-for-jarjestajat]]
             [konfo-backend.search.rajain-definitions :refer [all-agg-defs max-agg-defs ->max-agg-id]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [hit-haku-kaynnissa? log-pretty
+            [konfo-backend.tools :refer [log-pretty
                                          reduce-merge-map rename-key]]))
 
 (defn- buckets-to-map
@@ -14,7 +13,7 @@
     buckets
     (into {} (map (fn [x] [(keyword (:key x)) x]) buckets))))
 
-(defn- hits
+(defn hits
   [response]
   (map (fn [x] (-> (:_source x) (assoc :_score (:_score x)))) (get-in response [:hits :hits])))
 
@@ -58,7 +57,7 @@
   [response]
   (generate-default-rajain-counts (numbers-by-filter response)))
 
-(defn- filters-for-jarjestajat
+(defn filters-for-jarjestajat
   [response]
   (generate-rajain-counts-for-jarjestajat (numbers-by-filter response)
                                           (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
@@ -102,43 +101,12 @@
   {:total (get-in response [:hits :total :value])
    :hits  (filter (fn [hit] (not-empty (:toteutukset hit))) (external-hits response))})
 
-; TODO: Välitetään draft tännekin ja käytetään sitä hakutietojen suodatukseen (kts. konfo-backend.index.toteutus)
-(defn- inner-hits-with-kuvaukset
-  [inner-hits]
-  (let [hits (vec (map :_source (:hits inner-hits)))
-        kuvaukset (get-kuvaukset (vec (distinct (remove nil? (map :toteutusOid hits)))))]
-    (vec (for [hit hits
-               :let [toteutusOid (:toteutusOid hit)]]
-           (-> hit
-               (select-keys [:koulutusOid
-                             :oppilaitosOid
-                             :toteutusNimi
-                             :opetuskielet
-                             :toteutusOid
-                             :nimi
-                             :koulutustyyppi
-                             :kuva
-                             :jarjestaaUrheilijanAmmKoulutusta
-                             :opintojenLaajuusNumero
-                             :opintojenLaajuusNumeroMin
-                             :opintojenLaajuusNumeroMax
-                             :opintojenLaajuusyksikko])
-               (merge (:metadata hit))
-               (assoc :hakuAuki (hit-haku-kaynnissa? hit))
-               (assoc :kuvaus (if (not (nil? toteutusOid))
-                                (or ((keyword toteutusOid) kuvaukset) {})
-                                {})))))))
-
 (defn parse-inner-hits
-  ([response]
-   (parse-inner-hits response rajain-numbers))
-  ([response filter-generator]
-   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
-         total-inner-hits (:value (:total inner-hits))]
-     {:total   (or total-inner-hits 0)
-      :hits    (inner-hits-with-kuvaukset inner-hits)
-      :filters (filter-generator response)})))
+  [response filter-generator hits-generator]
+  (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)
+        total-inner-hits (:value (:total inner-hits))]
+    {:total   (or total-inner-hits 0)
+     :hits    (hits-generator inner-hits)
+     :filters (filter-generator response)}))
 
-(defn parse-inner-hits-for-jarjestajat
-  [response]
-  (parse-inner-hits response filters-for-jarjestajat))
+

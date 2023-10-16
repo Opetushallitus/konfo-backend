@@ -1,6 +1,7 @@
 (ns konfo-backend.index.toteutus
   (:refer-clojure :exclude [get])
   (:require [konfo-backend.tools :refer :all]
+            [konfo-backend.search.response :refer [parse-inner-hits filters-for-jarjestajat hits]]
             [konfo-backend.elastic-tools :refer [get-source search get-sources]]
             [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
 
@@ -8,6 +9,8 @@
 
 (defn- filter-unallowed-hakukohteet
   [hakutieto draft?]
+  (println "hakutieto")
+  (println hakutieto)
   (update hakutieto
           :hakukohteet
           (fn [hakukohteet] (filter #(allowed-to-view % draft?) hakukohteet))))
@@ -21,17 +24,17 @@
 (defn- filter-haut-and-hakukohteet
   [toteutus draft?]
   (as-> toteutus t
-        (map-allowed-to-view-hakutiedot t draft?)
-        (assoc t :hakutiedot (filter #(> (count (:hakukohteet %)) 0) (:hakutiedot t)))))
+    (map-allowed-to-view-hakutiedot t draft?)
+    (assoc t :hakutiedot (filter #(> (count (:hakukohteet %)) 0) (:hakutiedot t)))))
 
 (defn get
   [oid draft?]
   (let [toteutus (get-source index oid)]
     (when (allowed-to-view toteutus draft?)
       (as-> toteutus t
-            (filter-haut-and-hakukohteet t draft?)
-            (assoc t :hakuAuki (toteutus-haku-kaynnissa? t))
-            (assoc t :hakutiedot (with-is-haku-auki (:hakutiedot t)))))))
+        (filter-haut-and-hakukohteet t draft?)
+        (assoc t :hakuAuki (toteutus-haku-kaynnissa? t))
+        (assoc t :hakutiedot (with-is-haku-auki (:hakutiedot t)))))))
 
 (defn get-many ([oids excludes] (get-sources index oids excludes)) ([oids] (get-many oids [])))
 
@@ -54,3 +57,62 @@
             :_source ["oid" "metadata.kuvaus"]
             :size (count oids)
             :query {:terms {:oid (vec oids)}})))
+
+  ; TODO: Välitetään draft tännekin ja käytetään sitä hakutietojen suodatukseen (kts. konfo-backend.index.toteutus)
+(defn- toteutus-inner-hits-with-kuvaukset
+  [inner-hits]
+  (let [hits (vec (map :_source (:hits inner-hits)))
+        kuvaukset (get-kuvaukset (vec (distinct (remove nil? (map :toteutusOid hits)))))]
+    (vec (for [hit hits
+               :let [toteutusOid (:toteutusOid hit)]]
+           (-> hit
+               (select-keys [:koulutusOid
+                             :oppilaitosOid
+                             :toteutusNimi
+                             :opetuskielet
+                             :toteutusOid
+                             :nimi
+                             :koulutustyyppi
+                             :kuva
+                             :jarjestaaUrheilijanAmmKoulutusta
+                             :opintojenLaajuusNumero
+                             :opintojenLaajuusNumeroMin
+                             :opintojenLaajuusNumeroMax
+                             :opintojenLaajuusyksikko])
+               (merge (:metadata hit))
+               (assoc :hakuAuki (hit-haku-kaynnissa? hit))
+               (assoc :kuvaus (if (not (nil? toteutusOid))
+                                (or ((keyword toteutusOid) kuvaukset) {})
+                                {})))))))
+
+(defn parse-inner-hits-for-jarjestajat
+  [response]
+  (parse-inner-hits response filters-for-jarjestajat toteutus-inner-hits-with-kuvaukset))
+
+(defn search-by-hakukohde-oids
+  [hakukohde-oids-seq]
+  (let [
+        hakukohde-oids (set hakukohde-oids-seq)
+        toteutukset (search index
+                            hits
+                            :_source ["toteutusOid",
+                                      "tila",
+                                      "metadata.hakuaika",
+                                      "hakutiedot.hakukohteet.nimi",
+                                      "hakutiedot.hakukohteet.jarjestyspaikka",
+                                      "hakutiedot.hakukohteet.hakuajat",
+                                      "hakutiedot.hakukohteet.tila",
+                                      "hakutiedot.hakukohteet.hakukohdeOid"]
+                            :size (count hakukohde-oids)
+                            :query {:bool {:filter [{:term {:tila "julkaistu"}}
+                                                    {:terms {:hakutiedot.hakukohteet.hakukohdeOid hakukohde-oids}}]}})]
+    (->> toteutukset
+         (map #(filter-haut-and-hakukohteet % false))
+         (map (fn [toteutus] (-> toteutus
+                                 (#(assoc % :hakuAuki (toteutus-haku-kaynnissa? %)))
+                                 (#(assoc % :hakutiedot (with-is-haku-auki (:hakutiedot %)))))))
+         (mapcat #(get-in % [:hakutiedot]))
+         (mapcat #(get-in % [:hakukohteet]))
+         (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
+  
+  
