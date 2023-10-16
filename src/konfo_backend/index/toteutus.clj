@@ -97,7 +97,7 @@
                             hits
                             :_source ["oppilaitokset"
                                       "koulutusOid"
-                                      "toteutusOid"
+                                      "oid"
                                       "tila"
                                       "metadata.hakuaika"
                                       "hakutiedot.hakukohteet.nimi"
@@ -125,6 +125,7 @@
                                      (-> hk
                                          (assoc :esittely (get-in oppilaitos [:metadata :esittely]))
                                          (assoc :logo (get-in oppilaitos [:logo]))
+                                         (assoc :toteutusOid (get-in t [:oid]))
                                          (assoc :tutkintonimikkeet (get-in koulutukset [(:koulutusOid t) :metadata :tutkintonimike])))))))))
          (flatten)
          (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
