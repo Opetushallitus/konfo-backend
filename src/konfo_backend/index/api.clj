@@ -497,12 +497,12 @@
      :path-params [oid :- String]
      (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                     (ok result)
-                                    (not-found "Not found"))))
+                                    (not-found "Not found")))) 
+   
    (GET "/suosikit-hakutiedot" [:as request]
      :query-params [{draft :- Boolean false}
                     {hakukohde-oids :- String nil}]
      (with-access-logging request 
-       (println hakukohde-oids)
        (if-let [result (toteutus/search-by-hakukohde-oids (comma-separated-string->vec hakukohde-oids))]
                                     (ok result)
                                     (not-found "Not found"))))
@@ -519,14 +519,14 @@
      :path-params [oid :- String]
      (with-access-logging request (if-let [result (oppilaitos/get oid draft)]
                                     (ok result)
-                                    (if-let [osa-result (oppilaitos/get-by-osa oid draft)]
+                                    (if-let [osa-result (oppilaitos/get-osa oid draft)]
                                       (ok osa-result)
                                       (not-found "Not found")))))
 
    (GET "/oppilaitoksen-osa/:oid" [:as request]
      :query-params [{draft :- Boolean false}]
      :path-params [oid :- String]
-     (with-access-logging request (if-let [result (oppilaitos/get-by-osa oid draft)]
+     (with-access-logging request (if-let [result (oppilaitos/get-osa oid draft)]
                                     (ok result)
                                     (not-found "Not found"))))
 
