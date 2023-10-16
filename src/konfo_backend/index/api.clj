@@ -427,12 +427,12 @@
    |                type: json
    |        '404':
    |          description: Not found
-   |  /suosikit-hakutiedot:
+   |  /suosikit:
    |    get:
    |      tags:
    |        - internal
-   |      summary: Hae hakukohde-suosikeille tietoja
-   |      description: Hae hakukohteiden tietoja suosikit-listausta varten
+   |      summary: Hae suosikeille tietoja
+   |      description: Hae annetuilla hakukohde-oideilla tietoja suosikit-listausta varten
    |        Huom.! Vain Opintopolun sisäiseen käyttöön
    |      parameters:
    |        - in: query
@@ -499,7 +499,7 @@
                                     (ok result)
                                     (not-found "Not found")))) 
    
-   (GET "/suosikit-hakutiedot" [:as request]
+   (GET "/suosikit" [:as request]
      :query-params [{draft :- Boolean false}
                     {hakukohde-oids :- String nil}]
      (with-access-logging request 
