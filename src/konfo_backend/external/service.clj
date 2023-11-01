@@ -10,29 +10,29 @@
 (defn- get-koulutus
   [oid]
   (some-> (koulutus/get oid false)
-          (dissoc :muokkaaja :julkinen :esikatselu :organisaatiot :sorakuvausId)
-          (update-in [:sorakuvaus] dissoc :muokkaaja :julkinen)))
+          (dissoc :julkinen :esikatselu :organisaatiot :sorakuvausId)
+          (update-in [:sorakuvaus] dissoc :julkinen)))
 
 (defn get-toteutus
   [oid]
   (some-> (toteutus/get oid false)
-          (dissoc :muokkaaja :esikatselu :organisaatiot :hakutiedot)
+          (dissoc :esikatselu :organisaatiot :hakutiedot)
           (update-in [:metadata] dissoc :painotukset :erityisetKoulutustehtavat :kielivalikoima)))
 
 (defn get-hakukohde
   [oid]
   (some-> (hakukohde/get oid false)
-          (dissoc :muokkaaja :esikatselu :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto :koulutustyyppikoodi)))
+          (dissoc :esikatselu :toteutus :hakulomakeAtaruId :yhdenPaikanSaanto :koulutustyyppikoodi)))
 
 (defn get-haku
   [oid]
   (some-> (haku/get oid)
-          (dissoc :muokkaaja :organisaatiot :hakukohteenLiittamisenTakaraja :hakukohteenMuokkaamisenTakaraja :ajastettuJulkaisu :hakulomakeAtaruId)))
+          (dissoc :organisaatiot :hakukohteenLiittamisenTakaraja :hakukohteenMuokkaamisenTakaraja :ajastettuJulkaisu :hakulomakeAtaruId)))
 
 (defn get-valintaperustekuvaus
   [id]
   (some-> (valintaperuste/get id false)
-          (dissoc :muokkaaja :esikatselu :julkinen)))
+          (dissoc :esikatselu :julkinen)))
 
 (defn- get-koulutukset-by-oids
   [oids]
