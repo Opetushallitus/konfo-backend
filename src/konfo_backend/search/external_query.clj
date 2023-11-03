@@ -13,5 +13,5 @@
                                                             :filter (common-filters
                                                                       constraints (current-time-as-kouta-format))))]
   {:nested {:path       "search_terms",
-            :inner_hits {},
+            :inner_hits {:size 500},
             :query      {:bool query-contents}}}))
