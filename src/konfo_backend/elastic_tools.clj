@@ -4,7 +4,9 @@
     [clj-log.error-log :refer [with-error-logging]]
     [clj-http.client :as http]
     [clj-elasticsearch.elastic-utils :refer [elastic-post elastic-url ]]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [clojure.tools.logging :as log]
+    [clojure.walk :refer [postwalk]]))
 
 (def limit-to-use-search-after 10000)
 
@@ -12,12 +14,20 @@
 
 (def minimum-size-for-search-after 5)
 
+(defn- clean-muokkaaja-data
+  [map]
+  (postwalk
+   #(if (map? %)
+     (dissoc % :muokkaaja)
+     %)
+   map))
+
 (defn get-source
   ([index id excludes]
    (when id
      (let [result (e/get-document index id :_source_excludes (str/join "," excludes))]
        (when (:found result)
-         (:_source result)))))
+         (clean-muokkaaja-data (:_source result))))))
   ([index id]
    (get-source index id [])))
 
