@@ -170,7 +170,7 @@
    (s/->OptionalKey :vahimmaispisteet)     (s/maybe s/Num)})
 
 (def ValintaperusteKuvausMetadata
-  {:tyyppi         Koulutustyyppi
+  {:tyyppi         KoutaKoulutustyyppi
    (s/->OptionalKey :valintatavat)               [Valintatapa]
    (s/->OptionalKey :hakukelpoisuus)             Kielistetty
    (s/->OptionalKey :lisatiedot)                 Kielistetty

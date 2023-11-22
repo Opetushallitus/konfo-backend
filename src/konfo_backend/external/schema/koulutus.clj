@@ -84,7 +84,7 @@
   {:oid                          KoulutusOid
    (s/->OptionalKey :externalId) s/Str
    :johtaaTutkintoon             s/Bool
-   :koulutustyyppi               Koulutustyyppi
+   :koulutustyyppi               KoutaKoulutustyyppi
    :koulutukset                  [(->Koodi KoulutusKoodi)]
    :tila                         Julkaistu
    :tarjoajat                    [Organisaatio]

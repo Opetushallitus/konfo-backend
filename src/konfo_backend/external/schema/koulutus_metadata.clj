@@ -2,8 +2,7 @@
   (:require
     [schema.core :as s]
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
-    [schema-tools.core :as st]))
+    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def schemas
    "|    Eperuste:
@@ -92,6 +91,6 @@
     (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
     (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
     (s/->OptionalKey :tutkintonimike)             [(s/maybe (->Koodi TutkintonimikeKoodi))]
-    :tyyppi                                       Koulutustyyppi
+    :tyyppi                                       KoutaKoulutustyyppi
     s/Any                                         s/Any
     })

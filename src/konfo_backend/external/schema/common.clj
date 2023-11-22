@@ -1,91 +1,56 @@
 (ns konfo-backend.external.schema.common
   (:require
    [schema.core :as s]
+   [schema-tools.core :as st]
+   [schema-tools.openapi.core :as openapi]
+   [clj-yaml.core :as yaml]
    [clojure.string :as string]
    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
-(def kieli-schema
-  "|    Kieli:
-   |      type: string
-   |      enum:
-   |        - fi
-   |        - sv
-   |        - en")
+(defn remove-namespaces-from-titles [yml-str] (string/replace yml-str #"(?m)title: .+/(.+)$" "title: $1"))
 
-(def Kieli (s/enum "fi" "sv" "en"))
+(defn spec-paths-to-swagger-yaml [spec]
+  (-> spec
+      (yaml/generate-string :dumper-options {:flow-style :block})
+      (remove-namespaces-from-titles)
+      (string/split #"paths:\n")
+      second))
 
-(def Kielistetty
-  {(s/->OptionalKey :fi) s/Str
-   (s/->OptionalKey :sv) s/Str
-   (s/->OptionalKey :en) s/Str})
+(defn schema-to-swagger-yaml [schema]
+  (-> schema
+      (openapi/transform nil)
+      ((fn [x] {:components {:schemas {(keyword (:name (meta schema))) x}}}))
+      (yaml/generate-string :dumper-options {:flow-style :block})
+      (remove-namespaces-from-titles)
+      (string/split #"schemas:\n")
+      second))
 
-(def kuvaus-schema
-  "|    Kuvaus:
-   |      type: object
-   |      properties:
-   |        fi:
-   |          type: string
-   |          example: Suomenkielinen kuvaus
-   |          description: \"Suomenkielinen kuvaus, jos kielivalinnassa on 'fi'\"
-   |        sv:
-   |          type: string
-   |          example: Ruotsinkielinen kuvaus
-   |          description: \"Ruotsinkielinen kuvaus, jos kielivalinnassa on 'sv'\"
-   |        en:
-   |          type: string
-   |          example: Englanninkielinen kuvaus
-   |          description: \"Englanninkielinen kuvaus, jos kielivalinnassa on 'en'\"")
+(s/defschema Kieli (s/enum "fi" "sv" "en"))
 
-(def nimi-schema
-  "|    Nimi:
-   |      type: object
-   |      properties:
-   |        fi:
-   |          type: string
-   |          example: Suomenkielinen nimi
-   |          description: Suomenkielinen nimi, jos on olemassa
-   |        sv:
-   |          type: string
-   |          example: Ruotsinkielinen nimi
-   |          description: Ruotsinkielinen nimi, jos on olemassa
-   |        en:
-   |          type: string
-   |          example: Englanninkielinen nimi
-   |          description: Englanninkielinen nimi, jos on olemassa")
+(def kieli-schema (schema-to-swagger-yaml Kieli))
 
-(def teksti-schema
-  "|    Teksti:
-   |      type: object
-   |      properties:
-   |        fi:
-   |          type: string
-   |          example: Suomenkielinen teksti
-   |          description: Suomenkielinen teksti, jos on olemassa
-   |        sv:
-   |          type: string
-   |          example: Ruotsinkielinen teksti
-   |          description: Ruotsinkielinen teksti, jos on olemassa
-   |        en:
-   |          type: string
-   |          example: Englanninkielinen teksti
-   |          description: Englanninkielinen teksti, jos on olemassa")
+(defn create-kielistetty-schema
+  ([name]
+   {(s/->OptionalKey :fi) (st/schema s/Str (when name {:description (format "Suomenkielinen %s, jos määritelty" name)}))
+    (s/->OptionalKey :sv) (st/schema s/Str (when name {:description (format "Ruotsinkielinen %s, jos määritelty" name)}))
+    (s/->OptionalKey :en) (st/schema s/Str (when name {:description (format "Englanninkielinen %s, jos määritelty" name)}))})
+  ([] (create-kielistetty-schema nil)))
 
-(def linkki-schema
-  "|    Linkki:
-   |      type: object
-   |      properties:
-   |        fi:
-   |          type: string
-   |          example: Suomenkielinen linkki
-   |          description: Suomenkielinen linkki, jos on olemassa
-   |        sv:
-   |          type: string
-   |          example: Ruotsinkielinen linkki
-   |          description: Ruotsinkielinen linkki, jos on olemassa
-   |        en:
-   |          type: string
-   |          example: Englanninkielinen linkki
-   |          description: Englanninkielinen linkki, jos on olemassa")
+(s/defschema Kielistetty (create-kielistetty-schema))
+
+(s/defschema Kuvaus (create-kielistetty-schema "kuvaus"))
+(s/defschema Nimi (create-kielistetty-schema "nimi"))
+
+(s/defschema Teksti (create-kielistetty-schema "teksti"))
+(s/defschema Linkki (create-kielistetty-schema "linkki"))
+
+(def kuvaus-schema (schema-to-swagger-yaml Kuvaus))
+
+(def nimi-schema (schema-to-swagger-yaml Nimi))
+
+(def teksti-schema (schema-to-swagger-yaml Teksti))
+
+(def linkki-schema (schema-to-swagger-yaml Linkki))
 
 (def Julkaistu (s/eq "julkaistu"))
 
@@ -101,31 +66,26 @@
                            "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala"
                            "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus" "taiteen-perusopetus"])
 
-(def Koulutustyyppi (apply s/enum kouta-koulutustyypit))
+(s/defschema KoutaKoulutustyyppi (st/schema (apply s/enum kouta-koulutustyypit) {:description "Koulutuksen tyyppi"}))
 
-(def kouta-koulutustyyppi-schema
-  (str "|    KoutaKoulutustyyppi:
-   |      type: string
-   |      description: Koulutuksen tyyppi
-   |      enum:\n" (string/join (map #(str "|        - " % "\n") kouta-koulutustyypit))))
+(def kouta-koulutustyyppi-schema (schema-to-swagger-yaml KoutaKoulutustyyppi))
 
 ; Search-rajapinnoissa parametrina käytetty koulutustyyppi
-(defonce konfo-koulutustyypit ["aikuisten-perusopetus"
-                               "taiteen-perusopetus"
-                               "vaativan-tuen-koulutukset" "koulutustyyppi_4" "tuva-erityisopetus"
-                               "valmentavat-koulutukset" "tuva-normal" "telma" "vapaa-sivistystyo-opistovuosi"
-                               "amm" "koulutustyyppi_26" "koulutustyyppi_11" "koulutustyyppi_12" "muu-amm-tutkinto" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu"
-                               "lk"
-                               "amk" "amk-alempi" "amk-ylempi" "amm-ope-erityisope-ja-opo" "amk-opintojakso-avoin" "amk-opintojakso" "amk-opintokokonaisuus-avoin" "amk-opintokokonaisuus" "amk-erikoistumiskoulutus"
-                               "yo" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "yo-opintojakso-avoin" "yo-opintojakso" "yo-opintokokonaisuus" "yo-opintokokonaisuus-avoin" "ope-pedag-opinnot" "erikoislaakari" "yo-erikoistumiskoulutus"
-                               "vapaa-sivistystyo-muu"
-                               "muu"])
+(def konfo-koulutustyypit ["aikuisten-perusopetus"
+                           "taiteen-perusopetus"
+                           "vaativan-tuen-koulutukset" "koulutustyyppi_4" "tuva-erityisopetus"
+                           "valmentavat-koulutukset" "tuva-normal" "telma" "vapaa-sivistystyo-opistovuosi"
+                           "amm" "koulutustyyppi_26" "koulutustyyppi_11" "koulutustyyppi_12" "muu-amm-tutkinto" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu"
+                           "lk"
+                           "amk" "amk-alempi" "amk-ylempi" "amm-ope-erityisope-ja-opo" "amk-opintojakso-avoin" "amk-opintojakso" "amk-opintokokonaisuus-avoin" "amk-opintokokonaisuus" "amk-erikoistumiskoulutus"
+                           "yo" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "yo-opintojakso-avoin" "yo-opintojakso" "yo-opintokokonaisuus" "yo-opintokokonaisuus-avoin" "ope-pedag-opinnot" "erikoislaakari" "yo-erikoistumiskoulutus"
+                           "vapaa-sivistystyo-muu"
+                           "muu"])
 
-(def konfo-koulutustyyppi-schema
-  (str "|    KonfoKoulutustyyppi:
-   |      type: string
-   |      description: Koulutuksen tyyppi
-   |      enum:\n" (string/join (map #(str "|        - " % "\n") konfo-koulutustyypit))))
+
+(s/defschema KonfoKoulutustyyppi (st/schema (apply s/enum konfo-koulutustyypit) {:description "Koulutuksen tyyppi"}))
+
+(def konfo-koulutustyyppi-schema (schema-to-swagger-yaml KonfoKoulutustyyppi))
 
 (def Hakulomaketyyppi (s/enum "ataru" "ei sähköistä" "muu"))
 
@@ -136,6 +96,12 @@
   [koodi]
   {:koodiUri (s/maybe koodi)
    :nimi     Kielistetty})
+
+(s/defschema Organisaatio
+  {:paikkakunta (->Koodi KuntaKoodi)
+   :nimi        Kielistetty
+   :oid         OrganisaatioOid
+   s/Any        s/Any})
 
 (def organisaatio-schema
   "|    Organisaatio:
@@ -154,11 +120,6 @@
    |          example: 1.2.246.562.10.00000000007
    |          description: Organisaation yksilöivä oid")
 
-(def Organisaatio
-  {:paikkakunta (->Koodi KuntaKoodi)
-   :nimi        Kielistetty
-   :oid         OrganisaatioOid
-   s/Any        s/Any})
 
 (def koulutuslisatieto-schema
   "|    KoulutusLisatieto:
@@ -299,6 +260,16 @@
 (def Osoite
   {:osoite Kielistetty
    :postinumero (->Koodi PostinumeroKoodi)})
+
+(def KieliKoodi (->Koodi KieliKoodiPattern))
+(s/defschema Kielivalikoima
+  {:A1Kielet [KieliKoodi]
+   :A2Kielet [KieliKoodi]
+   :B1Kielet [KieliKoodi]
+   :B2Kielet [KieliKoodi]
+   :B3Kielet [KieliKoodi]
+   :aidinkielet [KieliKoodi]
+   :muutKielet [KieliKoodi]})
 
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
