@@ -79,6 +79,7 @@
                                         (get-in [:metadata :pistehistoria])
                                         (last))
                      :valintakokeet (:valintakokeet hk)
+                     :jarjestyspaikka (:jarjestyspaikka hk)
                      :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hk)
                      :jarjestaaUrheilijanAmmKoulutusta (get-in hk [:metadata :jarjestaaUrheilijanAmmKoulutusta])
                      :lukiodiplomit (get-in toteutus [:metadata :diplomit])

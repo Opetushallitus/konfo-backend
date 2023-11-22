@@ -55,6 +55,7 @@
                                              :example "1.2.246.562.17.00000000000000000009"})
               :logo (st/schema s/Str {:description "Hakukohteen järjestyspaikan oppilaitoksen logon URL"})
               :esittely (st/schema Kuvaus {:description "Hakukohteen järjestyspaikan oppilaitoksen esittely eri kielillä"})
+              :jarjestyspaikka (st/schema Organisaatio {:description "Hakukohteen järjestyspaikan tiedot"})
               :osoite (st/schema KayntiOsoite {:description "Hakukohteen järjestyspaikan käyntiosoite"})
               (s/optional-key :opiskelijoita) (st/schema s/Int {:description "Hakukohteen järjestyspaikan oppilaitoksen opiskelijoiden määrä"})
               (s/optional-key :osaamisalat) (st/schema [AmmOsaamisala] {:description "Lista ammatillisen koulutuksen osaamisalojen kuvauksia"})
