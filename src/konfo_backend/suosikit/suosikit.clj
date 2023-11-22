@@ -1,13 +1,12 @@
 (ns konfo-backend.suosikit.suosikit
-  (:require
-   [konfo-backend.tools :refer :all]
-   [konfo-backend.search.response :refer [hits]]
-   [konfo-backend.elastic-tools :refer [search]]
-   [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]
-   [konfo-backend.index.hakukohde :as hakukohde]
-   [konfo-backend.index.toteutus :as toteutus]
-   [konfo-backend.index.oppilaitos :as oppilaitos]
-   [konfo-backend.index.koulutus :as koulutus]))
+  (:require [konfo-backend.elastic-tools :refer [search]]
+            [konfo-backend.index.hakukohde :as hakukohde]
+            [konfo-backend.index.koulutus :as koulutus]
+            [konfo-backend.index.oppilaitos :as oppilaitos]
+            [konfo-backend.index.toteutus :as toteutus]
+            [konfo-backend.search.response :refer [hits]]
+            [konfo-backend.tools :refer :all]
+            [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
 
 (defn get-by-hakukohde-oids
   [hakukohde-oids-seq]
@@ -49,39 +48,36 @@
          (flatten)
          (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
 
-(defn into-map-by [get-key items]
-  (into {} (map #(vec [(get-key %) %]) items)))
-
 (defn get-vertailu-by-hakukohde-oids
   [hakukohde-oids-seq]
   (let [hakukohde-oids (set hakukohde-oids-seq)
         hakukohteet (hakukohde/get-many hakukohde-oids)
-        toteutukset-by-oid (into-map-by :oid (toteutus/get-many (distinct (map :toteutusOid hakukohteet))))
+        toteutukset-by-oid (into {} (map #(vec [(:oid %) %]) (toteutus/get-many (distinct (map :toteutusOid hakukohteet)))))
         oppilaitokset-res (oppilaitos/get-many (distinct (mapcat :oppilaitokset (vals toteutukset-by-oid))) false)
         osat-by-oid (mapcat #(map (fn [osa] [(:oid osa) %]) (:osat %)) oppilaitokset-res)
         oppilaitokset-by-oid (map (fn [oppilaitos] [(:oid oppilaitos) oppilaitos]) oppilaitokset-res)
         orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
-    (map (fn [hk] (let [toteutus (get-in toteutukset-by-oid [(:toteutusOid hk)])
-                        oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
-                    {:koulutustyyppi (get-in toteutus [:metadata :tyyppi])
-                     :toteutusOid (:toteutusOid hk)
-                     :hakukohdeOid (:oid hk)
-                     :nimi (:nimi hk)
-                     :logo (:logo oppilaitos)
-                     :esittely (get-in oppilaitos [:metadata :esittely])
-                     :osoite (-> oppilaitos
-                                 (get-in [:metadata :yhteystiedot])
-                                 (first)
-                                 (get-in [:kayntiosoiteStr]))
-                     :opiskelijoita (get-in oppilaitos [:metadata :opiskelijoita])
-                     :osaamisalat (get-in toteutus [:metadata :osaamisalat])
-                     :edellinenHaku (-> hk
-                                        (get-in [:metadata :pistehistoria])
-                                        (last))
-                     :valintakokeet (:valintakokeet hk)
-                     :jarjestyspaikka (:jarjestyspaikka hk)
-                     :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hk)
-                     :jarjestaaUrheilijanAmmKoulutusta (get-in hk [:metadata :jarjestaaUrheilijanAmmKoulutusta])
-                     :lukiodiplomit (get-in toteutus [:metadata :diplomit])
-                     :kielivalikoima (get-in toteutus [:metadata :kielivalikoima])}))
+    (map (fn [hakukohde] (let [toteutus-metadata (get-in toteutukset-by-oid [(:toteutusOid hakukohde) :metadata])
+                               oppilaitos (get-in orgs-by-oid [(get-in hakukohde [:jarjestyspaikka :oid]) :oppilaitos])]
+                           {:koulutustyyppi (get-in toteutus-metadata [:tyyppi])
+                            :toteutusOid (:toteutusOid hakukohde)
+                            :hakukohdeOid (:oid hakukohde)
+                            :nimi (:nimi hakukohde)
+                            :logo (:logo oppilaitos)
+                            :esittely (get-in oppilaitos [:metadata :esittely])
+                            :osoite (-> oppilaitos
+                                        (get-in [:metadata :yhteystiedot])
+                                        (first)
+                                        (get-in [:kayntiosoiteStr]))
+                            :opiskelijoita (get-in oppilaitos [:metadata :opiskelijoita])
+                            :osaamisalat (get-in toteutus-metadata [:osaamisalat])
+                            :edellinenHaku (-> hakukohde
+                                               (get-in [:metadata :pistehistoria])
+                                               (last))
+                            :valintakokeet (:valintakokeet hakukohde)
+                            :jarjestyspaikka (:jarjestyspaikka hakukohde)
+                            :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hakukohde)
+                            :jarjestaaUrheilijanAmmKoulutusta (get-in hakukohde [:metadata :jarjestaaUrheilijanAmmKoulutusta])
+                            :lukiodiplomit (get-in toteutus-metadata [:diplomit])
+                            :kielivalikoima (get-in toteutus-metadata [:kielivalikoima])}))
          hakukohteet)))
