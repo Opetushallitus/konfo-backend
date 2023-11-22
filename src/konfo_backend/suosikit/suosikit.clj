@@ -63,19 +63,21 @@
         orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
     (map (fn [hk] (let [toteutus (get-in toteutukset-by-oid [(:toteutusOid hk)])
                         oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
-                    {:toteutusOid (:toteutusOid hk)
+                    {:koulutustyyppi (get-in toteutus [:metadata :tyyppi])
+                     :toteutusOid (:toteutusOid hk)
                      :hakukohdeOid (:oid hk)
                      :nimi (:nimi hk)
+                     :logo (:logo oppilaitos)
                      :esittely (get-in oppilaitos [:metadata :esittely])
                      :osoite (-> oppilaitos
                                  (get-in [:metadata :yhteystiedot])
                                  (first)
                                  (get-in [:kayntiosoiteStr]))
-                     :alinPistemaara nil ;TODO
-                     :aloituspaikat nil ;TODO
-                     :ensisijaisetHakijat nil ;TODO
                      :opiskelijoita (get-in oppilaitos [:metadata :opiskelijoita])
                      :osaamisalat (get-in toteutus [:metadata :osaamisalat])
+                     :edellinenHaku (-> hk
+                                        (get-in [:metadata :pistehistoria])
+                                        (last))
                      :valintakokeet (:valintakokeet hk)
                      :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hk)
                      :jarjestaaUrheilijanAmmKoulutusta (get-in hk [:metadata :jarjestaaUrheilijanAmmKoulutusta])
