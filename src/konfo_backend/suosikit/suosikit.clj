@@ -75,7 +75,7 @@
                      :aloituspaikat nil ;TODO
                      :ensisijaisetHakijat nil ;TODO
                      :opiskelijoita (get-in oppilaitos [:metadata :opiskelijoita])
-                     :osaamisalat (get-in hk [:metadata :osaamisalat])
+                     :osaamisalat (get-in toteutus [:metadata :osaamisalat])
                      :valintakokeet (:valintakokeet hk)
                      :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hk)
                      :jarjestaaUrheilijanAmmKoulutusta (get-in hk [:metadata :jarjestaaUrheilijanAmmKoulutusta])
