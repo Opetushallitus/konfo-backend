@@ -27,6 +27,8 @@
                                    :sv "Esittely sv"}
                         :logo "https://testi.fi/oppilaitos-logo/oid/logo.png"
                         :toteutusOid "1.2.246.562.17.000001"
+                        :oppilaitosNimi {:fi "Jokin järjestyspaikka"
+                                         :sv "Jokin järjestyspaikka sv"}
                         :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka"
                                                  :sv "Jokin järjestyspaikka sv"}
                                           :paikkakunta {:koodiUri "kunta_297"
@@ -59,15 +61,12 @@
                          :nimi {:fi "Hakukohde fi" :sv "Hakukohde sv"}
                          :hakukohdeOid "1.2.246.562.20.0000001"
                          :toteutusOid "1.2.246.562.17.000001"
-                         :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka"
-                                                  :sv "Jokin järjestyspaikka sv"}
-                                           :paikkakunta {:koodiUri "kunta_297"
-                                                         :nimi {:fi "kunta_297 nimi fi"
-                                                                :sv "kunta_297 nimi sv"}}
-                                           :oid "1.2.246.562.10.67476956288"}
+                         :hakuOid "1.2.246.562.29.0000001"
                          :logo "https://testi.fi/oppilaitos-logo/oid/logo.png"
                          :esittely {:fi "Esittely"
                                     :sv "Esittely sv"}
+                         :oppilaitosNimi {:fi "Jokin järjestyspaikka"
+                                          :sv "Jokin järjestyspaikka sv"}
                          :osoite {}
                          :opiskelijoita 100
                          :osaamisalat [{:koodi {:koodiUri "osaamisala_0001#1"

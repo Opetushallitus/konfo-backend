@@ -29,6 +29,7 @@
    :hakukohdeOid (st/schema s/Str {:description "Hakukohteen yksilöivä tunniste"})
    :toteutusOid (st/schema s/Str {:description "Hakukohteeseen liitetyn toteutuksen yksilöivä tunniste"
                                   :example "1.2.246.562.17.00000000000000000009"})
+   :oppilaitosNimi (st/schema Nimi {:description "Hakukohteen järjestyspaikan oppilaitoksen nimi"})
    :logo (st/schema s/Str {:description "Hakukohteen järjestyspaikan oppilaitoksen logon URL"})
    :esittely (st/schema Kuvaus {:description "Hakukohteen järjestyspaikan oppilaitoksen esittely eri kielillä"})
    (s/optional-key :tutkintonimikkeet) (st/schema [(->Koodi s/Str)] {:description "Lista tutkintonimikkeitä käännöksineen (tutkintonimikkeet-koodisto)"})
@@ -53,9 +54,10 @@
               :hakukohdeOid (st/schema s/Str {:description "Hakukohteen yksilöivä tunniste"})
               :toteutusOid (st/schema s/Str {:description "Hakukohteeseen liitetyn toteutuksen yksilöivä tunniste"
                                              :example "1.2.246.562.17.00000000000000000009"})
+              :hakuOid (st/schema s/Str {:description "Hakukohteeseen liitetyn haun yksilöivä tunniste"})
               :logo (st/schema s/Str {:description "Hakukohteen järjestyspaikan oppilaitoksen logon URL"})
               :esittely (st/schema Kuvaus {:description "Hakukohteen järjestyspaikan oppilaitoksen esittely eri kielillä"})
-              :jarjestyspaikka (st/schema Organisaatio {:description "Hakukohteen järjestyspaikan tiedot"})
+              :oppilaitosNimi (st/schema Nimi {:description "Hakukohteen järjestyspaikan oppilaitoksen nimi"})
               :osoite (st/schema KayntiOsoite {:description "Hakukohteen järjestyspaikan käyntiosoite"})
               (s/optional-key :opiskelijoita) (st/schema s/Int {:description "Hakukohteen järjestyspaikan oppilaitoksen opiskelijoiden määrä"})
               (s/optional-key :osaamisalat) (st/schema [AmmOsaamisala] {:description "Lista ammatillisen koulutuksen osaamisalojen kuvauksia"})

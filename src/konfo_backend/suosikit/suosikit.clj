@@ -41,6 +41,7 @@
                      (mapcat :hakukohteet)
                      (map (fn [hk] (let [oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
                                      (-> hk
+                                         (assoc :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi]))
                                          (assoc :esittely (get-in oppilaitos [:metadata :esittely]))
                                          (assoc :logo (get-in oppilaitos [:logo]))
                                          (assoc :toteutusOid (get-in t [:oid]))
@@ -64,6 +65,8 @@
                             :hakukohdeOid (:oid hakukohde)
                             :nimi (:nimi hakukohde)
                             :logo (:logo oppilaitos)
+                            :hakuOid (:hakuOid hakukohde)
+                            :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi])
                             :esittely (get-in oppilaitos [:metadata :esittely])
                             :osoite (-> oppilaitos
                                         (get-in [:metadata :yhteystiedot])
@@ -75,7 +78,6 @@
                                                (get-in [:metadata :pistehistoria])
                                                (last))
                             :valintakokeet (:valintakokeet hakukohde)
-                            :jarjestyspaikka (:jarjestyspaikka hakukohde)
                             :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hakukohde)
                             :jarjestaaUrheilijanAmmKoulutusta (get-in hakukohde [:metadata :jarjestaaUrheilijanAmmKoulutusta])
                             :lukiodiplomit (get-in toteutus-metadata [:diplomit])
