@@ -25,7 +25,33 @@
    |              type: string
    |          required: true
    |          description: Pilkulla erotettu lista hakukohteiden oideja
-   |          example: kielivalikoima
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
+   |  /suosikit-vertailu:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae hakukohteille vertailutietoja
+   |      description: Hae annetuilla hakukohde-oideilla tietoja suosikkien vertailua varten
+   |        Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: query
+   |          name: hakukohde-oids
+   |          style: form
+   |          explode: false
+   |          schema:
+   |            type: array
+   |            items:
+   |              type: string
+   |          required: true
+   |          description: Pilkulla erotettu lista hakukohteiden oideja
    |      responses:
    |        '200':
    |          description: Ok
@@ -42,5 +68,11 @@
      :query-params [{hakukohde-oids :- String nil}]
      (with-access-logging request
        (if-let [result (suosikit/get-by-hakukohde-oids (comma-separated-string->vec hakukohde-oids))]
+         (ok result)
+         (not-found "Not found"))))
+   (c/GET "/suosikit-vertailu" [:as request]
+     :query-params [{hakukohde-oids :- String nil}]
+     (with-access-logging request
+       (if-let [result (suosikit/get-vertailu-by-hakukohde-oids (comma-separated-string->vec hakukohde-oids))]
          (ok result)
          (not-found "Not found"))))))
