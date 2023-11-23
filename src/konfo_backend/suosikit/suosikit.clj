@@ -52,7 +52,7 @@
 (defn get-vertailu-by-hakukohde-oids
   [hakukohde-oids-seq]
   (let [hakukohde-oids (set hakukohde-oids-seq)
-        hakukohteet (hakukohde/get-many hakukohde-oids)
+        hakukohteet (filter julkaistu? (hakukohde/get-many hakukohde-oids))
         toteutukset-by-oid (into {} (map #(vec [(:oid %) %]) (toteutus/get-many (distinct (map :toteutusOid hakukohteet)))))
         oppilaitokset-res (oppilaitos/get-many (distinct (mapcat :oppilaitokset (vals toteutukset-by-oid))) false)
         osat-by-oid (mapcat #(map (fn [osa] [(:oid osa) %]) (:osat %)) oppilaitokset-res)
