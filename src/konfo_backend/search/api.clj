@@ -6,6 +6,7 @@
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
                                                     hakualkaapaivissa]]
+   [konfo-backend.search.hakukohde.search :as hakukohde-search]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -493,7 +494,31 @@
    |        '404':
    |          description: Not found
    |        '400':
-   |          description: Bad request"))
+   |          description: Bad request
+   |  /search/hakukohteet:
+   |    get:
+   |      tags:
+   |        - internal-search
+   |      summary: Hae hakukohteita
+   |      description: Hakee (kaikki julkaistut) hakukohteet haun kohdejoukon perusteella. Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: query
+   |          name: kohdejoukko
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: Haun kohdejoukko (koodi uri)
+   |          example: haunkohdejoukko_11
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '400':
+   |          description: Bad request
+   "))
 
 
 (defn- parse-number-range
@@ -577,6 +602,14 @@
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
     :else (ok (ok-fn))))
+
+(defn- ->search-hakukohteet-with-kohdejoukko [kohdejoukko do-search]
+  (cond
+    (or (nil? kohdejoukko)
+        (empty? kohdejoukko)) (bad-request "Haun kohdejoukko puuttuu")
+    (nil? (re-matches #"haunkohdejoukko_[0-9a-zA-Z]+[#0-9]*" kohdejoukko))
+    (bad-request "Haun kohdejoukon arvo on virheellinen")
+    :else (ok (do-search kohdejoukko))))
 
 (def routes
   (context "/search" []
@@ -887,4 +920,11 @@
                                                     :apuraha apuraha
                                                     :hakualkaapaivissa hakualkaapaivissa})]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
-             :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))
+             :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))
+
+    (GET "/hakukohteet" request
+      :query-params [{kohdejoukko :- String nil}]
+      (with-access-logging request
+                           (->search-hakukohteet-with-kohdejoukko
+                            kohdejoukko
+                            hakukohde-search/search)))))
