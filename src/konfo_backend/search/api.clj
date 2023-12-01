@@ -534,7 +534,7 @@
 
 (def paths (spec-paths-to-swagger-yaml paths-spec))
 
-(def schemas (string/join "\n" (map schema-to-swagger-yaml [HakukohdeSearchResult])))
+(def schemas (string/join "\n" (map schema-to-swagger-yaml [CompactHakukohde HakukohdeSearchResult])))
 
 (defn- parse-number-range
   [min-number max-number]
