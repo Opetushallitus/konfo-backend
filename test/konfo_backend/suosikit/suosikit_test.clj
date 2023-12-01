@@ -23,8 +23,8 @@
       (testing "ok"
         (let [response (get-ok (suosikit-url [suosikki-hakukohde-oid1]))]
           (is (match? [{:tila "julkaistu"
-                        :esittely {:fi "Esittely"
-                                   :sv "Esittely sv"}
+                        :esittely {:fi "kuvaus"
+                                   :sv "kuvaus sv"}
                         :logo "https://testi.fi/oppilaitos-logo/oid/logo.png"
                         :toteutusOid "1.2.246.562.17.000001"
                         :oppilaitosNimi {:fi "Jokin järjestyspaikka"
@@ -63,8 +63,8 @@
                          :toteutusOid "1.2.246.562.17.000001"
                          :hakuOid "1.2.246.562.29.0000001"
                          :logo "https://testi.fi/oppilaitos-logo/oid/logo.png"
-                         :esittely {:fi "Esittely"
-                                    :sv "Esittely sv"}
+                         :esittely {:fi "kuvaus"
+                                    :sv "kuvaus sv"}
                          :oppilaitosNimi {:fi "Jokin järjestyspaikka"
                                           :sv "Jokin järjestyspaikka sv"}
                          :osoite {}

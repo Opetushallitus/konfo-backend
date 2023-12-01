@@ -17,6 +17,7 @@
                                       "koulutusOid"
                                       "oid"
                                       "tila"
+                                      "metadata.kuvaus"
                                       "metadata.hakuaika"
                                       "hakutiedot.hakukohteet.nimi"
                                       "hakutiedot.hakukohteet.jarjestyspaikka"
@@ -36,16 +37,16 @@
          (map (fn [toteutus] (-> toteutus
                                  (#(assoc % :hakuAuki (toteutus-haku-kaynnissa? %)))
                                  (#(assoc % :hakutiedot (with-is-haku-auki (:hakutiedot %)))))))
-         (map (fn [t]
-                (->> (:hakutiedot t)
+         (map (fn [toteutus]
+                (->> (:hakutiedot toteutus)
                      (mapcat :hakukohteet)
                      (map (fn [hk] (let [oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
                                      (-> hk
                                          (assoc :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi]))
-                                         (assoc :esittely (get-in oppilaitos [:metadata :esittely]))
+                                         (assoc :esittely (get-in toteutus [:metadata :kuvaus]))
                                          (assoc :logo (get-in oppilaitos [:logo]))
-                                         (assoc :toteutusOid (get-in t [:oid]))
-                                         (assoc :tutkintonimikkeet (get-in koulutukset [(:koulutusOid t) :metadata :tutkintonimike])))))))))
+                                         (assoc :toteutusOid (get-in toteutus [:oid]))
+                                         (assoc :tutkintonimikkeet (get-in koulutukset [(:koulutusOid toteutus) :metadata :tutkintonimike])))))))))
          (flatten)
          (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
 
@@ -67,7 +68,7 @@
                             :logo (:logo oppilaitos)
                             :hakuOid (:hakuOid hakukohde)
                             :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi])
-                            :esittely (get-in oppilaitos [:metadata :esittely])
+                            :esittely (get-in toteutus-metadata [:kuvaus])
                             :osoite (-> oppilaitos
                                         (get-in [:metadata :yhteystiedot])
                                         (first)
