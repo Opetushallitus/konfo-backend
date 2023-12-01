@@ -11,8 +11,8 @@
 
 (defn- ->kohdejoukko-query
   [kohdejoukko]
-  (let [terms {:term {:kohdejoukko.koodiUri kohdejoukko}}]
-    {:bool {:must terms, :filter {:term {:tila "julkaistu"}}}}))
+  {:bool {:must {:term {:kohdejoukko.koodiUri kohdejoukko}}
+          :filter {:term {:tila "julkaistu"}}}})
 
 (defn- extract-hakukohteet
   [haku]
