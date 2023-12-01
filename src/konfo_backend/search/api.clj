@@ -511,7 +511,7 @@
 
 (s/defschema HakukohdeSearchResult
   {:total s/Int
-   :hits (st/schema CompactHakukohde {:description "Hakukohteen perustiedot"})})
+   :hits [(st/schema CompactHakukohde {:description "Hakukohteen perustiedot"})]})
 
 (def paths-spec
   (openapi/openapi-spec
