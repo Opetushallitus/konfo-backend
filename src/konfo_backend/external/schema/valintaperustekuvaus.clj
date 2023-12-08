@@ -78,7 +78,7 @@
   {:id                                    s/Str
    (s/->OptionalKey :externalId)          s/Str
    :tila                                  Julkaistu
-   :koulutustyyppi                        Koulutustyyppi
+   :koulutustyyppi                        KoutaKoulutustyyppi
    :hakutapa                              (->Koodi HakutapaKoodi)
    :kohdejoukko                           (->Koodi HaunKohdejoukkoKoodi)
    (s/->OptionalKey :kohdejoukonTarkenne) (->Koodi HaunKohdejoukonTarkenneKoodi)

@@ -222,8 +222,7 @@
    :linkinAltTeksti   Kielistetty
    :sisallot          [Kielistetty]
    :tavoitteetKohde   Kielistetty
-   :tavoitteet        [Kielistetty]}
-)
+   :tavoitteet        [Kielistetty]})
 
 (def lukio-toteutus-metadata-schema
   "|    LukioToteutusMetadata:
@@ -262,10 +261,10 @@
    |          description: Osaamisalan linkin otsikko eri kielillä
    |          $ref: '#/components/schemas/Teksti'")
 
-(def AmmOsaamisala
-  {:koodi   (->Koodi #"osaamisala_\d+(#\d{1,2})?$")
-   :linkki  Kielistetty
-   :otsikko Kielistetty})
+(s/defschema AmmOsaamisala
+  {:koodi   (st/schema (->Koodi #"osaamisala_\d+(#\d{1,2})?$"))
+   :linkki  (st/schema Kielistetty {:description "Osaamisalan linkki ePerusteisiin"})
+   :otsikko (st/schema Kielistetty {:description "Osaamisalan linkin otsikko eri kielillä"})})
 
 (def amm-toteutus-metadata-schema
   "|    AmmatillinenToteutusMetadata:

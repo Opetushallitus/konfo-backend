@@ -66,7 +66,7 @@
 (def Sorakuvaus
   {:id s/Str
    (s/->OptionalKey :externalId) s/Str
-   :koulutustyyppi Koulutustyyppi
+   :koulutustyyppi KoutaKoulutustyyppi
    :tila Julkaistu
    :kielivalinta [Kieli]
    :nimi Kielistetty

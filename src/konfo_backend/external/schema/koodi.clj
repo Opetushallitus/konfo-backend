@@ -370,6 +370,8 @@
 
 (def LukioDiplomiKoodi s/Str)
 
+(def KieliKoodiPattern #"^kieli_")
+
 (def schemas
   (str
     kunta-schema "\n"

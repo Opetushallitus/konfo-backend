@@ -96,7 +96,8 @@
               |  schemas:
               "
               default/schemas "\n"
-              external/schemas
+              external/schemas "\n"
+              suosikit/schemas
               ))))
 
       (GET "/redoc/index.html" request

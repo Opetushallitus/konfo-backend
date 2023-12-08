@@ -1,7 +1,6 @@
 (ns konfo-backend.external.schema.search
   (:require
     [schema.core :as s]
-    [schema-tools.core :as st]
     [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
     [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
@@ -74,7 +73,7 @@
   {:oid                                       KoulutusOid
    :nimi                                      Kielistetty
    :kielivalinta                              [Kieli]
-   :koulutustyyppi                            Koulutustyyppi
+   :koulutustyyppi                            KoutaKoulutustyyppi
    :koulutukset                               [(->Koodi KoulutusKoodi)]
    :kuvaus                                    (s/maybe Kielistetty)
    (s/->OptionalKey :ePerusteId)              (s/maybe s/Int)
