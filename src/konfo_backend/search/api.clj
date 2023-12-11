@@ -1,6 +1,6 @@
 (ns konfo-backend.search.api
   (:require
-   [konfo-backend.external.schema.common :refer [Nimi schema-to-swagger-yaml spec-paths-to-swagger-yaml]]
+   [konfo-backend.external.schema.common :refer [KonfoKoulutustyyppi Nimi schema-to-swagger-yaml spec-paths-to-swagger-yaml]]
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
@@ -507,7 +507,10 @@
    :nimi (st/schema Nimi {:description "Hakukohteen nimi eri kielillä"})
    :hakuOid (st/schema s/Str {:description "Hakukohteeseen liitetyn haun yksilöivä tunniste"})
    :organisaatio {:nimi (st/schema Nimi {:description "Organisaation nimi eri kielillä"})}
-   :toteutus {:oid (st/schema s/Str {:description "Toteutuksen yksilöivä tunniste"})}})
+   :toteutus {:oid (st/schema s/Str {:description "Toteutuksen yksilöivä tunniste"})}
+   :koulutustyyppi (st/schema KonfoKoulutustyyppi)
+   :ammatillinenPerustutkintoErityisopetuksena
+   (st/schema s/Bool {:description "Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?"})})
 
 (s/defschema HakukohdeSearchResult
   {:total s/Int

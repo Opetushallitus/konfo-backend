@@ -38,7 +38,9 @@
               :nimi {:fi "nimi fi" :sv "nimi sv"}
               :hakuOid "1.2.246.562.29.0000006"
               :organisaatio {:nimi {:fi "Kiva ammattikorkeakoulu" :sv "Kiva ammattikorkeakoulu sv"}}
-              :toteutus {:oid "1.2.246.562.17.000008"}}
+              :toteutus {:oid "1.2.246.562.17.000008"}
+              :koulutustyyppi "yo"
+              :ammatillinenPerustutkintoErityisopetuksena nil}
              (first (:hits response))))))
   (testing "Searching with haunkohdejoukko_11"
     (let [response (search :kohdejoukko "haunkohdejoukko_11")]

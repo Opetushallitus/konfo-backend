@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer [allowed-to-view]]
-    [konfo-backend.elastic-tools :refer [get-source get-sources search]]))
+    [konfo-backend.elastic-tools :refer [get-source get-sources get-sources-with-selected-fields search]]))
 
 (defonce index "hakukohde-kouta")
 
@@ -20,6 +20,10 @@
    (get-sources index oids excludes))
   ([oids]
    (get-many oids [])))
+
+(defn get-many-with-selected-fields
+  [oids includes]
+  (get-sources-with-selected-fields index oids includes))
 
 (defn get-many-by-terms
   ([k values excludes]
