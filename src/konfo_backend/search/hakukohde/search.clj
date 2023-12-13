@@ -20,6 +20,7 @@
   [haku]
   (map #(assoc (select-keys % [:oid :nimi :hakuOid])
          :organisaatio (select-keys (:organisaatio %) [:nimi])
+         :jarjestyspaikka (select-keys (:jarjestyspaikka %) [:nimi])
          :toteutus (select-keys (:toteutus %) [:oid]))
        (filter julkaistu? (:hakukohteet haku))))
 
