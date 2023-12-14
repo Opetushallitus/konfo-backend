@@ -37,6 +37,10 @@
     (e/multi-get index ids :_source_excludes (str/join "," excludes))
     (e/multi-get index ids)))
 
+(defn get-sources-with-selected-fields
+  [index ids includes]
+  (e/multi-get index ids :_source_includes (str/join "," includes)))
+
 (defn search-without-mapper
   [index & query-parts]
   (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]

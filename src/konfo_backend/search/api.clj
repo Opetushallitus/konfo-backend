@@ -1,11 +1,14 @@
 (ns konfo-backend.search.api
   (:require
+   [konfo-backend.external.schema.common :refer [Kielistetty KonfoKoulutustyyppi Nimi schema-to-swagger-yaml
+                                                 spec-paths-to-swagger-yaml]]
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
                                                     hakualkaapaivissa]]
+   [konfo-backend.search.hakukohde.search :as hakukohde-search]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
    [konfo-backend.search.rajain-counts :as rajain-counts]
@@ -13,90 +16,95 @@
    [ring.util.http-response :refer [bad-request not-found ok]]
    [clj-log.access-log :refer [with-access-logging]]
    [konfo-backend.tools :refer [comma-separated-string->vec]]
+   [clj-yaml.core :as yaml]
+   [schema-tools.core :as st]
+   [schema-tools.openapi.core :as openapi]
+   [schema.core :as s]
    [clojure.string :as string]))
 
-(def paths (str
-            "|  /search/filters:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae hakurajaimet
-   |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |  /search/filters_as_array:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae hakurajaimet taulukkomuodossa
-   |      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |  /search/koulutukset:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae koulutuksia
-   |      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: query
-   |          name: keyword
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
-   |            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
-   |          example: Hevostalous
-   |        - in: query
-   |          name: page
-   |          schema:
-   |            type: number
-   |            default: 1
-   |          required: false
-   |          description: Hakutuloksen sivunumero
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: number
-   |            default: 20
-   |          required: false
-   |          description: Hakutuloksen sivun koko
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: sort
-   |          schema:
-   |            type: string
-   |            default: score
-   |          required: false
-   |          description: Järjestysperuste. 'name' tai 'score'
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   "
+(def paths-str (str
+               "paths:
+  /search/filters:
+    get:
+      tags:
+        - internal-search
+      summary: Hae hakurajaimet
+      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet. Huom.! Vain Opintopolun sisäiseen käyttöön
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+  /search/filters_as_array:
+    get:
+      tags:
+        - internal-search
+      summary: Hae hakurajaimet taulukkomuodossa
+      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa. Huom.! Vain Opintopolun sisäiseen käyttöön
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+  /search/koulutukset:
+    get:
+      tags:
+        - internal-search
+      summary: Hae koulutuksia
+      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: query
+          name: keyword
+          schema:
+            type: string
+          required: false
+          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
+            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
+          example: Hevostalous
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            default: score
+          required: false
+          description: Järjestysperuste. 'name' tai 'score'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+            "
             (:desc koulutustyyppi) "\n"
             (:desc sijainti) "\n"
             (:desc opetuskieli) "\n"
@@ -115,69 +123,69 @@
             (:desc pohjakoulutusvaatimus) "\n"
             (:desc alkamiskausi) "\n"
             (:desc hakualkaapaivissa) "\n"
-            "
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request
-   |  /search/koulutus/{oid}/jarjestajat:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae koulutuksen tarjoajat
-   |      description: Hakee annetun koulutuksen järjestäjiä. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: path
-   |          name: oid
-   |          schema:
-   |            type: string
-   |          required: true
-   |          description: Koulutuksen yksilöivä oid
-   |          example: 1.2.246.562.13.00000000000000000001
-   |        - in: query
-   |          name: page
-   |          schema:
-   |            type: number
-   |            default: 1
-   |          required: false
-   |          description: Hakutuloksen sivunumero
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: number
-   |            default: 20
-   |          required: false
-   |          description: Hakutuloksen sivun koko
-   |        - in: query
-   |          name: tuleva
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko tulevia vai tämänhetkisiä tarjoajia.
-   |            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   "
+        "
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+  /search/koulutus/{oid}/jarjestajat:
+    get:
+      tags:
+        - internal-search
+      summary: Hae koulutuksen tarjoajat
+      description: Hakee annetun koulutuksen järjestäjiä. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: path
+          name: oid
+          schema:
+            type: string
+          required: true
+          description: Koulutuksen yksilöivä oid
+          example: 1.2.246.562.13.00000000000000000001
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: tuleva
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko tulevia vai tämänhetkisiä tarjoajia.
+            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+"
             (:desc sijainti) "\n"
             (:desc opetuskieli) "\n"
             (:desc koulutusala) "\n"
@@ -196,69 +204,69 @@
             (:desc oppilaitos) "\n"
             (:desc alkamiskausi) "\n"
             (:desc hakualkaapaivissa) "\n"
-            "
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request
-   |  /search/oppilaitokset:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae oppilaitoksia
-   |      description: Hakee oppilaitoksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: query
-   |          name: keyword
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
-   |            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
-   |          example: Hevostalous
-   |        - in: query
-   |          name: page
-   |          schema:
-   |            type: number
-   |            default: 1
-   |          required: false
-   |          description: Hakutuloksen sivunumero
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: number
-   |            default: 20
-   |          required: false
-   |          description: Hakutuloksen sivun koko
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: sort
-   |          schema:
-   |            type: string
-   |            default: score
-   |          required: false
-   |          description: Järjestysperuste. 'name' tai 'score'
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   "
+        "
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+  /search/oppilaitokset:
+    get:
+      tags:
+        - internal-search
+      summary: Hae oppilaitoksia
+      description: Hakee oppilaitoksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: query
+          name: keyword
+          schema:
+            type: string
+          required: false
+          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
+            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
+          example: Hevostalous
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            default: score
+          required: false
+          description: Järjestysperuste. 'name' tai 'score'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+"
             (:desc koulutustyyppi) "\n"
             (:desc sijainti) "\n"
             (:desc opetuskieli) "\n"
@@ -277,69 +285,69 @@
             (:desc pohjakoulutusvaatimus) "\n"
             (:desc alkamiskausi) "\n"
             (:desc hakualkaapaivissa) "\n"
-            "
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request
-   |  /search/oppilaitos/{oid}/tarjonta:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae oppilaitoksen koulutustarjonnan
-   |      description: Hakee annetun oppilaitoksen koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: path
-   |          name: oid
-   |          schema:
-   |            type: string
-   |          required: true
-   |          description: Oppilaitoksen yksilöivä oid
-   |          example: 1.2.246.562.10.12345
-   |        - in: query
-   |          name: page
-   |          schema:
-   |            type: number
-   |            default: 1
-   |          required: false
-   |          description: Hakutuloksen sivunumero
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: number
-   |            default: 20
-   |          required: false
-   |          description: Hakutuloksen sivun koko
-   |        - in: query
-   |          name: tuleva
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
-   |            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   "
+        "
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+  /search/oppilaitos/{oid}/tarjonta:
+    get:
+      tags:
+        - internal-search
+      summary: Hae oppilaitoksen koulutustarjonnan
+      description: Hakee annetun oppilaitoksen koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: path
+          name: oid
+          schema:
+            type: string
+          required: true
+          description: Oppilaitoksen yksilöivä oid
+          example: 1.2.246.562.10.12345
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: tuleva
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
+            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+"
             (:desc koulutustyyppi) "\n"
             (:desc sijainti) "\n"
             (:desc opetuskieli) "\n"
@@ -348,122 +356,122 @@
             (:desc opetusaika) "\n"
             (:desc koulutuksenkestokuukausina) "\n"
             (:desc hakualkaapaivissa) "\n"
-            "
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request
-   |  /search/oppilaitoksen-osa/{oid}/tarjonta:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae oppilaitoksen osan koulutustarjonnan
-   |      description: Hakee annetun oppilaitoksen osan koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: path
-   |          name: oid
-   |          schema:
-   |            type: string
-   |          required: true
-   |          description: Oppilaitoksen osan yksilöivä oid
-   |          example: 1.2.246.562.10.12345
-   |        - in: query
-   |          name: page
-   |          schema:
-   |            type: number
-   |            default: 1
-   |          required: false
-   |          description: Hakutuloksen sivunumero
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: number
-   |            default: 20
-   |          required: false
-   |          description: Hakutuloksen sivun koko
-   |        - in: query
-   |          name: tuleva
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
-   |            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request
-   |  /search/autocomplete:
-   |    get:
-   |      tags:
-   |        - internal-search
-   |      summary: Hae koulutuksia ja oppilaitoksia ennakoivaa hakua varten
-   |      description: Hakee koulutuksia ja oppilaitoksia hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
-   |      parameters:
-   |        - in: query
-   |          name: searchPhrase
-   |          schema:
-   |            type: string
-   |          required: false
-   |          description: Hakusanat. Vähimmäispituus on 3 merkkiä.
-   |          example: Hevostalous
-   |        - in: query
-   |          name: lng
-   |          schema:
-   |            type: string
-   |            default: fi
-   |          required: false
-   |          description: Haun kieli. 'fi', 'sv' tai 'en'
-   |        - in: query
-   |          name: sort
-   |          schema:
-   |            type: string
-   |            default: score
-   |          required: false
-   |          description: Järjestysperuste. 'name' tai 'score'
-   |        - in: query
-   |          name: size
-   |          schema:
-   |            type: integer
-   |            default: 5
-   |          required: false
-   |          description: Montako koulutusta ja oppilaitosta noudetaan. Oletuksena noudetaan siis 5 koulutusta ja 5 oppilaitosta.
-   |        - in: query
-   |          name: order
-   |          schema:
-   |            type: string
-   |            default: desc
-   |          required: false
-   |          description: Järjestys. 'asc' tai 'desc'
-   "
+        "
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+  /search/oppilaitoksen-osa/{oid}/tarjonta:
+    get:
+      tags:
+        - internal-search
+      summary: Hae oppilaitoksen osan koulutustarjonnan
+      description: Hakee annetun oppilaitoksen osan koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: path
+          name: oid
+          schema:
+            type: string
+          required: true
+          description: Oppilaitoksen osan yksilöivä oid
+          example: 1.2.246.562.10.12345
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: tuleva
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
+            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
+  /search/autocomplete:
+    get:
+      tags:
+        - internal-search
+      summary: Hae koulutuksia ja oppilaitoksia ennakoivaa hakua varten
+      description: Hakee koulutuksia ja oppilaitoksia hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: query
+          name: searchPhrase
+          schema:
+            type: string
+          required: false
+          description: Hakusanat. Vähimmäispituus on 3 merkkiä.
+          example: Hevostalous
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            default: score
+          required: false
+          description: Järjestysperuste. 'name' tai 'score'
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 5
+          required: false
+          description: Montako koulutusta ja oppilaitosta noudetaan. Oletuksena noudetaan siis 5 koulutusta ja 5 oppilaitosta.
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+"
             (:desc koulutustyyppi) "\n"
             (:desc sijainti) "\n"
             (:desc opetuskieli) "\n"
@@ -482,19 +490,56 @@
             (:desc alkamiskausi) "\n"
             (:desc maksullisuus) "\n"
             (:desc hakualkaapaivissa) "\n"
-            "
-   |      responses:
-   |        '200':
-   |          description: Ok
-   |          content:
-   |            application/json:
-   |              schema:
-   |                type: json
-   |        '404':
-   |          description: Not found
-   |        '400':
-   |          description: Bad request"))
+        "
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request"))
 
+(s/defschema CompactHakukohde
+  {:oid (st/schema s/Str {:description "Hakukohteen yksilöivä tunniste"})
+   :nimi (st/schema Nimi {:description "Hakukohteen nimi eri kielillä"})
+   :hakuOid (st/schema s/Str {:description "Hakukohteeseen liitetyn haun yksilöivä tunniste"})
+   :organisaatio {:nimi (st/schema Nimi {:description "Organisaation nimi eri kielillä"})}
+   :jarjestyspaikka {:nimi (st/schema Nimi {:description "Järjestyspaikan nimi eri kielillä"})}
+   :toteutus {:oid (st/schema s/Str {:description "Toteutuksen yksilöivä tunniste"})}
+   :koulutustyyppi (st/schema KonfoKoulutustyyppi)
+   :ammatillinenPerustutkintoErityisopetuksena
+   (st/schema s/Bool {:description "Onko koulutuksen tyyppi \"Ammatillinen perustutkinto erityisopetuksena\"?"})})
+
+(s/defschema HakukohdeSearchResult
+  {:total s/Int
+   :hits [(st/schema CompactHakukohde {:description "Hakukohteen perustiedot"})]})
+
+(def paths-spec
+  (openapi/openapi-spec
+    {:paths
+     (assoc (:paths (yaml/parse-string paths-str))
+            "/search/hakukohteet"
+            {:get {:tags ["internal-search"]
+                   :summary "Hae hakukohteita"
+                   :description "Hakee (kaikki julkaistut) hakukohteet haun kohdejoukon perusteella. Huom.! Vain Opintopolun sisäiseen käyttöön"
+                   :parameters [{:in "query"
+                                 :name "kohdejoukko"
+                                 :description "Haun kohdejoukko (koodi uri)"
+                                 :required true
+                                 :schema {:type "string"}}]
+                   :responses {200 {:description "Ok"
+                                    ::openapi/content {"application/json" (st/schema HakukohdeSearchResult)}}
+                               400 {:description "Bad request"
+                                    :content {"text/plain" {:schema {:type "string"
+                                                                     :example "Haun kohdejoukko puuttuu"}}}}}}})}))
+
+(def paths (spec-paths-to-swagger-yaml paths-spec))
+
+(def schemas (string/join "\n" (map schema-to-swagger-yaml [CompactHakukohde HakukohdeSearchResult])))
 
 (defn- parse-number-range
   [min-number max-number]
@@ -577,6 +622,14 @@
     (and (not (nil? search-phrase))
          (> 3 (count search-phrase))) (bad-request "Hakusana on liian lyhyt")
     :else (ok (ok-fn))))
+
+(defn- ->search-hakukohteet-with-kohdejoukko [kohdejoukko do-search]
+  (cond
+    (or (nil? kohdejoukko)
+        (empty? kohdejoukko)) (bad-request "Haun kohdejoukko puuttuu")
+    (nil? (re-matches #"haunkohdejoukko_[0-9a-zA-Z]+[#0-9]*" kohdejoukko))
+    (bad-request "Haun kohdejoukon arvo on virheellinen")
+    :else (ok (do-search kohdejoukko))))
 
 (def routes
   (context "/search" []
@@ -887,4 +940,11 @@
                                                     :apuraha apuraha
                                                     :hakualkaapaivissa hakualkaapaivissa})]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
-             :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))))
+             :oppilaitokset (apply oppilaitos-search/autocomplete-search search-params)}))))
+
+    (GET "/hakukohteet" request
+      :query-params [{kohdejoukko :- String nil}]
+      (with-access-logging request
+                           (->search-hakukohteet-with-kohdejoukko
+                            kohdejoukko
+                            hakukohde-search/search)))))

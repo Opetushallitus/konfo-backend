@@ -46,31 +46,31 @@
                                    (aggregation-filters-without-rajainkeys constraints ["koulutustyyppi"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: koulutustyyppi
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              $ref: '#/components/schemas/KonfoKoulutustyyppi'
-   |          description: Pilkulla eroteltu lista koulutustyyppejä
-   |          example: [amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala]"})
+        - in: query
+          name: koulutustyyppi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/KonfoKoulutustyyppi'
+          description: Pilkulla eroteltu lista koulutustyyppejä
+          example: [amm,amm-muu,yo,amk,amm-tutkinnon-osa,amm-osaamisala]"})
 
 (def sijainti
   {:id :sijainti
    :make-query #(->terms-query "sijainti.keyword" %)
    :desc "
-   |        - in: query
-   |          name: sijainti
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna kuntien ja maakuntien koodeja (koodistot \"kunta\" ja \"maakunta\")
-   |          example: [kunta_091,maakunta_01]"})
+        - in: query
+          name: sijainti
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna kuntien ja maakuntien koodeja (koodistot \"kunta\" ja \"maakunta\")
+          example: [kunta_091,maakunta_01]"})
 
 (def maakunta
   {:id :maakunta
@@ -93,16 +93,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["opetuskieli"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: opetuskieli
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"oppilaitoksenopetuskieli\"-koodiston koodeja
-   |          example: [oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2]"})
+        - in: query
+          name: opetuskieli
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"oppilaitoksenopetuskieli\"-koodiston koodeja
+          example: [oppilaitoksenopetuskieli_1,oppilaitoksenopetuskieli_2]"})
 
 (def koulutusala
   {:id :koulutusala
@@ -112,16 +112,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["koulutusala"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: koulutusala
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna koulutusalojen koodeja (koodistot \"kansallinenkoulutusluokitus2016koulutusalataso1\" ja \"kansallinenkoulutusluokitus2016koulutusalataso2\")
-   |          example: [kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02]"})
+        - in: query
+          name: koulutusala
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna koulutusalojen koodeja (koodistot \"kansallinenkoulutusluokitus2016koulutusalataso1\" ja \"kansallinenkoulutusluokitus2016koulutusalataso2\")
+          example: [kansallinenkoulutusluokitus2016koulutusalataso1_01, kansallinenkoulutusluokitus2016koulutusalataso1_02]"})
 
 (def opetustapa
   {:id :opetustapa
@@ -131,16 +131,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["opetustapa"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: opetustapa
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"opetuspaikkakk\"-koodiston koodeja
-   |          example: [opetuspaikkakk_1, opetuspaikkakk_2]"})
+        - in: query
+          name: opetustapa
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"opetuspaikkakk\"-koodiston koodeja
+          example: [opetuspaikkakk_1, opetuspaikkakk_2]"})
 
 (def opetusaika
   {:id :opetusaika
@@ -150,17 +150,17 @@
                                    (aggregation-filters-without-rajainkeys constraints ["opetusaika"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: opetusaika
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          required: false
-   |          description: Pilkulla eroteltuna \"opetusaikakk\"-koodiston koodeja
-   |          example: [opetusaikakk_1,opetusaikakk_2]"})
+        - in: query
+          name: opetusaika
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          required: false
+          description: Pilkulla eroteltuna \"opetusaikakk\"-koodiston koodeja
+          example: [opetusaikakk_1,opetusaikakk_2]"})
 
 (def koulutuksenkestokuukausina
   {:id :koulutuksenkestokuukausina
@@ -174,20 +174,20 @@
                                   rajain-context)))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina"))
    :desc "
-   |        - in: query
-   |          name: koulutuksenkestokuukausina_min
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen suunnitellun keston alaraja.
-   |          example: 10
-   |        - in: query
-   |          name: koulutuksenkestokuukausina_max
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen suunnitellun keston yläraja.
-   |          example: 100"})
+        - in: query
+          name: koulutuksenkestokuukausina_min
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen suunnitellun keston alaraja.
+          example: 10
+        - in: query
+          name: koulutuksenkestokuukausina_max
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen suunnitellun keston yläraja.
+          example: 100"})
 
 (def valintatapa
   {:id :valintatapa
@@ -197,16 +197,16 @@
                                           (aggregation-filters-without-rajainkeys constraints ["valintatapa"] rajain-context)
                                           rajain-context))
    :desc "
-   |        - in: query
-   |          name: valintatapa
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"valintatapajono\"-koodiston koodeja
-   |          example: [valintatapajono_av, valintatapajono_tv]"})
+        - in: query
+          name: valintatapa
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"valintatapajono\"-koodiston koodeja
+          example: [valintatapajono_av, valintatapajono_tv]"})
 
 (def hakutapa
   {:id :hakutapa
@@ -216,16 +216,16 @@
                                           (aggregation-filters-without-rajainkeys constraints ["hakutapa"] rajain-context)
                                           rajain-context))
    :desc "
-   |        - in: query
-   |          name: hakutapa
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"hakutapa\"-koodiston koodeja
-   |          example: [hakutapa_01, hakutapa_03]"})
+        - in: query
+          name: hakutapa
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"hakutapa\"-koodiston koodeja
+          example: [hakutapa_01, hakutapa_03]"})
 
 (def jotpa
   {:id :jotpa
@@ -237,13 +237,13 @@
                                  constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
-   |        - in: query
-   |          name: jotpa
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia, joilla on JOTPA-rahoitus?"})
+        - in: query
+          name: jotpa
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, joilla on JOTPA-rahoitus?"})
 
 (def tyovoimakoulutus
   {:id :tyovoimakoulutus
@@ -255,13 +255,13 @@
                                  constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
-   |        - in: query
-   |          name: tyovoimakoulutus
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia, jotka ovat työvoimakoulutusta?"})
+        - in: query
+          name: tyovoimakoulutus
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, jotka ovat työvoimakoulutusta?"})
 
 (def taydennyskoulutus
   {:id :taydennyskoulutus
@@ -273,61 +273,61 @@
                                  constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
                                 rajain-context))
    :desc "
-   |        - in: query
-   |          name: taydennyskoulutus
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
+        - in: query
+          name: taydennyskoulutus
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
 
 (def maksullisuus
   {:desc "
-   |        - in: query
-   |          name: maksullisuustyyppi
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
-   |          example: maksuton,maksullinen,lukuvuosimaksu
-   |        - in: query
-   |          name: maksunmaara_min
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen maksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
-   |          example: 100
-   |        - in: query
-   |          name: maksunmaara_max
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen maksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
-   |          example: 100
-   |        - in: query
-   |          name: lukuvuosimaksunmaara_min
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
-   |          example: 100
-   |        - in: query
-   |          name: lukuvuosimaksunmaara_max
-   |          style: form
-   |          schema:
-   |            type: number
-   |          description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
-   |          example: 100
-   |        - in: query
-   |          name: apuraha
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Haetaanko koulutuksia, joilla on käytössä apuraha? Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\""})
+        - in: query
+          name: maksullisuustyyppi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
+          example: maksuton,maksullinen,lukuvuosimaksu
+        - in: query
+          name: maksunmaara_min
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen maksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+          example: 100
+        - in: query
+          name: maksunmaara_max
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen maksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_min
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_max
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+          example: 100
+        - in: query
+          name: apuraha
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, joilla on käytössä apuraha? Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\""})
 
 (def maksuton
   {:id :maksuton
@@ -379,16 +379,16 @@
                                           (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
                                           rajain-context))
    :desc "
-   |        - in: query
-   |          name: yhteishaku
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna yhteishakujen oideja
-   |          example: [1.2.246.562.29.00000000000000000800]"})
+        - in: query
+          name: yhteishaku
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna yhteishakujen oideja
+          example: [1.2.246.562.29.00000000000000000800]"})
 
 (def pohjakoulutusvaatimus
   {:id :pohjakoulutusvaatimus
@@ -398,16 +398,16 @@
                                           (aggregation-filters-without-rajainkeys constraints ["pohjakoulutusvaatimus"] rajain-context)
                                           rajain-context))
    :desc "
-   |        - in: query
-   |          name: pohjakoulutusvaatimus
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"pohjakoulutusvaatimuskonfo\"-koodiston koodeja
-   |          example: [pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102]"})
+        - in: query
+          name: pohjakoulutusvaatimus
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"pohjakoulutusvaatimuskonfo\"-koodiston koodeja
+          example: [pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102]"})
 
 (def oppilaitos
   {:id :oppilaitos
@@ -418,16 +418,16 @@
                                    (merge rajain-context {:term-params {:size 10000
                                                                         :min_doc_count 1}})))
    :desc "
-   |        - in: query
-   |          name: oppilaitos
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna toteutusten oppilaitosten oideja
-   |          example: [1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356]"})
+        - in: query
+          name: oppilaitos
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna toteutusten oppilaitosten oideja
+          example: [1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356]"})
 
 (def lukiopainotukset
   {:id :lukiopainotukset
@@ -437,16 +437,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["lukiopainotukset"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: lukiopainotukset
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"lukiopainotukset\"-koodiston koodeja
-   |          example: [lukiopainotukset_0111, lukiopainotukset_001]"})
+        - in: query
+          name: lukiopainotukset
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"lukiopainotukset\"-koodiston koodeja
+          example: [lukiopainotukset_0111, lukiopainotukset_001]"})
 
 (def lukiolinjaterityinenkoulutustehtava
   {:id :lukiolinjaterityinenkoulutustehtava
@@ -456,16 +456,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["lukiolinjaterityinenkoulutustehtava"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: lukiolinjaterityinenkoulutustehtava
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna \"lukiolinjaterityinenkoulutustehtava\"-koodiston koodeja
-   |          example: [lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126]"})
+        - in: query
+          name: lukiolinjaterityinenkoulutustehtava
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna \"lukiolinjaterityinenkoulutustehtava\"-koodiston koodeja
+          example: [lukiolinjaterityinenkoulutustehtava_0100, lukiolinjaterityinenkoulutustehtava_0126]"})
 
 (def osaamisala
   {:id :osaamisala
@@ -475,16 +475,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["osaamisala"] rajain-context)
                                    rajain-context))
    :desc "
-   |        - in: query
-   |          name: osaamisala
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna ammatillisten koulutusten \"osaamisala\"-koodiston koodeja
-   |          example: [osaamisala_1756, osaamisala_3076]"})
+        - in: query
+          name: osaamisala
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna ammatillisten koulutusten \"osaamisala\"-koodiston koodeja
+          example: [osaamisala_1756, osaamisala_3076]"})
 
 (def hakukaynnissa
   {:id :hakukaynnissa
@@ -495,13 +495,13 @@
                                 (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
                                 rajain-context))
    :desc "
-   |        - in: query
-   |          name: hakukaynnissa
-   |          schema:
-   |            type: boolean
-   |            default: false
-   |          required: false
-   |          description: Palautetaan koulutukset, joiden haku on käynissä"})
+        - in: query
+          name: hakukaynnissa
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Palautetaan koulutukset, joiden haku on käynissä"})
 
 (defonce hakualkaapaivissa-buckets [30])
 
@@ -514,13 +514,13 @@
                                         (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
                                         rajain-context))
    :desc "
-   |        - in: query
-   |          name: hakualkaapaivissa
-   |          schema:
-   |            type: number
-   |            default: 30
-   |          required: false
-   |          description: Palautetaan koulutukset, joiden hakuaika alkaa x vuorokauden sisällä."})
+        - in: query
+          name: hakualkaapaivissa
+          schema:
+            type: number
+            default: 30
+          required: false
+          description: Palautetaan koulutukset, joiden hakuaika alkaa x vuorokauden sisällä."})
 
 
 (defn kevat-date? [date]
@@ -543,16 +543,16 @@
                                    (aggregation-filters-without-rajainkeys constraints ["alkamiskausi"] rajain-context)
                                    (merge rajain-context {:term-params {:include (get-alkamiskausi-terms-include)}})))
    :desc "
-   |        - in: query
-   |          name: alkamiskausi
-   |          style: form
-   |          explode: false
-   |          schema:
-   |            type: array
-   |            items:
-   |              type: string
-   |          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\"
-   |          example: [henkilokohtainen, 2022-kevat]"})
+        - in: query
+          name: alkamiskausi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna alkamiskausi-tunnisteita (merkkijono). Validit arvot ovat muotoa \"<vuosi>-kevat/syksy\" (esim. esim. \"2022-kevat\") tai \"henkilokohtainen\"
+          example: [henkilokohtainen, 2022-kevat]"})
 
 (def all-rajain-definitions
   [koulutustyyppi sijainti opetuskieli koulutusala opetustapa

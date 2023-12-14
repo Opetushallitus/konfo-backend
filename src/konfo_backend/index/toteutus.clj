@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require [konfo-backend.tools :refer :all]
             [konfo-backend.search.response :refer [parse-inner-hits filters-for-jarjestajat]]
-            [konfo-backend.elastic-tools :refer [get-source search get-sources]]
+            [konfo-backend.elastic-tools :refer [get-source get-sources-with-selected-fields search get-sources]]
             [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
 
 (defonce index "toteutus-kouta")
@@ -35,6 +35,10 @@
         (assoc t :hakutiedot (with-is-haku-auki (:hakutiedot t)))))))
 
 (defn get-many ([oids excludes] (get-sources index oids excludes)) ([oids] (get-many oids [])))
+
+(defn get-many-with-selected-fields
+  [oids includes]
+  (get-sources-with-selected-fields index oids includes))
 
 (defn- parse-kuvaukset
   [result]

@@ -97,6 +97,7 @@
               "
               default/schemas "\n"
               external/schemas "\n"
+              search/schemas "\n"
               suosikit/schemas
               ))))
 
