@@ -46,6 +46,7 @@
                                     :paattyy "2023-10-11T09:58"
                                     :hakuAuki false
                                     :hakuMennyt false}]
+                        :hakuAuki false
                         :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01"
                                              :nimi {:fi "tutkintonimikkeet_01 nimi fi"
                                                     :sv "tutkintonimikkeet_01 nimi sv"}}
@@ -77,6 +78,8 @@
                                         :otsikko {:fi "Katso osaamisalan tarkempi kuvaus tästä"
                                                   :sv "Katso osaamisalan tarkempi kuvaus tästä sv"}}]
                          :edellinenHaku nil
+                         :toinenAsteOnkoKaksoistutkinto false
+                         :hakuAuki false
                          :jarjestaaUrheilijanAmmKoulutusta false
                          :valintakokeet
                          [{:id "f50c7536-1c50-4fa8-b13c-514877be71a0"
