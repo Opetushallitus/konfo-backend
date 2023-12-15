@@ -18,6 +18,7 @@
                                       "tila"
                                       "metadata.kuvaus"
                                       "metadata.hakuaika"
+                                      "hakutiedot.hakuOid"
                                       "hakutiedot.hakukohteet.nimi"
                                       "hakutiedot.hakukohteet.jarjestyspaikka"
                                       "hakutiedot.hakukohteet.hakuajat"
