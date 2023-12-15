@@ -27,6 +27,7 @@
                                    :sv "kuvaus sv"}
                         :logo "https://testi.fi/oppilaitos-logo/oid/logo.png"
                         :toteutusOid "1.2.246.562.17.000001"
+                        :hakuOid "1.2.246.562.29.0000001"
                         :oppilaitosNimi {:fi "Jokin järjestyspaikka"
                                          :sv "Jokin järjestyspaikka sv"}
                         :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka"
@@ -46,7 +47,7 @@
                         :hakukohdeOid "1.2.246.562.20.0000001"}]
                       response))))
       (testing "ok with hakuAuki"
-        (set-fixed-time "2023-10-11T9:50:01") 
+        (set-fixed-time "2023-10-11T9:50:01")
         (let [response (get-ok (suosikit-url [suosikki-hakukohde-oid1]))]
           (is (match? [{:hakuAuki true}] response)))))
     (testing "Get suosikit vertailu"
