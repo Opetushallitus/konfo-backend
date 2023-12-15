@@ -68,7 +68,7 @@
 
 (defn  hakutieto-hakukohde-haku-kaynnissa? [hakukohdetieto]
   (and (julkaistu? hakukohdetieto)
-       (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohdetieto))))
+       (boolean (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohdetieto)))))
 
 (defn toteutus-haku-kaynnissa?
   [toteutus]

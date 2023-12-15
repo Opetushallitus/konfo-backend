@@ -17,10 +17,10 @@
   (apply url-with-query-params "/konfo-backend/suosikit-vertailu" [:hakukohde-oids hakukohde-oids]))
 
 (deftest suosikit-test
-  (set-fixed-time "2020-01-02T12:00:01")
-  (let [suosikki-hakukohde-oid1  "1.2.246.562.20.0000001"]
+  (let [suosikki-hakukohde-oid1 "1.2.246.562.20.0000001"]
     (testing "Get suosikit"
       (testing "ok"
+        (set-fixed-time "2020-01-02T12:00:01")
         (let [response (get-ok (suosikit-url [suosikki-hakukohde-oid1]))]
           (is (match? [{:tila "julkaistu"
                         :esittely {:fi "kuvaus"
@@ -36,16 +36,6 @@
                                                                :sv "kunta_297 nimi sv"}}
                                           :oid "1.2.246.562.10.67476956288"}
                         :nimi {:fi "nimi fi" :sv "nimi sv"}
-                        :hakuajat [{:formatoituAlkaa {:fi "11.10.2023 klo 09:49"
-                                                      :sv "11.10.2023 kl. 09:49"
-                                                      :en "Oct. 11, 2023 at 09:49 am UTC+3"}
-                                    :formatoituPaattyy {:fi "11.10.2023 klo 09:58"
-                                                        :sv "11.10.2023 kl. 09:58"
-                                                        :en "Oct. 11, 2023 at 09:58 am UTC+3"}
-                                    :alkaa "2023-10-11T09:49"
-                                    :paattyy "2023-10-11T09:58"
-                                    :hakuAuki false
-                                    :hakuMennyt false}]
                         :hakuAuki false
                         :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01"
                                              :nimi {:fi "tutkintonimikkeet_01 nimi fi"
@@ -54,9 +44,14 @@
                                              :nimi {:fi "tutkintonimikkeet_02 nimi fi"
                                                     :sv "tutkintonimikkeet_02 nimi sv"}}]
                         :hakukohdeOid "1.2.246.562.20.0000001"}]
-                      response)))))
+                      response))))
+      (testing "ok with hakuAuki"
+        (set-fixed-time "2023-10-11T9:50:01") 
+        (let [response (get-ok (suosikit-url [suosikki-hakukohde-oid1]))]
+          (is (match? [{:hakuAuki true}] response)))))
     (testing "Get suosikit vertailu"
       (testing "ok"
+        (set-fixed-time "2020-01-02T12:00:01")
         (let [response (get-ok (suosikit-vertailu-url [suosikki-hakukohde-oid1]))]
           (is (match?  [{:koulutustyyppi "amm"
                          :nimi {:fi "Hakukohde fi" :sv "Hakukohde sv"}
@@ -118,4 +113,8 @@
                                           :jarjestamispaikka
                                           {:fi "Järjestämispaikka fi" :sv "Järjestämispaikka sv"}
                                           :lisatietoja {:fi "lisätieto fi" :sv "lisätieto sv"}}]}]}]
-                       response)))))))
+                       response))))
+      (testing "ok with hakuAuki"
+        (set-fixed-time "2023-10-11T9:50:01")
+        (let [response (get-ok (suosikit-vertailu-url [suosikki-hakukohde-oid1]))]
+          (is (match? [{:hakuAuki true}] response)))))))
