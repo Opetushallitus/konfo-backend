@@ -36,7 +36,7 @@
          (map #(toteutus/filter-haut-and-hakukohteet % false))
          (map (fn [toteutus]
                 (->> (:hakutiedot toteutus)
-                     (mapcat :hakukohteet)
+                     (mapcat (fn [hakutieto] (map #(assoc % :hakuOid (:hakuOid hakutieto)) (:hakukohteet hakutieto))))
                      (map (fn [hk] (let [oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
                                      (-> hk
                                          (assoc :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi]))
