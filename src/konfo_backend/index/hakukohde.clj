@@ -30,8 +30,10 @@
     (search index
             #(->> % :hits :hits (map :_source) (vec))
             :_source {:excludes (vec excludes)}
+            :size 1000
             :query {:terms {k (vec values)}}))
   ([k values]
     (search index
             #(->> % :hits :hits (map :_source) (vec))
+            :size 1000
             :query {:terms {k (vec values)}})))
