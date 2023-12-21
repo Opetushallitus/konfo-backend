@@ -459,7 +459,7 @@
 (defn with-uri-logging
   ([handler]
    (fn [^Exception e data req]
-     (log/error (str "Error when handling request for uri " (:uri req) " with params " (:params req)) e)
+     (log/error (str "Error when handling request for uri " (:uri req) " with params " (:params req)) (.getMessage e))
      (handler e data req))))
 
 (def routes
