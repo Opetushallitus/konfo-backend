@@ -33,9 +33,7 @@
   ([name]
    {(s/->OptionalKey :fi) (st/schema s/Str (when name {:description (format "Suomenkielinen %s, jos määritelty" name)}))
     (s/->OptionalKey :sv) (st/schema s/Str (when name {:description (format "Ruotsinkielinen %s, jos määritelty" name)}))
-    (s/->OptionalKey :en) (st/schema s/Str (when name {:description (format "Englanninkielinen %s, jos määritelty" name)}))
-    (s/->OptionalKey :_id) (st/schema s/Str)
-    (s/->OptionalKey :_tunniste) (st/schema s/Str)})
+    (s/->OptionalKey :en) (st/schema s/Str (when name {:description (format "Englanninkielinen %s, jos määritelty" name)}))})
   ([] (create-kielistetty-schema nil)))
 
 (s/defschema Kielistetty (create-kielistetty-schema))
