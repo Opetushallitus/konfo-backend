@@ -27,6 +27,7 @@
 (s/defschema SuosikitItem
   {:nimi (st/schema Nimi {:description "Hakukohteen nimi eri kielillä"})
    :hakukohdeOid (st/schema s/Str {:description "Hakukohteen yksilöivä tunniste"})
+   :hakuOid (st/schema s/Str {:description "Hakukohteeseen liitetyn haun yksilöivä tunniste"})
    :toteutusOid (st/schema s/Str {:description "Hakukohteeseen liitetyn toteutuksen yksilöivä tunniste"
                                   :example "1.2.246.562.17.00000000000000000009"})
    :oppilaitosNimi (st/schema Nimi {:description "Hakukohteen järjestyspaikan oppilaitoksen nimi"})
@@ -34,8 +35,8 @@
    :esittely (st/schema Kuvaus {:description "Hakukohteen järjestyspaikan oppilaitoksen esittely eri kielillä"})
    (s/optional-key :tutkintonimikkeet) (st/schema [(->Koodi s/Str)] {:description "Lista tutkintonimikkeitä käännöksineen (tutkintonimikkeet-koodisto)"})
    :jarjestyspaikka (st/schema Organisaatio {:description "Hakukohteen järjestyspaikan tiedot"})
-   :jarjestaaUrheilijanAmmKoulutusta s/Bool
-   :hakuajat [HakutietoHakuaika]})
+   :jarjestaaUrheilijanAmmKoulutusta s/Bool 
+   :hakuAuki (st/schema s/Bool {:description "Onko hakukohteen hakuaika käynnissä?"})})
 
 (s/defschema Pistetieto
   {:tarjoaja s/Str
@@ -64,6 +65,7 @@
               :edellinenHaku (st/schema Pistetieto {:description "Edellisen haun tiedot"})
               :valintakokeet (st/schema [Valintakoe] {:description "Hakukohteeseen liittyvät valintakokeet"})
               :toinenAsteOnkoKaksoistutkinto (st/schema s/Bool {:description "Onko hakukohteen toisen asteen koulutuksessa mahdollista suorittaa kaksoistutkinto?"})
+              :hakuAuki (st/schema s/Bool {:description "Onko hakukohteen hakuaika käynnissä?"})
               (s/->OptionalKey :lukiodiplomit) (st/schema [LukiodiplomiTieto])
               :kielivalikoima (st/schema Kielivalikoima)
               :jarjestaaUrheilijanAmmKoulutusta s/Bool}))

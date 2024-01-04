@@ -5,8 +5,7 @@
             [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.index.toteutus :as toteutus]
             [konfo-backend.search.response :refer [hits]]
-            [konfo-backend.tools :refer :all]
-            [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
+            [konfo-backend.tools :refer :all]))
 
 (defn get-by-hakukohde-oids
   [hakukohde-oids-seq]
@@ -19,6 +18,7 @@
                                       "tila"
                                       "metadata.kuvaus"
                                       "metadata.hakuaika"
+                                      "hakutiedot.hakuOid"
                                       "hakutiedot.hakukohteet.nimi"
                                       "hakutiedot.hakukohteet.jarjestyspaikka"
                                       "hakutiedot.hakukohteet.hakuajat"
@@ -34,18 +34,16 @@
         orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
     (->> toteutukset
          (map #(toteutus/filter-haut-and-hakukohteet % false))
-         (map (fn [toteutus] (-> toteutus
-                                 (#(assoc % :hakuAuki (toteutus-haku-kaynnissa? %)))
-                                 (#(assoc % :hakutiedot (with-is-haku-auki (:hakutiedot %)))))))
          (map (fn [toteutus]
                 (->> (:hakutiedot toteutus)
-                     (mapcat :hakukohteet)
+                     (mapcat (fn [hakutieto] (map #(assoc % :hakuOid (:hakuOid hakutieto)) (:hakukohteet hakutieto))))
                      (map (fn [hk] (let [oppilaitos (get-in orgs-by-oid [(get-in hk [:jarjestyspaikka :oid]) :oppilaitos])]
                                      (-> hk
                                          (assoc :oppilaitosNimi (get-in oppilaitos [:organisaatio :nimi]))
                                          (assoc :esittely (get-in toteutus [:metadata :kuvaus]))
                                          (assoc :logo (get-in oppilaitos [:logo]))
                                          (assoc :toteutusOid (get-in toteutus [:oid]))
+                                         (assoc :hakuAuki (hakutieto-hakukohde-haku-kaynnissa? hk))
                                          (assoc :tutkintonimikkeet (get-in koulutukset [(:koulutusOid toteutus) :metadata :tutkintonimike])))))))))
          (flatten)
          (filter #(contains? hakukohde-oids (:hakukohdeOid %))))))
@@ -59,8 +57,10 @@
         osat-by-oid (mapcat #(map (fn [osa] [(:oid osa) %]) (:osat %)) oppilaitokset-res)
         oppilaitokset-by-oid (map (fn [oppilaitos] [(:oid oppilaitos) oppilaitos]) oppilaitokset-res)
         orgs-by-oid (into {} (concat osat-by-oid oppilaitokset-by-oid))]
-    (map (fn [hakukohde] (let [toteutus-metadata (get-in toteutukset-by-oid [(:toteutusOid hakukohde) :metadata])
-                               oppilaitos (get-in orgs-by-oid [(get-in hakukohde [:jarjestyspaikka :oid]) :oppilaitos])]
+    (map (fn [hakukohde] (let [toteutus (get-in toteutukset-by-oid [(:toteutusOid hakukohde)])
+                               toteutus-metadata (:metadata toteutus)
+                               oppilaitos (get-in orgs-by-oid [(get-in hakukohde [:jarjestyspaikka :oid]) :oppilaitos])
+                               hakutieto-hakukohde (get-hakukohde-from-hakutiedot (:hakutiedot toteutus) (:oid hakukohde))]
                            {:koulutustyyppi (get-in toteutus-metadata [:tyyppi])
                             :toteutusOid (:toteutusOid hakukohde)
                             :hakukohdeOid (:oid hakukohde)
@@ -78,6 +78,7 @@
                             :edellinenHaku (-> hakukohde
                                                (get-in [:metadata :pistehistoria])
                                                (last))
+                            :hakuAuki (hakutieto-hakukohde-haku-kaynnissa? hakutieto-hakukohde)
                             :valintakokeet (:valintakokeet hakukohde)
                             :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hakukohde)
                             :jarjestaaUrheilijanAmmKoulutusta (get-in hakukohde [:metadata :jarjestaaUrheilijanAmmKoulutusta])

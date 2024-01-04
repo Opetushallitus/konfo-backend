@@ -60,6 +60,16 @@
       false
       (time/after? (time/now) lt))))
 
+(defn get-hakukohde-from-hakutiedot [hakutiedot hakukohdeOid]
+  (->> hakutiedot
+       (mapcat (fn [hakutieto] (:hakukohteet hakutieto)))
+       (filter (fn [hakukohdetieto] (= (:hakukohdeOid hakukohdetieto) hakukohdeOid)))
+       first))
+
+(defn  hakutieto-hakukohde-haku-kaynnissa? [hakukohdetieto]
+  (and (julkaistu? hakukohdetieto)
+       (boolean (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohdetieto)))))
+
 (defn toteutus-haku-kaynnissa?
   [toteutus]
   (let [hakutiedot (get-in toteutus [:hakutiedot])
@@ -67,9 +77,7 @@
     (if (empty? hakutiedot)
       (hakuaika-kaynnissa? toteutuksenHakuaika)
       (some (fn [hakutieto]
-              (some (fn [hakukohde]
-                      (and (julkaistu? hakukohde)
-                           (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakukohde))))
+              (some hakutieto-hakukohde-haku-kaynnissa?
                     (:hakukohteet hakutieto)))
             hakutiedot))))
 
@@ -80,6 +88,7 @@
     (if (empty? hakutiedot)
       (hakuaika-kaynnissa? toteutuksenHakuaika)
       (some (fn [hakutieto]
+              ; search-indeksissä hakutiedoilla ei ole hakukohteita, vaan hakuajat on hakutiedon juuressa
               (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
             hakutiedot))))
 
