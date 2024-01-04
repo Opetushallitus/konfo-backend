@@ -46,7 +46,9 @@
    :valintatapajonoOid s/Str
    :hakukohdeOid s/Str
    :hakuOid s/Str
-   :valintatapajonoTyyppi s/Str})
+   :valintatapajonoTyyppi s/Str
+   (s/optional-key :aloituspaikat) s/Int
+   (s/optional-key :ensisijaisestiHakeneet) s/Int})
 
 (s/defschema KayntiOsoite (st/schema (create-kielistetty-schema "osoite")))
 (s/defschema SuosikitVertailuItem
