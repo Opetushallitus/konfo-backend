@@ -42,10 +42,15 @@
                            "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with a hakutieto query"
-    (is (= [{:nested {:path  "search_terms.hakutiedot"
-                      :query {:bool
-                              {:filter
-                               {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}}}]
+    (is (= [{:nested
+             {:path "search_terms.hakutiedot"
+              :query {:bool
+                      {:should [{:bool
+                                 {:filter
+                                  {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                {:bool
+                                 {:must_not
+                                  {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}]
            (common-filters {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}
                            "2022-08-26T07:21"))))
 
@@ -79,9 +84,13 @@
                                {:bool
                                 {:filter
                                  [{:nested {:path  "search_terms.hakutiedot"
-                                            :query {:bool {:filter
-                                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset
-                                                                   "pohjakoulutusvaatimuskonfo_am"}}}}}}
+                                            :query {:bool
+                                                    {:should [{:bool
+                                                               {:filter
+                                                                {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                                              {:bool
+                                                               {:must_not
+                                                                {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}
                                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
                                :aggs {:real_hits {:reverse_nested {}}}})
                 ((:make-agg jotpa) {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]} default-ctx)))))

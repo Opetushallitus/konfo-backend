@@ -93,6 +93,16 @@
                        {:nested {:path "search_terms.hakutiedot.hakuajat"
                                  :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}}]}})))
 
+(defn pohjakoulutusvaatimukset-filter-query
+  [pohjakoulutusvaatimukset]
+  (when pohjakoulutusvaatimukset
+    {:nested
+     {:path "search_terms.hakutiedot"
+      :query
+      {:bool
+       {:should [{:bool {:filter (->terms-query "hakutiedot.pohjakoulutusvaatimukset" pohjakoulutusvaatimukset)}}
+                 {:bool {:must_not {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}))
+
 
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))
