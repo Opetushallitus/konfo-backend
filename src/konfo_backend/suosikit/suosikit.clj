@@ -83,5 +83,6 @@
                             :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hakukohde)
                             :jarjestaaUrheilijanAmmKoulutusta (get-in hakukohde [:metadata :jarjestaaUrheilijanAmmKoulutusta])
                             :lukiodiplomit (get-in toteutus-metadata [:diplomit])
-                            :kielivalikoima (get-in toteutus-metadata [:kielivalikoima])}))
+                            :kielivalikoima (get-in toteutus-metadata [:kielivalikoima])
+                            :aloituspaikat (get-in hakukohde [:metadata :aloituspaikat :lukumaara])}))
          hakukohteet)))
