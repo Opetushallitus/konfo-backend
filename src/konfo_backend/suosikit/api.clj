@@ -41,7 +41,7 @@
 (s/defschema Pistetieto
   {:tarjoaja s/Str
    :hakukohdekoodi s/Str
-   :pisteet s/Num
+   (s/optional-key :pisteet) s/Num
    :vuosi s/Str
    :valintatapajonoOid s/Str
    :hakukohdeOid s/Str

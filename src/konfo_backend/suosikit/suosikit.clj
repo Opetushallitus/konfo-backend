@@ -60,7 +60,8 @@
     (map (fn [hakukohde] (let [toteutus (get-in toteutukset-by-oid [(:toteutusOid hakukohde)])
                                toteutus-metadata (:metadata toteutus)
                                oppilaitos (get-in orgs-by-oid [(get-in hakukohde [:jarjestyspaikka :oid]) :oppilaitos])
-                               hakutieto-hakukohde (get-hakukohde-from-hakutiedot (:hakutiedot toteutus) (:oid hakukohde))]
+                               hakutieto-hakukohde (get-hakukohde-from-hakutiedot (:hakutiedot toteutus) (:oid hakukohde))
+                               edellisen-haun-alkamisvuosi (try (- (Integer/parseInt (get-in hakukohde [:paateltyAlkamiskausi :vuosi])) 1) (catch Exception _ nil))]
                            {:koulutustyyppi (get-in toteutus-metadata [:tyyppi])
                             :toteutusOid (:toteutusOid hakukohde)
                             :hakukohdeOid (:oid hakukohde)
@@ -75,9 +76,9 @@
                                         (get-in [:kayntiosoiteStr]))
                             :opiskelijoita (get-in oppilaitos [:metadata :opiskelijoita])
                             :osaamisalat (get-in toteutus-metadata [:osaamisalat])
-                            :edellinenHaku (-> hakukohde
-                                               (get-in [:metadata :pistehistoria])
-                                               (last))
+                            :edellinenHaku (or (->> (get-in hakukohde [:metadata :pistehistoria])
+                                                    (filter #(= (:vuosi %) (str edellisen-haun-alkamisvuosi)))
+                                                    (first)) (when edellisen-haun-alkamisvuosi {:vuosi edellisen-haun-alkamisvuosi}))
                             :hakuAuki (hakutieto-hakukohde-haku-kaynnissa? hakutieto-hakukohde)
                             :valintakokeet (:valintakokeet hakukohde)
                             :toinenAsteOnkoKaksoistutkinto (:toinenAsteOnkoKaksoistutkinto hakukohde)
