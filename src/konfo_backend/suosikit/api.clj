@@ -35,18 +35,20 @@
    :esittely (st/schema Kuvaus {:description "Hakukohteen järjestyspaikan oppilaitoksen esittely eri kielillä"})
    (s/optional-key :tutkintonimikkeet) (st/schema [(->Koodi s/Str)] {:description "Lista tutkintonimikkeitä käännöksineen (tutkintonimikkeet-koodisto)"})
    :jarjestyspaikka (st/schema Organisaatio {:description "Hakukohteen järjestyspaikan tiedot"})
-   :jarjestaaUrheilijanAmmKoulutusta s/Bool 
+   :jarjestaaUrheilijanAmmKoulutusta s/Bool
    :hakuAuki (st/schema s/Bool {:description "Onko hakukohteen hakuaika käynnissä?"})})
 
 (s/defschema Pistetieto
   {:tarjoaja s/Str
    :hakukohdekoodi s/Str
-   :pisteet s/Num
+   (s/optional-key :pisteet) s/Num
    :vuosi s/Str
    :valintatapajonoOid s/Str
    :hakukohdeOid s/Str
    :hakuOid s/Str
-   :valintatapajonoTyyppi s/Str})
+   :valintatapajonoTyyppi s/Str
+   (s/optional-key :aloituspaikat) s/Int
+   (s/optional-key :ensisijaisestiHakeneet) s/Int})
 
 (s/defschema KayntiOsoite (st/schema (create-kielistetty-schema "osoite")))
 (s/defschema SuosikitVertailuItem
@@ -66,7 +68,8 @@
               :valintakokeet (st/schema [Valintakoe] {:description "Hakukohteeseen liittyvät valintakokeet"})
               :toinenAsteOnkoKaksoistutkinto (st/schema s/Bool {:description "Onko hakukohteen toisen asteen koulutuksessa mahdollista suorittaa kaksoistutkinto?"})
               :hakuAuki (st/schema s/Bool {:description "Onko hakukohteen hakuaika käynnissä?"})
-              (s/->OptionalKey :lukiodiplomit) (st/schema [LukiodiplomiTieto])
+              (s/optional-key :aloituspaikat) (st/schema s/Int {:description "Hakukohteen aloituspaikat"})
+              (s/optional-key :lukiodiplomit) (st/schema [LukiodiplomiTieto])
               :kielivalikoima (st/schema Kielivalikoima)
               :jarjestaaUrheilijanAmmKoulutusta s/Bool}))
 

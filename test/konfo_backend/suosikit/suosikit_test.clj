@@ -77,6 +77,7 @@
                          :toinenAsteOnkoKaksoistutkinto false
                          :hakuAuki false
                          :jarjestaaUrheilijanAmmKoulutusta false
+                         :aloituspaikat 100
                          :valintakokeet
                          [{:id "f50c7536-1c50-4fa8-b13c-514877be71a0"
                            :tyyppi {:koodiUri "valintakokeentyyppi_1#1"
