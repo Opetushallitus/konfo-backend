@@ -122,11 +122,16 @@
    (with-real-hits agg nil)))
 
 (defn- rajain-terms-agg
-  [field-name rajain-context]
-  (let [default-terms {:field field-name
-                       :min_doc_count 0
-                       :size 1000}]
-    (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
+  ([field-name rajain-context missing-bucket-prefix]
+   (let [base-terms {:field field-name
+                     :min_doc_count 0
+                     :size 1000}
+         default-terms (if missing-bucket-prefix
+                         (assoc base-terms :missing (str missing-bucket-prefix "_missing"))
+                         base-terms)]
+     (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
+  ([field-name rajain-context]
+   (rajain-terms-agg field-name rajain-context nil)))
 
 (defn- constrained-agg [constraints filtered-aggs plain-aggs]
   (if (not-empty constraints)
@@ -163,13 +168,15 @@
    (max-agg-filter field-name nil)))
 
 (defn nested-rajain-aggregation
-  [rajain-key field-name constraints rajain-context]
-  (let [nested-agg {:nested  {:path (-> field-name
-                                        (replace-first ".keyword" "")
-                                        (split #"\.")
-                                        (drop-last) (#(join "." %)))}
-                    :aggs {:rajain (rajain-terms-agg field-name rajain-context)}}]
-    (constrained-agg
-     constraints
-     {(keyword rajain-key) nested-agg}
-     nested-agg)))
+  ([rajain-key field-name constraints rajain-context missing-bucket-prefix]
+   (let [nested-agg {:nested  {:path (-> field-name
+                                         (replace-first ".keyword" "")
+                                         (split #"\.")
+                                         (drop-last) (#(join "." %)))}
+                     :aggs {:rajain (rajain-terms-agg field-name rajain-context missing-bucket-prefix)}}]
+     (constrained-agg
+      constraints
+      {(keyword rajain-key) nested-agg}
+      nested-agg)))
+  ([rajain-key field-name constraints rajain-context]
+   (nested-rajain-aggregation rajain-key field-name constraints rajain-context nil)))

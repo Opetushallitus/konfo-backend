@@ -3,7 +3,8 @@
    [konfo-backend.tools :refer [current-time-as-kouta-format]]
    [clj-time.core :as time]
    [clojure.string :refer [replace-first]]
-   [konfo-backend.search.rajain-tools :refer :all]))
+   [konfo-backend.search.rajain-tools :refer :all]
+   [clojure.tools.logging :as log]))
 
 ;; Esitellään myöhemmin alustettu muuttuja ristikkäisten riippuvuuksien vuoksi. Tätä käytetään heti
 ;; alla olevissa funktioissa, vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta 
@@ -396,7 +397,7 @@
    :make-agg (fn [constraints rajain-context]
                (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                           (aggregation-filters-without-rajainkeys constraints ["pohjakoulutusvaatimus"] rajain-context)
-                                          rajain-context))
+                                          rajain-context "pohjakoulutusvaatimuskonfo"))
    :desc "
         - in: query
           name: pohjakoulutusvaatimus

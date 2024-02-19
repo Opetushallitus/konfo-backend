@@ -3,7 +3,8 @@
             [konfo-backend.index.oppilaitos :as oppilaitos]
             [konfo-backend.koodisto.koodisto :as k]
             [konfo-backend.tools :refer [koodi-uri-no-version reduce-merge-map]]
-            [konfo-backend.index.lokalisointi :as lokalisointi]))
+            [konfo-backend.index.lokalisointi :as lokalisointi]
+            [clojure.string :as str]))
 
 (defn- koodi->rajain-counts
   [rajain-counts koodi]
@@ -172,6 +173,28 @@
             {}
             rajain-counts)))
 
+(defn- add-missing-counts-to-codes
+  [rajain-counts prefix missing-code]
+  (let [missing-count (get rajain-counts missing-code 0)
+        counts-without-missing (dissoc rajain-counts missing-code)
+        add-missing-count-fn (fn [code count] (if (str/starts-with? (name code) prefix)
+                                                (+ count missing-count)
+                                                count))]
+      (reduce (fn [final-counts [code count]]
+                (assoc final-counts code (add-missing-count-fn code count)))
+              {}
+              counts-without-missing)))
+
+(defn- pohjakoulutusvaatimus-counts
+  [rajain-counts]
+  ; All pohjakoulutusvaatimus results should include values (and hence counts) from
+  ; documents that are missing the code set value - interpreted as "ei pohjakoulutusvaatimusta"
+  (let [counts-with-missing (add-missing-counts-to-codes rajain-counts
+                                                         "pohjakoulutusvaatimuskonfo"
+                                                         :pohjakoulutusvaatimuskonfo_missing)
+        counts (koodisto->rajain-counts counts-with-missing "pohjakoulutusvaatimuskonfo")]
+    counts))
+
 (defn generate-default-rajain-counts
   ([rajain-counts]
    (let [koodisto-counts (partial koodisto->rajain-counts rajain-counts)]
@@ -190,7 +213,7 @@
       :tyovoimakoulutus (tyovoimakoulutus rajain-counts)
       :taydennyskoulutus (taydennyskoulutus rajain-counts)
       :yhteishaku (yhteishaku rajain-counts)
-      :pohjakoulutusvaatimus (koodisto-counts "pohjakoulutusvaatimuskonfo")
+      :pohjakoulutusvaatimus (pohjakoulutusvaatimus-counts rajain-counts)
       :osaamisala (koodisto-counts "osaamisala")
       :lukiolinjaterityinenkoulutustehtava (koodisto-counts "lukiolinjaterityinenkoulutustehtava")
       :lukiopainotukset (koodisto-counts "lukiopainotukset")
