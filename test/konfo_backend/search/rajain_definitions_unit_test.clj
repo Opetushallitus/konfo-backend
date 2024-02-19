@@ -106,7 +106,8 @@
                                  :terms
                                  {:field         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                   :min_doc_count 0
-                                  :size          1000}}}
+                                  :size          1000
+                                  :missing       "pohjakoulutusvaatimuskonfo_missing"}}}
                                :nested {:path "search_terms.hakutiedot"}})
                 ((:make-agg pohjakoulutusvaatimus) {} default-ctx)))))
 
@@ -121,7 +122,8 @@
                                   {:reverse_nested {}}}
                                  :terms {:field         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                          :min_doc_count 0
-                                         :size          1000}}}
+                                         :size          1000
+                                         :missing       "pohjakoulutusvaatimuskonfo_missing"}}}
                                :nested {:path "search_terms.hakutiedot"}}}
                              :filter {:bool {:filter [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}]}}})
               ((:make-agg pohjakoulutusvaatimus) {:jotpa true} default-ctx))))
