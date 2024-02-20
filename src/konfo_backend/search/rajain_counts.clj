@@ -172,6 +172,18 @@
             {}
             rajain-counts)))
 
+(defn- pohjakoulutusvaatimus-counts
+  [rajain-counts]
+  ; All pohjakoulutusvaatimus results should include values (and hence counts) from
+  ; documents that are missing the code set value - interpreted as "ei pohjakoulutusvaatimusta"
+  (let [missing-count (get rajain-counts :pohjakoulutusvaatimuskonfo_missing 0)
+        koodisto-counts (koodisto->rajain-counts rajain-counts "pohjakoulutusvaatimuskonfo")]
+    (reduce (fn [final-counts [code data]]
+              (assoc final-counts code
+                     (update data :count #(+ missing-count %))))
+            {}
+            koodisto-counts)))
+
 (defn generate-default-rajain-counts
   ([rajain-counts]
    (let [koodisto-counts (partial koodisto->rajain-counts rajain-counts)]
@@ -190,7 +202,7 @@
       :tyovoimakoulutus (tyovoimakoulutus rajain-counts)
       :taydennyskoulutus (taydennyskoulutus rajain-counts)
       :yhteishaku (yhteishaku rajain-counts)
-      :pohjakoulutusvaatimus (koodisto-counts "pohjakoulutusvaatimuskonfo")
+      :pohjakoulutusvaatimus (pohjakoulutusvaatimus-counts rajain-counts)
       :osaamisala (koodisto-counts "osaamisala")
       :lukiolinjaterityinenkoulutustehtava (koodisto-counts "lukiolinjaterityinenkoulutustehtava")
       :lukiopainotukset (koodisto-counts "lukiopainotukset")

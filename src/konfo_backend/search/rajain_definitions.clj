@@ -392,11 +392,11 @@
 
 (def pohjakoulutusvaatimus
   {:id :pohjakoulutusvaatimus
-   :make-query #(nested-query "hakutiedot" "pohjakoulutusvaatimukset" %)
+   :make-query #(pohjakoulutusvaatimukset-filter-query %)
    :make-agg (fn [constraints rajain-context]
                (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                           (aggregation-filters-without-rajainkeys constraints ["pohjakoulutusvaatimus"] rajain-context)
-                                          rajain-context))
+                                          (merge rajain-context {:term-params {:missing "pohjakoulutusvaatimuskonfo_missing"}})))
    :desc "
         - in: query
           name: pohjakoulutusvaatimus

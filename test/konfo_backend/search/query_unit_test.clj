@@ -146,7 +146,11 @@
                               :koulutusala (default-agg "search_terms.koulutusalat.keyword")
                               :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid")
                               :kunta (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
-                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset")
+                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus
+                                                                         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                         nil
+                                                                         {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                         nil)
                               :maakunta (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"} nil)
                               :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa")
                               :opetustapa (default-agg "search_terms.opetustavat.keyword")
@@ -226,7 +230,11 @@
                              {:koulutusala (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
                               :yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" jotpa-bool-filter nil nil)
                               :kunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "kunta.*"} nil)
-                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset" jotpa-bool-filter nil nil)
+                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus
+                                                                         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                         jotpa-bool-filter
+                                                                         {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                         nil)
                               :maakunta (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "maakunta.*"} nil)
                               :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" jotpa-bool-filter nil nil)
                               :opetustapa (default-agg "search_terms.opetustavat.keyword" jotpa-bool-filter)
@@ -326,7 +334,11 @@
                              {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :kunta (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
                               :maakunta (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
-                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset" onkotuleva-sijainti-bool-filter nil "search_terms")
+                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus
+                                                                         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                         onkotuleva-sijainti-bool-filter
+                                                                         {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                         "search_terms")
                               :oppilaitos (default-agg "search_terms.oppilaitosOid.keyword" onkotuleva-sijainti-bool-filter {:min_doc_count 1
                                                                                                                              :size          10000} "search_terms")
                               :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
@@ -424,7 +436,11 @@
                              {:yhteishaku (default-nested-agg :yhteishaku "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :kunta (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
                               :maakunta (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
-                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus "search_terms.hakutiedot.pohjakoulutusvaatimukset" onkotuleva-sijainti-bool-filter nil "search_terms")
+                              :pohjakoulutusvaatimus (default-nested-agg :pohjakoulutusvaatimus
+                                                                         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                         onkotuleva-sijainti-bool-filter
+                                                                         {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                         "search_terms")
                               :hakutapa (default-nested-agg :hakutapa "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :opetustapa (default-agg "search_terms.opetustavat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                               :opetusaika (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
