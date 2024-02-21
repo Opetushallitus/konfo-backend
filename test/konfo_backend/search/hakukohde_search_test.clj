@@ -37,8 +37,8 @@
       (is (= {:oid "1.2.246.562.20.0000011"
               :nimi {:fi "nimi fi" :sv "nimi sv"}
               :hakuOid "1.2.246.562.29.0000006"
-              :organisaatio {:nimi {:fi "Kiva ammattikorkeakoulu" :sv "Kiva ammattikorkeakoulu sv"}}
               :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}}
+              :jarjestyspaikkaEnriched {:fi "Oppilaitos, Järjestämispaikka fi" :sv "Oppilaitos, Järjestämispaikka sv"}
               :toteutus {:oid "1.2.246.562.17.000008"}
               :koulutustyyppi "yo"
               :ammatillinenPerustutkintoErityisopetuksena nil}
@@ -47,3 +47,20 @@
     (let [response (search :kohdejoukko "haunkohdejoukko_11")]
       (is (= 0 (count (:hits response))))
       (is (= 0 (:total response))))))
+
+(not
+  (=
+    {:oid "1.2.246.562.20.0000011",
+     :nimi {:fi "nimi fi", :sv "nimi sv"},
+     :hakuOid "1.2.246.562.29.0000006",
+     :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka", :sv "Jokin järjestyspaikka sv"}},
+     :jarjestyspaikkaEnriched {:fi "Oppilaitos, Järjestämispaikka fi", :sv "Oppilaitos, Järjestämispaikka sv"},
+     :toteutus {:oid "1.2.246.562.17.000008"}, :koulutustyyppi "yo",
+     :ammatillinenPerustutkintoErityisopetuksena nil}
+    {:oid "1.2.246.562.20.0000011",
+     :nimi {:fi "nimi fi", :sv "nimi sv"},
+     :hakuOid "1.2.246.562.29.0000006",
+     :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka", :sv "Jokin järjestyspaikka sv"}},
+     :toteutus {:oid "1.2.246.562.17.000008"},
+     :koulutustyyppi "yo",
+     :ammatillinenPerustutkintoErityisopetuksena nil}))
