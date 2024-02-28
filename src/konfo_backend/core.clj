@@ -17,9 +17,8 @@
     [konfo-backend.default-api :as default]
     [konfo-backend.index.api :as index]
     [konfo-backend.search.api :as search]
-    [konfo-backend.palaute.api :as palaute]
     [konfo-backend.external.api :as external]
-    [konfo-backend.sitemap.api :as sitemap] 
+    [konfo-backend.sitemap.api :as sitemap]
     [konfo-backend.suosikit.api :as suosikit]
     [clojure.string]
     [ring.util.response :as resp]
@@ -76,7 +75,7 @@
               |  contact:
               |    name: \"Opetushallitus\"
               |    email: \"verkkotoimitus_opintopolku@oph.fi\"
-              |    url: \"https://www.oph.fi/\" 
+              |    url: \"https://www.oph.fi/\"
               |  license:
               |    name: \"EUPL 1.1 or latest approved by the European Commission\"
               |    url: \"http://www.osor.eu/eupl/\"
@@ -87,7 +86,6 @@
               default/paths "\n"
               index/paths "\n"
               search/paths "\n"
-              palaute/paths "\n"
               external/paths "\n"
               suosikit/paths "\n"
               sitemap/paths
@@ -124,7 +122,6 @@
       default/routes
       index/routes
       search/routes
-      palaute/routes
       external/routes
       sitemap/routes
       suosikit/routes)))
