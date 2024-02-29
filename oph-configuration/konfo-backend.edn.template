@@ -19,7 +19,6 @@
 
     :s3    {:region              "{{konfo_content_s3_region}}"
             :credentials-profile nil
-            :feedback-queue      "{{palaute_queue_url}}"
             :bucket-name         "{{konfo_content_s3_bucket}}"}
 
     :search-terms-boost    {:koulutusnimi {{konfo_backend_search_terms_boost_koulutusnimi}}
