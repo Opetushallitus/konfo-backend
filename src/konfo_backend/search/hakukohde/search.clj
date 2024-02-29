@@ -18,8 +18,7 @@
 
 (defn- extract-hakukohteet
   [haku]
-  (map #(assoc (select-keys % [:oid :nimi :hakuOid])
-         :organisaatio (select-keys (:organisaatio %) [:nimi])
+  (map #(assoc (select-keys % [:oid :nimi :hakuOid :jarjestyspaikkaHierarkiaNimi])
          :jarjestyspaikka (select-keys (:jarjestyspaikka %) [:nimi])
          :toteutus (select-keys (:toteutus %) [:oid]))
        (filter julkaistu? (:hakukohteet haku))))
