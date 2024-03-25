@@ -14,7 +14,7 @@
       (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
       (coll? value) {:terms {term-key (->lower-case-vec value)}}
       :else {:term {term-key (->lower-case value)}})))
-
+; Dima todo filter OY-4569
 (defn nested-query
   [nested-field-name field-name constraint]
   {:nested
@@ -22,6 +22,25 @@
     :query
     {:bool
      {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
+
+(defn yhteishaku-filter-query
+  [nested-field-name field-name constraint]
+    (println (str "\u001b[32m"
+                "rajain_tools.clj_yhteishaku-filter-query_test_feb19_12_34"
+                "nested-field-name: " nested-field-name " "
+                "field-name: " field-name " "
+                "constraint: " constraint " "
+                "\u001b[0m"))
+  {:nested
+   {:path (str "search_terms." nested-field-name)
+   :query
+   {:bool
+    {:filter [(->terms-query (str nested-field-name "." field-name) constraint),
+      {:nested {:path "search_terms.hakutiedot.hakuajat", 
+                :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}},
+                                        {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2024-02-19T10:33"}}} 
+                                                          {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}} 
+                                                                           {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2024-02-19T10:33"}}}]}}]}}]}}}}]}}}})
 
 (defn ->boolean-term-query
   [key]
@@ -75,15 +94,14 @@
   (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
     {:bool {:should (vec active-conditions)}}))
 
+; Dima todo
 (defn hakukaynnissa-filter-query
   [current-time]
-  {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
-                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                                     {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
-                   {:nested {:path "search_terms.hakutiedot.hakuajat"
-                             :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
-                                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                                                      {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]}})
+  {:bool {:should [{:nested {:path "search_terms.hakutiedot.hakuajat" 
+            :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}},
+  {:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}},
+                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
+                                   {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}]}})
 
 (defn hakualkaapaivissa-filter-query
   [current-time days]

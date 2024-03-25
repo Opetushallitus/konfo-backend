@@ -23,6 +23,7 @@
                           (cond-> []
                                   (constraints? constraints) (conj (common-filters constraints (current-time-as-kouta-format)))
                                    extra-filter (conj extra-filter))))]
+       (println (str "\u001b[32m" "test03_post-filter-query_extra-filter" extra-filter "\u001b[0m"))
        {:nested (assoc-if {:path "search_terms" :query {:bool {:filter filters}}}
                            :inner_hits inner-hits inner-hits)})))
   ([constraints]

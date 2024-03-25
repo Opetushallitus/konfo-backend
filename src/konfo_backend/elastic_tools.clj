@@ -1,12 +1,13 @@
 (ns konfo-backend.elastic-tools
   (:require
-    [clj-elasticsearch.elastic-connect :as e]
-    [clj-log.error-log :refer [with-error-logging]]
-    [clj-http.client :as http]
-    [clj-elasticsearch.elastic-utils :refer [elastic-post elastic-url ]]
-    [clojure.string :as str]
-    [clojure.tools.logging :as log]
-    [clojure.walk :refer [postwalk]]))
+   [clj-elasticsearch.elastic-connect :as e]
+   [konfo-backend.tools :refer [debug-pretty]]
+   [clj-log.error-log :refer [with-error-logging]]
+   [clj-http.client :as http]
+   [clj-elasticsearch.elastic-utils :refer [elastic-post elastic-url ]]
+   [clojure.string :as str]
+   [clojure.tools.logging :as log]
+   [clojure.walk :refer [postwalk]]))
 
 (def limit-to-use-search-after 10000)
 
@@ -44,7 +45,9 @@
 
 (defn search-without-mapper
   [index & query-parts]
-  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
+  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))
+        query-map (apply array-map query-parts-without-nils)]
+    (debug-pretty query-map)
     (apply e/search index query-parts-without-nils)))
 
 (defn search

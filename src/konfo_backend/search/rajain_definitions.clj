@@ -373,7 +373,9 @@
 
 (def yhteishaku
   {:id :yhteishaku
-   :make-query #(nested-query "hakutiedot" "yhteishakuOid" %)
+   ;:make-query (fn [value current-time] (when (true? value) (yhteishaku-filter-query "hakutiedot" "yhteishakuOid" current-time value)))
+   ;:make-query #(nested-query "hakutiedot" "yhteishakuOid" %)
+   :make-query #(yhteishaku-filter-query "hakutiedot" "yhteishakuOid" %)
    :make-agg (fn [constraints rajain-context]
                (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
                                           (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
