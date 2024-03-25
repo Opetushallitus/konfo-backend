@@ -1,11 +1,9 @@
 (ns konfo-backend.search.rajain-tools
-  (:require [clojure.string :refer [lower-case replace-first split join]]
-            [clj-time.core :as time]
-            [konfo-backend.tools :refer [->lower-case-vec kouta-date-time-string->date-time ->kouta-date-time-string]]))
-
-(defn by-rajaingroup
-  [rajaimet rajain-group]
-  (mapv :id (filter #(= (:rajainGroupId %) rajain-group) rajaimet)))
+  (:require [clj-time.core :as time]
+            [clojure.string :refer [join lower-case replace-first split]]
+            [konfo-backend.tools :refer [->kouta-date-time-string
+                                         ->lower-case-vec
+                                         kouta-date-time-string->date-time]]))
 
 (defn ->terms-query [key value]
   (let [term-key (keyword (str "search_terms." key))
@@ -15,7 +13,7 @@
       (coll? value) {:terms {term-key (->lower-case-vec value)}}
       :else {:term {term-key (->lower-case value)}})))
 
-(defn nested-query
+(defn nested-terms-query
   [nested-field-name field-name constraint]
   {:nested
    {:path (str "search_terms." nested-field-name)
@@ -118,26 +116,21 @@
                        :size 1000}]
     {:terms (merge default-terms (get-in rajain-context [:term-params]))}))
 
-(defn- rajain-terms-agg-with-real-hits
-  [field-name rajain-context]
-  (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context))
-
-(defn- constrained-agg [constraints filtered-aggs plain-aggs]
+(defn- constrained-agg [constraints aggs]
   (if (not-empty constraints)
     {:filter {:bool {:filter constraints}}
-     :aggs filtered-aggs}
-    plain-aggs))
+     :aggs {:rajain aggs}}
+    aggs))
 
-(defn rajain-aggregation
-  [field-name contraints rajain-context]
+(defn rajain-terms-aggregation
+  [field-name constraints rajain-context]
   (constrained-agg
-   contraints
-   {:rajain (rajain-terms-agg-with-real-hits field-name rajain-context)}
-   (rajain-terms-agg-with-real-hits field-name rajain-context)))
+   constraints
+  (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context)))
 
 (defn multi-bucket-rajain-agg [own-filters-with-bucket constraints rajain-context]
   (let [own-aggs (with-real-hits {:filters {:filters own-filters-with-bucket}} rajain-context)]
-    (constrained-agg constraints {:rajain own-aggs} own-aggs)))
+    (constrained-agg constraints own-aggs)))
 
 (defn bool-agg-filter [own-filter constraints rajain-context]
   (with-real-hits
@@ -156,19 +149,38 @@
   ([field-name]
    (max-agg-filter field-name nil)))
 
-(defn nested-rajain-aggregation
-  [rajain-key nested-path constraints rajain-agg rajain-context]
-  (let [agg-query (with-real-hits rajain-agg rajain-context)]
-    {:nested  {:path nested-path}
-     :aggs {(keyword rajain-key) (constrained-agg constraints
-                                                  {:rajain agg-query}
-                                                  agg-query)}}))
+(defn strip-excess-nested [query common-nested-path]
+  (let [query-nested-path (get-in query [:nested :path])]
+    (if (and query-nested-path (= query-nested-path common-nested-path))
+      (or (get-in query [:nested :query :bool :filter])
+          (get-in query [:nested :query]))
+      query)))
 
+(defn get-top-level-nested-path
+  [nested-path]
+  (when nested-path (as-> nested-path $
+                      (split $ #"\.")
+                      (take 2 $)
+                      (join "." $))))
+
+(defn nested-rajain-aggregation
+  [nested-path constraints rajain-agg rajain-context]
+  (let [constraints-by-nest (group-by #(get-top-level-nested-path (get-in % [:nested :path])) constraints)
+        root-constraints (get constraints-by-nest nil)
+        own-nested-constraints (get constraints-by-nest nested-path)
+        other-nested-constraints (flatten (vals (dissoc constraints-by-nest nil nested-path)))]
+    (constrained-agg root-constraints
+                     (constrained-agg other-nested-constraints
+                                      {:nested {:path nested-path}
+                                       :aggs {:rajain (constrained-agg (flatten (map #(strip-excess-nested % nested-path) own-nested-constraints))
+                                                                       (with-real-hits rajain-agg rajain-context))}}))))
 (defn nested-rajain-terms-aggregation
-  [rajain-key field-name constraints rajain-context]
+  [field-name constraints rajain-context]
   (let [nested-path (-> field-name
                         (replace-first ".keyword" "")
                         (split #"\.")
                         (drop-last) (#(join "." %)))]
-  (nested-rajain-aggregation rajain-key nested-path constraints 
-                             (rajain-terms-agg field-name rajain-context) rajain-context)))
+    (nested-rajain-aggregation nested-path
+                               constraints
+                               (rajain-terms-agg field-name rajain-context)
+                               rajain-context)))

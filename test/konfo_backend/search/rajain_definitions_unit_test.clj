@@ -84,12 +84,15 @@
                                 {:filter
                                  [{:nested {:path  "search_terms.hakutiedot"
                                             :query {:bool
-                                                    {:should [{:bool
-                                                               {:filter
-                                                                {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
-                                                              {:bool
-                                                               {:must_not
-                                                                {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}
+                                                    {:filter
+                                                     [{:bool
+                                                       {:should
+                                                        [{:bool
+                                                          {:filter
+                                                           {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                                         {:bool
+                                                          {:must_not
+                                                           {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}]}}}}
                                   {:term {:search_terms.hasJotpaRahoitus true}}]}}
                                :aggs {:real_hits {:reverse_nested {}}}})
                 ((:make-agg jotpa) {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]} default-ctx)))))
@@ -113,45 +116,38 @@
   (testing "Should form aggregation for pohjakoulutusvaatimus with jotpa as the selected filter"
     (is (match? (m/match-with [map? m/equals]
                               {:aggs
-                               {:pohjakoulutusvaatimus
-                                {:aggs
-                                 {:real_hits
-                                  {:reverse_nested {}}}
-                                 :terms {:field         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                         :min_doc_count 0
-                                         :size          1000
-                                         :missing       "pohjakoulutusvaatimuskonfo_missing"}}}
-                               :nested {:path "search_terms.hakutiedot"}
+                               {:rajain {:aggs {:rajain {:terms {:field         "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                 :min_doc_count 0
+                                                                 :size          1000
+                                                                 :missing       "pohjakoulutusvaatimuskonfo_missing"}
+                                                         :aggs {:real_hits {:reverse_nested {}}}}}
+                                         :nested {:path "search_terms.hakutiedot"}}}
                                :filter {:bool {:filter [{:term {:search_terms.hasJotpaRahoitus true}}]}}})
                 ((:make-agg pohjakoulutusvaatimus) {:jotpa true} default-ctx))))
 
   (testing "Should form aggregation for hakutapa with hakukaynnissa and pohjakoulutusvaatimus as selected filters"
     (is (match? (m/match-with
                  [map? m/equals]
-                 {:aggs {:hakutapa
-                         {:aggs
-                          {:rajain
-                           {:aggs {:real_hits {:reverse_nested {}}}
-                            :terms {:field         "search_terms.hakutiedot.hakutapa"
-                                    :min_doc_count 0
-                                    :size          1000}}}
-                          :nested {:path "search_terms.hakutiedot"}}}
-                  :filter {:bool
-                           {:filter
-                            [{:bool
-                              {:filter
-                               [{:bool
-                                 {:should [{:bool
-                                            {:filter
-                                             {:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am"
-                                                                                                         "pohjakoulutusvaatimuskonfo_003"]}}}}
-                                           {:bool
-                                            {:must_not
-                                             {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}
-                                {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                          :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
-                                                                  {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                   {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}})
+                 {:nested {:path "search_terms.hakutiedot"}
+                  :aggs {:rajain
+                         {:aggs {:rajain
+                                 {:aggs {:real_hits {:reverse_nested {}}}
+                                  :terms {:field         "search_terms.hakutiedot.hakutapa"
+                                          :min_doc_count 0
+                                          :size          1000}}}
+                          :filter {:bool
+                                   {:filter
+                                    [{:bool
+                                      {:should [{:bool
+                                                 {:filter
+                                                  {:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]}}}}
+                                                {:bool
+                                                 {:must_not
+                                                  {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}
+                                     {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                               :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                       {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}}}})
                 ((:make-agg hakutapa) {:jotpa                 false
                                        :pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
                                        :hakukaynnissa         true} default-ctx)))))
@@ -176,10 +172,11 @@
                                                          :size          1000}}}
                                :filter {:bool {:filter
                                                [{:term {:search_terms.hasJotpaRahoitus true}}
-                                                {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                          :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
-                                                                                  {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                   {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}})
+                                                {:nested {:path  "search_terms.hakutiedot"
+                                                          :query {:bool {:filter [{:nested {:path "search_terms.hakutiedot.hakuajat"
+                                                                                            :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}}}]}}})
                 ((:make-agg opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
 
   (testing "Should form aggregation for koulutustyyppi without any selected filters"
@@ -206,8 +203,8 @@
                                                  :terms {:field "search_terms.koulutustyypit.keyword" :min_doc_count 0 :size 1000}}}
                                :filter {:bool {:filter [{:nested {:path  "search_terms.hakutiedot"
                                                                   :query {:bool {:filter
-                                                                                 {:terms {:search_terms.hakutiedot.yhteishakuOid ["1.2.246.562.29.00000000000000000001"
-                                                                                                                                  "1.2.246.562.29.00000000000000000002"]}}}}}}]}}})
+                                                                                 [{:terms {:search_terms.hakutiedot.yhteishakuOid ["1.2.246.562.29.00000000000000000001"
+                                                                                                                                   "1.2.246.562.29.00000000000000000002"]}}]}}}}]}}})
                 ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
                                                           "1.2.246.562.29.00000000000000000002"]} default-ctx))))
 
@@ -226,7 +223,12 @@
                   {:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_2"}}
                   {:term {:search_terms.hasJotpaRahoitus true}}
                   {:nested {:path  "search_terms.hakutiedot"
-                            :query {:bool {:filter [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}
+                            :query {:bool {:filter [{:bool {:should [{:bool
+                                                                      {:filter
+                                                                       {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                                                     {:bool
+                                                                      {:must_not
+                                                                       {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}
                                                     {:bool {:should [{:nested {:path  "search_terms.hakutiedot.hakuajat"
                                                                                :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
