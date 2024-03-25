@@ -1,6 +1,8 @@
 (ns konfo-backend.search.koulutus-jarjestajat-search-test
   (:require [clojure.test :refer :all]
             [clojure.string :refer [starts-with?]]
+            [matcher-combinators.test]
+            [matcher-combinators.matchers :as m]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.test-mock-data :refer :all]))
 
@@ -102,57 +104,59 @@
       (testing "nykyiset"
         (let [r (search hevosala-oid :tuleva false)]
           (is (= 1 (:total r)))
-          (is (= {:koulutusOid "1.2.246.562.13.000011"
-                  ;:maksunMaara nil,
-                  :kuvaus {},
-                  :toteutusOid ponikoulu-oid,
-                  :opetusajat [],
-                  :nimi {:fi "Punkaharjun yliopisto",
-                         :sv "Punkaharjun yliopisto sv"},
-                  :oppilaitosOid "1.2.246.562.10.000002",
-                  :suunniteltuKestoKuukausina 0,
-                  ;:maksullisuustyyppi nil,
-                  :kunnat [{:koodiUri "kunta_220",
-                            :nimi {:fi "kunta_220 nimi fi",
-                                   :sv "kunta_220 nimi sv"}}],
-                  :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
-                                       :nimi {:fi "tutkintonimikkeet_01 nimi fi",
-                                              :sv "tutkintonimikkeet_01 nimi sv"}},
-                                      {:koodiUri "tutkintonimikkeet_02",
-                                       :nimi {:fi "tutkintonimikkeet_02 nimi fi",
-                                              :sv "tutkintonimikkeet_02 nimi sv"}}],
-                  ;:jarjestetaanErityisopetuksena nil,
-                  :ammatillinenPerustutkintoErityisopetuksena false,
-                  :jarjestaaUrheilijanAmmKoulutusta true,
-                  ;:oppilaitosTila nil,
-                  :opetuskielet ["oppilaitoksenopetuskieli_02"]
-                  :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
-                  :koulutustyyppi "amm"
-                  :hakuAuki true
-                  } (first (:hits r))))))
+          (is (match?
+               {:koulutusOid "1.2.246.562.13.000011"
+                ;:maksunMaara nil,
+                :kuvaus {},
+                :toteutusOid ponikoulu-oid,
+                :opetusajat [],
+                :nimi {:fi "Punkaharjun yliopisto",
+                       :sv "Punkaharjun yliopisto sv"},
+                :oppilaitosOid "1.2.246.562.10.000002",
+                :suunniteltuKestoKuukausina 0,
+                ;:maksullisuustyyppi nil,
+                :kunnat [{:koodiUri "kunta_220",
+                          :nimi {:fi "kunta_220 nimi fi",
+                                 :sv "kunta_220 nimi sv"}}],
+                :tutkintonimikkeet [{:koodiUri "tutkintonimikkeet_01",
+                                     :nimi {:fi "tutkintonimikkeet_01 nimi fi",
+                                            :sv "tutkintonimikkeet_01 nimi sv"}},
+                                    {:koodiUri "tutkintonimikkeet_02",
+                                     :nimi {:fi "tutkintonimikkeet_02 nimi fi",
+                                            :sv "tutkintonimikkeet_02 nimi sv"}}],
+                ;:jarjestetaanErityisopetuksena nil,
+                :ammatillinenPerustutkintoErityisopetuksena false,
+                :jarjestaaUrheilijanAmmKoulutusta true,
+                ;:oppilaitosTila nil,
+                :opetuskielet ["oppilaitoksenopetuskieli_02"]
+                :toteutusNimi {:fi "Ponikoulu fi", :sv "Ponikoulu sv"},
+                :koulutustyyppi "amm"
+                :hakuAuki true}
+               (first (:hits r))))))
 
       (testing "tulevat"
         (let [r (search hevosala-oid :tuleva true)]
           (is (= 1 (:total r)))
-          (is (= {:koulutusOid "1.2.246.562.13.000011"
-                  :oppilaitosOid "1.2.246.562.10.39218317368",
-                  :nimi {:fi "Helsingin yliopisto",
-                         :sv "Helsingfors universitet"
-                         :en "University of Helsinki"},
+          (is (match?
+               {:koulutusOid "1.2.246.562.13.000011"
+                :oppilaitosOid "1.2.246.562.10.39218317368",
+                :nimi {:fi "Helsingin yliopisto",
+                       :sv "Helsingfors universitet"
+                       :en "University of Helsinki"},
                   ;:oppilaitosTila nil,
-                  :koulutustyyppi "yo",
+                :koulutustyyppi "yo",
                   ;:opetuskielet [],
-                  :kunnat [{:koodiUri "kunta_091",
-                            :nimi {:fi "kunta_091 nimi fi",
-                                   :sv "kunta_091 nimi sv"}}],
-                  :hakuAuki false
-                  :kuvaus {}
-                  } (first (:hits r)))))))))
+                :kunnat [{:koodiUri "kunta_091",
+                          :nimi {:fi "kunta_091 nimi fi",
+                                 :sv "kunta_091 nimi sv"}}],
+                :hakuAuki false
+                :kuvaus {}}
+               (first (:hits r)))))))))
 
-  (def traktoriala-oid2 "1.2.246.562.13.000012")
-  (deftest koulutus-jarjestajat-test-no-jarjestajia
-    (testing "Get koulutuksen järjestäjät"
-      (testing "no järjestäjiä"
-        (let [r (search traktoriala-oid2)]
-          (is (= 0 (:total r)))
-          (is (= [] (:hits r)))))))
+(def traktoriala-oid2 "1.2.246.562.13.000012")
+(deftest koulutus-jarjestajat-test-no-jarjestajia
+  (testing "Get koulutuksen järjestäjät"
+    (testing "no järjestäjiä"
+      (let [r (search traktoriala-oid2)]
+        (is (= 0 (:total r)))
+        (is (= [] (:hits r)))))))

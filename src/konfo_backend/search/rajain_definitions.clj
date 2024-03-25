@@ -1,9 +1,8 @@
 (ns konfo-backend.search.rajain-definitions
-  (:require
-   [konfo-backend.tools :refer [current-time-as-kouta-format]]
-   [clj-time.core :as time]
-   [clojure.string :refer [replace-first]]
-   [konfo-backend.search.rajain-tools :refer :all]))
+  (:require [clj-time.core :as time]
+            [clojure.string :as str]
+            [konfo-backend.search.rajain-tools :refer :all]
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 ;; Esitellään myöhemmin alustettu muuttuja ristikkäisten riippuvuuksien vuoksi. Tätä käytetään heti
 ;; alla olevissa funktioissa, vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta 
@@ -15,17 +14,47 @@
   [constraints]
   (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id all-rajain-definitions))))
 
+(defn strip-excess-nested [query common-nested-path]
+  (let [query-nested-path (get-in query [:nested :path])]
+    (if (and query-nested-path (= query-nested-path common-nested-path))
+      (or (get-in query [:nested :query :bool :filter])
+          (get-in query [:nested :query]))
+      query)))
+
 (defn common-filters
   [constraints current-time]
-  (let [rajaimet-grouped (group-by :rajainGroupId all-rajain-definitions)
-        rajaimet-without-group (get rajaimet-grouped nil)
-        rajain-groups (vals (dissoc rajaimet-grouped nil))]
-    (filterv
-     some?
-     (flatten
-      (conj
-       (mapv #(make-query-for-rajain constraints % current-time) rajaimet-without-group)
-       (mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups))))))
+  ; Muodostetaan ensin kolmitasoinen mappi (nested-id -> group-id -> query), jotta voidaan helposti yhdistellä queryt tasojen mukaan
+  (let [nested-grouped-queries (reduce (fn [result rajain]
+                                         (if-let [query (make-query-for-rajain constraints rajain current-time)]
+                                           (let [nested-path (get-in query [:nested :path])
+                                                 nest-id (when nested-path (as-> nested-path $
+                                                                             (str/split $ #"\.")
+                                                                             (take 2 $)
+                                                                             (str/join "." $)))
+                                                 group-id (:rajainGroupId rajain)]
+                                             (update-in result [nest-id group-id] #(conj (or % []) query)))
+                                           result))
+                                       {}
+                                       all-rajain-definitions)]
+    ; Yhdistetään nested- ja group- queryt
+    (reduce-kv (fn [result nest-id nest-groups]
+                 (let [queries (reduce-kv (fn [group-result group-id group-queries]
+                                            ; Rajain-ryhmät pitää yhdistää "or":lla, joten lisätään bool-should
+                                            (concat group-result
+                                                    ; bool-should tarvitsee lisätä vain jos rajain-ryhmä on olemassa ja siinä on enemmän kuin yksi query
+                                                    (if (and group-id group-queries (< 1 (count group-queries)))
+                                                      [{:bool {:should group-queries}}]
+                                                      group-queries)))
+                                          []
+                                          nest-groups)]
+                   (concat result
+                           ; Yhdistetään nested-queryt, jos niitä on enemmän kuin yksi
+                           (if (and nest-id (< 1 (count queries)))
+                             [{:nested {:path nest-id
+                                        :query {:bool {:filter (map #(strip-excess-nested % nest-id) queries)}}}}]
+                             queries))))
+               []
+               nested-grouped-queries)))
 
 (defn aggregation-filters-without-rajainkeys
   [constraints excluded-rajain-keys rajain-context]
@@ -193,9 +222,9 @@
   {:id :valintatapa
    :make-query #(nested-query "hakutiedot" "valintatavat" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat"
-                                          (aggregation-filters-without-rajainkeys constraints ["valintatapa"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat"
+                                                (aggregation-filters-without-rajainkeys constraints ["valintatapa"] rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: valintatapa
@@ -210,11 +239,12 @@
 
 (def hakutapa
   {:id :hakutapa
+   :rajainGroupId :hakutapa
    :make-query #(nested-query "hakutiedot" "hakutapa" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa"
-                                          (aggregation-filters-without-rajainkeys constraints ["hakutapa"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa"
+                                                (aggregation-filters-without-rajainkeys constraints ["hakutapa"] rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: hakutapa
@@ -373,11 +403,12 @@
 
 (def yhteishaku
   {:id :yhteishaku
+   :rajainGroupId :hakutapa
    :make-query #(nested-query "hakutiedot" "yhteishakuOid" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
-                                          (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
+                                                (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: yhteishaku
@@ -394,7 +425,7 @@
   {:id :pohjakoulutusvaatimus
    :make-query #(pohjakoulutusvaatimukset-filter-query %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+               (nested-rajain-terms-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
                                           (aggregation-filters-without-rajainkeys constraints ["pohjakoulutusvaatimus"] rajain-context)
                                           (merge rajain-context {:term-params {:missing "pohjakoulutusvaatimuskonfo_missing"}})))
    :desc "
@@ -491,9 +522,10 @@
    :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (when (true? value) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
-                                (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
-                                rajain-context))
+               (nested-rajain-aggregation "hakukaynnissa" "search_terms.hakutiedot"
+                                          (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
+                                          {:filter (hakukaynnissa-filter-query (:current-time rajain-context))}
+                                          nil))
    :desc "
         - in: query
           name: hakukaynnissa
@@ -567,7 +599,7 @@
    lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
-                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus 
+                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus
                            lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def hakutulos-agg-defs
@@ -582,7 +614,7 @@
 
 (defn ->max-agg-id
   [agg-id]
-  (keyword (replace-first (str agg-id "-max") ":" "")))
+  (keyword (str/replace-first (str agg-id "-max") ":" "")))
 
 (defn- generate-aggs
   [agg-defs constraints rajain-context]

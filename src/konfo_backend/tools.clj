@@ -83,14 +83,11 @@
 
 (defn hit-haku-kaynnissa?
   [hit]
-  (let [hakutiedot (get-in hit [:hakutiedot])
-        toteutuksenHakuaika (:toteutusHakuaika hit)]
-    (if (empty? hakutiedot)
-      (hakuaika-kaynnissa? toteutuksenHakuaika)
-      (some (fn [hakutieto]
-              ; search-indeksissä hakutiedoilla ei ole hakukohteita, vaan hakuajat on hakutiedon juuressa
-              (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
-            hakutiedot))))
+  (let [hakutiedot (get-in hit [:hakutiedot])]
+    (boolean (some (fn [hakutieto]
+            ; search-indeksissä hakutiedoilla ei ole hakukohteita, vaan hakuajat on hakutiedon juuressa
+            (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
+          hakutiedot))))
 
 (defn now-in-millis [] (coerce/to-long (time/now)))
 

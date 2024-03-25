@@ -1,12 +1,10 @@
 (ns konfo-backend.elastic-tools
   (:require
-    [clj-elasticsearch.elastic-connect :as e]
-    [clj-log.error-log :refer [with-error-logging]]
-    [clj-http.client :as http]
-    [clj-elasticsearch.elastic-utils :refer [elastic-post elastic-url ]]
-    [clojure.string :as str]
-    [clojure.tools.logging :as log]
-    [clojure.walk :refer [postwalk]]))
+   [clj-elasticsearch.elastic-connect :as e]
+   [clj-http.client :as http]
+   [clj-elasticsearch.elastic-utils :refer [elastic-url]]
+   [clojure.string :as str]
+   [clojure.walk :refer [postwalk]]))
 
 (def limit-to-use-search-after 10000)
 
@@ -116,8 +114,8 @@
   (let [pit (get-pit index)
         initial-from   (- limit-to-use-search-after size)
         initial-search (apply search-fn nil :pit pit :from initial-from :size size query-parts)]
-        (do-search-after search-fn to size query-parts initial-search
-                         (fn [final-result result] (concat final-result (mapper result))))))
+    (do-search-after search-fn to size query-parts initial-search
+                     (fn [final-result result] (concat final-result (mapper result))))))
 
 (defn search-all-with-do-after [index mapper to & query-parts]
   (let [initial-results (apply search index mapper :size limit-to-use-search-after query-parts)
@@ -134,7 +132,7 @@
           (assoc :hits [])
           mapper)
       (mapper
-        (do-search-after search-fn from size query-parts initial-search (fn [_ result] result))))))
+       (do-search-after search-fn from size query-parts initial-search (fn [_ result] result))))))
 
 (defn search-with-pagination
   [index page size mapper & query-parts]
