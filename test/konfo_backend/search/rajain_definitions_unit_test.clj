@@ -146,40 +146,23 @@
                              :query
                              {:bool
                               {:filter
-                               {:terms
-                                {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am"
-                                                                                    "pohjakoulutusvaatimuskonfo_003"]}}}}}}
-                           {:bool
-                            {:should [{:bool
-                                       {:should
-                                        [{:bool
-                                          {:filter
-                                           [{:range
-                                             {:search_terms.toteutusHakuaika.alkaa
-                                              {:lte "2022-08-26T07:21"}}}
-                                            {:bool
-                                             {:should
-                                              [{:bool
-                                                {:must_not
-                                                 {:exists
-                                                  {:field "search_terms.toteutusHakuaika.paattyy"}}}}
-                                               {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
-                                         {:nested {:path "search_terms.hakutiedot.hakuajat"
-                                                   :query
-                                                   {:bool
-                                                    {:filter
-                                                     [{:range
-                                                       {:search_terms.hakutiedot.hakuajat.alkaa
-                                                        {:lte "2022-08-26T07:21"}}}
-                                                      {:bool
-                                                       {:should
-                                                        [{:bool
-                                                          {:must_not
-                                                           {:exists
-                                                            {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                         {:range
-                                                          {:search_terms.hakutiedot.hakuajat.paattyy
-                                                           {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}]}}})
+                               [{:terms
+                                {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]}}
+                                {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                          :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                                                  {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}]}}}}]}}}}
+                           {:bool {:should [{:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                      :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                                                              {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                               {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}]}}}}
+                                            {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                              {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                                                               {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                                                             {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                       :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}}]}}]}}]}}})
               ((:make-agg hakutapa) {:jotpa                 false
                                      :pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am" "pohjakoulutusvaatimuskonfo_003"]
                                      :hakukaynnissa         true} default-ctx))))
@@ -198,39 +181,23 @@
   (testing "Should form aggregation for opetuskieli with jotpa and hakukaynnissa as selected filters"
     (is (match? (m/match-with [map? m/equals
                                vector? m/in-any-order]
-                              {:aggs
-                               {:rajain
-                                {:aggs
-                                 {:real_hits
-                                  {:reverse_nested {}}}
-                                 :terms
-                                 {:field         "search_terms.opetuskielet.keyword"
-                                  :min_doc_count 0
-                                  :size          1000}}}
-                               :filter
-                               {:bool
-                                {:filter
-                                 [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
-                                  {:bool
-                                   {:should [{:bool
-                                              {:should
-                                               [{:bool
-                                                 {:filter
-                                                  [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
-                                                   {:bool
-                                                    {:should
-                                                     [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
-                                                      {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
-                                                {:nested
-                                                 {:path "search_terms.hakutiedot.hakuajat"
-                                                  :query
-                                                  {:bool
-                                                   {:filter
-                                                    [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
-                                                     {:bool
-                                                      {:should
-                                                       [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                        {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}]}}]}}})
+                              {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
+                                                 :terms {:field         "search_terms.opetuskielet.keyword"
+                                                         :min_doc_count 0
+                                                         :size          1000}}}
+                               :filter {:bool {:filter
+                                               [{:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
+                                                {:bool {:should
+                                                        [{:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                   :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                                                                           {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                                            {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                             {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}]}}}}
+                                                         {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                           {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                                                                            {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                                                                          {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                                    :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}}]}}]}}]}}})
                 ((:make-agg opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
 
   (testing "Should form aggregation for koulutustyyppi without any selected filters"
@@ -253,17 +220,12 @@
 
   (testing "Should form aggregation for koulutustyyppi with yhteishaku filter"
     (is (match? (m/match-with [map? m/equals]
-                              {:aggs   {:rajain {:aggs  {:real_hits {:reverse_nested {}}}
-                                                 :terms {:field         "search_terms.koulutustyypit.keyword"
-                                                         :min_doc_count 0
-                                                         :size          1000}}}
-                               :filter {:bool {:filter [{:nested {:path  "search_terms.hakutiedot"
-                                                                  :query {:bool
-                                                                          {:filter
-                                                                           {:terms
-                                                                            {:search_terms.hakutiedot.yhteishakuOid
-                                                                             ["1.2.246.562.29.00000000000000000001"
-                                                                              "1.2.246.562.29.00000000000000000002"]}}}}}}]}}})
+                              {:filter {:bool {:filter [{:nested {:path  "search_terms.hakutiedot",
+                                                                  :query {:bool {:filter
+                                                                                 [{:terms {:search_terms.hakutiedot.yhteishakuOid ["1.2.246.562.29.00000000000000000001"
+                                                                                                                                   "1.2.246.562.29.00000000000000000002"]}}]}}}}]}},
+                               :aggs   {:rajain {:terms {:field "search_terms.koulutustyypit.keyword", :min_doc_count 0, :size 1000},
+                                                 :aggs  {:real_hits {:reverse_nested {}}}}}})
                 ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
                                                           "1.2.246.562.29.00000000000000000002"]} default-ctx))))
 
@@ -280,42 +242,27 @@
   (is (match? (m/in-any-order
                [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
                 {:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_2"}}
-                {:nested {:path "search_terms.hakutiedot"
-                          :query
-                          {:bool
-                           {:filter
-                            {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}}}
+                {:nested {:path  "search_terms.hakutiedot",
+                          :query {:bool {:filter [{:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}
+                                                  {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                            :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                                                                    {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                      {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}]}}}}]}}}}
                 {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
-                {:bool
-                 {:should [{:bool {:should
-                                   [{:bool
-                                     {:filter
-                                      [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
-                                       {:bool
-                                        {:should
-                                         [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
-                                          {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
-                                    {:nested
-                                     {:path "search_terms.hakutiedot.hakuajat"
-                                      :query
-                                      {:bool
-                                       {:filter
-                                        [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
-                                         {:bool
-                                          {:should
-                                           [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                            {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}
-                           {:bool
-                            {:should
-                             [{:range
-                               {:search_terms.toteutusHakuaika.alkaa
-                                {:gt "2022-08-26T07:21"
-                                 :lte "2022-09-25T07:21"}}}
-                              {:nested {:path "search_terms.hakutiedot.hakuajat"
-                                        :query {:range
-                                                {:search_terms.hakutiedot.hakuajat.alkaa
-                                                 {:gt "2022-08-26T07:21"
-                                                  :lte "2022-09-25T07:21"}}}}}]}}]}}])
+                {:bool {:should [{:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                           :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                                                   {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}]}}}}
+                                 {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}}
+                                                                                    {:range {:search_terms.toteutusHakuaika.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}
+                                                  {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                            :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}}]}}
+                                 {:bool {:should [{:range {:search_terms.toteutusHakuaika.alkaa {:gt "2022-08-26T07:21", :lte "2022-09-25T07:21"}}}
+                                                  {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                            :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt "2022-08-26T07:21", :lte "2022-09-25T07:21"}}}}}]}}]}}])
               (common-filters {:sijainti                            []
                                :lukiopainotukset                    []
                                :lukiolinjaterityinenkoulutustehtava []

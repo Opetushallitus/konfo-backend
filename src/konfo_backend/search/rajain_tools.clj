@@ -74,15 +74,12 @@
 (defn make-combined-should-filter-query
   [constraints rajain-items current-time]
   (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
-    (let [filtered-conditions (filter #(get-in % [:bool :should]) (flatten active-conditions))]
-      (println (str "\u001b[35m" "should: " (vec filtered-conditions) "\u001b[0m"))
-      {:bool {:should (vec filtered-conditions)}})))
+      {:bool {:should (vec (flatten active-conditions))}}))
 
 (defn make-combined-nested-filter-query
   [constraints rajain-items current-time]
   (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
     (let [filtered-conditions (filter #(get-in % [:nested]) (flatten active-conditions))]
-      (println (str "\u001b[35m" "nested: " (vec filtered-conditions) "\u001b[0m"))
       (vec filtered-conditions))))
 
 (defn hakukaynnissa-filter-query

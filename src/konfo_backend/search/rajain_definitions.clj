@@ -41,10 +41,6 @@
                         [(mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups)
                         (mapv #(make-combined-nested-filter-query constraints % current-time) rajain-groups)])))
         transformed-hakuaika (vec (flatten (transform-elastic-query nested-and-should-combined)))]
-        ;rajain-nested (filter return-value [:bool :should])] 
-    (println (str "\u001b[31m" "common-filters" current-time "\u001b[0m"))
-    (println (str "\u001b[33m" "transformed-hakuaika: " transformed-hakuaika "\u001b[0m"))
-    (println (str "\u001b[32m" "nested-and-should-combined: " nested-and-should-combined  "\u001b[0m"))    
     transformed-hakuaika))
 
 (defn aggregation-filters-without-rajainkeys
