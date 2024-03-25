@@ -1,7 +1,6 @@
 (ns konfo-backend.elastic-tools
   (:require
    [clj-elasticsearch.elastic-connect :as e]
-   [konfo-backend.tools :refer [debug-pretty]]
    [clj-log.error-log :refer [with-error-logging]]
    [clj-http.client :as http]
    [clj-elasticsearch.elastic-utils :refer [elastic-post elastic-url ]]
@@ -45,9 +44,7 @@
 
 (defn search-without-mapper
   [index & query-parts]
-  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))
-        query-map (apply array-map query-parts-without-nils)]
-    (debug-pretty query-map)
+  (let [query-parts-without-nils (apply concat (remove (fn [[_ v]] (nil? v)) (partition 2 query-parts)))]
     (apply e/search index query-parts-without-nils)))
 
 (defn search
