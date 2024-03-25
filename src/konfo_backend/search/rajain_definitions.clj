@@ -33,18 +33,18 @@
   (let [rajaimet-grouped (group-by :rajainGroupId all-rajain-definitions)
         rajaimet-without-group (get rajaimet-grouped nil)
         rajain-groups (vals (dissoc rajaimet-grouped nil))
-        return-value (filterv
+        nested-and-should-combined (filterv
                       some?
                       (flatten
                        (into
                         (mapv #(make-query-for-rajain constraints % current-time) rajaimet-without-group)
                         [(mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups)
                         (mapv #(make-combined-nested-filter-query constraints % current-time) rajain-groups)])))
-        transformed-hakuaika (vec (flatten (transform-elastic-query return-value)))]
+        transformed-hakuaika (vec (flatten (transform-elastic-query nested-and-should-combined)))]
         ;rajain-nested (filter return-value [:bool :should])] 
     (println (str "\u001b[31m" "common-filters" current-time "\u001b[0m"))
     (println (str "\u001b[33m" "transformed-hakuaika: " transformed-hakuaika "\u001b[0m"))
-    (println (str "\u001b[32m" "return-value: " return-value  "\u001b[0m"))    
+    (println (str "\u001b[32m" "nested-and-should-combined: " nested-and-should-combined  "\u001b[0m"))    
     transformed-hakuaika))
 
 (defn aggregation-filters-without-rajainkeys
