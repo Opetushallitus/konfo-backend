@@ -30,6 +30,7 @@
         agg-buckets (or (get-in rajain-agg [:buckets])
                         (get-in rajain-agg [:rajain :buckets])
                         [])]
+    ; TODO: hakukaynnissä on nyt kolmitasoinen, joten täytyy tehdä rekursiiviseksi jollain tavalla!
     (if (and (map? agg) (empty? agg-buckets) (contains? agg :real_hits))
       {agg-key agg} ; single-bucket aggregaatio! esim. hakukaynnissa
       (buckets-to-map agg-buckets))))
