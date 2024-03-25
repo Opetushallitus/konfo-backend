@@ -1,7 +1,7 @@
 (ns konfo-backend.search.rajain-tools
   (:require [clojure.string :refer [lower-case replace-first split join]]
             [clj-time.core :as time]
-            [konfo-backend.tools :refer [->lower-case-vec kouta-date-time-string->date-time ->kouta-date-time-string current-time-as-kouta-format]]))
+            [konfo-backend.tools :refer [->lower-case-vec kouta-date-time-string->date-time ->kouta-date-time-string]]))
 
 (defn by-rajaingroup
   [rajaimet rajain-group]
@@ -22,19 +22,6 @@
     :query
     {:bool
      {:filter (->terms-query (str nested-field-name "." field-name) constraint)}}}})
-
-(defn yhteishaku-filter-query
-  [nested-field-name field-name constraint]
-  {:nested
-   {:path (str "search_terms." nested-field-name)
-   :query
-   {:bool
-    {:filter [(->terms-query (str nested-field-name "." field-name) constraint),
-      {:nested {:path "search_terms.hakutiedot.hakuajat", 
-                :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}},
-                                        {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte (current-time-as-kouta-format)}}} 
-                                                          {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}} 
-                                                                           {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt (current-time-as-kouta-format)}}}]}}]}}]}}}}]}}}})
 
 (defn ->boolean-term-query
   [key]
@@ -83,18 +70,34 @@
       ; Sallitaan make-query-funktioiden määrittely rajain_definitions:ssa joustavasti eri parametrimäärillä (0-2)
       (apply (:make-query rajain) (take make-query-arg-count [constraint-vals current-time])))))
 
+
 (defn make-combined-should-filter-query
   [constraints rajain-items current-time]
   (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
-    {:bool {:should (vec active-conditions)}}))
+    (let [filtered-conditions (filter #(get-in % [:bool :should]) (flatten active-conditions))]
+      (println (str "\u001b[35m" "should: " (vec filtered-conditions) "\u001b[0m"))
+      {:bool {:should (vec filtered-conditions)}})))
+
+(defn make-combined-nested-filter-query
+  [constraints rajain-items current-time]
+  (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
+    (let [filtered-conditions (filter #(get-in % [:nested]) (flatten active-conditions))]
+      (println (str "\u001b[35m" "nested: " (vec filtered-conditions) "\u001b[0m"))
+      (vec filtered-conditions))))
 
 (defn hakukaynnissa-filter-query
   [current-time]
-  {:bool {:should [{:nested {:path "search_terms.hakutiedot.hakuajat" 
-            :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}},
-  {:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}},
-                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                   {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}]}})
+   [{:nested {:path  "search_terms.hakutiedot.hakuajat"
+             :query {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}
+                                     {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
+                                                      {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                       {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}]}}}},
+   {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
+                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
+                                                      {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
+                    {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                              :query {:bool {:must {:exists {:field "search_terms.hakutiedot.hakuajat"}}}}}}]}}])
+
 
 (defn hakualkaapaivissa-filter-query
   [current-time days]

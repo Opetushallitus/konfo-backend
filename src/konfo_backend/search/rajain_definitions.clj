@@ -15,17 +15,37 @@
   [constraints]
   (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id all-rajain-definitions))))
 
+(defn transform-elastic-query [input]
+  (let [nested-hakutiedot-root (filter #(= "search_terms.hakutiedot" (get-in % [:nested :path])) input)
+        nested-hakutiedot-children (filter #(clojure.string/includes? (get-in % [:nested :path] "") "search_terms.hakutiedot.") input)
+        base-queries (remove #(= :nested (first (keys %))) input)
+        combined-queries (for [nested-query (map #(get-in % [:nested :query :bool :filter]) nested-hakutiedot-root)]
+                           nested-query)
+        merged-query (if (empty? nested-hakutiedot-root)
+                       {}
+                       {:nested {:path (-> (first nested-hakutiedot-root) :nested :path)
+                                 :query {:bool {:filter (vec (remove empty? (flatten [combined-queries nested-hakutiedot-children])))}}}})]
+    (filter not-empty (conj base-queries merged-query))
+    ))
+
 (defn common-filters
   [constraints current-time]
   (let [rajaimet-grouped (group-by :rajainGroupId all-rajain-definitions)
         rajaimet-without-group (get rajaimet-grouped nil)
-        rajain-groups (vals (dissoc rajaimet-grouped nil))]
-    (filterv
-     some?
-     (flatten
-      (conj
-       (mapv #(make-query-for-rajain constraints % current-time) rajaimet-without-group)
-       (mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups))))))
+        rajain-groups (vals (dissoc rajaimet-grouped nil))
+        return-value (filterv
+                      some?
+                      (flatten
+                       (into
+                        (mapv #(make-query-for-rajain constraints % current-time) rajaimet-without-group)
+                        [(mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups)
+                        (mapv #(make-combined-nested-filter-query constraints % current-time) rajain-groups)])))
+        transformed-hakuaika (vec (flatten (transform-elastic-query return-value)))]
+        ;rajain-nested (filter return-value [:bool :should])] 
+    (println (str "\u001b[31m" "common-filters" current-time "\u001b[0m"))
+    (println (str "\u001b[33m" "transformed-hakuaika: " transformed-hakuaika "\u001b[0m"))
+    (println (str "\u001b[32m" "return-value: " return-value  "\u001b[0m"))    
+    transformed-hakuaika))
 
 (defn aggregation-filters-without-rajainkeys
   [constraints excluded-rajain-keys rajain-context]
@@ -373,7 +393,7 @@
 
 (def yhteishaku
   {:id :yhteishaku
-   :make-query #(yhteishaku-filter-query "hakutiedot" "yhteishakuOid" %)
+   :make-query #(nested-query "hakutiedot" "yhteishakuOid" %)
    :make-agg (fn [constraints rajain-context]
                (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
                                           (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
