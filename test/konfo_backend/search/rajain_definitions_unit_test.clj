@@ -42,17 +42,19 @@
                            "2022-08-26T07:21"))))
 
   (testing "Should form filter for the query with a hakutieto query"
-    (is (= [{:nested
-             {:path "search_terms.hakutiedot"
-              :query {:bool
-                      {:should [{:bool
-                                 {:filter
-                                  {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
-                                {:bool
-                                 {:must_not
-                                  {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}]
-           (common-filters {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}
-                           "2022-08-26T07:21"))))
+    (is (match? [{:nested
+                  {:path "search_terms.hakutiedot"
+                   :query {:bool
+                           {:filter
+                            [{:bool
+                              {:should [{:bool
+                                         {:filter
+                                          {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                        {:bool
+                                         {:must_not
+                                          {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}]}}}}]
+                (common-filters {:pohjakoulutusvaatimus ["pohjakoulutusvaatimuskonfo_am"]}
+                                "2022-08-26T07:21"))))
 
   (testing "Should form filter for maksullisuus -rajaingroup with single all-must -item"
     (is (= [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "maksullinen"}}]
@@ -172,11 +174,10 @@
                                                          :size          1000}}}
                                :filter {:bool {:filter
                                                [{:term {:search_terms.hasJotpaRahoitus true}}
-                                                {:nested {:path  "search_terms.hakutiedot"
-                                                          :query {:bool {:filter [{:nested {:path "search_terms.hakutiedot.hakuajat"
-                                                                                            :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
-                                                                                                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}}}]}}})
+                                                {:nested {:path "search_terms.hakutiedot.hakuajat"
+                                                          :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2022-08-26T07:21"}}}
+                                                                                  {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                   {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2022-08-26T07:21"}}}]}}]}}}}]}}})
                 ((:make-agg opetuskieli) {:jotpa true :hakukaynnissa true} default-ctx))))
 
   (testing "Should form aggregation for koulutustyyppi without any selected filters"
