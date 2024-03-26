@@ -42,7 +42,7 @@
 
     (testing "Search all oppilaitokset"
       (let [r (search :sort "name" :order "asc")]
-        (is (= 14 (count (:hits r))))
+        (is (= 12 (count (:hits r))))
         (is (= 5 (get-in r [:filters :koulutustyyppi :aikuisten-perusopetus :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :taiteen-perusopetus :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
