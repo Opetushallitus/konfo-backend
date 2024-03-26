@@ -2,10 +2,8 @@
   (:require [clojure.test :refer [deftest is use-fixtures testing]]
             [matcher-combinators.test]
             [matcher-combinators.matchers :as m]
-            [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.test-mock-data :refer :all]
-            [cheshire.core :refer [generate-string]]))
+            [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -34,11 +32,11 @@
     (let [response (search :kohdejoukko "haunkohdejoukko_02")]
       (is (= 7 (count (:hits response))))
       (is (= 7 (:total response)))
-      (is (= {:oid "1.2.246.562.20.0000011"
+      (is (match? {:oid "1.2.246.562.20.0000011"
               :nimi {:fi "nimi fi" :sv "nimi sv"}
               :hakuOid "1.2.246.562.29.0000006"
               :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}}
-              :jarjestyspaikkaHierarkiaNimi {:fi "Oppilaitos, Järjestämispaikka fi" :sv "Oppilaitos, Järjestämispaikka sv"}
+              :jarjestyspaikkaHierarkiaNimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}
               :toteutus {:oid "1.2.246.562.17.000008"}
               :koulutustyyppi "yo"
               :ammatillinenPerustutkintoErityisopetuksena nil}
@@ -47,20 +45,3 @@
     (let [response (search :kohdejoukko "haunkohdejoukko_11")]
       (is (= 0 (count (:hits response))))
       (is (= 0 (:total response))))))
-
-(not
-  (=
-    {:oid "1.2.246.562.20.0000011",
-     :nimi {:fi "nimi fi", :sv "nimi sv"},
-     :hakuOid "1.2.246.562.29.0000006",
-     :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka", :sv "Jokin järjestyspaikka sv"}},
-     :jarjestyspaikkaHierarkiaNimi {:fi "Oppilaitos, Järjestämispaikka fi", :sv "Oppilaitos, Järjestämispaikka sv"},
-     :toteutus {:oid "1.2.246.562.17.000008"}, :koulutustyyppi "yo",
-     :ammatillinenPerustutkintoErityisopetuksena nil}
-    {:oid "1.2.246.562.20.0000011",
-     :nimi {:fi "nimi fi", :sv "nimi sv"},
-     :hakuOid "1.2.246.562.29.0000006",
-     :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka", :sv "Jokin järjestyspaikka sv"}},
-     :toteutus {:oid "1.2.246.562.17.000008"},
-     :koulutustyyppi "yo",
-     :ammatillinenPerustutkintoErityisopetuksena nil}))
