@@ -31,7 +31,7 @@
          {:bool
           {:filter
            [{:nested
-             {:path "search_terms.hakutiedot.hakuajat",
+             {:path "search_terms.hakutiedot.hakuajat"
               :query
               {:bool
                {:filter
@@ -120,7 +120,7 @@
                                                          {:filter
                                                           [{:range
                                                             {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                             {:gte 0}}}]}},
+                                                             {:gte 0}}}]}}
                                                         :aggs {:real_hits {:reverse_nested {}}}}
                        :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
                        :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton")
@@ -144,7 +144,7 @@
                        :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:include alkamiskaudet-include} nil)
                        :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" nil nil nil)
                        :hakukaynnissa                  {:nested {:path "search_terms.hakutiedot"}
-                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
                                                                                           :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
@@ -189,8 +189,7 @@
                        :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:include alkamiskaudet-include} nil)
                        :hakukaynnissa                  {:filter {:bool {:filter [jotpa-term]}}
                                                         :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                        ; TÄSSÄ KORJATTU!
-                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
                                                                                                           :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
@@ -211,7 +210,7 @@
                                                           [jotpa-term
                                                            {:range
                                                             {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                             {:gte 0}}}]}},
+                                                             {:gte 0}}}]}}
                                                         :aggs {:real_hits {:reverse_nested {}}}}
                        :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
                        :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [jotpa-term] nil)
@@ -264,13 +263,12 @@
                        :lukuvuosimaksu-max                  (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
                        :koulutuksenkestokuukausina          {:filter {:bool {:filter [sijainti-term
                                                                                       onkotuleva-term
-                                                                                      {:range {:search_terms.metadata.suunniteltuKestoKuukausina {:gte 0}}}]}},
+                                                                                      {:range {:search_terms.metadata.suunniteltuKestoKuukausina {:gte 0}}}]}}
                                                              :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}
                        :koulutuksenkestokuukausina-max      (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
                        :hakukaynnissa                       {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
                                                              :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                                                                                    ; TÄSSÄ KORJATTU!
-                                                                             :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                             :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
                                                                                                                :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                         {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
@@ -322,13 +320,13 @@
                                                            onkotuleva-term
                                                            {:range
                                                             {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                             {:gte 0}}}]}},
+                                                             {:gte 0}}}]}}
                                                         :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                        :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
                        :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
                        :hakukaynnissa                  {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
                                                         :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat",
+                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
                                                                                                           :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
                                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}

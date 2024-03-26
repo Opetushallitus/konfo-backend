@@ -14,7 +14,7 @@
   [constraints]
   (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id all-rajain-definitions))))
 
-(defn create-rajain-query-groups [constraints current-time]
+(defn- create-rajain-query-groups [constraints current-time]
   (reduce (fn [result rajain]
             (if-let [query (make-query-for-rajain constraints rajain current-time)]
               (let [nested-path (get-in query [:nested :path])
@@ -25,27 +25,30 @@
           {}
           all-rajain-definitions))
 
+(defn- single-nested-query? [queries] (and (= 1 (count queries)) (get-in (first queries) [:nested])))
+
 (defn common-filters
-  [constraints current-time & options]
+  [constraints current-time]
   ; Muodostetaan ensin kolmitasoinen mappi (nested-id -> group-id -> query), jotta voidaan helposti yhdistellä queryt tasojen mukaan
-  (let [{:keys [keep-single-nested?]} (first options)
-        nested-grouped-queries (create-rajain-query-groups constraints current-time)]
+  (let [nested-grouped-queries (create-rajain-query-groups constraints current-time)]
     ; Yhdistetään nested- ja group- queryt
     (reduce-kv (fn [result nest-id nest-groups]
                  (let [queries (reduce-kv (fn [group-result group-id group-queries]
-                                            ; Rajain-ryhmät pitää yhdistää "or":lla, joten lisätään bool-should
-                                            (concat group-result
-                                                    ; bool-should tarvitsee lisätä vain jos rajain-ryhmä on olemassa ja siinä on enemmän kuin yksi query
-                                                    (if (and group-id group-queries (< 1 (count group-queries)))
-                                                      [{:bool {:should group-queries}}]
-                                                      group-queries)))
+                                            ; Karsitaan pois queryista yhteinen nested-taso, jos sellainen on
+                                            (let [stripped-queries (map #(strip-excess-nested % nest-id) group-queries)]
+                                              (concat group-result
+                                                      ; Bool-should tarvitsee lisätä vain jos rajain-ryhmä on olemassa ja siinä on enemmän kuin yksi query
+                                                      (if (and group-id stripped-queries (< 1 (count stripped-queries)))
+                                                        [{:bool {:should stripped-queries}}] ; Rajain-ryhmät pitää yhdistää "or":lla, joten lisätään bool-should
+                                                        stripped-queries))))
                                           []
                                           nest-groups)]
                    (concat result
-                           ; Jos nested-ryhmä, yhdistetään yhdeksi nested-queryksi, jotta queryt kohdistuu yhteen nested-elementtiin
-                           (if (and nest-id (or keep-single-nested? (< 1 (count queries))))
+                           ; Yhdistetään nested-polun (käytännössä search_terms.hakutiedot) queryt yhdeksi queryksi, jotta ne kohdistuvat samaan nested-elementtiin.
+                           ; Jos ryhmässä on ainoastaan yksi nested-query karsimisen jälkeen, sitä ei tarvitse kääriä enää uudelleen nested-queryyn
+                           (if (and nest-id (not (single-nested-query? queries)))
                              [{:nested {:path nest-id
-                                        :query {:bool {:filter (map #(strip-excess-nested % nest-id) queries)}}}}]
+                                        :query {:bool {:filter queries}}}}]
                              queries))))
                []
                nested-grouped-queries)))
@@ -62,11 +65,11 @@
         extra-constraints (:extra-filter rajain-context)
         current-time (:current-time rajain-context)
         constraints-without-own (apply dissoc constraints excluded-rajain-keys)]
-    (when (or (constraints? constraints-without-own) (not (nil? extra-constraints)))
-      (vec (flatten
-            (cond-> []
-              (constraints? constraints-without-own) (conj (common-filters constraints-without-own current-time {:keep-single-nested? true}))
-              extra-constraints (concat (vector extra-constraints))))))))
+    (not-empty
+     (vec (flatten
+           (cond-> []
+             (constraints? constraints-without-own) (conj (common-filters constraints-without-own current-time))
+             extra-constraints (concat (vector extra-constraints))))))))
 
 (def koulutustyyppi
   {:id :koulutustyyppi
