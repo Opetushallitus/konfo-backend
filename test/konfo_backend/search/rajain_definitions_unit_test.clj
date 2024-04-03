@@ -143,12 +143,14 @@
                            {:filter
                             [{:nested
                               {:path "search_terms.hakutiedot"
-                               :query
-                               {:bool
-                                {:filter
-                                 {:terms
-                                  {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am"
-                                                                                      "pohjakoulutusvaatimuskonfo_003"]}}}}}}
+                               :query {:bool
+                                       {:should [{:bool
+                                                  {:filter
+                                                   {:terms {:search_terms.hakutiedot.pohjakoulutusvaatimukset ["pohjakoulutusvaatimuskonfo_am"
+                                                                                                               "pohjakoulutusvaatimuskonfo_003"]}}}}
+                                                 {:bool
+                                                  {:must_not
+                                                   {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}
                              {:bool
                               {:should [{:bool
                                          {:should
@@ -281,10 +283,13 @@
                  [{:term {:search_terms.koulutustyypit.keyword "koulutustyyppi_26"}}
                   {:term {:search_terms.opetuskielet.keyword "oppilaitoksenopetuskieli_2"}}
                   {:nested {:path "search_terms.hakutiedot"
-                            :query
-                            {:bool
-                             {:filter
-                              {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}}}
+                            :query {:bool
+                                    {:should [{:bool
+                                               {:filter
+                                                {:term {:search_terms.hakutiedot.pohjakoulutusvaatimukset "pohjakoulutusvaatimuskonfo_am"}}}}
+                                              {:bool
+                                               {:must_not
+                                                {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}
                   {:bool {:should [{:term {:search_terms.hasJotpaRahoitus true}}]}}
                   {:bool
                    {:should [{:bool {:should
