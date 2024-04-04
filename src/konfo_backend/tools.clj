@@ -86,8 +86,8 @@
   (let [hakutiedot (get-in hit [:hakutiedot])]
     (boolean (some (fn [hakutieto]
             ; search-indeksissä hakutiedoilla ei ole hakukohteita, vaan hakuajat on hakutiedon juuressa
-            (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
-          hakutiedot))))
+                     (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
+                   hakutiedot))))
 
 (defn now-in-millis [] (coerce/to-long (time/now)))
 
@@ -112,6 +112,8 @@
 (defn remove-element [coll e] (remove #(= e %) coll))
 
 (defn ->koodi-with-version-wildcard [koodi] (str koodi "#*"))
+
+(defn ->lower-case [val] (if (string? val) (str/lower-case val) val))
 
 (defn ->lower-case-vec [coll] (vec (map str/lower-case coll)))
 

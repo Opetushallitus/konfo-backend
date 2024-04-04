@@ -1,13 +1,13 @@
 (ns konfo-backend.search.rajain-tools
   (:require [clj-time.core :as time]
-            [clojure.string :refer [join lower-case replace-first split]]
+            [clojure.string :refer [join replace-first split]]
             [konfo-backend.tools :refer [->kouta-date-time-string
+                                         ->lower-case
                                          ->lower-case-vec
                                          kouta-date-time-string->date-time]]))
 
 (defn ->terms-query [key value]
-  (let [term-key (keyword (str "search_terms." key))
-        ->lower-case (fn [val] (if (string? val) (lower-case val) val))]
+  (let [term-key (keyword (str "search_terms." key))]
     (cond
       (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
       (coll? value) {:terms {term-key (->lower-case-vec value)}}
@@ -126,7 +126,7 @@
   [field-name constraints rajain-context]
   (constrained-agg
    constraints
-  (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context)))
+   (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context)))
 
 (defn multi-bucket-rajain-agg [own-filters-with-bucket constraints rajain-context]
   (let [own-aggs (with-real-hits {:filters {:filters own-filters-with-bucket}} rajain-context)]
