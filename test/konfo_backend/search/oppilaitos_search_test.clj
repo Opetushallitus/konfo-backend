@@ -81,7 +81,8 @@
         (is (= 0 (get-in r [:filters :koulutustyyppi :yo :alakoodit :yo-erikoistumiskoulutus :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :yo :count])))
 
-        (is (= 0 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo-muu :count])))
+        (is (= 0 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-muu :count])))
+        (is (= 0 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-osaamismerkki :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :muu :count])))
 
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
@@ -139,9 +140,9 @@
       (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]
           ;(debug-pretty r)
         (is (= 0 (count (:hits r))))
-          (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
-          (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
-          (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))))
+        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
+        (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))))
 
     (testing "opetuskieli"
       (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
