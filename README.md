@@ -50,6 +50,8 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
                          :kunta 1
                          :language-default 1
                          :default 0.1}
+
+ :swagger-ui {:syntaxHighlight false}
  }
 ```
 
