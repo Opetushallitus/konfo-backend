@@ -17,7 +17,7 @@
                  [org.clojure/core.memoize "1.0.257"]
                  ; Rest + server
                  [metosin/compojure-api "2.0.0-alpha31"]
-                 [metosin/ring-swagger-ui "4.18.1"]
+                 [metosin/ring-swagger-ui "5.9.0"]
                  [metosin/schema-tools "0.13.1"]
                  [clj-commons/clj-yaml "1.0.27"]
                  [clj-http "3.12.3"]
