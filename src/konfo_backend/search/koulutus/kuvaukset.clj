@@ -3,7 +3,8 @@
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.index.eperuste :as eperuste]
             [clojure.string :as string]
-            [konfo-backend.index.osaamisalakuvaus :as osaamisala]))
+            [konfo-backend.index.osaamisalakuvaus :as osaamisala]
+            [konfo-backend.constants :refer [language-keys]]))
 
 (defn- select-amm-kuvaus
   [eperuste]
@@ -33,8 +34,6 @@
                               vaatimukset-translation))))
                    (string/join " "))))]
     (if (string/blank? result) nil result)))
-
-(def language-keys [:fi :sv :en])
 
 (defn- strip-ammattitaitovaatimukset-html [html-str]
   (when (string? html-str)
