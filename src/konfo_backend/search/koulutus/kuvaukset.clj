@@ -1,7 +1,8 @@
 (ns konfo-backend.search.koulutus.kuvaukset
-  (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa?]]
+  (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa? osaamismerkki?]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.index.eperuste :as eperuste]
+            [konfo-backend.index.osaamismerkki :as osaamismerkki]
             [clojure.string :as string]
             [konfo-backend.index.osaamisalakuvaus :as osaamisala]
             [konfo-backend.constants :refer [language-keys]]))
@@ -98,6 +99,16 @@
        (set)
        (eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids)))
 
+(defn- get-osaamismerkki-kuvaukset
+  [hits]
+  (->> hits
+       :hits
+       (filter osaamismerkki?)
+       (filter #(some? (:osaamismerkki %)))
+       (map #(get % :osaamismerkki))
+       (set)
+       (osaamismerkki/get-kuvaukset-by-osaamismerkki-koodiuris)))
+
 (defn- find-amm-kuvaus
   [kuvaukset hit]
   (when-let [kuvaus (first (filter #(= (:id %) (:eperuste hit)) kuvaukset))]
@@ -144,16 +155,18 @@
   [result]
   (let [amm-kuvaukset (get-amm-kuvaukset result)
         amm-osaamisala-kuvaukset (get-amm-osaamisala-kuvaukset result)
-        amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)]
+        amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)
+        osaamismerkkikuvaukset (get-osaamismerkki-kuvaukset result)]
     (->> (for [hit (:hits result)]
            (cond (amm-koulutus-with-eperuste? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
-                 (amm-osaamisala? hit)
-                 (assoc hit :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
+                 (amm-osaamisala? hit) (assoc hit
+                                              :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
                  (amm-tutkinnon-osa? hit) (assoc hit
                                                  :kuvaus
                                                  (find-amm-tutkinnon-osa-kuvaus
-                                                  amm-tutkinnon-osa-kuvaukset
-                                                  (:tutkinnonOsat hit)))
+                                                   amm-tutkinnon-osa-kuvaukset
+                                                   (:tutkinnonOsat hit)))
+                 (osaamismerkki? hit) (assoc hit :kuvaus osaamismerkkikuvaukset)
                  :else hit))
          (vec)
          (assoc result :hits))))
