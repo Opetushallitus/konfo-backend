@@ -1,7 +1,7 @@
 (ns konfo-backend.index.osaamismerkki
   (:refer-clojure :exclude [get])
   (:require
-   [konfo-backend.elastic-tools :refer [search]]
+   [konfo-backend.elastic-tools :refer [get-source search]]
    [konfo-backend.tools :refer [koodi-uri-no-version]]
    [konfo-backend.constants :refer [language-keys]]
    [clojure.string :as s]))
@@ -9,6 +9,10 @@
 (defonce index "osaamismerkki")
 
 (def osaamismerkki-search (partial search index))
+
+(defn get
+  [koodiuri]
+  (get-source index (koodi-uri-no-version koodiuri)))
 
 (defn- ->koodiuri-query
   [koodiuris]
