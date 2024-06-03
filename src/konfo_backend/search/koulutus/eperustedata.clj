@@ -1,4 +1,4 @@
-(ns konfo-backend.search.koulutus.kuvaukset
+(ns konfo-backend.search.koulutus.eperustedata
   (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa? osaamismerkki?]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.index.eperuste :as eperuste]
@@ -99,7 +99,7 @@
        (set)
        (eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids)))
 
-(defn- get-osaamismerkki-kuvaukset
+(defn- get-osaamismerkki-data
   [hits]
   (->> hits
        :hits
@@ -151,12 +151,12 @@
       (boolean (not-any? #(string/starts-with? koulutus-koodiuri %) koulutus-koodit-without-eperuste)))
     false))
 
-(defn with-kuvaukset
+(defn with-eperustedata
   [result]
   (let [amm-kuvaukset (get-amm-kuvaukset result)
         amm-osaamisala-kuvaukset (get-amm-osaamisala-kuvaukset result)
         amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)
-        osaamismerkkikuvaukset (get-osaamismerkki-kuvaukset result)]
+        osaamismerkkidata (get-osaamismerkki-data result)]
     (->> (for [hit (:hits result)]
            (cond (amm-koulutus-with-eperuste? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
                  (amm-osaamisala? hit) (assoc hit
@@ -166,7 +166,9 @@
                                                  (find-amm-tutkinnon-osa-kuvaus
                                                    amm-tutkinnon-osa-kuvaukset
                                                    (:tutkinnonOsat hit)))
-                 (osaamismerkki? hit) (assoc hit :kuvaus osaamismerkkikuvaukset)
+                 (osaamismerkki? hit) (-> hit
+                                          (assoc :kuvaus (:kuvaus osaamismerkkidata))
+                                          (assoc :kuvake (:kuvake osaamismerkkidata)))
                  :else hit))
          (vec)
          (assoc result :hits))))

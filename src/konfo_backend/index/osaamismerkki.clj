@@ -34,19 +34,20 @@
                    :when (seq x)]
                {language (str x ".")}))))
 
-(defn parse-osaamismerkki-kuvaus
+(defn parse-osaamismerkki-eperustedata
   [osaamismerkki-data]
-  {:osaamistavoitteet (parse-osaamismerkki-kuvaus-items
-                        (:osaamistavoitteet osaamismerkki-data) :osaamistavoite)
-   :arviointikriteerit (parse-osaamismerkki-kuvaus-items
-                         (:arviointikriteerit osaamismerkki-data) :arviointikriteeri)})
+  {:kuvaus
+   {:osaamistavoitteet (parse-osaamismerkki-kuvaus-items
+                         (:osaamistavoitteet osaamismerkki-data) :osaamistavoite)
+    :arviointikriteerit (parse-osaamismerkki-kuvaus-items
+                          (:arviointikriteerit osaamismerkki-data) :arviointikriteeri)}
+   :kuvake (get-in osaamismerkki-data [:kategoria :liite])})
 
 (defn parse-kuvaukset
   [result]
   (into {} (->> (get-in result [:hits :hits])
                 (map :_source)
-                (map parse-osaamismerkki-kuvaus))))
-
+                (map parse-osaamismerkki-eperustedata))))
 
 (defn get-kuvaukset-by-osaamismerkki-koodiuris
   [koodiuris]
@@ -54,6 +55,7 @@
     (let [koodiuris-without-version (map #(koodi-uri-no-version %) koodiuris)]
       (osaamismerkki-search parse-kuvaukset
                             :_source [:osaamistavoitteet
-                                      :arviointikriteerit]
+                                      :arviointikriteerit
+                                      :kategoria]
                             :size (count koodiuris-without-version)
                             :query (->koodiuri-query koodiuris-without-version)))))

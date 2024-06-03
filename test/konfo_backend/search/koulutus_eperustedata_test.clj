@@ -1,6 +1,6 @@
-(ns konfo-backend.search.koulutus-kuvaukset-test
+(ns konfo-backend.search.koulutus-eperustedata-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.search.koulutus.kuvaukset :refer [select-amm-tutkinnon-osa-kuvaus]]
+            [konfo-backend.search.koulutus.eperustedata :refer [select-amm-tutkinnon-osa-kuvaus]]
             [cheshire.core :as cheshire]))
 
 (def tutkinnon-osa-data

@@ -1,6 +1,6 @@
 (ns konfo-backend.index.osaamismerkki-test
   (:require [clojure.test :refer :all]
-            [konfo-backend.index.osaamismerkki :refer [parse-osaamismerkki-kuvaus parse-osaamismerkki-kuvaus-items]]))
+            [konfo-backend.index.osaamismerkki :refer [parse-osaamismerkki-eperustedata parse-osaamismerkki-kuvaus-items]]))
 
 (deftest parse-osaamismerkki-kuvaus-items-test
   (testing "should parse osaamistavoitteet with one tavoite"
@@ -62,7 +62,7 @@
     (is (= {}
            (parse-osaamismerkki-kuvaus-items nil :arviointikriteeri)))))
 
-(deftest parse-osaamismerkki-kuvaus-test
+(deftest parse-osaamismerkki-eperustedata-test
   (testing "should parse kuvaus with only osaamistavoitteet"
     (let [osaamismerkki-data {:id 9203131
                               :koodiUri "osaamismerkit_1022"
@@ -72,13 +72,14 @@
                                                     :sv "kan söka information i digitala miljöer"
                                                     :_id "9204226"}
                                                    :id 9203075}]}]
-      (is (= {:osaamistavoitteet
-              {:fi "osaa hakea tietoa digitaalisista ympäristöistä."
-               :sv "kan söka information i digitala miljöer."}
-              :arviointikriteerit {}}
-             (parse-osaamismerkki-kuvaus osaamismerkki-data)))))
+      (is (= {:kuvaus {:osaamistavoitteet
+                       {:fi "osaa hakea tietoa digitaalisista ympäristöistä."
+                        :sv "kan söka information i digitala miljöer."}
+                       :arviointikriteerit {}}
+              :kuvake nil}
+             (parse-osaamismerkki-eperustedata osaamismerkki-data)))))
 
-  (testing "should parse kuvaus with osaamistavoitteet and arviointikriteerit"
+  (testing "should parse kuvaus with osaamistavoitteet and arviointikriteerit and liite image"
     (let [osaamismerkki-data {:id 9203131
                               :koodiUri "osaamismerkit_1022"
                               :osaamistavoitteet [{:osaamistavoite
@@ -104,11 +105,28 @@
                                                      :fi "kertoo perustellen tietolähteiden ja tiedon luotettavuudesta"
                                                      :sv "beskriver och motiverar informationskällans och informationens tillförlitlighet"
                                                      :_id "9204223"}
-                                                    :id 9203144}]}]
-      (is (= {:osaamistavoitteet
-              {:fi "osaa hakea tietoa digitaalisista ympäristöistä."
-               :sv "kan söka information i digitala miljöer."}
-              :arviointikriteerit
-              {:fi "nimeää erilaisia hakulähteitä ja -tapoja tiedonhaussa, käyttää hakutermejä tietolähteiden ja tiedon etsimisessä, kertoo perustellen tietolähteiden ja tiedon luotettavuudesta."
-               :sv "ger exempel på olika informationskällor och metoder vid informationssökning, använder söktermer vid sökning av informationskällor och information, beskriver och motiverar informationskällans och informationens tillförlitlighet."}}
-             (parse-osaamismerkki-kuvaus osaamismerkki-data))))))
+                                                    :id 9203144}]
+                              :kategoria {:nimi
+                                          {:_tunniste "6d20f392-f411-4e85-9d00-559411a6e4d7"
+                                           :fi "Digitaidot"
+                                           :sv "Digital kompetens"
+                                           :_id "9202528"}
+                                          :id 9202623
+                                          :muokattu 1707992127262
+                                          :kuvaus nil
+                                          :liite {:nimi "digitaidot_eitekstia.png"
+                                                  :binarydata "iVBORw0KGgoA"
+                                                  :mime "image/png"
+                                                  :id "ff78de54-0090-484f-87ce-802ea6c70156"}}}]
+
+      (is (= {:kuvaus {:osaamistavoitteet
+                       {:fi "osaa hakea tietoa digitaalisista ympäristöistä."
+                        :sv "kan söka information i digitala miljöer."}
+                       :arviointikriteerit
+                       {:fi "nimeää erilaisia hakulähteitä ja -tapoja tiedonhaussa, käyttää hakutermejä tietolähteiden ja tiedon etsimisessä, kertoo perustellen tietolähteiden ja tiedon luotettavuudesta."
+                        :sv "ger exempel på olika informationskällor och metoder vid informationssökning, använder söktermer vid sökning av informationskällor och information, beskriver och motiverar informationskällans och informationens tillförlitlighet."}}
+              :kuvake {:nimi "digitaidot_eitekstia.png"
+                       :binarydata "iVBORw0KGgoA"
+                       :mime "image/png"
+                       :id "ff78de54-0090-484f-87ce-802ea6c70156"}}
+             (parse-osaamismerkki-eperustedata osaamismerkki-data))))))
