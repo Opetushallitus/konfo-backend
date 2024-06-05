@@ -1,1 +1,2 @@
-#kaocha/v1 {:kaocha.filter/focus-meta [:focus]}
+#kaocha/v1 {:kaocha.filter/focus-meta [:focus]
+            :kaocha.plugin.randomize/randomize? false}
