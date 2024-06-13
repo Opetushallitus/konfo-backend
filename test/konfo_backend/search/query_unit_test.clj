@@ -132,9 +132,9 @@
                        :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid")
                        :kunta                          (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
                        :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                                                  nil
-                                                                  {:missing "pohjakoulutusvaatimuskonfo_missing"}
-                                                                  nil)
+                                                                           nil
+                                                                           {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                           nil)
                        :maakunta                       (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"} nil)
                        :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa")
                        :opetustapa                     (default-agg "search_terms.opetustavat.keyword")
@@ -149,15 +149,13 @@
                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
                                                                         :aggs {:real_hits {:reverse_nested {}}}}}}
-                       :hakualkaapaivissa              {:filters
-                                                        {:filters
-                                                         {:hakualkaapaivissa_30
-                                                          {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                    :query {:range
-                                                                            {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                             {:gt  "2020-01-01T01:01"
-                                                                              :lte "2020-01-31T01:01"}}}}}}}
-                                                        :aggs {:real_hits {:reverse_nested {}}}}
+                       :hakualkaapaivissa_30           {:nested {:path "search_terms.hakutiedot"}
+                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                          :query {:range
+                                                                                                  {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                   {:gt  "2020-01-01T01:01"
+                                                                                                    :lte "2020-01-31T01:01"}}}}}
+                                                                        :aggs {:real_hits {:reverse_nested {}}}}}}
                        :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                        :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
                        :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
@@ -194,16 +192,14 @@
                                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
                                                                                         :aggs {:real_hits {:reverse_nested {}}}}}}}}
-                       :hakualkaapaivissa              {:filter {:bool {:filter [jotpa-term]}}
-                                                        :aggs   {:rajain {:filters
-                                                                          {:filters
-                                                                           {:hakualkaapaivissa_30
-                                                                            {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                      :query {:range
-                                                                                              {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                               {:gt  "2020-01-01T01:01"
-                                                                                                :lte "2020-01-31T01:01"}}}}}}}
-                                                                          :aggs {:real_hits {:reverse_nested {}}}}}}
+                       :hakualkaapaivissa_30           {:filter {:bool {:filter [jotpa-term]}}
+                                                        :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                          :query {:range
+                                                                                                                  {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                   {:gt  "2020-01-01T01:01"
+                                                                                                                    :lte "2020-01-31T01:01"}}}}}
+                                                                                        :aggs {:real_hits {:reverse_nested {}}}}}}}}
                        :koulutuksenkestokuukausina     {:filter
                                                         {:bool
                                                          {:filter
@@ -273,16 +269,14 @@
                                                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                         {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
                                                                                              :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
-                       :hakualkaapaivissa                   {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                             :aggs   {:rajain {:filters
-                                                                               {:filters
-                                                                                {:hakualkaapaivissa_30
-                                                                                 {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                           :query {:range
-                                                                                                   {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                                    {:gt  "2020-01-01T01:01"
-                                                                                                     :lte "2020-01-31T01:01"}}}}}}}
-                                                                               :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}})
+                       :hakualkaapaivissa_30                {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                             :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                             :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                               :query {:range
+                                                                                                                       {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                        {:gt  "2020-01-01T01:01"
+                                                                                                                         :lte "2020-01-31T01:01"}}}}}
+                                                                                             :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
       (jarjestajat-aggregations {:sijainti ["kunta_564"]} false)))))
 
 (deftest tarjoajat-aggregations-test
@@ -331,14 +325,12 @@
                                                                                                                                   {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
                                                                                                                                                    {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
                                                                                         :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
-                       :hakualkaapaivissa              {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                        :aggs   {:rajain {:filters
-                                                                          {:filters
-                                                                           {:hakualkaapaivissa_30
-                                                                            {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                      :query {:range
-                                                                                              {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                               {:gt  "2020-01-01T01:01"
-                                                                                                :lte "2020-01-31T01:01"}}}}}}}
-                                                                          :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}})
+                       :hakualkaapaivissa_30           {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                        :aggs {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                        :aggs {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                          :query {:range
+                                                                                                                  {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                   {:gt  "2020-01-01T01:01"
+                                                                                                                    :lte "2020-01-31T01:01"}}}}}
+                                                                                        :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
       (tarjoajat-aggregations {:sijainti ["kunta_564"]} false)))))

@@ -50,7 +50,7 @@
 
 (defn- numbers-by-filter
   [response]
-  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map :id all-agg-defs))
+  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map #(or (:agg-id %) (:id %)) all-agg-defs))
         max-numbers (reduce-merge-map #(->max-number response %) (map #(->max-agg-id (:id %)) max-agg-defs))]
     (merge doc-counts max-numbers)))
 

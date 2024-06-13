@@ -533,16 +533,16 @@
           required: false
           description: Palautetaan koulutukset, joiden haku on käynissä"})
 
-(defonce hakualkaapaivissa-buckets [30])
-
 (def hakualkaapaivissa
   {:id :hakualkaapaivissa
+   :agg-id :hakualkaapaivissa_30
    :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (hakualkaapaivissa-filter-query current-time value))
    :make-agg (fn [constraints rajain-context]
-               (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str "hakualkaapaivissa_" %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
-                                        (aggregation-filters-for-rajain :hakualkaapaivissa constraints rajain-context)
-                                        rajain-context))
+               (nested-rajain-aggregation "search_terms.hakutiedot"
+                                          (aggregation-filters-for-rajain :hakualkaapaivissa constraints rajain-context)
+                                          {:filter (hakualkaapaivissa-filter-query (:current-time rajain-context) 30)}
+                                          rajain-context))
    :desc "
         - in: query
           name: hakualkaapaivissa
@@ -618,7 +618,7 @@
   [agg-defs constraints rajain-context]
   (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
     (-> {}
-        (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
+        (into (for [agg agg-defs] {(or (:agg-id agg) (:id agg)) ((:make-agg agg) constraints rajain-context)}))
         (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
 
 (defn generate-hakutulos-aggregations

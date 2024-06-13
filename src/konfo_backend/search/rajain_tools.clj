@@ -128,10 +128,6 @@
    constraints
    (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context)))
 
-(defn multi-bucket-rajain-agg [own-filters-with-bucket constraints rajain-context]
-  (let [own-aggs (with-real-hits {:filters {:filters own-filters-with-bucket}} rajain-context)]
-    (constrained-agg constraints own-aggs)))
-
 (defn bool-agg-filter [own-filter constraints rajain-context]
   (with-real-hits
     {:filter {:bool
