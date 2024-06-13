@@ -38,7 +38,7 @@
               :nimi {:fi "nimi fi" :sv "nimi sv"}
               :hakuOid "1.2.246.562.29.0000006"
               :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}}
-              :jarjestyspaikkaHierarkiaNimi {:fi "Oppilaitos, Järjestämispaikka fi" :sv "Oppilaitos, Järjestämispaikka sv"}
+              :jarjestyspaikkaHierarkiaNimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}
               :toteutus {:oid "1.2.246.562.17.000008"}
               :koulutustyyppi "yo"
               :ammatillinenPerustutkintoErityisopetuksena nil}
