@@ -292,7 +292,7 @@
             items:
               type: string
           description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
-          example: maksuton,maksullinen,lukuvuosimaksu
+          example: [maksuton,maksullinen,lukuvuosimaksu]
         - in: query
           name: maksunmaara_min
           style: form
