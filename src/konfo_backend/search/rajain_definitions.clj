@@ -1,9 +1,8 @@
 (ns konfo-backend.search.rajain-definitions
-  (:require
-   [konfo-backend.tools :refer [current-time-as-kouta-format]]
-   [clj-time.core :as time]
-   [clojure.string :refer [replace-first]]
-   [konfo-backend.search.rajain-tools :refer :all]))
+  (:require [clj-time.core :as time]
+            [clojure.string :as str]
+            [konfo-backend.search.rajain-tools :refer :all]
+            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
 
 ;; Esitellään myöhemmin alustettu muuttuja ristikkäisten riippuvuuksien vuoksi. Tätä käytetään heti
 ;; alla olevissa funktioissa, vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta 
@@ -15,36 +14,70 @@
   [constraints]
   (not-empty (filter #(constraint? ((keyword %) constraints)) (map :id all-rajain-definitions))))
 
+(defn- create-rajain-query-groups [constraints current-time]
+  (reduce (fn [result rajain]
+            (if-let [query (make-query-for-rajain constraints rajain current-time)]
+              (let [nested-path (get-in query [:nested :path])
+                    nest-id (get-top-level-nested-path nested-path)
+                    group-id (:rajainGroupId rajain)]
+                (update-in result [nest-id group-id] #(conj (or % []) query)))
+              result))
+          {}
+          all-rajain-definitions))
+
+(defn- single-nested-query? [queries] (and (= 1 (count queries)) (get-in (first queries) [:nested])))
+
 (defn common-filters
   [constraints current-time]
-  (let [rajaimet-grouped (group-by :rajainGroupId all-rajain-definitions)
-        rajaimet-without-group (get rajaimet-grouped nil)
-        rajain-groups (vals (dissoc rajaimet-grouped nil))]
-    (filterv
-     some?
-     (flatten
-      (conj
-       (mapv #(make-query-for-rajain constraints % current-time) rajaimet-without-group)
-       (mapv #(make-combined-should-filter-query constraints % current-time) rajain-groups))))))
+  ; Muodostetaan ensin kolmitasoinen mappi (nested-id -> group-id -> query), jotta voidaan helposti yhdistellä queryt tasojen mukaan
+  (let [nested-grouped-queries (create-rajain-query-groups constraints current-time)]
+    ; Yhdistetään nested- ja group- queryt
+    (reduce-kv (fn [result nest-id nest-groups]
+                 (let [queries (reduce-kv (fn [group-result group-id group-queries]
+                                            ; Karsitaan pois queryista yhteinen nested-taso, jos sellainen on
+                                            (let [stripped-queries (map #(strip-excess-nested % nest-id) group-queries)]
+                                              (concat group-result
+                                                      ; Bool-should tarvitsee lisätä vain jos rajain-ryhmä on olemassa ja siinä on enemmän kuin yksi query
+                                                      (if (and group-id stripped-queries (< 1 (count stripped-queries)))
+                                                        [{:bool {:should stripped-queries}}] ; Rajain-ryhmät pitää yhdistää "or":lla, joten lisätään bool-should
+                                                        stripped-queries))))
+                                          []
+                                          nest-groups)]
+                   (concat result
+                           ; Yhdistetään nested-polun (käytännössä search_terms.hakutiedot) queryt yhdeksi queryksi, jotta ne kohdistuvat samaan nested-elementtiin.
+                           ; Jos ryhmässä on ainoastaan yksi nested-query karsimisen jälkeen, sitä ei tarvitse kääriä enää uudelleen nested-queryyn
+                           (if (and nest-id (not (single-nested-query? queries)))
+                             [{:nested {:path nest-id
+                                        :query {:bool {:filter queries}}}}]
+                             queries))))
+               []
+               nested-grouped-queries)))
 
-(defn aggregation-filters-without-rajainkeys
-  [constraints excluded-rajain-keys rajain-context]
-  (let [extra-constraints (:extra-filter rajain-context)
+(defn- get-rajain-keys-by-group [rajain-group-id]
+  (if rajain-group-id
+    (map :id (filter #(= (:rajainGroupId %) rajain-group-id) all-rajain-definitions))
+    []))
+
+(defn aggregation-filters-for-rajain
+  [own-rajain-key constraints rajain-context]
+  (let [own-rajain (first (filter #(= own-rajain-key (:id %)) all-rajain-definitions))
+        excluded-rajain-keys (concat [own-rajain-key] (get-rajain-keys-by-group (:rajainGroupId own-rajain)))
+        extra-constraints (:extra-filter rajain-context)
         current-time (:current-time rajain-context)
-        constraints-wo-rajainkey (apply dissoc constraints (map keyword excluded-rajain-keys))]
-    (when (or (constraints? constraints-wo-rajainkey) (not (nil? extra-constraints)))
-      (vec (flatten
-            (cond-> []
-              (constraints? constraints-wo-rajainkey) (conj (common-filters constraints-wo-rajainkey current-time))
-              extra-constraints (concat (vector extra-constraints))))))))
+        constraints-without-own (apply dissoc constraints excluded-rajain-keys)]
+    (not-empty
+     (vec (flatten
+           (cond-> []
+             (constraints? constraints-without-own) (conj (common-filters constraints-without-own current-time))
+             extra-constraints (concat (vector extra-constraints))))))))
 
 (def koulutustyyppi
   {:id :koulutustyyppi
    :make-query #(->terms-query "koulutustyypit.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "koulutustyypit.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["koulutustyyppi"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "koulutustyypit.keyword")
+                                         (aggregation-filters-for-rajain :koulutustyyppi constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: koulutustyyppi
@@ -75,23 +108,23 @@
 (def maakunta
   {:id :maakunta
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "sijainti.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["sijainti"] rajain-context)
-                                   (merge rajain-context {:term-params {:include "maakunta.*"}})))})
+               (rajain-terms-aggregation (->field-key "sijainti.keyword")
+                                         (aggregation-filters-for-rajain :sijainti constraints rajain-context)
+                                         (merge rajain-context {:term-params {:include "maakunta.*"}})))})
 (def kunta
   {:id :kunta
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "sijainti.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["sijainti"] rajain-context)
-                                   (merge rajain-context {:term-params {:include "kunta.*"}})))})
+               (rajain-terms-aggregation (->field-key "sijainti.keyword")
+                                         (aggregation-filters-for-rajain :sijainti constraints rajain-context)
+                                         (merge rajain-context {:term-params {:include "kunta.*"}})))})
 
 (def opetuskieli
   {:id :opetuskieli
    :make-query #(->terms-query "opetuskielet.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "opetuskielet.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["opetuskieli"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "opetuskielet.keyword")
+                                         (aggregation-filters-for-rajain :opetuskieli constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: opetuskieli
@@ -108,9 +141,9 @@
   {:id :koulutusala
    :make-query #(->terms-query "koulutusalat.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "koulutusalat.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["koulutusala"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "koulutusalat.keyword")
+                                         (aggregation-filters-for-rajain :koulutusala constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: koulutusala
@@ -127,9 +160,9 @@
   {:id :opetustapa
    :make-query #(->terms-query "opetustavat.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "opetustavat.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["opetustapa"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "opetustavat.keyword")
+                                         (aggregation-filters-for-rajain :opetustapa constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: opetustapa
@@ -146,9 +179,9 @@
   {:id :opetusaika
    :make-query #(->terms-query "metadata.opetusajat.koodiUri" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "metadata.opetusajat.koodiUri.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["opetusaika"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "metadata.opetusajat.koodiUri.keyword")
+                                         (aggregation-filters-for-rajain :opetusaika constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: opetusaika
@@ -169,8 +202,8 @@
                (let [kesto (if (not-empty (:koulutuksenkestokuukausina constraints))
                              (:koulutuksenkestokuukausina constraints) [0])]
                  (bool-agg-filter (number-range-query "metadata.suunniteltuKestoKuukausina" kesto)
-                                  (aggregation-filters-without-rajainkeys constraints ["koulutuksenkestokuukausina"]
-                                                                          rajain-context)
+                                  (aggregation-filters-for-rajain :koulutuksenkestokuukausina constraints
+                                                                  rajain-context)
                                   rajain-context)))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.suunniteltuKestoKuukausina"))
    :desc "
@@ -191,11 +224,11 @@
 
 (def valintatapa
   {:id :valintatapa
-   :make-query #(nested-query "hakutiedot" "valintatavat" %)
+   :make-query #(nested-terms-query "hakutiedot" "valintatavat" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "valintatapa" "search_terms.hakutiedot.valintatavat"
-                                          (aggregation-filters-without-rajainkeys constraints ["valintatapa"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "search_terms.hakutiedot.valintatavat"
+                                                (aggregation-filters-for-rajain :valintatapa constraints rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: valintatapa
@@ -210,11 +243,12 @@
 
 (def hakutapa
   {:id :hakutapa
-   :make-query #(nested-query "hakutiedot" "hakutapa" %)
+   :rajainGroupId :hakutapa
+   :make-query #(nested-terms-query "hakutiedot" "hakutapa" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "hakutapa" "search_terms.hakutiedot.hakutapa"
-                                          (aggregation-filters-without-rajainkeys constraints ["hakutapa"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "search_terms.hakutiedot.hakutapa"
+                                                (aggregation-filters-for-rajain :hakutapa constraints rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: hakutapa
@@ -233,8 +267,7 @@
    :make-query #(->boolean-term-query "hasJotpaRahoitus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "hasJotpaRahoitus")
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
+                                (aggregation-filters-for-rajain :jotpa constraints rajain-context)
                                 rajain-context))
    :desc "
         - in: query
@@ -251,8 +284,7 @@
    :make-query #(->boolean-term-query "isTyovoimakoulutus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTyovoimakoulutus")
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
+                                (aggregation-filters-for-rajain :tyovoimakoulutus constraints rajain-context)
                                 rajain-context))
    :desc "
         - in: query
@@ -269,8 +301,7 @@
    :make-query #(->boolean-term-query "isTaydennyskoulutus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isTaydennyskoulutus")
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :tyoelama) rajain-context)
+                                (aggregation-filters-for-rajain :taydennyskoulutus constraints rajain-context)
                                 rajain-context))
    :desc "
         - in: query
@@ -335,8 +366,7 @@
    :make-query #(->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :maksullisuus) rajain-context)
+                                (aggregation-filters-for-rajain :maksuton constraints rajain-context)
                                 rajain-context))})
 
 (def maksullinen
@@ -348,8 +378,7 @@
                (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
                                            (number-range-query "metadata.maksunMaara"
                                                                (get-in constraints [:maksullinen :maksunmaara]))])
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :maksullisuus) rajain-context)
+                                (aggregation-filters-for-rajain :maksullinen constraints rajain-context)
                                 rajain-context))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
                                          (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
@@ -364,8 +393,7 @@
                (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
                                            (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
                                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
-                                (aggregation-filters-without-rajainkeys
-                                 constraints (by-rajaingroup all-rajain-definitions :maksullisuus) rajain-context)
+                                (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
                                 rajain-context))
    :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
                                                    (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
@@ -373,11 +401,12 @@
 
 (def yhteishaku
   {:id :yhteishaku
-   :make-query #(nested-query "hakutiedot" "yhteishakuOid" %)
+   :rajainGroupId :hakutapa
+   :make-query #(nested-terms-query "hakutiedot" "yhteishakuOid" %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "yhteishaku" "search_terms.hakutiedot.yhteishakuOid"
-                                          (aggregation-filters-without-rajainkeys constraints ["yhteishaku"] rajain-context)
-                                          rajain-context))
+               (nested-rajain-terms-aggregation "search_terms.hakutiedot.yhteishakuOid"
+                                                (aggregation-filters-for-rajain :yhteishaku constraints rajain-context)
+                                                rajain-context))
    :desc "
         - in: query
           name: yhteishaku
@@ -394,9 +423,9 @@
   {:id :pohjakoulutusvaatimus
    :make-query #(pohjakoulutusvaatimukset-filter-query %)
    :make-agg (fn [constraints rajain-context]
-               (nested-rajain-aggregation "pohjakoulutusvaatimus" "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                          (aggregation-filters-without-rajainkeys constraints ["pohjakoulutusvaatimus"] rajain-context)
-                                          (merge rajain-context {:term-params {:missing "pohjakoulutusvaatimuskonfo_missing"}})))
+               (nested-rajain-terms-aggregation "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                (aggregation-filters-for-rajain :pohjakoulutusvaatimus constraints rajain-context)
+                                                (merge rajain-context {:term-params {:missing "pohjakoulutusvaatimuskonfo_missing"}})))
    :desc "
         - in: query
           name: pohjakoulutusvaatimus
@@ -413,10 +442,10 @@
   {:id :oppilaitos
    :make-query #(->terms-query "oppilaitosOid.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "oppilaitosOid.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["oppilaitos"] rajain-context)
-                                   (merge rajain-context {:term-params {:size 10000
-                                                                        :min_doc_count 1}})))
+               (rajain-terms-aggregation (->field-key "oppilaitosOid.keyword")
+                                         (aggregation-filters-for-rajain :oppilaitos constraints rajain-context)
+                                         (merge rajain-context {:term-params {:size 10000
+                                                                              :min_doc_count 1}})))
    :desc "
         - in: query
           name: oppilaitos
@@ -433,9 +462,9 @@
   {:id :lukiopainotukset
    :make-query #(->terms-query "lukiopainotukset.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "lukiopainotukset.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["lukiopainotukset"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "lukiopainotukset.keyword")
+                                         (aggregation-filters-for-rajain :lukiopainotukset constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: lukiopainotukset
@@ -452,9 +481,9 @@
   {:id :lukiolinjaterityinenkoulutustehtava
    :make-query #(->terms-query "lukiolinjaterityinenkoulutustehtava.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["lukiolinjaterityinenkoulutustehtava"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "lukiolinjaterityinenkoulutustehtava.keyword")
+                                         (aggregation-filters-for-rajain :lukiolinjaterityinenkoulutustehtava constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: lukiolinjaterityinenkoulutustehtava
@@ -471,9 +500,9 @@
   {:id :osaamisala
    :make-query #(->terms-query "osaamisalat.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "osaamisalat.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["osaamisala"] rajain-context)
-                                   rajain-context))
+               (rajain-terms-aggregation (->field-key "osaamisalat.keyword")
+                                         (aggregation-filters-for-rajain :osaamisala constraints rajain-context)
+                                         rajain-context))
    :desc "
         - in: query
           name: osaamisala
@@ -491,9 +520,10 @@
    :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (when (true? value) (hakukaynnissa-filter-query current-time)))
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (hakukaynnissa-filter-query (:current-time rajain-context))
-                                (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
-                                rajain-context))
+               (nested-rajain-aggregation "search_terms.hakutiedot"
+                                          (aggregation-filters-for-rajain :hakukaynnissa constraints rajain-context)
+                                          {:filter (hakukaynnissa-filter-query (:current-time rajain-context))}
+                                          rajain-context))
    :desc "
         - in: query
           name: hakukaynnissa
@@ -503,16 +533,16 @@
           required: false
           description: Palautetaan koulutukset, joiden haku on käynissä"})
 
-(defonce hakualkaapaivissa-buckets [30])
-
 (def hakualkaapaivissa
   {:id :hakualkaapaivissa
+   :agg-id :hakualkaapaivissa_30
    :rajainGroupId :hakuaika
    :make-query (fn [value current-time] (hakualkaapaivissa-filter-query current-time value))
    :make-agg (fn [constraints rajain-context]
-               (multi-bucket-rajain-agg (into {} (remove #(nil? (second %)) (map #(vector (keyword (str "hakualkaapaivissa_" %)) (hakualkaapaivissa-filter-query (:current-time rajain-context) %)) hakualkaapaivissa-buckets)))
-                                        (aggregation-filters-without-rajainkeys constraints (by-rajaingroup all-rajain-definitions :hakuaika) rajain-context)
-                                        rajain-context))
+               (nested-rajain-aggregation "search_terms.hakutiedot"
+                                          (aggregation-filters-for-rajain :hakualkaapaivissa constraints rajain-context)
+                                          {:filter (hakualkaapaivissa-filter-query (:current-time rajain-context) 30)}
+                                          rajain-context))
    :desc "
         - in: query
           name: hakualkaapaivissa
@@ -539,9 +569,9 @@
   {:id :alkamiskausi
    :make-query #(->terms-query "paatellytAlkamiskaudet.keyword" %)
    :make-agg (fn [constraints rajain-context]
-               (rajain-aggregation (->field-key "paatellytAlkamiskaudet.keyword")
-                                   (aggregation-filters-without-rajainkeys constraints ["alkamiskausi"] rajain-context)
-                                   (merge rajain-context {:term-params {:include (get-alkamiskausi-terms-include)}})))
+               (rajain-terms-aggregation (->field-key "paatellytAlkamiskaudet.keyword")
+                                         (aggregation-filters-for-rajain :alkamiskausi constraints rajain-context)
+                                         (merge rajain-context {:term-params {:include (get-alkamiskausi-terms-include)}})))
    :desc "
         - in: query
           name: alkamiskausi
@@ -567,7 +597,7 @@
    lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
-                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus 
+                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus
                            lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def hakutulos-agg-defs
@@ -582,13 +612,13 @@
 
 (defn ->max-agg-id
   [agg-id]
-  (keyword (replace-first (str agg-id "-max") ":" "")))
+  (keyword (str/replace-first (str agg-id "-max") ":" "")))
 
 (defn- generate-aggs
   [agg-defs constraints rajain-context]
   (let [max-agg-defs (filter #(not (nil? (:make-max-agg %))) agg-defs)]
     (-> {}
-        (into (for [agg agg-defs] {(:id agg) ((:make-agg agg) constraints rajain-context)}))
+        (into (for [agg agg-defs] {(or (:agg-id agg) (:id agg)) ((:make-agg agg) constraints rajain-context)}))
         (into (for [agg max-agg-defs] {(->max-agg-id (:id agg)) ((:make-max-agg agg) constraints)})))))
 
 (defn generate-hakutulos-aggregations

@@ -211,7 +211,6 @@
       :hakualkaapaivissa {:30 {:count (get rajain-counts :hakualkaapaivissa_30 0)}}}))
   ([] (generate-default-rajain-counts {})))
 
-
 (defn- create-oppilaitos-counts
   [oppilaitokset]
   (let [oppilaitos-oids (keys oppilaitokset)

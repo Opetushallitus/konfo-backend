@@ -25,14 +25,15 @@
 
 (defn- get-uniform-buckets [agg agg-key]
   ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on yksi ylimääräinen aggregaatiokerros
-  (let [rajain-agg (get-in agg [agg-key] agg)
-        ;Jos aggregaatiolla on rajaimia, on lisäksi "rajain"-aggregaatiokerros
-        agg-buckets (or (get-in rajain-agg [:buckets])
-                        (get-in rajain-agg [:rajain :buckets])
-                        [])]
-    (if (and (map? agg) (empty? agg-buckets) (contains? agg :real_hits))
-      {agg-key agg} ; single-bucket aggregaatio! esim. hakukaynnissa
-      (buckets-to-map agg-buckets))))
+  (if (or (nil? agg) (contains? agg :real_hits))
+    ; single-bucket aggregaatio! esim. hakukaynnissa
+    {agg-key agg}
+    (let [buckets (get agg :buckets)
+          ;Jos aggregaatiolla on rajaimia, on lisäksi "rajain"-aggregaatiokerros
+          nested-agg (or (get agg agg-key) (get agg :rajain))]
+      (if (empty? buckets)
+        (get-uniform-buckets nested-agg agg-key)
+        (buckets-to-map buckets)))))
 
 (defn- ->doc_count
   [response agg-key]
@@ -49,7 +50,7 @@
 
 (defn- numbers-by-filter
   [response]
-  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map :id all-agg-defs))
+  (let [doc-counts (reduce-merge-map #(->doc_count response %) (map #(or (:agg-id %) (:id %)) all-agg-defs))
         max-numbers (reduce-merge-map #(->max-number response %) (map #(->max-agg-id (:id %)) max-agg-defs))]
     (merge doc-counts max-numbers)))
 

@@ -38,6 +38,7 @@
 (def haku-oid-2 "1.2.246.562.29.0000002")
 
 (deftest koulutus-search-test
+  (set-fixed-time "2021-01-01T00:00:00")
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto
                 konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset
                 konfo-backend.index.eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
@@ -174,6 +175,14 @@
       (let [r (search :hakutapa "hakutapa_03" :sort "name" :order "asc")]
         (is (= 3 (count (:hits r))))
         (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))))
+
+    (testing "hakukäynnissä ja hakutapa_01"
+      (let [r (search :hakukaynnissa true :hakutapa "hakutapa_01" :sort "name" :order "asc")]
+        (is (= 0 (count (:hits r))))))
+    
+    (testing "hakukäynnissä ja hakutapa_03"
+      (let [r (search :hakukaynnissa true :hakutapa "hakutapa_03" :sort "name" :order "asc")]
+        (is (= 1 (count (:hits r))))))
 
     (testing "yhteishaku"
       (let [r (search :yhteishaku haku-oid-2 :sort "name" :order "asc")]

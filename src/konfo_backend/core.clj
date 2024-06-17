@@ -2,6 +2,7 @@
   (:require
     [konfo-backend.config :refer [config]]
     [clj-log.access-log :refer [with-access-logging]]
+    [clj-log.error-log] 
     [konfo-backend.contentful.contentful :as contentful]
     [konfo-backend.contentful.updater-api :refer [konfo-updater-api]]
     [ring.middleware.reload :refer [wrap-reload]]
