@@ -1,21 +1,19 @@
 (ns konfo-backend.search.rajain-tools
-  (:require [clojure.string :refer [lower-case replace-first split join]]
-            [clj-time.core :as time]
-            [konfo-backend.tools :refer [->lower-case-vec kouta-date-time-string->date-time ->kouta-date-time-string]]))
-
-(defn by-rajaingroup
-  [rajaimet rajain-group]
-  (mapv :id (filter #(= (:rajainGroupId %) rajain-group) rajaimet)))
+  (:require [clj-time.core :as time]
+            [clojure.string :refer [join replace-first split]]
+            [konfo-backend.tools :refer [->kouta-date-time-string
+                                         ->lower-case
+                                         ->lower-case-vec
+                                         kouta-date-time-string->date-time]]))
 
 (defn ->terms-query [key value]
-  (let [term-key (keyword (str "search_terms." key))
-        ->lower-case (fn [val] (if (string? val) (lower-case val) val))]
+  (let [term-key (keyword (str "search_terms." key))]
     (cond
       (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
       (coll? value) {:terms {term-key (->lower-case-vec value)}}
       :else {:term {term-key (->lower-case value)}})))
 
-(defn nested-query
+(defn nested-terms-query
   [nested-field-name field-name constraint]
   {:nested
    {:path (str "search_terms." nested-field-name)
@@ -70,28 +68,19 @@
       ; Sallitaan make-query-funktioiden määrittely rajain_definitions:ssa joustavasti eri parametrimäärillä (0-2)
       (apply (:make-query rajain) (take make-query-arg-count [constraint-vals current-time])))))
 
-(defn make-combined-should-filter-query
-  [constraints rajain-items current-time]
-  (when-let [active-conditions (not-empty (filter some? (map #(make-query-for-rajain constraints % current-time) rajain-items)))]
-    {:bool {:should (vec active-conditions)}}))
-
 (defn hakukaynnissa-filter-query
   [current-time]
-  {:bool {:should [{:bool {:filter [{:range {:search_terms.toteutusHakuaika.alkaa {:lte current-time}}}
-                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.toteutusHakuaika.paattyy"}}}},
-                                                     {:range {:search_terms.toteutusHakuaika.paattyy {:gt current-time}}}]}}]}}
-                   {:nested {:path "search_terms.hakutiedot.hakuajat"
-                             :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
-                                                     {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}},
-                                                                      {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}}]}})
+  {:nested {:path  "search_terms.hakutiedot.hakuajat"
+            :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte current-time}}}
+                                    {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                     {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt current-time}}}]}}]}}}})
 
 (defn hakualkaapaivissa-filter-query
   [current-time days]
   (when days
     (let [max-time (->kouta-date-time-string (time/plus (kouta-date-time-string->date-time current-time) (time/days days)))]
-      {:bool {:should [{:range {:search_terms.toteutusHakuaika.alkaa {:gt current-time :lte max-time}}}
-                       {:nested {:path "search_terms.hakutiedot.hakuajat"
-                                 :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}}]}})))
+      {:nested {:path "search_terms.hakutiedot.hakuajat"
+                :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}})))
 
 (defn pohjakoulutusvaatimukset-filter-query
   [pohjakoulutusvaatimukset]
@@ -110,9 +99,9 @@
 (defn all-must
   [conditions]
   (when-let [active-conditions (not-empty (filter some? conditions))]
-      (if (> (count active-conditions) 1)
-        {:bool {:filter (vec active-conditions)}}
-        (first active-conditions))))
+    (if (> (count active-conditions) 1)
+      {:bool {:filter (vec active-conditions)}}
+      (first active-conditions))))
 
 (defn- with-real-hits
   ([agg rajain-context]
@@ -121,29 +110,23 @@
   ([agg]
    (with-real-hits agg nil)))
 
-(defn- rajain-terms-agg
-  [field-name rajain-context]
+(defn- rajain-terms-agg [field-name rajain-context]
   (let [default-terms {:field field-name
                        :min_doc_count 0
                        :size 1000}]
-    (with-real-hits {:terms (merge default-terms (get-in rajain-context [:term-params]))} rajain-context)))
+    {:terms (merge default-terms (get-in rajain-context [:term-params]))}))
 
-(defn- constrained-agg [constraints filtered-aggs plain-aggs]
+(defn- constrained-agg [constraints aggs]
   (if (not-empty constraints)
     {:filter {:bool {:filter constraints}}
-     :aggs filtered-aggs}
-    plain-aggs))
+     :aggs {:rajain aggs}}
+    aggs))
 
-(defn rajain-aggregation
-  [field-name contraints rajain-context]
+(defn rajain-terms-aggregation
+  [field-name constraints rajain-context]
   (constrained-agg
-   contraints
-   {:rajain (rajain-terms-agg field-name rajain-context)}
-   (rajain-terms-agg field-name rajain-context)))
-
-(defn multi-bucket-rajain-agg [own-filters-with-bucket constraints rajain-context]
-  (let [own-aggs (with-real-hits {:filters {:filters own-filters-with-bucket}} rajain-context)]
-    (constrained-agg constraints {:rajain own-aggs} own-aggs)))
+   constraints
+   (with-real-hits (rajain-terms-agg field-name rajain-context) rajain-context)))
 
 (defn bool-agg-filter [own-filter constraints rajain-context]
   (with-real-hits
@@ -162,14 +145,38 @@
   ([field-name]
    (max-agg-filter field-name nil)))
 
+(defn strip-excess-nested [query common-nested-path]
+  (let [query-nested-path (get-in query [:nested :path])]
+    (if (and query-nested-path (= query-nested-path common-nested-path))
+      (or (get-in query [:nested :query :bool :filter])
+          (get-in query [:nested :query]))
+      query)))
+
+(defn get-top-level-nested-path
+  [nested-path]
+  (when nested-path (as-> nested-path $
+                      (split $ #"\.")
+                      (take 2 $)
+                      (join "." $))))
+
 (defn nested-rajain-aggregation
-  [rajain-key field-name constraints rajain-context]
-  (let [nested-agg {:nested  {:path (-> field-name
-                                        (replace-first ".keyword" "")
-                                        (split #"\.")
-                                        (drop-last) (#(join "." %)))}
-                    :aggs {:rajain (rajain-terms-agg field-name rajain-context)}}]
-    (constrained-agg
-     constraints
-     {(keyword rajain-key) nested-agg}
-     nested-agg)))
+  [nested-path constraints rajain-agg rajain-context]
+  (let [constraints-by-nest (group-by #(get-top-level-nested-path (get-in % [:nested :path])) constraints)
+        root-constraints (get constraints-by-nest nil)
+        own-nested-constraints (get constraints-by-nest nested-path)
+        other-nested-constraints (flatten (vals (dissoc constraints-by-nest nil nested-path)))]
+    (constrained-agg root-constraints
+                     (constrained-agg other-nested-constraints
+                                      {:nested {:path nested-path}
+                                       :aggs {:rajain (constrained-agg (flatten (map #(strip-excess-nested % nested-path) own-nested-constraints))
+                                                                       (with-real-hits rajain-agg rajain-context))}}))))
+(defn nested-rajain-terms-aggregation
+  [field-name constraints rajain-context]
+  (let [nested-path (-> field-name
+                        (replace-first ".keyword" "")
+                        (split #"\.")
+                        (drop-last) (#(join "." %)))]
+    (nested-rajain-aggregation nested-path
+                               constraints
+                               (rajain-terms-agg field-name rajain-context)
+                               rajain-context)))

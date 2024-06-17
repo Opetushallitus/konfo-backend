@@ -64,7 +64,7 @@
                                     :sv "kuvaus sv"}
                          :oppilaitosNimi {:fi "Jokin järjestyspaikka"
                                           :sv "Jokin järjestyspaikka sv"}
-                         :osoite {}
+                         :osoite nil
                          :opiskelijoita 100
                          :osaamisalat [{:koodi {:koodiUri "osaamisala_0001#1"
                                                 :nimi {:fi "osaamisala_0001#1 nimi fi"
@@ -98,20 +98,22 @@
                            :tilaisuudet [{:osoite
                                           {:osoite {:fi "Kivatie 1" :sv "kivavägen 1"}
                                            :postinumero
-                                           {:koodiUri "posti_04230#2"
-                                            :nimi
-                                            {:fi "posti_04230#2 nimi fi" :sv "posti_04230#2 nimi sv"}}}
+                                           {:fi
+                                            {:koodiUri "posti_04230#2"
+                                             :nimi "posti_04230#2 nimi fi"}
+                                            :sv {:koodiUri "posti_04230#2"
+                                                 :nimi "posti_04230#2 nimi sv"}}}
                                           :aika
                                           {:alkaa "2023-10-11T09:49"
                                            :paattyy "2023-10-11T09:58"
                                            :formatoituPaattyy
                                            {:fi "11.10.2023 klo 09:58"
                                             :sv "11.10.2023 kl. 09:58"
-                                            :en "Oct. 11, 2023 at 09:58 am UTC+3"}
+                                            :en "Oct. 11, 2023 at 09:58 AM UTC+3"}
                                            :formatoituAlkaa
                                            {:fi "11.10.2023 klo 09:49"
                                             :sv "11.10.2023 kl. 09:49"
-                                            :en "Oct. 11, 2023 at 09:49 am UTC+3"}}
+                                            :en "Oct. 11, 2023 at 09:49 AM UTC+3"}}
                                           :jarjestamispaikka
                                           {:fi "Järjestämispaikka fi" :sv "Järjestämispaikka sv"}
                                           :lisatietoja {:fi "lisätieto fi" :sv "lisätieto sv"}}]}]}]

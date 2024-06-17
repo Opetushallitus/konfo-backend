@@ -258,9 +258,19 @@
    |          description: Postinumero ja -toimipaikka
    |          $ref: '#/components/schemas/Postinumero'")
 
+(def KielistettyPostinumero
+  {:koodiUri (s/maybe PostinumeroKoodi)
+   :nimi     (s/maybe s/Str)}
+  )
+
+(def Postinumero
+  {(s/->OptionalKey :fi) (s/maybe KielistettyPostinumero)
+   (s/->OptionalKey :en) (s/maybe KielistettyPostinumero)
+   (s/->OptionalKey :sv) (s/maybe KielistettyPostinumero)})
+
 (def Osoite
   {:osoite Kielistetty
-   :postinumero (->Koodi PostinumeroKoodi)})
+   :postinumero Postinumero})
 
 (def KieliKoodi (->Koodi KieliKoodiPattern))
 (s/defschema Kielivalikoima
