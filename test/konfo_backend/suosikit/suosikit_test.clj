@@ -47,7 +47,7 @@
                         :hakukohdeOid "1.2.246.562.20.0000001"}]
                       response))))
       (testing "ok with hakuAuki"
-        (set-fixed-time "2023-10-11T9:50:01")
+        (set-fixed-time "2024-06-14T9:50:01")
         (let [response (get-ok (suosikit-url [suosikki-hakukohde-oid1]))]
           (is (match? [{:hakuAuki true}] response)))))
     (testing "Get suosikit vertailu"
@@ -64,7 +64,7 @@
                                     :sv "kuvaus sv"}
                          :oppilaitosNimi {:fi "Jokin järjestyspaikka"
                                           :sv "Jokin järjestyspaikka sv"}
-                         :osoite {}
+                         :osoite nil
                          :opiskelijoita 100
                          :osaamisalat [{:koodi {:koodiUri "osaamisala_0001#1"
                                                 :nimi {:fi "osaamisala_0001#1 nimi fi"
@@ -98,25 +98,27 @@
                            :tilaisuudet [{:osoite
                                           {:osoite {:fi "Kivatie 1" :sv "kivavägen 1"}
                                            :postinumero
-                                           {:koodiUri "posti_04230#2"
-                                            :nimi
-                                            {:fi "posti_04230#2 nimi fi" :sv "posti_04230#2 nimi sv"}}}
+                                           {:fi
+                                            {:koodiUri "posti_04230#2"
+                                             :nimi "posti_04230#2 nimi fi"}
+                                            :sv {:koodiUri "posti_04230#2"
+                                                 :nimi "posti_04230#2 nimi sv"}}}
                                           :aika
-                                          {:alkaa "2023-10-11T09:49"
-                                           :paattyy "2023-10-11T09:58"
+                                          {:alkaa "2024-06-14T09:49"
+                                           :paattyy "2024-06-14T09:58"
                                            :formatoituPaattyy
-                                           {:fi "11.10.2023 klo 09:58"
-                                            :sv "11.10.2023 kl. 09:58"
-                                            :en "Oct. 11, 2023 at 09:58 am UTC+3"}
+                                           {:fi "14.6.2024 klo 09:58"
+                                            :sv "14.6.2024 kl. 09:58"
+                                            :en "Jun. 14, 2024 at 09:58 AM UTC+3"}
                                            :formatoituAlkaa
-                                           {:fi "11.10.2023 klo 09:49"
-                                            :sv "11.10.2023 kl. 09:49"
-                                            :en "Oct. 11, 2023 at 09:49 am UTC+3"}}
+                                           {:fi "14.6.2024 klo 09:49"
+                                            :sv "14.6.2024 kl. 09:49"
+                                            :en "Jun. 14, 2024 at 09:49 AM UTC+3"}}
                                           :jarjestamispaikka
                                           {:fi "Järjestämispaikka fi" :sv "Järjestämispaikka sv"}
                                           :lisatietoja {:fi "lisätieto fi" :sv "lisätieto sv"}}]}]}]
                        response))))
       (testing "ok with hakuAuki"
-        (set-fixed-time "2023-10-11T9:50:01")
+        (set-fixed-time "2024-06-14T9:50:01")
         (let [response (get-ok (suosikit-vertailu-url [suosikki-hakukohde-oid1]))]
           (is (match? [{:hakuAuki true}] response)))))))

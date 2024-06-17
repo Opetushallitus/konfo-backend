@@ -357,7 +357,7 @@
    |          required: false
    |          description: pilkulla erotettu lista tutkinnon osien koodi-ureja.
    |            Jos puuttuu, palautetaan kaikkien tutkinnon osien kuvaukset
-   |          example: tutkinnonosat_123,tutkinnonosat_124
+   |          example: [tutkinnonosat_123,tutkinnonosat_124]
    |      responses:
    |        '200':
    |          description: Ok
@@ -393,7 +393,7 @@
    |          required: false
    |          description: pilkulla erotettu lista osaamisalojen koodi-ureja.
    |            Jos puuttuu, palautetaan kaikkien osaamisalojen kuvaukset
-   |          example: osaamisala_123,osaamisala_124
+   |          example: [osaamisala_123,osaamisala_124]
    |      responses:
    |        '200':
    |          description: Ok
