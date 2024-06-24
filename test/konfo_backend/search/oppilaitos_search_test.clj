@@ -82,7 +82,7 @@
         (is (= 0 (get-in r [:filters :koulutustyyppi :yo :count])))
 
         (is (= 0 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-muu :count])))
-        (is (= 0 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-osaamismerkki :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-osaamismerkki :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :muu :count])))
 
         (is (= 1 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
