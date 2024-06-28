@@ -61,7 +61,10 @@
 (defn filters-for-jarjestajat
   [response]
   (generate-rajain-counts-for-jarjestajat (numbers-by-filter response)
-                                          (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
+                                          (let [oppilaitos-aggs (get-in response [:aggregations :hits_aggregation :oppilaitos])]
+                                            (if (seq (get-in oppilaitos-aggs [:rajain :buckets]))
+                                              (get-uniform-buckets oppilaitos-aggs :oppilaitos)
+                                              {}))))
 
 (defn parse
   [response]
