@@ -85,7 +85,8 @@
           (is (= 2 (get-in r [:filters :maakunta :maakunta_01 :count])))
           (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
           (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
-          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))))
+          (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
+          (is (= 1 (get-in r [:filters :oppilaitos :1.2.246.562.10.000002 :count])))))
       (testing "Filtering reduces counts"
         (let [r (search traktoriala-oid :tuleva false :order "asc" :opetuskieli "oppilaitoksenopetuskieli_01")]
           (is (= 1 (:total r)))
@@ -100,6 +101,7 @@
       (testing "no järjestäjiä"
         (let [r (search "1.2.246.562.13.000999")]
           (is (= 0 (:total r)))
+          (is (= {} (get-in r [:filters :oppilaitos])))
           (is (= [] (:hits r)))))
       (testing "nykyiset"
         (let [r (search hevosala-oid :tuleva false)]
