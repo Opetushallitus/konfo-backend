@@ -25,15 +25,16 @@
 
 (defn- get-uniform-buckets [agg agg-key]
   ;nested-aggregaatioilla (esim. search_terms.hakutiedot.yhteishakuOid) on yksi ylimääräinen aggregaatiokerros
-  (if (or (nil? agg) (contains? agg :real_hits))
+  (cond
+    (nil? agg) {}
     ; single-bucket aggregaatio! esim. hakukaynnissa
-    {agg-key agg}
-    (let [buckets (get agg :buckets)
+    (contains? agg :real_hits) {agg-key agg}
+    :else (let [buckets (get agg :buckets)
           ;Jos aggregaatiolla on rajaimia, on lisäksi "rajain"-aggregaatiokerros
-          nested-agg (or (get agg agg-key) (get agg :rajain))]
-      (if (empty? buckets)
-        (get-uniform-buckets nested-agg agg-key)
-        (buckets-to-map buckets)))))
+                nested-agg (or (get agg agg-key) (get agg :rajain))]
+            (if (empty? buckets)
+              (get-uniform-buckets nested-agg agg-key)
+              (buckets-to-map buckets)))))
 
 (defn- ->doc_count
   [response agg-key]
