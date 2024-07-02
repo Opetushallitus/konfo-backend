@@ -70,21 +70,23 @@
    |            $ref: '#/components/schemas/Tutkintonimike'")
 
 (s/defschema KoulutusHit
-  {:oid                                       KoulutusOid
-   :nimi                                      Kielistetty
-   :kielivalinta                              [Kieli]
-   :koulutustyyppi                            KoutaKoulutustyyppi
-   :koulutukset                               [(->Koodi KoulutusKoodi)]
-   :kuvaus                                    (s/maybe Kielistetty)
-   (s/->OptionalKey :ePerusteId)              (s/maybe s/Int)
-   (s/->OptionalKey :teemakuva)               (s/maybe Url)
-   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   (s/->OptionalKey :opintojenLaajuusNumeroMin)        (s/maybe s/Num)
-   (s/->OptionalKey :opintojenLaajuusNumeroMax)        (s/maybe s/Num)
-   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Num)
-   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
-   (s/->OptionalKey :tutkintonimikkeet)       [(->Koodi TutkintonimikeKoodi)]
-   :toteutukset                               [KoulutusToteutusHit]})
+  {:oid                                         KoulutusOid
+   :nimi                                        Kielistetty
+   :kielivalinta                                [Kieli]
+   :koulutustyyppi                              KoutaKoulutustyyppi
+   :koulutukset                                 [(->Koodi KoulutusKoodi)]
+   :kuvaus                                      (s/maybe Kielistetty)
+   (s/->OptionalKey :ePerusteId)                (s/maybe s/Int)
+   (s/->OptionalKey :teemakuva)                 (s/maybe Url)
+   (s/->OptionalKey :hakutuloslistauksenKuvake) (s/maybe Url)
+   (s/->OptionalKey :osaamismerkki)             (s/maybe Url)
+   (s/->OptionalKey :opintojenLaajuus)          (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumero)    (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusyksikko)   (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+   (s/->OptionalKey :tutkintonimikkeet)         [(->Koodi TutkintonimikeKoodi)]
+   :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas
   koulutus-toteutus-hit-schema)

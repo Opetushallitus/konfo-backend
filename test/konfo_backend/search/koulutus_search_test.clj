@@ -60,7 +60,7 @@
                                       :aikuisten-perusopetus {:count 5}}
                      :opetuskieli {:oppilaitoksenopetuskieli_01 {:count 1}
                                    :oppilaitoksenopetuskieli_02 {:count 7}}
-                     :maakunta {:maakunta_01 {:count 36}
+                     :maakunta {:maakunta_01 {:count 37}
                                 :maakunta_02 {:count 0}}
                      :opetustapa {:opetuspaikkakk_01 {:count 1}
                                   :opetuspaikkakk_02 {:count 7}}
@@ -75,12 +75,12 @@
                                 :hakutapa_03 {:count 3}}
                      :pohjakoulutusvaatimus {:pohjakoulutusvaatimuskonfo_01 {:count 0}
                                              :pohjakoulutusvaatimuskonfo_am {:count 4}}
-                     :koulutuksenkestokuukausina {:count 20, :max 46.0}
+                     :koulutuksenkestokuukausina {:count 21, :max 46.0}
                      :maksullisuus {:maksullisuustyyppi
                                     {:maksuton {:count 0}
-                                     :maksullinen {:count 3}
+                                     :maksullinen {:count 4}
                                      :lukuvuosimaksu {:count 2}}
-                                    :maksunmaara {:count 3
+                                    :maksunmaara {:count 4
                                                   :max 200.5}
                                     :lukuvuosimaksunmaara {:count 2
                                                            :max 500.0}
@@ -146,6 +146,11 @@
         (is (= 2 (count (:hits r))))
         (is (= 2 (get-in r [:filters :koulutustyyppi :lk :count])))))
 
+    (testing "koulutustyyppi osaamismerkki"
+      (let [r (search :koulutustyyppi "vapaa-sivistystyo-osaamismerkki" :sort "name" :order "asc")]
+        (is (= 1 (count (:hits r))))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :vapaa-sivistystyo :alakoodit :vapaa-sivistystyo-osaamismerkki :count])))))
+
     (testing "opetuskieli"
       (let [r (search :opetuskieli "oppilaitoksenopetuskieli_01" :sort "name" :order "asc")]
         (is (= 1 (count (:hits r))))
@@ -179,7 +184,7 @@
     (testing "hakukäynnissä ja hakutapa_01"
       (let [r (search :hakukaynnissa true :hakutapa "hakutapa_01" :sort "name" :order "asc")]
         (is (= 0 (count (:hits r))))))
-    
+
     (testing "hakukäynnissä ja hakutapa_03"
       (let [r (search :hakukaynnissa true :hakutapa "hakutapa_03" :sort "name" :order "asc")]
         (is (= 1 (count (:hits r))))))

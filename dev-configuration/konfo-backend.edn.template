@@ -1,27 +1,31 @@
 {
-    :elastic-url "{{konfo_backend_elastic7_url}}"
-    :elastic-timeout 120000
-:search-terms-boost    {:koulutusnimi 20
-                            :toteutusNimi 6
-                            :asiasanat 5
-                            :tutkintonimikkeet 4
-                            :ammattinimikkeet 3
-                            :koulutus_organisaationimi 2
-                            :toteutus_organisaationimi 1
-                            :kunta 1
-                            :language-default 1
-                            :default 0.1}
+  :elastic-url "{{konfo_backend_elastic7_url}}"
+  :elastic-timeout 120000
+  :search-terms-boost    {:koulutusnimi 20
+                          :toteutusNimi 6
+                          :asiasanat 5
+                          :tutkintonimikkeet 4
+                          :ammattinimikkeet 3
+                          :koulutus_organisaationimi 2
+                          :toteutus_organisaationimi 1
+                          :kunta 1
+                          :language-default 1
+                          :default 0.1
+                         }
 
-    :contentful-update-username "oph"
-    :contentful-update-password "oph"
+  :contentful-update-username "oph"
+  :contentful-update-password "oph"
 
-    :contentful-space-id "space-id"
-    :contentful-access-token "access-token"
-    :contentful-preview-token "preview-token"
+  :contentful-space-id "space-id"
+  :contentful-access-token "access-token"
+  :contentful-preview-token "preview-token"
 
-    :dev true
-    :konfo-host "http://localhost"
+  :dev true
+  :konfo-host "http://localhost"
 
-    :ataru-hakija-url "http://localhost:8351/hakemus/api"
-    :caller-id "1.2.246.562.10.00000000001.konfo-backend"
+  :ataru-hakija-url "http://localhost:8351/hakemus/api"
+  :caller-id "1.2.246.562.10.00000000001.konfo-backend"
+  :swagger-ui {
+    :syntaxHighlight false
+  }
 }

@@ -63,7 +63,7 @@
 
 (def kouta-koulutustyypit ["amm" "yo" "amk" "amm-ope-erityisope-ja-opo" "ope-pedag-opinnot" "kk-opintojakso"
                            "kk-opintokokonaisuus" "erikoislaakari" "erikoistumiskoulutus" "lk" "telma" "tuva"
-                           "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "muu" "amm-osaamisala"
+                           "vapaa-sivistystyo-opistovuosi" "vapaa-sivistystyo-muu" "vapaa-sivistystyo-osaamismerkki" "muu" "amm-osaamisala"
                            "amm-tutkinnon-osa" "amm-muu" "aikuisten-perusopetus" "taiteen-perusopetus"])
 
 (s/defschema KoutaKoulutustyyppi (st/schema (apply s/enum kouta-koulutustyypit) {:description "Koulutuksen tyyppi"}))
@@ -80,6 +80,7 @@
                            "amk" "amk-alempi" "amk-ylempi" "amm-ope-erityisope-ja-opo" "amk-opintojakso-avoin" "amk-opintojakso" "amk-opintokokonaisuus-avoin" "amk-opintokokonaisuus" "amk-erikoistumiskoulutus"
                            "yo" "kandi" "kandi-ja-maisteri" "maisteri" "tohtori" "yo-opintojakso-avoin" "yo-opintojakso" "yo-opintokokonaisuus" "yo-opintokokonaisuus-avoin" "ope-pedag-opinnot" "erikoislaakari" "yo-erikoistumiskoulutus"
                            "vapaa-sivistystyo-muu"
+                           "vapaa-sivistystyo-osaamismerkki"
                            "muu"])
 
 
