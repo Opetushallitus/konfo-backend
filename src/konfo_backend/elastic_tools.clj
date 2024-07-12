@@ -12,7 +12,7 @@
 
 (def minimum-size-for-search-after 5)
 
-(defn- clean-unwanted-fields
+(defn clean-unwanted-fields
   [map]
   (postwalk
    #(if (map? %)
