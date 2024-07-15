@@ -39,15 +39,25 @@
 (defn- oppilaitos-osa-entry [osa-oid draft? parents-search-result]
   (let [oppilaitos-org (first (filter oppilaitos? parents-search-result))
         flat-oppilaitos-osat (mapcat :osat parents-search-result)
-        osa (first (filter #(= (:oid %) osa-oid) flat-oppilaitos-osat))
+        ; osa voi löytyä useammalta tasolta, jos on kyse toimipisteen toimipisteestä, koska alempien tasojen osat
+        ; on indeksoitu myös ylemmälle tasolle. Ylemmältä tasolta osista kuitenkin puuttuu parentToimipisteOid, joten
+        ; deduplikoidaan siten että valitaan ensisijaisesti ne, joilla on parentToimipisteOid.
+        deduped-osat (->> flat-oppilaitos-osat
+                          (group-by :oid)
+                          (vals)
+                          (map (fn [dupes]
+                                 (or (first (filter :parentToimipisteOid dupes))
+                                     (first dupes)))))
+        osa (first (filter #(= (:oid %) osa-oid) deduped-osat))
         parent-oppilaitos (-> (:oppilaitos oppilaitos-org)
                               (assoc :nimi (:nimi oppilaitos-org))
                               (assoc :oid (:oid oppilaitos-org))
-                              (assoc :osat flat-oppilaitos-osat))]
+                              (assoc :osat deduped-osat))]
     (some->> (assoc osa :oppilaitos parent-oppilaitos)
              (dissoc-kouta-data-if-not-allowed-to-view draft?)
              (clean-unwanted-fields)
              (not-empty))))
+
 (defn get-osa
   [oid draft?]
   (let [parents-search-result (search index oppilaitos-osa-mapper
