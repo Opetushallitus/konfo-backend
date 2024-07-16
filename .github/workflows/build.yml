@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare clojure env
         uses: ./.github/actions/prepare-clojure-env
@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare clojure env
         uses: ./.github/actions/prepare-clojure-env
@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: lein uberjar
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: restore-build
         with:
           path: target
@@ -46,9 +46,9 @@ jobs:
     needs: [test, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: restore-build
         with:
           path: target
