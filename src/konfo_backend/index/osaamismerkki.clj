@@ -36,18 +36,20 @@
 
 (defn parse-osaamismerkki-eperustedata
   [osaamismerkki-data]
-  {:kuvaus
-   {:osaamistavoitteet (parse-osaamismerkki-kuvaus-items
-                         (:osaamistavoitteet osaamismerkki-data) :osaamistavoite)
-    :arviointikriteerit (parse-osaamismerkki-kuvaus-items
-                          (:arviointikriteerit osaamismerkki-data) :arviointikriteeri)}
-   :kuvake (get-in osaamismerkki-data [:kategoria :liite])})
+  (let [source (:_source osaamismerkki-data)]
+    {(keyword (get-in osaamismerkki-data [:_id]) )
+     {:kuvaus
+     {:osaamistavoitteet (parse-osaamismerkki-kuvaus-items
+                           (:osaamistavoitteet source) :osaamistavoite)
+      :arviointikriteerit (parse-osaamismerkki-kuvaus-items
+                            (:arviointikriteerit source) :arviointikriteeri)}
+     :kuvake (get-in source [:kategoria :liite])}}))
 
 (defn parse-kuvaukset
   [result]
-  (into {} (->> (get-in result [:hits :hits])
-                (map :_source)
-                (map parse-osaamismerkki-eperustedata))))
+  (let [parsed (->> (get-in result [:hits :hits])
+                    (map parse-osaamismerkki-eperustedata))]
+    (apply conj parsed)))
 
 (defn get-kuvaukset-by-osaamismerkki-koodiuris
   [koodiuris]

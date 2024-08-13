@@ -1,5 +1,5 @@
 (ns konfo-backend.search.koulutus.eperustedata
-  (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa? osaamismerkki?]]
+  (:require [konfo-backend.tools :refer [ammatillinen? amm-osaamisala? amm-tutkinnon-osa? osaamismerkki? koodi-uri-no-version]]
             [konfo-backend.search.tools :refer :all]
             [konfo-backend.index.eperuste :as eperuste]
             [konfo-backend.index.osaamismerkki :as osaamismerkki]
@@ -99,7 +99,7 @@
        (set)
        (eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids)))
 
-(defn- get-osaamismerkki-data
+(defn- get-osaamismerkit-data
   [hits]
   (->> hits
        :hits
@@ -156,7 +156,7 @@
   (let [amm-kuvaukset (get-amm-kuvaukset result)
         amm-osaamisala-kuvaukset (get-amm-osaamisala-kuvaukset result)
         amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)
-        osaamismerkkidata (get-osaamismerkki-data result)]
+        osaamismerkit (get-osaamismerkit-data result)]
     (->> (for [hit (:hits result)]
            (cond (amm-koulutus-with-eperuste? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
                  (amm-osaamisala? hit) (assoc hit
@@ -166,9 +166,13 @@
                                                  (find-amm-tutkinnon-osa-kuvaus
                                                    amm-tutkinnon-osa-kuvaukset
                                                    (:tutkinnonOsat hit)))
-                 (osaamismerkki? hit) (-> hit
-                                          (assoc :kuvaus (:kuvaus osaamismerkkidata))
-                                          (assoc :kuvake (:kuvake osaamismerkkidata)))
+                 (osaamismerkki? hit) (let [osaamismerkki-id (:osaamismerkki hit)
+                                            osaamismerkki (if (nil? osaamismerkki-id)
+                                                            {}
+                                                            ((keyword (koodi-uri-no-version osaamismerkki-id)) osaamismerkit))]
+                                        (-> hit
+                                            (assoc :kuvaus (:kuvaus osaamismerkki))
+                                            (assoc :kuvake (:kuvake osaamismerkki))))
                  :else hit))
          (vec)
          (assoc result :hits))))
