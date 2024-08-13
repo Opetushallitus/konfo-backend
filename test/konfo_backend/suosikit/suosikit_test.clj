@@ -109,11 +109,11 @@
                                            :formatoituPaattyy
                                            {:fi "11.10.2023 klo 09:58"
                                             :sv "11.10.2023 kl. 09:58"
-                                            :en "Oct. 11, 2023 at 09:58 AM UTC+3"}
+                                            :en "Oct. 11, 2023 at 09:58 am UTC+3"}
                                            :formatoituAlkaa
                                            {:fi "11.10.2023 klo 09:49"
                                             :sv "11.10.2023 kl. 09:49"
-                                            :en "Oct. 11, 2023 at 09:49 AM UTC+3"}}
+                                            :en "Oct. 11, 2023 at 09:49 am UTC+3"}}
                                           :jarjestamispaikka
                                           {:fi "Järjestämispaikka fi" :sv "Järjestämispaikka sv"}
                                           :lisatietoja {:fi "lisätieto fi" :sv "lisätieto sv"}}]}]}]

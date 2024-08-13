@@ -1,6 +1,7 @@
 (ns konfo-backend.index.oppilaitos-test
   (:require [clojure.test :refer :all]
             [matcher-combinators.test]
+            [matcher-combinators.matchers :as m]
             [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
@@ -76,6 +77,55 @@
       (testing "allowed to get draft oppilaitoksen osa when tallennettu and esikatselu true"
         (let [response (get-ok (oppilaitos-draft-url oppilaitosOid2))]
           (is (= oppilaitosOid2 (:oid response)))
-          ;;TODO alla oleva kommentoitu elastic7 -testauksen yhteydessä. Täytyy kuitenkin myöhemmin selvittää / korjata
-          ;;(is (true? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa)))
-          )))))
+          (is (true? (contains? (find-osa response oppilaitoksenOsaOid4) :oppilaitoksenOsa))))))))
+
+(defn oppilaitos-osa-url
+  [oid]
+  (apply url-with-query-params (str "/konfo-backend/oppilaitoksen-osa/" oid) [:draft false]))
+
+(deftest oppilaitos-osa-test
+  (let [ita-suomen-yliopisto-oid "1.2.246.562.10.38515028629"
+        ita-suomen-yliopisto-avoin "1.2.246.562.10.65987152505"
+        ita-suomen-yliopisto-avoin-joensuu-oid "1.2.246.562.10.52129572656"
+        ita-suomen-yliopisto-avoin-kuopio-oid "1.2.246.562.10.71579636385"
+        osat [{:oid ita-suomen-yliopisto-avoin
+               :nimi {:fi "Itä-Suomen yliopisto, Avoin yliopisto",
+                      :sv "Östra Finlands Universitet, Öppna universitet",
+                      :en "University of Eastern Finland, Open University"}}
+              {:oid ita-suomen-yliopisto-avoin-joensuu-oid
+               :nimi {:fi "Itä-Suomen yliopisto, Avoin yliopisto, Joensuun kampus",
+                      :sv "Östra Finlands Universitet, Öppna universitet, Joensuu kampus",
+                      :en "University of Eastern Finland, Open University, Joensuu campus"}}
+              {:oid ita-suomen-yliopisto-avoin-kuopio-oid
+               :nimi {:fi "Itä-Suomen yliopisto, Avoin yliopisto, Kuopion kampus",
+                      :sv "Östra Finlands Universitet, Öppna universitet, Kuopio kampus",
+                      :en "University of Eastern Finland, Open University, Kuopio campus"}}]]
+    (testing "Get oppilaitoksen osa"
+      (testing "return correct data for toimipiste below oppilaitos"
+        (let [response (get-ok (oppilaitos-osa-url ita-suomen-yliopisto-avoin))]
+          (is (match? (m/match-with [vector? m/in-any-order]
+                                    {:oid ita-suomen-yliopisto-avoin
+                                     :nimi {:fi "Itä-Suomen yliopisto, Avoin yliopisto",
+                                            :sv "Östra Finlands Universitet, Öppna universitet",
+                                            :en "University of Eastern Finland, Open University"}
+                                     :oppilaitos {:oid ita-suomen-yliopisto-oid
+                                                  :nimi {:fi "Itä-Suomen yliopisto",
+                                                         :sv "Östra Finlands Universitet",
+                                                         :en "University of Eastern Finland"}
+                                                  :osat osat}})
+                      response))
+          (is (nil? (:parentToimipisteOid response)))))
+      (testing "return correct data for toimipiste below toimimpiste"
+        (let [response (get-ok (oppilaitos-osa-url ita-suomen-yliopisto-avoin-kuopio-oid))]
+          (is (match? (m/match-with [vector? m/in-any-order]
+                                    {:oid ita-suomen-yliopisto-avoin-kuopio-oid
+                                     :nimi {:fi "Itä-Suomen yliopisto, Avoin yliopisto, Kuopion kampus",
+                                            :sv "Östra Finlands Universitet, Öppna universitet, Kuopio kampus",
+                                            :en "University of Eastern Finland, Open University, Kuopio campus"}
+                                     :parentToimipisteOid ita-suomen-yliopisto-avoin
+                                     :oppilaitos {:oid ita-suomen-yliopisto-oid
+                                                  :nimi {:fi "Itä-Suomen yliopisto",
+                                                         :sv "Östra Finlands Universitet",
+                                                         :en "University of Eastern Finland"}
+                                                  :osat osat}})
+                      response)))))))
