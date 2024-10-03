@@ -78,7 +78,6 @@
    :kuvaus                                      (s/maybe Kielistetty)
    (s/->OptionalKey :ePerusteId)                (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)                 (s/maybe Url)
-   (s/->OptionalKey :hakutuloslistauksenKuvake) (s/maybe Url)
    (s/->OptionalKey :osaamismerkki)             (s/maybe Url)
    (s/->OptionalKey :opintojenLaajuus)          (s/maybe (->Koodi OpintojenLaajuusKoodi))
    (s/->OptionalKey :opintojenLaajuusNumeroMin) (s/maybe s/Num)
