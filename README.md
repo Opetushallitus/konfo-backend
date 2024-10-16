@@ -50,20 +50,26 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
                          :kunta 1
                          :language-default 1
                          :default 0.1}
+
+ :swagger-ui {:syntaxHighlight false}
  }
 ```
 
 ### 3.2. Testien ajaminen
 
-Testit saa ajettua komentoriviltä komennolla `lein test`
+Testit ajetaan [Kaocha test runnerilla](https://cljdoc.org/d/lambdaisland/kaocha/1.87.1366/doc/readme).
+Kaikki testit saa ajettua komentoriviltä komennolla `lein test`.
 
-Yksittäisen testitiedoston saa ajettua `lein test <namespacen nimi>`.
-Esimerkiksi `lein test konfo-backend.index.toteutus-test`
+Yksittäisen testitiedoston saa ajettua lisäämällä `^:focus`-tagin testitiedoston namespace-määrittelyn alkuun, esim.
+`ns ^:focus kouta-indeksoija-service.indexer.kouta-indexer-test`.
 
-Yksittäisen testin saa ajettua `lein test :only <namespacen nimi>/<testin nimi>`.
-Esimerkiksi `lein test :only konfo-backend.index.toteutus-test/toteutus-test`
+Yksittäisen testin saa ajettua lisäämällä `^:focus`-tagi ennen ajettavan testin nimeä, esim.
+`deftest ^:focus index-oppilaitos-test`.
+
+Testejä voi ajaa myös watch-modessa komennolla `lein test --watch` eli test runner ajaa testit automaattisesti uudestaan, kun koodia tai testejä muutetaan.
 
 Testit käynnistävät Elasticsearchin docker-kontissa satunnaiseen vapaaseen porttiin.
+Watch-moodissa elasticsearch käynnistetään vain kerran, kun testiajo käynnistetään, ja se pysyy taustalla käynnissä kunnes testiajo lopetetaan.
 
 ### 3.3. Ajaminen lokaalisti
 

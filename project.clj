@@ -17,7 +17,7 @@
                  [org.clojure/core.memoize "1.0.257"]
                  ; Rest + server
                  [metosin/compojure-api "2.0.0-alpha31"]
-                 [metosin/ring-swagger-ui "4.18.1"]
+                 [metosin/ring-swagger-ui "5.9.0"]
                  [metosin/schema-tools "0.13.1"]
                  [clj-commons/clj-yaml "1.0.27"]
                  [clj-http "3.12.3"]
@@ -57,7 +57,7 @@
             [lein-cljfmt "0.8.0"]
             [lein-shell "0.5.0"]
             [lein-ancient "0.7.0"]
-            [com.jakemccrary/lein-test-refresh "0.24.1"]]
+            ]
   :main konfo-backend.core
   :profiles {:dev {:plugins [[lein-cloverage "1.0.13" :exclusions [org.clojure/clojure]]]
                    :jvm-opts ["-Dport=3006"]}
@@ -70,37 +70,18 @@
                                    [io.swagger.parser.v3/swagger-parser "2.1.16"]
                                    [com.fasterxml.jackson.dataformat/jackson-dataformat-yaml "2.15.2"]
                                    [com.fasterxml.jackson.core/jackson-annotations "2.15.2"]
-                                   [nubank/matcher-combinators "3.8.8"]]
+                                   [nubank/matcher-combinators "3.8.8"]
+                                   [lambdaisland/kaocha "1.87.1366"]]
                     :jvm-opts ["-Dlog4j.configurationFile=test/resources/log4j2.properties" "-Dconf=ci-configuration/konfo-backend.edn"]
-                    :injections [(require '[clj-test-utils.elasticsearch-docker-utils :as utils])
-                                 (require '[clj-elasticsearch.elastic-utils :as eutils])
-                                 (when (not (System/getenv "WITHOUT_ELASTIC"))
-                                   (if-let [elasticPort (java.lang.System/getenv "elasticPort")]
-                                     (do
-                                       (prn "Using Elastic from port " elasticPort)
-                                       (intern 'clj-elasticsearch.elastic-utils 'elastic-host (str "http://127.0.0.1:" elasticPort)))
-                                     (utils/global-docker-elastic-fixture)))]}
-             :only-unit-tests {:test-selectors {:default (fn [m]
-                                                           (or (clojure.string/includes? (str (:ns m))
-                                                                                         "unit-test")
-                                                               (clojure.string/includes? (str (:name m))
-                                                                                         "unit-test")))}}
-             :only-integration-tests {:test-selectors {:default (fn [m]
-                                                                  (not (or (clojure.string/includes? (str (:ns m))
-                                                                                                     "unit-test")
-                                                                           (clojure.string/includes? (str (:name m))
-                                                                                                     "unit-test"))))}}
+                    :injections [(require '[clojure.test]
+                                          '[clj-test-utils.elasticsearch-docker-utils :as utils])
+                                 (utils/global-docker-elastic-fixture)]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dconf=ci-configuration/konfo-backend.edn"]
                        :resource-paths ["oph-configuration" "resources"]}}
   :aliases {"run" ["with-profile" "+dev" "run"]
             "run-updater" ["with-profile" "+updater" "run"]
             "uberjar" ["do" "clean" ["uberjar"]]
-            "test" ["with-profile" "+test" "test"]
-            "test-unit" ["shell" "without-elastic" "with-profile" "+test,+only-unit-tests" "test"]
-            "test-integration" ["with-profile" "+test,+only-integration-tests", "test"]
-            "auto-test" ["with-profile" "+test" "auto" "test"]
-            "test-reload" ["with-profile" "+test" "test-refresh"]
+            "test" ["with-profile" "+test" ["run" "-m" "konfo-backend.kaocha/run"]]
             "cloverage" ["with-profile" "+test" "cloverage"]}
-  :shell {:commands {"without-elastic" {:default-command "lein" :env {"WITHOUT_ELASTIC" "true"}}}}
   :zprint {:width 100 :old? false :style :community :map {:comma? false}})

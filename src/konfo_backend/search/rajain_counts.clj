@@ -57,6 +57,7 @@
         total-ammatilliset-wo-erityisoepetus-count (total-count ammatilliset-wo-erityisoepetus-counts)
         total-vaativan-tuen-koulutus-count (total-count vaativa-tuki-counts)
         total-valmentavat-koulutukset-count (+ (rcount :tuva-normal) (rcount :telma) (rcount :vapaa-sivistystyo-opistovuosi))
+        total-vapaa-sivistystyo-count (+ (rcount :vapaa-sivistystyo-muu) (rcount :vapaa-sivistystyo-osaamismerkki))
         total-amk-count (+ (rcount :amk-alempi) (rcount :amk-ylempi) (rcount :amm-ope-erityisope-ja-opo)
                            (rcount :amk-opintojakso) (rcount :amk-opintojakso-avoin) (rcount :amk-opintokokonaisuus)
                            (rcount :amk-opintokokonaisuus-avoin) (rcount :amk-erikoistumiskoulutus))
@@ -73,6 +74,10 @@
                                                              :telma {:count (rcount :telma)}
                                                              :vapaa-sivistystyo-opistovuosi {:count (rcount :vapaa-sivistystyo-opistovuosi)})}
                                           total-valmentavat-koulutukset-count (assoc :count total-valmentavat-koulutukset-count))
+               :vapaa-sivistystyo (cond-> {:alakoodit (array-map
+                                                        :vapaa-sivistystyo-muu {:count (rcount :vapaa-sivistystyo-muu)}
+                                                        :vapaa-sivistystyo-osaamismerkki {:count (rcount :vapaa-sivistystyo-osaamismerkki)})}
+                                          total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
                :amm (cond-> {:alakoodit ammatilliset-wo-erityisoepetus-counts}
                       total-ammatilliset-wo-erityisoepetus-count (assoc :count total-ammatilliset-wo-erityisoepetus-count))
                :lk {:count (rcount :lk)}
@@ -99,7 +104,6 @@
                                         :erikoislaakari {:count (rcount :erikoislaakari)}
                                         :yo-erikoistumiskoulutus {:count (rcount :yo-erikoistumiskoulutus)})}
                      total-yo-count (assoc :count total-yo-count))
-               :vapaa-sivistystyo-muu {:count (rcount :vapaa-sivistystyo-muu)}
                :muu {:count (rcount :muu)})))
 
 (defn- hakukaynnissa [rajain-counts] {:count (get rajain-counts :hakukaynnissa 0)})

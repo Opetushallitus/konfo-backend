@@ -1,7 +1,7 @@
 (ns konfo-backend.search.koulutus.search
   (:require [konfo-backend.elastic-tools :as e]
             [konfo-backend.search.external-query :refer [external-query]]
-            [konfo-backend.search.koulutus.kuvaukset :refer [with-kuvaukset]]
+            [konfo-backend.search.koulutus.eperustedata :refer [with-eperustedata]]
             [konfo-backend.index.toteutus :refer [parse-inner-hits-for-jarjestajat]]
             [konfo-backend.search.query :refer [post-filter-query
                                                 hakutulos-aggregations
@@ -25,8 +25,8 @@
     (koulutus-kouta-search
      page
      size
-     #(-> % parse with-kuvaukset)
-     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
+     #(-> % parse with-eperustedata)
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
      :sort (sorts sort order lng)
      :query search-term-query
      :post_filter post-filter
@@ -52,8 +52,8 @@
     (koulutus-kouta-search
      page
      size
-     #(-> % parse-external with-kuvaukset)
-     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
+     #(-> % parse-external with-eperustedata)
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
      :sort (sorts sort order lng)
      :query query)))
 

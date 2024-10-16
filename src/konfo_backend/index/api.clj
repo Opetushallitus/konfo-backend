@@ -6,6 +6,7 @@
    [konfo-backend.index.hakukohde :as hakukohde]
    [konfo-backend.index.valintaperuste :as valintaperuste]
    [konfo-backend.index.oppilaitos :as oppilaitos]
+   [konfo-backend.index.osaamismerkki :as osaamismerkki]
    [konfo-backend.eperuste.eperuste :as eperuste]
    [konfo-backend.index.lokalisointi :as lokalisointi]
    [compojure.api.core :as c :refer [GET]]
@@ -403,6 +404,30 @@
    |                type: json
    |        '404':
    |          description: Not found
+   |  /osaamismerkki/{koodiuri}:
+   |    get:
+   |      tags:
+   |        - internal
+   |      summary: Hae osaamismerkin tiedot ePerusteista
+   |      description: Hae osaamismerkin tiedot ePerusteista osaamismerkin koodiuri:n perusteella.
+   |        Huom.! Vain Opintopolun sisäiseen käyttöön
+   |      parameters:
+   |        - in: path
+   |          name: koodiuri
+   |          schema:
+   |            type: string
+   |          required: true
+   |          description: osaamismerkin koodiuri
+   |          example: osaamismerkit_1008
+   |      responses:
+   |        '200':
+   |          description: Ok
+   |          content:
+   |            application/json:
+   |              schema:
+   |                type: json
+   |        '404':
+   |          description: Not found
    |  /koodisto/{koodistouri}/koodit:
    |    get:
    |      tags:
@@ -469,7 +494,7 @@
      :path-params [oid :- String]
      (with-access-logging request (if-let [result (hakukohde/get oid draft)]
                                     (ok result)
-                                    (not-found "Not found")))) 
+                                    (not-found "Not found"))))
 
    (GET "/valintaperuste/:id" [:as request]
      :query-params [{draft :- Boolean false}]
@@ -524,6 +549,12 @@
      :path-params [id :- String]
      :query-params [{koodi-urit :- String nil}]
      (with-access-logging request (if-let [result (eperuste/get-osaamisala-kuvaukset id (comma-separated-string->vec koodi-urit))]
+                                    (ok result)
+                                    (not-found "Not found"))))
+
+   (GET "/osaamismerkki/:koodiuri" [:as request]
+     :path-params [koodiuri :- String]
+     (with-access-logging request (if-let [result (osaamismerkki/get koodiuri)]
                                     (ok result)
                                     (not-found "Not found"))))
 

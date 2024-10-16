@@ -99,6 +99,8 @@
 
 (defn amm-tutkinnon-osa? [e] (= "amm-tutkinnon-osa" (:koulutustyyppi e)))
 
+(defn osaamismerkki? [e] (= "vapaa-sivistystyo-osaamismerkki" (:koulutustyyppi e)))
+
 (defn comma-separated-string->vec
   [s]
   (->> (some-> s

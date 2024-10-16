@@ -55,8 +55,9 @@
     {:exceptions {:handlers {::ex/default exeption-handler}}}
 
     (undocumented
-      (ui/swagger-ui {:swagger-docs "/konfo-backend/swagger.yaml"
-                      :path "/konfo-backend/swagger"}))
+      (ui/swagger-ui (merge {:swagger-docs "/konfo-backend/swagger.yaml"
+                             :path "/konfo-backend/swagger"}
+                            (:swagger-ui config))))
 
     (context "/konfo-backend"
       []
