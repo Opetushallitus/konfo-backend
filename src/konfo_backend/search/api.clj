@@ -368,67 +368,6 @@
           description: Not found
         '400':
           description: Bad request
-  /search/oppilaitoksen-osa/{oid}/tarjonta:
-    get:
-      tags:
-        - internal-search
-      summary: Hae oppilaitoksen osan koulutustarjonnan
-      description: Hakee annetun oppilaitoksen osan koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
-      parameters:
-        - in: path
-          name: oid
-          schema:
-            type: string
-          required: true
-          description: Oppilaitoksen osan yksilöivä oid
-          example: 1.2.246.562.10.12345
-        - in: query
-          name: page
-          schema:
-            type: number
-            default: 1
-          required: false
-          description: Hakutuloksen sivunumero
-        - in: query
-          name: size
-          schema:
-            type: number
-            default: 20
-          required: false
-          description: Hakutuloksen sivun koko
-        - in: query
-          name: tuleva
-          schema:
-            type: boolean
-            default: false
-          required: false
-          description: Haetaanko tuleva vai tämänhetkinen tarjonta.
-            Tarjoaja on tuleva, jos se lisätty koulutukselle tarjoajaksi mutta se ei ole vielä julkaissut omaa toteutusta.
-        - in: query
-          name: lng
-          schema:
-            type: string
-            default: fi
-          required: false
-          description: Haun kieli. 'fi', 'sv' tai 'en'
-        - in: query
-          name: order
-          schema:
-            type: string
-            default: desc
-          required: false
-          description: Järjestys. 'asc' tai 'desc'
-      responses:
-        '200':
-          description: Ok
-          content:
-            application/json:
-              schema:
-                type: json
-        '404':
-          description: Not found
-        '400':
-          description: Bad request
   /search/autocomplete:
     get:
       tags:
@@ -599,7 +538,7 @@
                          order
                          (create-constraints rajain-params)))))
 
-(defn- ->search-subentities-with-validated-params
+(defn ->search-subentities-with-validated-params
   [do-search oid lng page size order tuleva rajain-params]
   (cond
     (not (some #{lng} ["fi" "sv" "en"])) (bad-request "Virheellinen kieli")
