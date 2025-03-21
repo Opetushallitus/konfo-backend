@@ -38,7 +38,7 @@
 (def haku-oid-2 "1.2.246.562.29.0000002")
 
 (deftest koulutus-search-test
-  (set-fixed-time "2021-01-01T00:00:00")
+  (set-fixed-time "2021-01-01T04:00:00")
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto
                 konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset
                 konfo-backend.index.eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
