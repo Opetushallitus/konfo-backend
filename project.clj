@@ -114,7 +114,7 @@
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.4.0"]
                                    [oph/clj-test-utils "0.5.6-SNAPSHOT"]
-                                   [org.mockito/mockito-all "1.10.19"]
+                                   [org.mockito/mockito-core "5.16.1"]
                                    [clj-http-fake "1.0.4"]
                                    [net.java.dev.jna/jna "5.17.0"]
                                    [io.swagger.parser.v3/swagger-parser "2.1.25"]
