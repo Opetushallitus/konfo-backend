@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>fd54872ea22b0d71bc7d1a9347fd18a3f678de21</tag>
+    <tag>1daf1dfdb5be2961092a348c81ca7f18ef81c7c0</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -439,8 +439,8 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.19</version>
+      <artifactId>mockito-core</artifactId>
+      <version>5.16.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
