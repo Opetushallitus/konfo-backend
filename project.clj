@@ -4,8 +4,16 @@
 
 (defproject konfo-backend "0.2.1-SNAPSHOT"
   :description "Konfo-backend"
-  :repositories [["releases" "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"]
-                 ["snapshots" "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"]]
+  :repositories [["releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
+                              :username :env/artifactory_username
+                              :password :env/artifactory_password
+                              :sign-releases false
+                              :snapshots false}]
+                 ["snapshots" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
+                               :username :env/artifactory_username
+                               :password :env/artifactory_password
+                               :sign-releases false
+                               :snapshots true}]]
   :managed-dependencies [[org.clojure/clojure "1.11.4"]
                          [org.clojure/core.memoize "1.1.266"]
                          [clj-time "0.15.2"]
@@ -30,8 +38,8 @@
                          [ring/ring-jetty-adapter "1.13.0"]
                          [ring/ring-devel "1.13.0"]
                          [ring-cors "0.1.13"]
-                         [oph/clj-log "0.3.2-SNAPSHOT" :exclusions [org.scala-lang/scala-library
-                                                                    com.amazonaws/aws-java-sdk-s3]]
+                         [oph/clj-log "0.3.2-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
+                                                                    pl.allegro.tech/embedded-elasticsearch]]
                          [ring-basic-authentication "1.2.0"]
                          [org.clojure/tools.logging "1.3.0"]
                          [org.apache.logging.log4j/log4j-api "2.24.3"]
@@ -43,7 +51,8 @@
                          [cprop "0.1.20"]
                          [com.contentful.java/java-sdk "10.5.21"]
                          [commons-codec/commons-codec "1.18.0"]
-                         [oph/clj-elasticsearch "0.5.4-SNAPSHOT" :exclusions [org.scala-lang/scala-library]]
+                         [oph/clj-elasticsearch "0.5.4-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
+                                                                              pl.allegro.tech/embedded-elasticsearch]]
                          [mount "0.1.21"]
                          [org.clojure/data.xml "0.0.8"]
 

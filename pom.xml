@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>b8a64b379acff4c3582a4937308aa13b9815230c</tag>
+    <tag>e70ef480c465e3218ad9a9239dc12c4de36332c5</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -55,7 +55,7 @@
       <id>releases</id>
       <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
         <enabled>true</enabled>
@@ -211,12 +211,12 @@
         <version>0.3.2-SNAPSHOT</version>
         <exclusions>
           <exclusion>
-            <artifactId>scala-library</artifactId>
-            <groupId>org.scala-lang</groupId>
+            <artifactId>s3mock_2.12</artifactId>
+            <groupId>io.findify</groupId>
           </exclusion>
           <exclusion>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <groupId>com.amazonaws</groupId>
+            <artifactId>embedded-elasticsearch</artifactId>
+            <groupId>pl.allegro.tech</groupId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -281,8 +281,12 @@
         <version>0.5.4-SNAPSHOT</version>
         <exclusions>
           <exclusion>
-            <artifactId>scala-library</artifactId>
-            <groupId>org.scala-lang</groupId>
+            <artifactId>s3mock_2.12</artifactId>
+            <groupId>io.findify</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>embedded-elasticsearch</artifactId>
+            <groupId>pl.allegro.tech</groupId>
           </exclusion>
         </exclusions>
       </dependency>
