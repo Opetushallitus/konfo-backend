@@ -3,20 +3,22 @@ description: 'Prepare clojure enviroment for build'
 runs:
   using: "composite"
   steps:
-    - name: Set up JDK 11
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version-file: '.java-version'
         distribution: 'corretto'
 
-    - uses: szenius/set-timezone@v2.0
-      with:
-        timezoneLinux: "Europe/Helsinki"
+    - name: Set timezone to Europe/Helsinki
+      shell: bash
+      run: |
+        sudo timedatectl set-timezone Europe/Helsinki
+        echo "Europe/Helsinki" | sudo tee /etc/timezone
 
     - name: Install clojure tools
       uses: DeLaGuardo/setup-clojure@12.5
       with:
-        lein: 2.9.1
+        lein: 2.11.2
 
     - name: Cache dependencies
       uses: actions/cache@v4
