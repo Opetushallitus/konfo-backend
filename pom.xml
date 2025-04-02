@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>e70ef480c465e3218ad9a9239dc12c4de36332c5</tag>
+    <tag>fd54872ea22b0d71bc7d1a9347fd18a3f678de21</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -304,6 +304,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
         <version>1.21</version>
+      </dependency>
+      <dependency>
+        <groupId>instaparse</groupId>
+        <artifactId>instaparse</artifactId>
+        <version>1.5.0</version>
       </dependency>
       <dependency>
         <groupId>com.squareup.okhttp3</groupId>

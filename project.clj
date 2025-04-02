@@ -59,6 +59,9 @@
                          ; oph:clj-test-utils transitive dependency
                          [org.apache.commons/commons-compress "1.21"]
 
+                         ; compojure transitive dependency
+                         [instaparse/instaparse "1.5.0"]
+
                          [com.squareup.okhttp3/okhttp "3.14.9"]
                          [com.fasterxml.jackson.core/jackson-annotations "2.18.3"]
                          [com.fasterxml.jackson.core/jackson-core "2.18.3"]
