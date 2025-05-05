@@ -242,16 +242,7 @@
    |      type: object
    |      properties:
    |        koodi:
-   |          type: object
-   |          properties:
-   |            koodiUri:
-   |              type: string
-   |              description: Osaamisalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamisala/1)
-   |              example: osaamisala_0001#1
-   |            nimi:
-   |              type: object
-   |              description: Osaamisalan nimi eri kielillä
-   |              $ref: '#/components/schemas/Nimi'
+   |          $ref: '#/components/schemas/Osaamisala'
    |        linkki:
    |          type: object
    |          description: Osaamisalan linkki ePerusteisiin

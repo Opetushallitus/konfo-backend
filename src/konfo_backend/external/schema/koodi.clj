@@ -8,7 +8,7 @@
    |        koodiUri:
    |          type: string
    |          example: kunta_091
-   |          description: Kunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kunta/1)
+   |          description: Kunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kunta/1)
    |        nimi:
    |          type: object
    |          description: Kunnan nimi eri kielillä.
@@ -24,7 +24,7 @@
    |        maakoodiUri:
    |          type: string
    |          example: maakunta_01
-   |          description: Maakunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/maakunta/1)
+   |          description: Maakunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/maakunta/1)
    |        nimi:
    |          type: object
    |          description: Maakunnan nimi eri kielillä.
@@ -40,7 +40,7 @@
    |        koodiUri:
    |          type: string
    |          example: koulutus_301102#11
-   |          description: Koulutuksen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/koulutus/11)
+   |          description: Koulutuksen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/koulutus/11)
    |        nimi:
    |          type: object
    |          description: Koulutuksen nimi eri kielillä.
@@ -56,7 +56,7 @@
    |        koodiUri:
    |          type: string
    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_054#1
-   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kansallinenkoulutusluokitus2016koulutusalataso1/1)
+   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso1/1)
    |        nimi:
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
@@ -72,7 +72,7 @@
    |        koodiUri:
    |          type: string
    |          example: kansallinenkoulutusluokitus2016koulutusalataso2_054#1
-   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kansallinenkoulutusluokitus2016koulutusalataso2/1)
+   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso2/1)
    |        nimi:
    |          type: object
    |          description: Koulutusalan nimi eri kielillä.
@@ -87,7 +87,7 @@
    |      properties:
    |        koodiUri:
    |          type: string
-   |          description: Lisätiedon otsikon koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/koulutuksenlisatiedot/1)
+   |          description: Lisätiedon otsikon koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/koulutuksenlisatiedot/1)
    |          example: koulutuksenlisatiedot_03#1
    |        nimi:
    |          type: object
@@ -104,7 +104,7 @@
    |        koodiUri:
    |          type: string
    |          example: tutkintonimikkeet_10024
-   |          description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikkeet/2)
+   |          description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/tutkintonimikkeet/2)
    |        nimi:
    |          type: object
    |          description: Tutkintonimikkeem nimi eri kielillä.
@@ -120,7 +120,7 @@
    |        koodiUri:
    |          type: string
    |          example: tutkintonimikekk_110
-   |          description: Kk-tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/tutkintonimikekk/2)
+   |          description: Kk-tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/tutkintonimikekk/2)
    |        nimi:
    |          type: object
    |          description: Tutkintonimikkeem nimi eri kielillä.
@@ -136,7 +136,7 @@
    |        koodiUri:
    |          type: string
    |          example: opintojenlaajuus_40
-   |          description: Opintojen laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuus/1)
+   |          description: Opintojen laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opintojenlaajuus/1)
    |        nimi:
    |          type: object
    |          description: Opintojen laajuus eri kielillä.
@@ -152,7 +152,7 @@
    |        koodiUri:
    |          type: string
    |          example: opintojenlaajuus_40
-   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opintojenlaajuusyksikko/1)
+   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opintojenlaajuusyksikko/1)
    |        nimi:
    |          type: object
    |          description: Tutkinnon laajuuden eri kielillä.
@@ -168,7 +168,7 @@
    |        koodiUri:
    |          type: string
    |          example: oppilaitoksenopetuskieli_1
-   |          description: Opetuskieli. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/oppilaitoksenopetuskieli/1)
+   |          description: Opetuskieli. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/oppilaitoksenopetuskieli/1)
    |        nimi:
    |          type: object
    |          description: Opetuskieli eri kielillä.
@@ -184,7 +184,7 @@
    |        koodiUri:
    |          type: string
    |          example: opetusaikakk_1
-   |          description: Opetusaika. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetusaikakk/1)
+   |          description: Opetusaika. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opetusaikakk/1)
    |        nimi:
    |          type: object
    |          description: Opetusaika eri kielillä.
@@ -200,7 +200,7 @@
    |        koodiUri:
    |          type: string
    |          example: opetuspaikkakk_1
-   |          description: Opetustapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/opetuspaikkakk/1)
+   |          description: Opetustapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opetuspaikkakk/1)
    |        nimi:
    |          type: object
    |          description: Opetustapa eri kielillä.
@@ -216,7 +216,7 @@
    |        koodiUri:
    |          type: string
    |          example: kausi_s
-   |          description: Alkamiskausi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/kausi/1)
+   |          description: Alkamiskausi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kausi/1)
    |        nimi:
    |          type: object
    |          description: Alkamiskausi eri kielillä
@@ -232,7 +232,7 @@
    |        koodiUri:
    |          type: string
    |          example: pohjakoulutusvaatimuskouta_pk
-   |          description: Hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/pohjakoulutusvaatimuskouta/1)
+   |          description: Hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/pohjakoulutusvaatimuskouta/1)
    |        nimi:
    |          type: object
    |          description: Pohjakoulutusvaatimus eri kielillä
@@ -248,7 +248,7 @@
    |        koodiUri:
    |          type: string
    |          example: posti_04230#2
-   |          description: Postinumero. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/posti/2)
+   |          description: Postinumero. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/posti/2)
    |        nimi:
    |          type: object
    |          description: Postitoimipaikan nimi eri kielillä
@@ -264,7 +264,7 @@
    |        koodi:
    |          type: string
    |          example: liitetyypitamm_3#1
-   |          description: Liitteen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/liitetyypitamm/1)
+   |          description: Liitteen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/liitetyypitamm/1)
    |        nimi:
    |          type: object
    |          description: Liitteen tyyppi eri kielillä
@@ -280,7 +280,7 @@
    |        koodi:
    |          type: string
    |          example: liitetyypitamm_3#1
-   |          description: Valintakokeen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/valintakokeentyyppi/1)
+   |          description: Valintakokeen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/valintakokeentyyppi/1)
    |        nimi:
    |          type: object
    |          description: Valintakokeen tyyppi eri kielillä
@@ -296,7 +296,7 @@
    |        koodi:
    |          type: string
    |          example: hakutapa_03#1
-   |          description: Hakutapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/hakutapa/11)
+   |          description: Hakutapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/hakutapa/1)
    |        nimi:
    |          type: object
    |          description: Hakutavan nimi eri kielillä
@@ -312,7 +312,7 @@
    |        koodi:
    |          type: string
    |          example: haunkohdejoukko_03#1
-   |          description: Haun kohdejoukko. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukko/11)
+   |          description: Haun kohdejoukko. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/haunkohdejoukko/1)
    |        nimi:
    |          type: object
    |          description: Haun kohdejoukon nimi eri kielillä
@@ -328,7 +328,7 @@
    |        koodi:
    |          type: string
    |          example: haunkohdejoukontarkenne_03#1
-   |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/haunkohdejoukontarkenne/11)
+   |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/haunkohdejoukontarkenne/1)
    |        nimi:
    |          type: object
    |          description: Haun kohdejoukon tarkenne eri kielillä
@@ -344,7 +344,7 @@
    |        koodi:
    |          type: string
    |          example: valintatapajono_av#1
-   |          description: Valintatapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/valintatapajono/1)
+   |          description: Valintatapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/valintatapajono/1)
    |        nimi:
    |          type: object
    |          description: Valintatapa eri kielillä
@@ -360,7 +360,7 @@
    |        koodiUri:
    |          type: string
    |          example: osaamistausta_1
-   |          description: Osaamistausta. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
+   |          description: Osaamistausta. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/osaamistausta/1)
    |        nimi:
    |          type: object
    |          description: Osaamistausta.
@@ -375,7 +375,7 @@
    |        koodiUri:
    |          type: string
    |          example: osaamisala_1
-   |          description: Osaamisala. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
+   |          description: Osaamisala. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/osaamistausta/1)
    |        nimi:
    |          type: object
    |          description: Osaamisala.
@@ -389,26 +389,28 @@
 
 (def schemas
   (str
-    kunta-schema "\n"
-    maakunta-schema "\n"
-    koulutus-koodi-schema "\n"
-    koulutusala-1-schema "\n"
-    koulutusala-2-schema "\n"
-    koulutuslisatieto-koodi-schema "\n"
-    tutkintonimike-schema "\n"
-    tutkintonimikekk-schema "\n"
-    opintojenlaajuus-schema "\n"
-    opintojenlaajuusyksikko-schema "\n"
-    opetuskieli-schema "\n"
-    opetustapa-schema "\n"
-    opetusaika-schema "\n"
-    alkamiskausi-schema "\n"
-    pohjakoulutusvaatimus-schema "\n"
-    postinumero-schema "\n"
-    liitteen-tyyppi-schema "\n"
-    valintakokeen-tyyppi-schema "\n"
-    hakutapa-schema "\n"
-    haun-kohdejoukko-schema "\n"
-    haun-kohdejoukon-tarkenne-schema "\n"
-    valintatapa-schema "\n"
-    osaamistausta-schema))
+   kunta-schema "\n"
+   maakunta-schema "\n"
+   koulutus-koodi-schema "\n"
+   koulutusala-1-schema "\n"
+   koulutusala-2-schema "\n"
+   koulutuslisatieto-koodi-schema "\n"
+   tutkintonimike-schema "\n"
+   tutkintonimikekk-schema "\n"
+   opintojenlaajuus-schema "\n"
+   opintojenlaajuusyksikko-schema "\n"
+   opetuskieli-schema "\n"
+   opetustapa-schema "\n"
+   opetusaika-schema "\n"
+   alkamiskausi-schema "\n"
+   pohjakoulutusvaatimus-schema "\n"
+   postinumero-schema "\n"
+   liitteen-tyyppi-schema "\n"
+   valintakokeen-tyyppi-schema "\n"
+   hakutapa-schema "\n"
+   haun-kohdejoukko-schema "\n"
+   haun-kohdejoukon-tarkenne-schema "\n"
+   valintatapa-schema "\n"
+   osaamistausta-schema "\n"
+   osaamisala-schema))
+
