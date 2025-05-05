@@ -262,7 +262,7 @@
    |          $ref: '#/components/schemas/Teksti'")
 
 (s/defschema AmmOsaamisala
-  {:koodi   (st/schema (->Koodi #"osaamisala_\d+(#\d{1,2})?$"))
+  {:koodi   (st/schema (->Koodi OsaamisalaKoodi))
    :linkki  (st/schema Kielistetty {:description "Osaamisalan linkki ePerusteisiin"})
    :otsikko (st/schema Kielistetty {:description "Osaamisalan linkin otsikko eri kielillä"})})
 

@@ -368,6 +368,21 @@
 
 (def OsaamistaustaKoodi #"^osaamistausta_")
 
+(def osaamisala-schema
+  "|    Osaamisala:
+   |      type: object
+   |      properties:
+   |        koodiUri:
+   |          type: string
+   |          example: osaamisala_1
+   |          description: Osaamisala. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-ui/html/koodisto/osaamistausta/1)
+   |        nimi:
+   |          type: object
+   |          description: Osaamisala.
+   |          $ref: '#/components/schemas/Teksti'")
+
+(def OsaamisalaKoodi #"^osaamisala_")
+
 (def LukioDiplomiKoodi s/Str)
 
 (def KieliKoodiPattern #"^kieli_")
