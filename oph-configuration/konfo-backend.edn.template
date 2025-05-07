@@ -32,4 +32,6 @@
 
     :ataru-hakija-url "{{ataru_applicant_service_url}}/hakemus/api"
     :caller-id "1.2.246.562.10.00000000001.konfo-backend"
-    :swagger-ui {:syntaxHighlight false}}
+    :swagger-ui {:syntaxHighlight false}
+    :koodisto-host "{{host_virkailija}}"
+}

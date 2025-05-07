@@ -51,6 +51,7 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
                          :default 0.1}
 
  :swagger-ui {:syntaxHighlight false}
+ :koodisto-host "virkailija.untuvaopintopolku.fi"
  }
 ```
 

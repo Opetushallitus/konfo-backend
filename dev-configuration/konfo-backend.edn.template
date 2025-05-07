@@ -26,4 +26,5 @@
   :swagger-ui {
     :syntaxHighlight false
   }
+  :koodisto-host "{{host_virkailija}}"
 }

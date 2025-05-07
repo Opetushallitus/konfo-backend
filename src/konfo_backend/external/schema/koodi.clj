@@ -1,385 +1,462 @@
 (ns konfo-backend.external.schema.koodi
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            [konfo-backend.config :refer [config]]
+
+            [clojure.string :as str]))
+
+(defonce koodisto-base-url (str "https://" (:koodisto-host config)))
 
 (def kunta-schema
-  "|    Kunta:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kunta_091
-   |          description: Kunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kunta/1)
-   |        nimi:
-   |          type: object
-   |          description: Kunnan nimi eri kielillä.
-   |          example: {\"fi\": \"Helsinki\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    Kunta:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: kunta_091
+    |          description: Kunnan koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/kunta/1)
+    |        nimi:
+    |          type: object
+    |          description: Kunnan nimi eri kielillä.
+    |          example: {\"fi\": \"Helsinki\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def KuntaKoodi    #"^kunta_")
 
 (def maakunta-schema
-  "|    Maakunta:
-   |      type: object
-   |      properties:
-   |        maakoodiUri:
-   |          type: string
-   |          example: maakunta_01
-   |          description: Maakunnan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/maakunta/1)
-   |        nimi:
-   |          type: object
-   |          description: Maakunnan nimi eri kielillä.
-   |          example: {\"fi\": \"Uusimaa\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    Maakunta:
+    |      type: object
+    |      properties:
+    |        maakoodiUri:
+    |          type: string
+    |          example: maakunta_01
+    |          description: Maakunnan koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/maakunta/1)
+    |        nimi:
+    |          type: object
+    |          description: Maakunnan nimi eri kielillä.
+    |          example: {\"fi\": \"Uusimaa\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def MaakuntaKoodi    #"^maakunta_")
 
 (def koulutus-koodi-schema
-  "|    KoulutusKoodi:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: koulutus_301102#11
-   |          description: Koulutuksen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/koulutus/11)
-   |        nimi:
-   |          type: object
-   |          description: Koulutuksen nimi eri kielillä.
-   |          example: {\"fi\": \"IB-tutkinto\", \"sv\": \"IB-examen\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    KoulutusKoodi:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: koulutus_301102#11
+    |          description: Koulutuksen koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/koulutus/11)
+    |        nimi:
+    |          type: object
+    |          description: Koulutuksen nimi eri kielillä.
+    |          example: {\"fi\": \"IB-tutkinto\", \"sv\": \"IB-examen\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def KoulutusKoodi #"^koulutus_")
 
 (def koulutusala-1-schema
-  "|    Koulutusala1:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kansallinenkoulutusluokitus2016koulutusalataso1_054#1
-   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso1/1)
-   |        nimi:
-   |          type: object
-   |          description: Koulutusalan nimi eri kielillä.
-   |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    Koulutusala1:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: kansallinenkoulutusluokitus2016koulutusalataso1_054#1
+    |          description: Koulutusalan koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso1/1)
+    |        nimi:
+    |          type: object
+    |          description: Koulutusalan nimi eri kielillä.
+    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def Koulutusala1Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso1_")
 
 (def koulutusala-2-schema
-  "|    Koulutusala2:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kansallinenkoulutusluokitus2016koulutusalataso2_054#1
-   |          description: Koulutusalan koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso2/1)
-   |        nimi:
-   |          type: object
-   |          description: Koulutusalan nimi eri kielillä.
-   |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    Koulutusala2:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: kansallinenkoulutusluokitus2016koulutusalataso2_054#1
+    |          description: Koulutusalan koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/kansallinenkoulutusluokitus2016koulutusalataso2/1)
+    |        nimi:
+    |          type: object
+    |          description: Koulutusalan nimi eri kielillä.
+    |          example: {\"fi\": \"Koulutusala suomeksi\", \"sv\": \"Koulutusala på svenska\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def Koulutusala2Koodi #"^kansallinenkoulutusluokitus2016koulutusalataso2_")
 
 (def koulutuslisatieto-koodi-schema
-  "|    KoulutusLisatietoKoodi:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          description: Lisätiedon otsikon koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/koulutuksenlisatiedot/1)
-   |          example: koulutuksenlisatiedot_03#1
-   |        nimi:
-   |          type: object
-   |          description: Koulutuksen lisatiedon otsikko eri kielillä.
-   |          example: {\"fi\": \"Otsikko suomeksi\", \"sv\": \"Otsikko på svenska\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    KoulutusLisatietoKoodi:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          description: Lisätiedon otsikon koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/koulutuksenlisatiedot/1)
+    |          example: koulutuksenlisatiedot_03#1
+    |        nimi:
+    |          type: object
+    |          description: Koulutuksen lisatiedon otsikko eri kielillä.
+    |          example: {\"fi\": \"Otsikko suomeksi\", \"sv\": \"Otsikko på svenska\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def KoulutusLisatietoKoodi #"^koulutuksenlisatiedot_")
 
 (def tutkintonimike-schema
-  "|    Tutkintonimike:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: tutkintonimikkeet_10024
-   |          description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/tutkintonimikkeet/2)
-   |        nimi:
-   |          type: object
-   |          description: Tutkintonimikkeem nimi eri kielillä.
-   |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    Tutkintonimike:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: tutkintonimikkeet_10024
+    |          description: Tutkintonimikkeen koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/tutkintonimikkeet/2)
+    |        nimi:
+    |          type: object
+    |          description: Tutkintonimikkeem nimi eri kielillä.
+    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def TutkintonimikeKoodi #"^tutkintonimikkeet_")
 
 (def tutkintonimikekk-schema
-  "|    TutkintonimikeKk:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: tutkintonimikekk_110
-   |          description: Kk-tutkintonimikkeen koodi URI. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/tutkintonimikekk/2)
-   |        nimi:
-   |          type: object
-   |          description: Tutkintonimikkeem nimi eri kielillä.
-   |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
-   |          $ref: '#/components/schemas/Nimi'")
+  (str/replace
+   "|    TutkintonimikeKk:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: tutkintonimikekk_110
+    |          description: Kk-tutkintonimikkeen koodi URI. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/tutkintonimikekk/2)
+    |        nimi:
+    |          type: object
+    |          description: Tutkintonimikkeem nimi eri kielillä.
+    |          example: {\"fi\": \"Tutkintonimike suomeksi\"}
+    |          $ref: '#/components/schemas/Nimi'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def TutkintonimikeKkKoodi #"^tutkintonimikekk_")
 
 (def opintojenlaajuus-schema
-  "|    OpintojenLaajuus:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: opintojenlaajuus_40
-   |          description: Opintojen laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opintojenlaajuus/1)
-   |        nimi:
-   |          type: object
-   |          description: Opintojen laajuus eri kielillä.
-   |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    OpintojenLaajuus:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: opintojenlaajuus_40
+    |          description: Opintojen laajuus. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/opintojenlaajuus/1)
+    |        nimi:
+    |          type: object
+    |          description: Opintojen laajuus eri kielillä.
+    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OpintojenLaajuusKoodi #"^opintojenlaajuus_")
 
 (def opintojenlaajuusyksikko-schema
-  "|    OpintojenLaajuusyksikko:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: opintojenlaajuus_40
-   |          description: Tutkinnon laajuus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opintojenlaajuusyksikko/1)
-   |        nimi:
-   |          type: object
-   |          description: Tutkinnon laajuuden eri kielillä.
-   |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    OpintojenLaajuusyksikko:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: opintojenlaajuus_40
+    |          description: Tutkinnon laajuus. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/opintojenlaajuusyksikko/1)
+    |        nimi:
+    |          type: object
+    |          description: Tutkinnon laajuuden eri kielillä.
+    |          example: {\"fi\": \"Tutkinnon laajuus suomeksi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OpintojenLaajuusyksikkoKoodi #"^opintojenlaajuusyksikko_")
 
 (def opetuskieli-schema
-  "|    Opetuskieli:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: oppilaitoksenopetuskieli_1
-   |          description: Opetuskieli. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/oppilaitoksenopetuskieli/1)
-   |        nimi:
-   |          type: object
-   |          description: Opetuskieli eri kielillä.
-   |          example: {\"fi\": \"suomi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Opetuskieli:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: oppilaitoksenopetuskieli_1
+    |          description: Opetuskieli. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/oppilaitoksenopetuskieli/1)
+    |        nimi:
+    |          type: object
+    |          description: Opetuskieli eri kielillä.
+    |          example: {\"fi\": \"suomi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OpetuskieliKoodi #"^oppilaitoksenopetuskieli_")
 
 (def opetusaika-schema
-  "|    Opetusaika:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: opetusaikakk_1
-   |          description: Opetusaika. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opetusaikakk/1)
-   |        nimi:
-   |          type: object
-   |          description: Opetusaika eri kielillä.
-   |          example: {\"fi\": \"suomi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Opetusaika:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: opetusaikakk_1
+    |          description: Opetusaika. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/opetusaikakk/1)
+    |        nimi:
+    |          type: object
+    |          description: Opetusaika eri kielillä.
+    |          example: {\"fi\": \"suomi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OpetusaikaKoodi #"^opetusaikakk_")
 
 (def opetustapa-schema
-  "|    Opetustapa:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: opetuspaikkakk_1
-   |          description: Opetustapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/opetuspaikkakk/1)
-   |        nimi:
-   |          type: object
-   |          description: Opetustapa eri kielillä.
-   |          example: {\"fi\": \"suomi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Opetustapa:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: opetuspaikkakk_1
+    |          description: Opetustapa. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/opetuspaikkakk/1)
+    |        nimi:
+    |          type: object
+    |          description: Opetustapa eri kielillä.
+    |          example: {\"fi\": \"suomi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OpetustapaKoodi #"^opetuspaikkakk_")
 
 (def alkamiskausi-schema
-  "|    Alkamiskausi:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: kausi_s
-   |          description: Alkamiskausi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/kausi/1)
-   |        nimi:
-   |          type: object
-   |          description: Alkamiskausi eri kielillä
-   |          example: {\"fi\": \"syksy\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Alkamiskausi:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: kausi_s
+    |          description: Alkamiskausi. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/kausi/1)
+    |        nimi:
+    |          type: object
+    |          description: Alkamiskausi eri kielillä
+    |          example: {\"fi\": \"syksy\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def AlkamiskausiKoodi #"^kausi_")
 
 (def pohjakoulutusvaatimus-schema
-  "|    Pohjakoulutusvaatimus:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: pohjakoulutusvaatimuskouta_pk
-   |          description: Hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/pohjakoulutusvaatimuskouta/1)
-   |        nimi:
-   |          type: object
-   |          description: Pohjakoulutusvaatimus eri kielillä
-   |          example: {\"fi\": \"syksy\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Pohjakoulutusvaatimus:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: pohjakoulutusvaatimuskouta_pk
+    |          description: Hakukohteen pohjakoulutusvaatimus. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/pohjakoulutusvaatimuskouta/1)
+    |        nimi:
+    |          type: object
+    |          description: Pohjakoulutusvaatimus eri kielillä
+    |          example: {\"fi\": \"syksy\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def PohjakoulutusvaatimusKoodi #"^pohjakoulutusvaatimuskouta_")
 
 (def postinumero-schema
-  "|    Postinumero:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: posti_04230#2
-   |          description: Postinumero. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/posti/2)
-   |        nimi:
-   |          type: object
-   |          description: Postitoimipaikan nimi eri kielillä
-   |          example: {\"fi\": \"Kerava\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Postinumero:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: posti_04230#2
+    |          description: Postinumero. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/posti/2)
+    |        nimi:
+    |          type: object
+    |          description: Postitoimipaikan nimi eri kielillä
+    |          example: {\"fi\": \"Kerava\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def PostinumeroKoodi #"^posti_")
 
 (def liitteen-tyyppi-schema
-  "|    LiitteenTyyppi:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: liitetyypitamm_3#1
-   |          description: Liitteen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/liitetyypitamm/1)
-   |        nimi:
-   |          type: object
-   |          description: Liitteen tyyppi eri kielillä
-   |          example: {\"fi\": \"Todistus\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    LiitteenTyyppi:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: liitetyypitamm_3#1
+    |          description: Liitteen tyyppi. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/liitetyypitamm/1)
+    |        nimi:
+    |          type: object
+    |          description: Liitteen tyyppi eri kielillä
+    |          example: {\"fi\": \"Todistus\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def LiitteenTyyppiKoodi #"^liitetyypitamm_")
 
 (def valintakokeen-tyyppi-schema
-  "|    ValintakokeenTyyppi:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: liitetyypitamm_3#1
-   |          description: Valintakokeen tyyppi. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/valintakokeentyyppi/1)
-   |        nimi:
-   |          type: object
-   |          description: Valintakokeen tyyppi eri kielillä
-   |          example: {\"fi\": \"Kuulustelu\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    ValintakokeenTyyppi:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: liitetyypitamm_3#1
+    |          description: Valintakokeen tyyppi. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/valintakokeentyyppi/1)
+    |        nimi:
+    |          type: object
+    |          description: Valintakokeen tyyppi eri kielillä
+    |          example: {\"fi\": \"Kuulustelu\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def ValintakokeenTyyppiKoodi #"^valintakokeentyyppi_")
 
 (def hakutapa-schema
-  "|    Hakutapa:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: hakutapa_03#1
-   |          description: Hakutapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/hakutapa/1)
-   |        nimi:
-   |          type: object
-   |          description: Hakutavan nimi eri kielillä
-   |          example: {\"fi\": \"Yhteishaku\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Hakutapa:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: hakutapa_03#1
+    |          description: Hakutapa. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/hakutapa/1)
+    |        nimi:
+    |          type: object
+    |          description: Hakutavan nimi eri kielillä
+    |          example: {\"fi\": \"Yhteishaku\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def HakutapaKoodi #"^hakutapa_")
 
 (def haun-kohdejoukko-schema
-  "|    HaunKohdejoukko:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: haunkohdejoukko_03#1
-   |          description: Haun kohdejoukko. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/haunkohdejoukko/1)
-   |        nimi:
-   |          type: object
-   |          description: Haun kohdejoukon nimi eri kielillä
-   |          example: {\"fi\": \"Kohdejoukko\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    HaunKohdejoukko:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: haunkohdejoukko_03#1
+    |          description: Haun kohdejoukko. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/haunkohdejoukko/1)
+    |        nimi:
+    |          type: object
+    |          description: Haun kohdejoukon nimi eri kielillä
+    |          example: {\"fi\": \"Kohdejoukko\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def HaunKohdejoukkoKoodi #"^haunkohdejoukko_")
 
 (def haun-kohdejoukon-tarkenne-schema
-  "|    HaunKohdejoukonTarkenne:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: haunkohdejoukontarkenne_03#1
-   |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/haunkohdejoukontarkenne/1)
-   |        nimi:
-   |          type: object
-   |          description: Haun kohdejoukon tarkenne eri kielillä
-   |          example: {\"fi\": \"Kohdejoukon tarkenne\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    HaunKohdejoukonTarkenne:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: haunkohdejoukontarkenne_03#1
+    |          description: Haun kohdejoukon tarkenne. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/haunkohdejoukontarkenne/1)
+    |        nimi:
+    |          type: object
+    |          description: Haun kohdejoukon tarkenne eri kielillä
+    |          example: {\"fi\": \"Kohdejoukon tarkenne\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def HaunKohdejoukonTarkenneKoodi #"^haunkohdejoukontarkenne_")
 
 (def valintatapa-schema
-  "|    Valintatapa:
-   |      type: object
-   |      properties:
-   |        koodi:
-   |          type: string
-   |          example: valintatapajono_av#1
-   |          description: Valintatapa. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/valintatapajono/1)
-   |        nimi:
-   |          type: object
-   |          description: Valintatapa eri kielillä
-   |          example: {\"fi\": \"Valintatapa suomeksi\"}
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Valintatapa:
+    |      type: object
+    |      properties:
+    |        koodi:
+    |          type: string
+    |          example: valintatapajono_av#1
+    |          description: Valintatapa. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/valintatapajono/1)
+    |        nimi:
+    |          type: object
+    |          description: Valintatapa eri kielillä
+    |          example: {\"fi\": \"Valintatapa suomeksi\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def ValintatapaKoodi #"^valintatapajono_")
 
 (def osaamistausta-schema
-  "|    Osaamistausta:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: osaamistausta_1
-   |          description: Osaamistausta. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/koodisto-service/ui/koodisto/view/osaamistausta/1)
-   |        nimi:
-   |          type: object
-   |          description: Osaamistausta.
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Osaamistausta:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: osaamistausta_1
+    |          description: Osaamistausta. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/osaamistausta/1)
+    |        nimi:
+    |          type: object
+    |          description: Osaamistausta.
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OsaamistaustaKoodi #"^osaamistausta_")
 
 (def osaamisala-schema
-  "|    Osaamisala:
-   |      type: object
-   |      properties:
-   |        koodiUri:
-   |          type: string
-   |          example: osaamisala_1
-   |          description: Osaamisala. Viittaa [koodistoon](https://virkailija.testiopintopolku.fi/osaamistausta/1)
-   |        nimi:
-   |          type: object
-   |          description: Osaamisala.
-   |          $ref: '#/components/schemas/Teksti'")
+  (str/replace
+   "|    Osaamisala:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: osaamisala_1
+    |          description: Osaamisala. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/osaamistausta/1)
+    |        nimi:
+    |          type: object
+    |          description: Osaamisala.
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
 
 (def OsaamisalaKoodi #"^osaamisala_")
 
