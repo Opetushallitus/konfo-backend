@@ -39,7 +39,6 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
  :contentful-preview-token "preview-token"
 
  :dev true
- :konfo-host "http://localhost"
  :search-terms-boost    {:koulutusnimi 20
                          :toteutusNimi 6
                          :asiasanat 5
@@ -52,6 +51,7 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
                          :default 0.1}
 
  :swagger-ui {:syntaxHighlight false}
+ :koodisto-host "virkailija.untuvaopintopolku.fi"
  }
 ```
 

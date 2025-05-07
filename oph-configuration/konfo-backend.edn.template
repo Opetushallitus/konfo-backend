@@ -12,8 +12,6 @@
     :contentful-access-token-en "{{konfo_contentful_access_token_en}}"
     :contentful-preview-token-en "{{konfo_contentful_preview_token_en}}"
 
-    :konfo-host "https://{{host_beta}}"
-
     :contentful-update-username "{{konfo_contentful_update_username}}"
     :contentful-update-password "{{konfo_contentful_update_password}}"
 
@@ -34,4 +32,6 @@
 
     :ataru-hakija-url "{{ataru_applicant_service_url}}/hakemus/api"
     :caller-id "1.2.246.562.10.00000000001.konfo-backend"
-    :swagger-ui {:syntaxHighlight false}}
+    :swagger-ui {:syntaxHighlight false}
+    :koodisto-host "{{host_virkailija}}"
+}
