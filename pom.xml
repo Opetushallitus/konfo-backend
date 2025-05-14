@@ -246,7 +246,7 @@
     <dependency>
       <groupId>com.contentful.java</groupId>
       <artifactId>java-sdk</artifactId>
-      <version>10.5.15</version>
+      <version>10.5.19</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
