@@ -4,6 +4,7 @@
                                                  spec-paths-to-swagger-yaml]]
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
+                                                    amm_erityisopetus tuva_erityisopetus
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
@@ -520,7 +521,9 @@
                       :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
                                                        (:lukuvuosimaksunmaara_max rajain-params))
                       :apuraha (if (:apuraha rajain-params) true nil)})
-   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)})
+   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)
+   :amm_erityisopetus (:amm_erityisopetus rajain-params)
+   :tuva_erityisopetus (:tuva_erityisopetus rajain-params)})
 
 (defn ->search-with-validated-params
   [do-search keyword lng page size sort order rajain-params]
@@ -682,7 +685,9 @@
                      {osaamisala            :- String nil}
                      {oppilaitos            :- String nil}
                      {alkamiskausi          :- String nil}
-                     {hakualkaapaivissa     :- Long nil}]
+                     {hakualkaapaivissa     :- Long nil}
+                     {amm_erityisopetus     :- Boolean false}
+                     {tuva_erityisopetus    :- Boolean false}]
       (with-access-logging request (->search-subentities-with-validated-params
                                     koulutus-search/search-koulutuksen-jarjestajat
                                     oid
@@ -717,7 +722,9 @@
                                      :osaamisala osaamisala
                                      :oppilaitos oppilaitos
                                      :alkamiskausi alkamiskausi
-                                     :hakualkaapaivissa hakualkaapaivissa})))
+                                     :hakualkaapaivissa hakualkaapaivissa
+                                     :amm_erityisopetus amm_erityisopetus
+                                     :tuva_erityisopetus tuva_erityisopetus})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
