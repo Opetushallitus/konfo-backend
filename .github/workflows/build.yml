@@ -70,7 +70,7 @@ jobs:
           cp target/uberjar/konfo-backend-*-standalone.jar $DOCKER_BUILD_DIR/artifact/konfo-backend.jar
           cp -vr oph-configuration $DOCKER_BUILD_DIR/config/
 
-          export BASE_IMAGE="baseimage-fatjar-openjdk11:master"
+          export BASE_IMAGE="baseimage-fatjar-openjdk21:master"
 
           ./ci-tools/common/pull-image.sh
           ./ci-tools/github-build/build-fatjar.sh konfo-backend
