@@ -90,7 +90,7 @@
     (s/->OptionalKey :opintojenLaajuusNumeroMin)  (s/maybe s/Num)
     (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
     (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
-    (s/->OptionalKey :tutkintonimike)             [(s/maybe (->Koodi TutkintonimikeKoodi))]
+    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet 
     :tyyppi                                       KoutaKoulutustyyppi
     s/Any                                         s/Any
     })

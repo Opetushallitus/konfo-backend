@@ -1,7 +1,6 @@
 (ns konfo-backend.external.schema.koodi
   (:require [schema.core :as s]
             [konfo-backend.config :refer [config]]
-
             [clojure.string :as str]))
 
 (defonce koodisto-base-url (str "https://" (:koodisto-host config)))
@@ -137,7 +136,7 @@
    "$KOODISTO-BASE-URL"
    koodisto-base-url))
 
-(def TutkintonimikeKoodi #"^tutkintonimikkeet_")
+(def TutkintonimikkeetKoodi #"^tutkintonimikkeet_")
 
 (def tutkintonimikekk-schema
   (str/replace

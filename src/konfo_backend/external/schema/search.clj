@@ -1,8 +1,8 @@
 (ns konfo-backend.external.schema.search
   (:require
-    [schema.core :as s]
-    [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+   [schema.core :as s]
+   [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (s/defschema KoulutusToteutusHit
   {:toteutusOid         ToteutusOid
@@ -84,7 +84,7 @@
    (s/->OptionalKey :opintojenLaajuusNumeroMax) (s/maybe s/Num)
    (s/->OptionalKey :opintojenLaajuusNumero)    (s/maybe s/Num)
    (s/->OptionalKey :opintojenLaajuusyksikko)   (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
-   (s/->OptionalKey :tutkintonimikkeet)         [(->Koodi TutkintonimikeKoodi)]
+   (s/->OptionalKey :tutkintonimikkeet)         Tutkintonimikkeet
    :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas

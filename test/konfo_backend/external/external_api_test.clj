@@ -28,6 +28,7 @@
   (testing "Testing external apis"
     (let [koulutusOid1 "1.2.246.562.13.000003"
           koulutusOid2 "1.2.246.562.13.000004"
+          koulutusOid16 "1.2.246.562.13.000016"
           lukio-Oid "1.2.246.562.13.000008"
           kkKoulutusOid "1.2.246.562.13.000009"
           toteutusOid1 "1.2.246.562.17.000001"
@@ -82,7 +83,9 @@
         (testing "not julkaistu"
           (get-not-found (koulutus-url koulutusOid2)))
         (testing "not amm"
-          (get-ok-or-print-schema-error (koulutus-url kkKoulutusOid))))
+          (get-ok-or-print-schema-error (koulutus-url kkKoulutusOid)))
+        (testing "should pass koodiuri schema validation for koulutus with tutkintonimikekk koodiuri"
+          (get-ok-or-print-schema-error (koulutus-url koulutusOid16))))
 
       (testing "Get toteutus"
         (testing "ok only toteutus"

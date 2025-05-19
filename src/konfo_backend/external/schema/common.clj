@@ -282,6 +282,11 @@
    :aidinkielet [KieliKoodi]
    :muutKielet [KieliKoodi]})
 
+(def Tutkintonimikkeet
+  [(s/conditional
+     #(boolean (re-find TutkintonimikkeetKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikkeetKoodi))
+     #(boolean (re-find TutkintonimikeKkKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikeKkKoodi)))])
+
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
        konfo-koulutustyyppi-schema "\n"
