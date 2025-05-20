@@ -52,6 +52,7 @@
 
     (testing "Search all koulutukset"
       (let [r (search :sort "name" :order "asc")]
+        (is (match? 38 (:total r)))
         (is (match? 20 (count (:hits r))))
         (is (match? {:koulutustyyppi {:amm {:count 23}
                                       :amk {:count 0}
