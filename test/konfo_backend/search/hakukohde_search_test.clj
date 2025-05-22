@@ -33,7 +33,7 @@
       (is (= 7 (count (:hits response))))
       (is (= 7 (:total response)))
       (is (match? {:oid "1.2.246.562.20.0000011"
-              :nimi {:fi "nimi fi" :sv "nimi sv"}
+              :nimi {:fi "KK-hakukohde fi" :sv "KK-hakukohde sv"}
               :hakuOid "1.2.246.562.29.0000006"
               :jarjestyspaikka {:nimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}}
               :jarjestyspaikkaHierarkiaNimi {:fi "Jokin järjestyspaikka" :sv "Jokin järjestyspaikka sv"}

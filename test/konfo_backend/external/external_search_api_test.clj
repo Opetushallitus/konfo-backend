@@ -36,7 +36,7 @@
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search toteutus with koulutustyyppi amm"
       (let [r (search :koulutustyyppi "amm")]
-        (is (= 20 (:total r)))
+        (is (= 21 (:total r)))
         (is (= [koulutusOid1] [(:oid (first (:hits r)))]))
         (is (= [toteutusOid1] [(:toteutusOid (first (:toteutukset (first (:hits r)))))]))))
     (testing "Search toteutus with keyword"

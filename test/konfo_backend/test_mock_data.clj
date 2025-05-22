@@ -17,7 +17,10 @@
                                                              :koodisto "koulutustyyppi"
                                                              :koodit [{:koodiUri "koulutustyyppi_11"
                                                                        :versio 1
-                                                                       :nimi {:fi "Mahtava koulutustyyppi"}}]}
+                                                                       :nimi {:fi "Mahtava koulutustyyppi"}}
+                                                                      {:koodiUri "koulutustyyppi_4"
+                                                                       :versio 1
+                                                                       :nimi {:fi "Ammatillinen perustutkinto (vaativa erityinen tuki)"}}]}
     (= "opetuspaikkakk" x)                                  {:id "opetuspaikkakk"
                                                              :koodisto "opetuspaikkakk"
                                                              :koodit [{:koodiUri "opetuspaikkakk_01"
