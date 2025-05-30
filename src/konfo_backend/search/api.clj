@@ -659,6 +659,7 @@
                      {size                  :- Long 20}
                      {lng                   :- String "fi"}
                      {order                 :- String "asc"}
+                     {koulutustyyppi        :- String nil}
                      {sijainti              :- String nil}
                      {opetuskieli           :- String nil}
                      {koulutusala           :- String nil}
@@ -685,9 +686,7 @@
                      {osaamisala            :- String nil}
                      {oppilaitos            :- String nil}
                      {alkamiskausi          :- String nil}
-                     {hakualkaapaivissa     :- Long nil}
-                     {amm_erityisopetus     :- Boolean false}
-                     {tuva_erityisopetus    :- Boolean false}]
+                     {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params
                                     koulutus-search/search-koulutuksen-jarjestajat
                                     oid
@@ -723,8 +722,12 @@
                                      :oppilaitos oppilaitos
                                      :alkamiskausi alkamiskausi
                                      :hakualkaapaivissa hakualkaapaivissa
-                                     :amm_erityisopetus amm_erityisopetus
-                                     :tuva_erityisopetus tuva_erityisopetus})))
+                                     :amm_erityisopetus (when (some? koulutustyyppi)
+                                                          (contains? (set (string/split koulutustyyppi #","))
+                                                                     "koulutustyyppi_4"))
+                                     :tuva_erityisopetus (when (some? koulutustyyppi)
+                                                           (contains? (set (string/split koulutustyyppi #","))
+                                                                      "tuva-erityisopetus"))})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
