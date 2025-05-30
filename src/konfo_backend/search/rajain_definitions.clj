@@ -637,7 +637,7 @@
 (def hakutulos-agg-defs
   (concat common-agg-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
 
-(def jarjestaja-agg-defs (concat common-agg-defs [lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
+(def jarjestaja-agg-defs (concat common-agg-defs [koulutustyyppi lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def tarjoaja-agg-defs
   (concat common-agg-defs [koulutustyyppi koulutusala]))
