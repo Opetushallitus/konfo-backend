@@ -80,18 +80,17 @@
           (is (= 1 (:total r)))
           (is (= massikkakoulu-oid (:toteutusOid (first (:hits r)))))))
       (testing "returns amm perustutkinto vaativana erityisenä tukena"
-        (let [r (search puutarha-koulutus-oid :tuleva false :order "asc" :amm_erityisopetus true)
+        (let [r (search puutarha-koulutus-oid :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus,koulutustyyppi_4,amm")
               hits (:hits r)]
           (is (= 1 (:total r)))
           (is (= 1 (count hits)))
           (is (= puutarha-ala-toteutus-erityisopetuksena-oid (:toteutusOid (first hits))))))
       (testing "Can filter by tuva vaativana erityisenä tukena"
-        (let [r (search tuva-erityisopetuksena-oid :tuleva false :order "asc" :tuva_erityisopetus true)
+        (let [r (search tuva-erityisopetuksena-oid :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus,koulutustyyppi_4,amm")
               hits (:hits r)]
           (is (= 1 (:total r)))
           (is (= 1 (count hits)))
-          (is (= tuva-toteutus-erityisopetuksena-oid (:toteutusOid (first hits))))))
-      )
+          (is (= tuva-toteutus-erityisopetuksena-oid (:toteutusOid (first hits)))))))
 
     (testing "Filter counts"
       (testing "Without any filters"

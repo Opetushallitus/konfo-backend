@@ -312,6 +312,7 @@
           required: false
           description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
 
+;; Päätellään koulutustyypin perusteella (koulutustyyppi_4)
 (def amm_erityisopetus
   {:id :amm_erityisopetus
    :rajainGroupId :erityisopetus
@@ -319,16 +320,9 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "metadata.ammPerustutkintoErityisopetuksena")
                                 (aggregation-filters-for-rajain :amm_erityisopetus constraints rajain-context)
-                                rajain-context))
-   :desc "
-        - in: query
-          name: amm_erityisopetus
-          schema:
-            type: boolean
-            default: false
-          required: false
-          description: Haetaanko ammatillisia koulutuksia, jotka voi suorittaa erityisopetuksena?"})
+                                rajain-context))})
 
+;; Päätellään koulutustyypin perusteella (tuva-erityisopetus)
 (def tuva_erityisopetus
   {:id :tuva_erityisopetus
    :rajainGroupId :erityisopetus
@@ -336,15 +330,7 @@
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "metadata.jarjestetaanErityisopetuksena")
                                 (aggregation-filters-for-rajain :tuva_erityisopetus constraints rajain-context)
-                                rajain-context))
-   :desc "
-        - in: query
-          name: tuva_erityisopetus
-          schema:
-            type: boolean
-            default: false
-          required: false
-          description: Haetaanko TUVA koulutuksia, jotka voi suorittaa erityisopetuksena?"})
+                                rajain-context))})
 
 (def maksullisuus
   {:desc "
