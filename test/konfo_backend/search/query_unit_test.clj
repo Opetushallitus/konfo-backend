@@ -233,6 +233,7 @@
                      {:nested {:path "search_terms"}
                       :aggs
                       {:yhteishaku                          (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
+                       :koulutustyyppi                      (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                        :kunta                               (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
                        :maakunta                            (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
                        :pohjakoulutusvaatimus               (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"

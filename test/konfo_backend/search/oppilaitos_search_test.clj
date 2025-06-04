@@ -45,17 +45,17 @@
         (is (= 12 (count (:hits r))))
         (is (= 5 (get-in r [:filters :koulutustyyppi :aikuisten-perusopetus :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :taiteen-perusopetus :count])))
-        (is (= 0 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
-        (is (= 0 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))
-        (is (= 0 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :alakoodit :tuva-normal :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
+        (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :alakoodit :tuva-normal :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :alakoodit :telma :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :alakoodit :vapaa-sivistystyo-opistovuosi :count])))
-        (is (= 0 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :count])))
-        (is (= 5 (get-in r [:filters :koulutustyyppi :amm :alakoodit :muu-amm-tutkinto :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :valmentavat-koulutukset :count])))
+        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :alakoodit :muu-amm-tutkinto :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-tutkinnon-osa :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :lk :count])))
 
         (is (= 0 (get-in r [:filters :koulutustyyppi :amk :alakoodit :amk-alempi :count])))
@@ -91,8 +91,8 @@
         (is (= 0 (get-in r [:filters :maakunta :maakunta_02 :count])))
         (is (= 1 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))
         (is (= 6 (get-in r [:filters :opetustapa :opetuspaikkakk_02 :count])))
-        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
+        (is (= 6 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+        (is (= 6 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
     (testing "Search oppilaitokset, filter with..."
       (testing "sijainti"
@@ -114,25 +114,25 @@
 
     (testing "koulutustyyppi amm"
       (let [r (search :koulutustyyppi "amm" :sort "name" :order "asc")]
-        (is (= 5 (count (:hits r))))
-        (is (= 5 (get-in r [:filters :koulutustyyppi :amm :alakoodit :muu-amm-tutkinto :count])))
+        (is (= 6 (count (:hits r))))
+        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :alakoodit :muu-amm-tutkinto :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-tutkinnon-osa :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))))
 
     (testing "koulutustyyppi amm-osaamisala"
       (let [r (search :koulutustyyppi "amm-osaamisala" :sort "name" :order "asc")]
           ;; (debug-pretty r)
         (is (= 1 (count (:hits r))))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))))
 
     (testing "koulutustyyppi amm-tutkinnon-osa"
       (let [r (search :koulutustyyppi "amm-tutkinnon-osa" :sort "name" :order "asc")]
           ;(debug-pretty r)
         (is (= 0 (count (:hits r))))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-tutkinnon-osa :count])))))
 
@@ -140,7 +140,7 @@
       (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]
           ;(debug-pretty r)
         (is (= 0 (count (:hits r))))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
         (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))))
 
@@ -153,10 +153,10 @@
 
     (testing "koulutusala"
       (let [r (search :koulutusala "kansallinenkoulutusluokitus2016koulutusalataso1_01" :sort "name" :order "asc")]
-        (is (= 5 (count (:hits r))))
-        (is (= 6 (get-in r [:filters :koulutustyyppi :amm :count])))
-        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
-        (is (= 5 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
+        (is (= 6 (count (:hits r))))
+        (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 6 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_01 :count])))
+        (is (= 6 (get-in r [:filters :koulutusala :kansallinenkoulutusluokitus2016koulutusalataso1_02 :count])))))
 
     (testing "opetustapa"
       (let [r (search :opetustapa "opetuspaikkakk_02" :sort "name" :order "asc")]

@@ -312,6 +312,26 @@
           required: false
           description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
 
+;; Päätellään koulutustyypin perusteella (koulutustyyppi_4)
+(def amm_erityisopetus
+  {:id :amm_erityisopetus
+   :rajainGroupId :erityisopetus
+   :make-query #(->boolean-term-query "metadata.ammatillinenPerustutkintoErityisopetuksena")
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (->boolean-term-query "metadata.ammPerustutkintoErityisopetuksena")
+                                (aggregation-filters-for-rajain :amm_erityisopetus constraints rajain-context)
+                                rajain-context))})
+
+;; Päätellään koulutustyypin perusteella (tuva-erityisopetus)
+(def tuva_erityisopetus
+  {:id :tuva_erityisopetus
+   :rajainGroupId :erityisopetus
+   :make-query #(->boolean-term-query "metadata.jarjestetaanErityisopetuksena")
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (->boolean-term-query "metadata.jarjestetaanErityisopetuksena")
+                                (aggregation-filters-for-rajain :tuva_erityisopetus constraints rajain-context)
+                                rajain-context))})
+
 (def maksullisuus
   {:desc "
         - in: query
@@ -552,7 +572,6 @@
           required: false
           description: Palautetaan koulutukset, joiden hakuaika alkaa x vuorokauden sisällä."})
 
-
 (defn kevat-date? [date]
   (< (time/month date) 8))
 
@@ -587,7 +606,8 @@
 (def all-rajain-definitions
   [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
    opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi
-   koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus maksuton maksullinen
+   koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus
+   amm_erityisopetus tuva_erityisopetus maksuton maksullinen
    lukuvuosimaksu hakukaynnissa hakualkaapaivissa lukiopainotukset
    lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
 
@@ -603,7 +623,7 @@
 (def hakutulos-agg-defs
   (concat common-agg-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
 
-(def jarjestaja-agg-defs (concat common-agg-defs [lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
+(def jarjestaja-agg-defs (concat common-agg-defs [koulutustyyppi lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def tarjoaja-agg-defs
   (concat common-agg-defs [koulutustyyppi koulutusala]))

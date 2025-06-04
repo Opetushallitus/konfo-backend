@@ -24,10 +24,14 @@
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 (def hevosala-oid "1.2.246.562.13.000011")
+(def puutarha-koulutus-oid "1.2.246.562.13.000049")
+(def tuva-erityisopetuksena-oid "1.2.246.562.13.000050")
 
 (def ponikoulu-oid  "1.2.246.562.17.000010")
 (def valtrakoulu-oid "1.2.246.562.17.000011")
 (def massikkakoulu-oid  "1.2.246.562.17.000012")
+(def puutarha-ala-toteutus-erityisopetuksena-oid "1.2.246.562.17.000030")
+(def tuva-toteutus-erityisopetuksena-oid "1.2.246.562.17.000031")
 
 (def haku-oid "1.2.246.562.29.0000001")
 (def hakukohde-oid "1.2.246.562.20.0000008")
@@ -74,7 +78,19 @@
       (testing "Can filter by opetustapa"
         (let [r (search traktoriala-oid :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
           (is (= 1 (:total r)))
-          (is (= massikkakoulu-oid (:toteutusOid (first (:hits r))))))))
+          (is (= massikkakoulu-oid (:toteutusOid (first (:hits r)))))))
+      (testing "returns amm perustutkinto vaativana erityisenä tukena"
+        (let [r (search puutarha-koulutus-oid :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus,koulutustyyppi_4,amm")
+              hits (:hits r)]
+          (is (= 1 (:total r)))
+          (is (= 1 (count hits)))
+          (is (= puutarha-ala-toteutus-erityisopetuksena-oid (:toteutusOid (first hits))))))
+      (testing "Can filter by tuva vaativana erityisenä tukena"
+        (let [r (search tuva-erityisopetuksena-oid :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus,koulutustyyppi_4,amm")
+              hits (:hits r)]
+          (is (= 1 (:total r)))
+          (is (= 1 (count hits)))
+          (is (= tuva-toteutus-erityisopetuksena-oid (:toteutusOid (first hits)))))))
 
     (testing "Filter counts"
       (testing "Without any filters"

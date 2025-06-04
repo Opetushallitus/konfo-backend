@@ -520,7 +520,9 @@
                       :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
                                                        (:lukuvuosimaksunmaara_max rajain-params))
                       :apuraha (if (:apuraha rajain-params) true nil)})
-   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)})
+   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)
+   :amm_erityisopetus (:amm_erityisopetus rajain-params)
+   :tuva_erityisopetus (:tuva_erityisopetus rajain-params)})
 
 (defn ->search-with-validated-params
   [do-search keyword lng page size sort order rajain-params]
@@ -656,6 +658,7 @@
                      {size                  :- Long 20}
                      {lng                   :- String "fi"}
                      {order                 :- String "asc"}
+                     {koulutustyyppi        :- String nil}
                      {sijainti              :- String nil}
                      {opetuskieli           :- String nil}
                      {koulutusala           :- String nil}
@@ -717,7 +720,13 @@
                                      :osaamisala osaamisala
                                      :oppilaitos oppilaitos
                                      :alkamiskausi alkamiskausi
-                                     :hakualkaapaivissa hakualkaapaivissa})))
+                                     :hakualkaapaivissa hakualkaapaivissa
+                                     :amm_erityisopetus (when (some? koulutustyyppi)
+                                                          (contains? (set (string/split koulutustyyppi #","))
+                                                                     "koulutustyyppi_4"))
+                                     :tuva_erityisopetus (when (some? koulutustyyppi)
+                                                           (contains? (set (string/split koulutustyyppi #","))
+                                                                      "tuva-erityisopetus"))})))
 
     (GET "/oppilaitokset" [:as request]
       :query-params [{keyword               :- String nil}
