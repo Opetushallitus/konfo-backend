@@ -53,7 +53,10 @@
      page
      size
      #(-> % parse-external with-eperustedata)
-     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax" "koulutustyyppi"]
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta",
+               "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
+               "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
+               "koulutustyyppi", "luokittelutermit"]
      :sort (sorts sort order lng)
      :query query)))
 

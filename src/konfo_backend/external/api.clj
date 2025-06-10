@@ -397,6 +397,16 @@
           required: false
           description: Pilkulla eroteltu pohjakoulutusvaatimusten koodeja
           example: [pohjakoulutusvaatimuskonfo_am, pohjakoulutusvaatimuskonfo_102]
+        - in: query
+          name: luokittelutermi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltu lista luokittelutermejä
+          example: [jod-ohjaaja, ohjaajakoulutus]
       responses:
         '200':
           description: Ok
@@ -609,7 +619,8 @@
                                  {taydennyskoulutus     :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
-                                 {pohjakoulutusvaatimus :- String nil}]
+                                 {pohjakoulutusvaatimus :- String nil}
+                                 {luokittelutermi       :- String nil}]
                   :return response/KoulutusToteutusSearchResponse
                   (with-access-logging request (->search-with-validated-params external-search
                                                                                keyword
@@ -631,9 +642,10 @@
                                                                                 :hakutapa hakutapa
                                                                                 :yhteishaku yhteishaku
                                                                                 :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                                                :luokittelutermi luokittelutermi
                                                                                 :lukiopainotukset nil
                                                                                 :lukiolinjaterityinenkoulutustehtava nil
-                                                                                :osaamisala nil})))
+                                                                                :osaamisala nil })))
              (GET "/search/oppilaitos/:oid/tarjonta" [:as request]
                   :path-params [oid :- String]
                   :query-params [{tuleva         :- Boolean false}
