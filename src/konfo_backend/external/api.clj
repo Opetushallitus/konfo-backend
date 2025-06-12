@@ -1,36 +1,45 @@
 (ns konfo-backend.external.api
   (:require
-    [compojure.api.core :refer [GET POST context]]
-    [compojure.api.exception :as ex]
-    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
-    [ring.util.http-response :refer :all]
-    [compojure.api.sweet :refer [api]]
-    [clojure.tools.logging :as log]
-    [konfo-backend.external.schema.common :as common]
-    [konfo-backend.external.schema.koodi :as koodi]
-    [konfo-backend.external.schema.koulutus :as koulutus]
-    [konfo-backend.external.schema.koulutus-metadata :as koulutus-metadata]
-    [konfo-backend.external.schema.toteutus :as toteutus]
-    [konfo-backend.external.schema.toteutus-metadata :as toteutus-metadata]
-    [konfo-backend.external.schema.hakukohde :as hakukohde]
-    [konfo-backend.external.schema.haku :as haku]
-    [konfo-backend.external.schema.valintakoe :as valintakoe]
-    [konfo-backend.external.schema.valintaperustekuvaus :as valintaperuste]
-    [konfo-backend.external.schema.valintaperustekuvaus-metadata :as valintaperuste-metadata]
-    [konfo-backend.external.schema.sorakuvaus :as sorakuvaus]
-    [konfo-backend.external.schema.response :as response]
-    [konfo-backend.external.schema.liite :as liite]
-    [konfo-backend.external.schema.search :as search]
-    [konfo-backend.external.service :as service]
-    [konfo-backend.search.rajain-counts :as rajain-counts]
-    [clj-log.access-log :refer [with-access-logging]]
-    [konfo-backend.search.api :refer [->search-with-validated-params ->search-subentities-with-validated-params]]
-    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
-                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
-                                                     hakutapa yhteishaku pohjakoulutusvaatimus
-                                                     opetusaika koulutuksenkestokuukausina
-                                                     hakualkaapaivissa]]
-    [konfo-backend.search.koulutus.search :refer [external-search]]))
+   [clj-log.access-log :refer [with-access-logging]]
+   [clojure.tools.logging :as log]
+   [compojure.api.core :refer [context GET]]
+   [compojure.api.exception :as ex]
+   [compojure.api.sweet :refer [api]]
+   [konfo-backend.external.schema.common :as common]
+   [konfo-backend.external.schema.haku :as haku]
+   [konfo-backend.external.schema.hakukohde :as hakukohde]
+   [konfo-backend.external.schema.koodi :as koodi]
+   [konfo-backend.external.schema.koulutus :as koulutus]
+   [konfo-backend.external.schema.koulutus-metadata :as koulutus-metadata]
+   [konfo-backend.external.schema.liite :as liite]
+   [konfo-backend.external.schema.response :as response]
+   [konfo-backend.external.schema.search :as search]
+   [konfo-backend.external.schema.sorakuvaus :as sorakuvaus]
+   [konfo-backend.external.schema.toteutus :as toteutus]
+   [konfo-backend.external.schema.toteutus-metadata :as toteutus-metadata]
+   [konfo-backend.external.schema.valintakoe :as valintakoe]
+   [konfo-backend.external.schema.valintaperustekuvaus :as valintaperuste]
+   [konfo-backend.external.schema.valintaperustekuvaus-metadata :as valintaperuste-metadata]
+   [konfo-backend.external.service :as service]
+   [konfo-backend.search.api :refer [->search-subentities-with-validated-params
+                                     ->search-with-validated-params]]
+   [konfo-backend.search.koulutus.search :refer [external-koulutukset-search
+                                                 external-search]]
+   [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
+   [konfo-backend.search.rajain-counts :as rajain-counts]
+   [konfo-backend.search.rajain-definitions :refer [alkamiskausi
+                                                    hakualkaapaivissa
+                                                    hakukaynnissa hakutapa
+                                                    jotpa
+                                                    koulutuksenkestokuukausina
+                                                    koulutusala koulutustyyppi
+                                                    maksullisuus opetusaika
+                                                    opetuskieli opetustapa
+                                                    pohjakoulutusvaatimus
+                                                    sijainti taydennyskoulutus
+                                                    tyovoimakoulutus
+                                                    valintatapa yhteishaku]]
+   [ring.util.http-response :refer :all]))
 
 (def paths (str "
   /external/koulutus/{oid}:
@@ -418,6 +427,97 @@
            description: Not found
         '400':
            description: Bad request
+  /external/search/koulutukset:
+    get:
+      tags:
+        - External
+      summary: Hae koulutuksia
+      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      parameters:
+        - in: query
+          name: keyword
+          schema:
+            type: string
+          required: false
+          description: Hakusana. Voi olla tyhjä, jos haetaan vain rajaimilla tai halutaan hakea kaikki.
+            Muussa tapauksessa vähimmäispituus on 3 merkkiä.
+          example: Hevostalous
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+          description: Hakutuloksen sivunumero
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 20
+          required: false
+          description: Hakutuloksen sivun koko
+        - in: query
+          name: lng
+          schema:
+            type: string
+            default: fi
+          required: false
+          description: Haun kieli. 'fi', 'sv' tai 'en'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            default: score
+          required: false
+          description: Järjestysperuste. 'name' tai 'score'
+        - in: query
+          name: order
+          schema:
+            type: string
+            default: desc
+          required: false
+          description: Järjestys. 'asc' tai 'desc'
+            "
+            (:desc koulutustyyppi) "\n"
+            (:desc sijainti) "\n"
+            (:desc opetuskieli) "\n"
+            (:desc koulutusala) "\n"
+            (:desc opetustapa) "\n"
+            (:desc opetusaika) "\n"
+            (:desc koulutuksenkestokuukausina) "\n"
+            (:desc maksullisuus) "\n"
+            (:desc valintatapa) "\n"
+            (:desc hakukaynnissa) "\n"
+            (:desc jotpa) "\n"
+            (:desc tyovoimakoulutus) "\n"
+            (:desc taydennyskoulutus) "\n"
+            (:desc hakutapa) "\n"
+            (:desc yhteishaku) "\n"
+            (:desc pohjakoulutusvaatimus) "\n"
+            (:desc alkamiskausi) "\n"
+            (:desc hakualkaapaivissa) "\n"
+        "
+        - in: query
+          name: luokittelutermi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltu lista luokittelutermejä
+          example: [jod-ohjaaja, ohjaajakoulutus]
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: json
+        '404':
+          description: Not found
+        '400':
+          description: Bad request
   /external/search/filters:
     get:
       tags:
@@ -646,6 +746,72 @@
                                                                                 :lukiopainotukset nil
                                                                                 :lukiolinjaterityinenkoulutustehtava nil
                                                                                 :osaamisala nil })))
+             (GET "/search/koulutukset" request
+                  :query-params [{keyword               :- String nil}
+                                 {page                  :- Long 1}
+                                 {size                  :- Long 20}
+                                 {lng                   :- String "fi"}
+                                 {sort                  :- String "score"}
+                                 {order                 :- String "desc"}
+                                 {koulutustyyppi        :- String nil}
+                                 {sijainti              :- String nil}
+                                 {opetuskieli           :- String nil}
+                                 {koulutusala           :- String nil}
+                                 {opetustapa            :- String nil}
+                                 {opetusaika            :- String nil}
+                                 {valintatapa           :- String nil}
+                                 {hakukaynnissa         :- Boolean false}
+                                 {jotpa                 :- Boolean false}
+                                 {tyovoimakoulutus      :- Boolean false}
+                                 {taydennyskoulutus     :- Boolean false}
+                                 {hakutapa              :- String nil}
+                                 {yhteishaku            :- String nil}
+                                 {pohjakoulutusvaatimus :- String nil}
+                                 {alkamiskausi          :- String nil}
+                                 {koulutuksenkestokuukausina_min :- Number nil}
+                                 {koulutuksenkestokuukausina_max :- Number nil}
+                                 {maksullisuustyyppi    :- String nil}
+                                 {maksunmaara_min       :- Number nil}
+                                 {maksunmaara_max       :- Number nil}
+                                 {lukuvuosimaksunmaara_min :- Number nil}
+                                 {lukuvuosimaksunmaara_max :- Number nil}
+                                 {apuraha               :- Boolean false}
+                                 {hakualkaapaivissa     :- Long nil}
+                                 {luokittelutermi       :- String nil}]
+                  :return response/KoulutusToteutusSearchResponse
+                  (with-access-logging request (->search-with-validated-params
+                                                 external-koulutukset-search
+                                                 keyword
+                                                 lng
+                                                 page
+                                                 size
+                                                 sort
+                                                 order
+                                                 {:koulutustyyppi koulutustyyppi
+                                                  :sijainti sijainti
+                                                  :opetuskieli opetuskieli
+                                                  :koulutusala koulutusala
+                                                  :opetustapa opetustapa
+                                                  :opetusaika opetusaika
+                                                  :valintatapa valintatapa
+                                                  :hakukaynnissa hakukaynnissa
+                                                  :jotpa jotpa
+                                                  :tyovoimakoulutus tyovoimakoulutus
+                                                  :taydennyskoulutus taydennyskoulutus
+                                                  :hakutapa hakutapa
+                                                  :yhteishaku yhteishaku
+                                                  :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                  :alkamiskausi alkamiskausi
+                                                  :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
+                                                  :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                                  :maksullisuustyyppi maksullisuustyyppi
+                                                  :maksunmaara_min maksunmaara_min
+                                                  :maksunmaara_max maksunmaara_max
+                                                  :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
+                                                  :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                                  :apuraha apuraha
+                                                  :hakualkaapaivissa hakualkaapaivissa
+                                                  :luokittelutermi luokittelutermi})))
              (GET "/search/oppilaitos/:oid/tarjonta" [:as request]
                   :path-params [oid :- String]
                   :query-params [{tuleva         :- Boolean false}

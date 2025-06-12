@@ -287,6 +287,14 @@
      #(boolean (re-find TutkintonimikkeetKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikkeetKoodi))
      #(boolean (re-find TutkintonimikeKkKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikeKkKoodi)))])
 
+(def TutkinnonOsa {
+   (s/->OptionalKey :eperuste)                (s/maybe s/Int)
+   (s/->OptionalKey :koulutus)                (s/maybe (->Koodi KoulutusKoodi))
+   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+   (s/->OptionalKey :tutkinnonOsat)           (s/maybe (->Koodi TutkinnonOsaKoodi))})
+
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
        konfo-koulutustyyppi-schema "\n"

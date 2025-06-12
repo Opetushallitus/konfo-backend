@@ -1,17 +1,19 @@
 (ns konfo-backend.search.koulutus.search
-  (:require [konfo-backend.elastic-tools :as e]
-            [konfo-backend.search.external-query :refer [external-query]]
-            [konfo-backend.search.koulutus.eperustedata :refer [with-eperustedata]]
-            [konfo-backend.index.toteutus :refer [parse-inner-hits-for-jarjestajat]]
-            [konfo-backend.search.query :refer [post-filter-query
-                                                hakutulos-aggregations
-                                                jarjestajat-aggregations search-term-query sorts
-                                                toteutukset-inner-hits toteutukset-query]]
-            [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
-            [konfo-backend.search.response :refer [parse parse-external
-                                                   parse-for-autocomplete]]
-            [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [log-pretty]]))
+  (:require
+   [konfo-backend.elastic-tools :as e]
+   [konfo-backend.index.toteutus :refer [parse-inner-hits-for-jarjestajat]]
+   [konfo-backend.search.external-query :refer [external-query]]
+   [konfo-backend.search.koulutus.eperustedata :refer [with-eperustedata]]
+   [konfo-backend.search.query :refer [hakutulos-aggregations
+                                       jarjestajat-aggregations
+                                       post-filter-query search-term-query
+                                       sorts toteutukset-inner-hits
+                                       toteutukset-query]]
+   [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
+   [konfo-backend.search.response :refer [parse parse-external parse-external-koulutukset
+                                          parse-for-autocomplete]]
+   [konfo-backend.search.tools :refer :all]
+   [konfo-backend.tools :refer [log-pretty]]))
 
 (defonce index "koulutus-kouta-search")
 
@@ -57,6 +59,21 @@
                "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
                "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
                "koulutustyyppi", "luokittelutermit"]
+     :sort (sorts sort order lng)
+     :query query)))
+
+(defn external-koulutukset-search
+  [keyword lng page size sort order constraints]
+  (let [query (external-query keyword constraints lng ["words"])]
+    (log-pretty query)
+    (koulutus-kouta-search
+     page
+     size
+     #(-> % parse-external-koulutukset with-eperustedata)
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta",
+               "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
+               "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
+               "koulutustyyppi", "luokittelutermit", "tutkinnonOsat", "osaamisala"]
      :sort (sorts sort order lng)
      :query query)))
 

@@ -103,6 +103,11 @@
   {:total (get-in response [:hits :total :value])
    :hits  (filter (fn [hit] (not-empty (:toteutukset hit))) (external-hits response))})
 
+(defn parse-external-koulutukset
+  [response]
+  {:total (get-in response [:hits :total :value])
+   :hits  (external-hits response)})
+
 (defn parse-inner-hits
   [response filter-generator hits-generator]
   (let [inner-hits (some-> response :hits :hits (first) :inner_hits :search_terms :hits)

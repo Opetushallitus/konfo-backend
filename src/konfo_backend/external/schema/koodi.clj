@@ -449,7 +449,7 @@
     |        koodiUri:
     |          type: string
     |          example: osaamisala_1
-    |          description: Osaamisala. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/osaamistausta/1)
+    |          description: Osaamisala. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/osaamisala/1)
     |        nimi:
     |          type: object
     |          description: Osaamisala.
@@ -458,6 +458,24 @@
    koodisto-base-url))
 
 (def OsaamisalaKoodi #"^osaamisala_")
+
+(def tutkinnonosa-schema
+  (str/replace
+   "|    TutkinnonOsa:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: tutkinnonosat_1
+    |          description: TutkinnonOsa. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/tutkinnonosat/1)
+    |        nimi:
+    |          type: object
+    |          description: TutkinnonOsa.
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
+
+(def TutkinnonOsaKoodi #"^tutkinnonosat_")
 
 (def LukioDiplomiKoodi s/Str)
 
@@ -488,5 +506,6 @@
    haun-kohdejoukon-tarkenne-schema "\n"
    valintatapa-schema "\n"
    osaamistausta-schema "\n"
-   osaamisala-schema))
+   osaamisala-schema "\n"
+   tutkinnonosa-schema))
 
