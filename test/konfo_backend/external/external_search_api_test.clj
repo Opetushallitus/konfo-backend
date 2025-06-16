@@ -1,9 +1,8 @@
 (ns konfo-backend.external.external-search-api-test
-  (:require [clojure.test :refer :all]
-            [konfo-backend.external.schema.koulutus :as k]
-            [clj-elasticsearch.elastic-utils :refer [elastic-post]]
-            [konfo-backend.test-tools :refer :all]
-            [konfo-backend.test-mock-data :refer :all]))
+  (:require
+   [clojure.test :refer :all]
+   [konfo-backend.test-mock-data :refer :all]
+   [konfo-backend.test-tools :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -17,6 +16,14 @@
   [& query-params]
   (get-ok-or-print-schema-error (apply search-url query-params)))
 
+(defn search-koulutukset-url
+  [& query-params]
+  (apply url-with-query-params "/konfo-backend/external/search/koulutukset" query-params))
+
+(defn search-koulutukset
+  [& query-params]
+  (get-ok-or-print-schema-error (apply search-koulutukset-url query-params)))
+
 (defn search-failed
   [& query-params]
   (get-internal-error (apply search-url query-params)))
@@ -29,14 +36,21 @@
         koulutusOid5 "1.2.246.562.13.000009" ;; yo
         koulutusOid6 "1.2.246.562.13.000030" ;; yo
         koulutusOid8 "1.2.246.562.13.000047" ;; amk
+        koulutusOid7 "1.2.246.562.13.000007" ;; amm
+        koulutusOid10 "1.2.246.562.13.000010" ;; amm
+        koulutusOid11 "1.2.246.562.13.000011" ;; amm
+        koulutusOid16 "1.2.246.562.13.000016" ;; amk
         toteutusOid1 "1.2.246.562.17.000025" ;; Järjestyksessä ensimmäinen
         toteutusOid2 "1.2.246.562.17.000021" ;; yo
-        toteutusOid3 "1.2.246.562.17.000028"] ;; amk
+        toteutusOid3 "1.2.246.562.17.000028" ;; amk
+        toteutusOid10 "1.2.246.562.17.000010" ;; amm
+        toteutusOid11 "1.2.246.562.17.000011"
+        toteutusOid12 "1.2.246.562.17.000012"]
 
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
     (testing "Search toteutus with koulutustyyppi amm"
       (let [r (search :koulutustyyppi "amm")]
-        (is (= 21 (:total r)))
+        (is (= 22 (:total r)))
         (is (= [koulutusOid1] [(:oid (first (:hits r)))]))
         (is (= [toteutusOid1] [(:toteutusOid (first (:toteutukset (first (:hits r)))))]))))
     (testing "Search toteutus with keyword"
@@ -53,6 +67,27 @@
         (is (= 1 (:total r)))
         (is (= [koulutusOid8] (vec (map :oid (:hits r)))))
         (is (= [toteutusOid3] (vec (sort (distinct (map :toteutusOid (:toteutukset (first (:hits r)))))))))))
+    (testing "Search toteutukset with luokittelutermi and koulutustyyppi amm"
+      (let [r (search :luokittelutermi "ohjaaja" :koulutustyyppi "amm")]
+        (is (= 3 (:total r)))
+        (is (= [koulutusOid11 koulutusOid10] (vec (map :oid (:hits r)))))
+        (is (= [toteutusOid10] (vec (sort (distinct (map :toteutusOid (:toteutukset (first (:hits r)))))))))))
+    (testing "Search toteutukset with only luokittelutermi"
+      (let [r (search :luokittelutermi "ohjaaja")]
+        (is (= 4 (:total r)))
+        (is (= [koulutusOid11 koulutusOid10] (vec (map :oid (:hits r)))))
+        (is (= [toteutusOid10] (vec (sort (distinct (map :toteutusOid (:toteutukset (first (:hits r)))))))))))
+   (testing "Search koulutukset with luokittelutermi and koulutustyyppi amm"
+      (let [r (search-koulutukset :luokittelutermi "ohjaaja" :koulutustyyppi "amm")]
+        (is (= 3 (:total r)))
+        (is (= [koulutusOid7 koulutusOid11 koulutusOid10] (vec (map :oid (:hits r)))))
+        (is (= [] (map :toteutusOid (:toteutukset (nth (:hits r) 0)))))
+        (is (= [toteutusOid10] (map :toteutusOid (:toteutukset (nth (:hits r) 1)))))
+        (is (= [toteutusOid11 toteutusOid12] (vec (sort (distinct (map :toteutusOid (:toteutukset (nth (:hits r) 2)))))))))) 
+   (testing "Search koulutukset with luokittelutermi"
+      (let [r (search-koulutukset :luokittelutermi "ohjaaja")]
+        (is (= 4 (:total r)))
+        (is (= [koulutusOid7 koulutusOid16 koulutusOid11 koulutusOid10] (vec (map :oid (:hits r)))))))
     (testing "Nothing found"
       (is (= 0 (count (:hits (search :keyword "mummo"))))))
     (testing "Erroneous schema"
