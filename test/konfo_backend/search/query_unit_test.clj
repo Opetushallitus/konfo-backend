@@ -158,6 +158,7 @@
                                                                         :aggs {:real_hits {:reverse_nested {}}}}}}
                        :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                        :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
+                       :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true)
                        :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
       (hakutulos-aggregations {}))))
 
@@ -216,6 +217,7 @@
                        :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
                        :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                        :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
+                       :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true)
                        :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
       (hakutulos-aggregations {:jotpa true})))))
 

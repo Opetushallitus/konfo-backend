@@ -111,6 +111,7 @@
 (defn- jotpa [rajain-counts] {:count (get rajain-counts :jotpa 0)})
 (defn- taydennyskoulutus [rajain-counts] {:count (get rajain-counts :taydennyskoulutus 0)})
 (defn- tyovoimakoulutus [rajain-counts] {:count (get rajain-counts :tyovoimakoulutus 0)})
+(defn- pieniosaamiskokonaisuus [rajain-counts] {:count (get rajain-counts :pieniosaamiskokonaisuus 0)})
 
 (defn- koulutuksenkesto [rajain-counts] {:count (get rajain-counts :koulutuksenkestokuukausina 0)
                                          :max (get rajain-counts :koulutuksenkestokuukausina-max)})
@@ -138,7 +139,6 @@
                            (assoc :count (get-in aggs [yhteishakuKey] 0))))))
             {}
             yhteishaut)))
-
 
 (defn- kausi-ja-vuosi-value? [value] (re-matches #"^\d{4}-(kevat|syksy)$" (name value)))
 
@@ -205,6 +205,7 @@
       :jotpa (jotpa rajain-counts)
       :tyovoimakoulutus (tyovoimakoulutus rajain-counts)
       :taydennyskoulutus (taydennyskoulutus rajain-counts)
+      :pieniosaamiskokonaisuus (pieniosaamiskokonaisuus rajain-counts)
       :yhteishaku (yhteishaku rajain-counts)
       :pohjakoulutusvaatimus (pohjakoulutusvaatimus-counts rajain-counts)
       :osaamisala (koodisto-counts "osaamisala")
