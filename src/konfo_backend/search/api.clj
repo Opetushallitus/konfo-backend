@@ -7,7 +7,7 @@
                                                     hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
-                                                    hakualkaapaivissa]]
+                                                    hakualkaapaivissa pieniosaamiskokonaisuus]]
    [konfo-backend.search.hakukohde.search :as hakukohde-search]
    [konfo-backend.search.koulutus.search :as koulutus-search]
    [konfo-backend.search.oppilaitos.search :as oppilaitos-search]
@@ -23,7 +23,7 @@
    [clojure.string :as string]))
 
 (def paths-str (str
-               "paths:
+                "paths:
   /search/filters:
     get:
       tags:
@@ -105,25 +105,26 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
             "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc maksullisuus) "\n"
-            (:desc valintatapa) "\n"
-            (:desc hakukaynnissa) "\n"
-            (:desc jotpa) "\n"
-            (:desc tyovoimakoulutus) "\n"
-            (:desc taydennyskoulutus) "\n"
-            (:desc hakutapa) "\n"
-            (:desc yhteishaku) "\n"
-            (:desc pohjakoulutusvaatimus) "\n"
-            (:desc alkamiskausi) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc alkamiskausi) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -186,25 +187,26 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
 "
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc maksullisuus) "\n"
-            (:desc valintatapa) "\n"
-            (:desc hakukaynnissa) "\n"
-            (:desc jotpa) "\n"
-            (:desc tyovoimakoulutus) "\n"
-            (:desc taydennyskoulutus) "\n"
-            (:desc lukiopainotukset) "\n"
-            (:desc lukiolinjaterityinenkoulutustehtava) "\n"
-            (:desc osaamisala) "\n"
-            (:desc oppilaitos) "\n"
-            (:desc alkamiskausi) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc lukiopainotukset) "\n"
+                (:desc lukiolinjaterityinenkoulutustehtava) "\n"
+                (:desc osaamisala) "\n"
+                (:desc oppilaitos) "\n"
+                (:desc alkamiskausi) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -267,25 +269,26 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
 "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc maksullisuus) "\n"
-            (:desc valintatapa) "\n"
-            (:desc hakukaynnissa) "\n"
-            (:desc jotpa) "\n"
-            (:desc tyovoimakoulutus) "\n"
-            (:desc taydennyskoulutus) "\n"
-            (:desc hakutapa) "\n"
-            (:desc yhteishaku) "\n"
-            (:desc pohjakoulutusvaatimus) "\n"
-            (:desc alkamiskausi) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc alkamiskausi) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -348,15 +351,15 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
 "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -411,25 +414,26 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
 "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc valintatapa) "\n"
-            (:desc hakukaynnissa) "\n"
-            (:desc jotpa) "\n"
-            (:desc tyovoimakoulutus) "\n"
-            (:desc taydennyskoulutus) "\n"
-            (:desc hakutapa) "\n"
-            (:desc yhteishaku) "\n"
-            (:desc pohjakoulutusvaatimus) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc alkamiskausi) "\n"
-            (:desc maksullisuus) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc alkamiskausi) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -459,22 +463,22 @@
 
 (def paths-spec
   (openapi/openapi-spec
-    {:paths
-     (assoc (:paths (yaml/parse-string paths-str))
-            "/search/hakukohteet"
-            {:get {:tags ["internal-search"]
-                   :summary "Hae hakukohteita"
-                   :description "Hakee (kaikki julkaistut) hakukohteet haun kohdejoukon perusteella. Huom.! Vain Opintopolun sisäiseen käyttöön"
-                   :parameters [{:in "query"
-                                 :name "kohdejoukko"
-                                 :description "Haun kohdejoukko (koodi uri)"
-                                 :required true
-                                 :schema {:type "string"}}]
-                   :responses {200 {:description "Ok"
-                                    ::openapi/content {"application/json" (st/schema HakukohdeSearchResult)}}
-                               400 {:description "Bad request"
-                                    :content {"text/plain" {:schema {:type "string"
-                                                                     :example "Haun kohdejoukko puuttuu"}}}}}}})}))
+   {:paths
+    (assoc (:paths (yaml/parse-string paths-str))
+           "/search/hakukohteet"
+           {:get {:tags ["internal-search"]
+                  :summary "Hae hakukohteita"
+                  :description "Hakee (kaikki julkaistut) hakukohteet haun kohdejoukon perusteella. Huom.! Vain Opintopolun sisäiseen käyttöön"
+                  :parameters [{:in "query"
+                                :name "kohdejoukko"
+                                :description "Haun kohdejoukko (koodi uri)"
+                                :required true
+                                :schema {:type "string"}}]
+                  :responses {200 {:description "Ok"
+                                   ::openapi/content {"application/json" (st/schema HakukohdeSearchResult)}}
+                              400 {:description "Bad request"
+                                   :content {"text/plain" {:schema {:type "string"
+                                                                    :example "Haun kohdejoukko puuttuu"}}}}}}})}))
 
 (def paths (spec-paths-to-swagger-yaml paths-spec))
 
@@ -502,6 +506,7 @@
    :jotpa                 (:jotpa rajain-params)
    :tyovoimakoulutus      (:tyovoimakoulutus rajain-params)
    :taydennyskoulutus     (:taydennyskoulutus rajain-params)
+   :pieniosaamiskokonaisuus (:pieniosaamiskokonaisuus rajain-params)
    :yhteishaku            (comma-separated-string->vec (:yhteishaku rajain-params))
    :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus rajain-params))
    :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset rajain-params))
@@ -606,6 +611,7 @@
                      {jotpa                 :- Boolean false}
                      {tyovoimakoulutus      :- Boolean false}
                      {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -638,6 +644,7 @@
                                      :jotpa jotpa
                                      :tyovoimakoulutus tyovoimakoulutus
                                      :taydennyskoulutus taydennyskoulutus
+                                     :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                      :hakutapa hakutapa
                                      :yhteishaku yhteishaku
                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -670,6 +677,7 @@
                      {jotpa                 :- Boolean false}
                      {tyovoimakoulutus      :- Boolean false}
                      {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -705,6 +713,7 @@
                                      :jotpa jotpa
                                      :tyovoimakoulutus tyovoimakoulutus
                                      :taydennyskoulutus taydennyskoulutus
+                                     :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                      :hakutapa hakutapa
                                      :yhteishaku yhteishaku
                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -747,6 +756,7 @@
                      {jotpa                 :- Boolean false}
                      {tyovoimakoulutus      :- Boolean false}
                      {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -778,6 +788,7 @@
                                                                     :jotpa jotpa
                                                                     :tyovoimakoulutus tyovoimakoulutus
                                                                     :taydennyskoulutus taydennyskoulutus
+                                                                    :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                                                     :hakutapa hakutapa
                                                                     :yhteishaku yhteishaku
                                                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -840,6 +851,7 @@
                      {jotpa                 :- Boolean false}
                      {tyovoimakoulutus      :- Boolean false}
                      {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
                      {hakutapa              :- String nil}
                      {yhteishaku            :- String nil}
                      {pohjakoulutusvaatimus :- String nil}
@@ -875,6 +887,7 @@
                                                     :jotpa jotpa
                                                     :tyovoimakoulutus tyovoimakoulutus
                                                     :taydennyskoulutus taydennyskoulutus
+                                                    :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                                     :hakutapa hakutapa
                                                     :yhteishaku yhteishaku
                                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -894,6 +907,6 @@
     (GET "/hakukohteet" request
       :query-params [{kohdejoukko :- String nil}]
       (with-access-logging request
-                           (->search-hakukohteet-with-kohdejoukko
-                            kohdejoukko
-                            hakukohde-search/search)))))
+        (->search-hakukohteet-with-kohdejoukko
+         kohdejoukko
+         hakukohde-search/search)))))

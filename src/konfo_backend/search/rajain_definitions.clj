@@ -312,6 +312,23 @@
           required: false
           description: Haetaanko koulutuksia, jotka ovat täydennyskoulutusta?"})
 
+(def pieniosaamiskokonaisuus
+  {:id :pieniosaamiskokonaisuus
+   :rajainGroupId :tyoelama
+   :make-query #(->boolean-term-query "isPieniOsaamiskokonaisuus")
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (->boolean-term-query "isPieniOsaamiskokonaisuus")
+                                (aggregation-filters-for-rajain :pieniosaamiskokonaisuus constraints rajain-context)
+                                rajain-context))
+   :desc "
+        - in: query
+          name: pieniosaamiskokonaisuus
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, jotka on määritelty pieniksi osaamiskokonaisuuksiksi?"})
+
 ;; Päätellään koulutustyypin perusteella (koulutustyyppi_4)
 (def amm_erityisopetus
   {:id :amm_erityisopetus
@@ -606,7 +623,7 @@
 (def all-rajain-definitions
   [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
    opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi
-   koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus
+   koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
    amm_erityisopetus tuva_erityisopetus maksuton maksullinen
    lukuvuosimaksu hakukaynnissa hakualkaapaivissa lukiopainotukset
    lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
@@ -617,11 +634,11 @@
    lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
-                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus
+                          [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
                            lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def hakutulos-agg-defs
-  (concat common-agg-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus]))
+  (concat common-agg-defs [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus]))
 
 (def jarjestaja-agg-defs (concat common-agg-defs [koulutustyyppi lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
