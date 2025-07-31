@@ -314,7 +314,6 @@
 
 (def pieniosaamiskokonaisuus
   {:id :pieniosaamiskokonaisuus
-   :rajainGroupId :tyoelama
    :make-query #(->boolean-term-query "isPieniOsaamiskokonaisuus")
    :make-agg (fn [constraints rajain-context]
                (bool-agg-filter (->boolean-term-query "isPieniOsaamiskokonaisuus")

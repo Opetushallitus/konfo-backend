@@ -217,8 +217,8 @@
                        :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
                        :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                        :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
-                       :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true)
-                       :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
+                       :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)
+                       :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true [jotpa-term] nil)}}})
       (hakutulos-aggregations {:jotpa true})))))
 
 (def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
