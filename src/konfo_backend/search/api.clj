@@ -450,8 +450,8 @@
   {:oid (st/schema s/Str {:description "Hakukohteen yksilöivä tunniste"})
    :nimi (st/schema Nimi {:description "Hakukohteen nimi eri kielillä"})
    :hakuOid (st/schema s/Str {:description "Hakukohteeseen liitetyn haun yksilöivä tunniste"})
-   :organisaatio {:nimi (st/schema Nimi {:description "Organisaation nimi eri kielillä"})}
    :jarjestyspaikka {:nimi (st/schema Nimi {:description "Järjestyspaikan nimi eri kielillä"})}
+   :jarjestyspaikkaHierarkiaNimi (st/schema Nimi {:description "Järjestyspaikka hierarkian nimet ensimmäiseen oppilaitokseen asti eri kielillä"})
    :toteutus {:oid (st/schema s/Str {:description "Toteutuksen yksilöivä tunniste"})}
    :koulutustyyppi (st/schema KonfoKoulutustyyppi)
    :ammatillinenPerustutkintoErityisopetuksena
