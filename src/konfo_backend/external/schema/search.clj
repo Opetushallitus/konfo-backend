@@ -85,6 +85,9 @@
    (s/->OptionalKey :opintojenLaajuusNumero)    (s/maybe s/Num)
    (s/->OptionalKey :opintojenLaajuusyksikko)   (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
    (s/->OptionalKey :tutkintonimikkeet)         Tutkintonimikkeet
+   (s/->OptionalKey :luokittelutermit)          [s/Str]
+   (s/->OptionalKey :osaamisala)                (s/maybe (->Koodi OsaamisalaKoodi))
+   (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsa])
    :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas

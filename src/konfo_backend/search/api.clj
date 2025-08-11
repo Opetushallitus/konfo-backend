@@ -490,6 +490,7 @@
 
 (defn- create-constraints [rajain-params]
   {:koulutustyyppi        (->> (:koulutustyyppi rajain-params) (comma-separated-string->vec))
+   :luokittelutermi       (comma-separated-string->vec (:luokittelutermi rajain-params))
    :sijainti              (comma-separated-string->vec (:sijainti rajain-params))
    :opetuskieli           (comma-separated-string->vec (:opetuskieli rajain-params))
    :koulutusala           (comma-separated-string->vec (:koulutusala rajain-params))

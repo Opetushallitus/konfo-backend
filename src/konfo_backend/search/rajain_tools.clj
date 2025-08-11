@@ -6,12 +6,17 @@
                                          ->lower-case-vec
                                          kouta-date-time-string->date-time]]))
 
-(defn ->terms-query [key value]
-  (let [term-key (keyword (str "search_terms." key))]
-    (cond
-      (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
-      (coll? value) {:terms {term-key (->lower-case-vec value)}}
-      :else {:term {term-key (->lower-case value)}})))
+(defn ->terms-query
+  ([key value with-search-terms]
+   (let [term-key (if with-search-terms
+                    (keyword (str "search_terms." key))
+                    (keyword key))]
+     (cond
+       (and (coll? value) (= (count value) 1)) {:term {term-key (->lower-case (first value))}}
+       (coll? value) {:terms {term-key (->lower-case-vec value)}}
+       :else {:term {term-key (->lower-case value)}})))
+  ([key value]
+   (->terms-query key value true)))
 
 (defn nested-terms-query
   [nested-field-name field-name constraint]
@@ -91,7 +96,6 @@
       {:bool
        {:should [{:bool {:filter (->terms-query "hakutiedot.pohjakoulutusvaatimukset" pohjakoulutusvaatimukset)}}
                  {:bool {:must_not {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}))
-
 
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))

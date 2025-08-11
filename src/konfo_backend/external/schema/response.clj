@@ -144,6 +144,10 @@
   {:total s/Int
    :hits  [KoulutusHit]})
 
+(def KoulutusToteutusSearchResponse
+  {:total s/Int
+   :hits  [KoulutusHit]})
+
 (def schemas
   (str koulutus-response-schema "\n"
        toteutus-response-schema "\n"
