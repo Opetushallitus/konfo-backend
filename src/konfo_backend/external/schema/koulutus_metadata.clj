@@ -69,11 +69,11 @@
     |          items:
     |            $ref: '#/components/schemas/Tutkintonimike'
     |")
-  
+
 
 (def Eperuste
   {(s/->OptionalKey :id) s/Int
-   (s/->OptionalKey :diaarinumero) s/Str
+   (s/->OptionalKey :diaarinumero)      (s/maybe s/Str)
    (s/->OptionalKey :voimassaoloLoppuu) (s/maybe s/Str)})
 
  (def KoulutusMetadata
@@ -90,7 +90,7 @@
     (s/->OptionalKey :opintojenLaajuusNumeroMin)  (s/maybe s/Num)
     (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
     (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
-    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet 
+    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet
     :tyyppi                                       KoutaKoulutustyyppi
     s/Any                                         s/Any
     })
