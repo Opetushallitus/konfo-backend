@@ -36,6 +36,7 @@
                                                     maksullisuus opetusaika
                                                     opetuskieli opetustapa
                                                     pohjakoulutusvaatimus
+                                                    pieniosaamiskokonaisuus
                                                     sijainti taydennyskoulutus
                                                     tyovoimakoulutus
                                                     valintatapa yhteishaku]]
@@ -374,6 +375,13 @@
           required: false
           description: Haetaanko koulutuksia jotka ovat täydennyskoulutusta
         - in: query
+          name: pieniosaamiskokonaisuus
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia jotka on määritelty pieniksi osaamiskokonaisuuksiksi
+        - in: query
           name: hakutapa
           style: form
           explode: false
@@ -491,6 +499,7 @@
             (:desc jotpa) "\n"
             (:desc tyovoimakoulutus) "\n"
             (:desc taydennyskoulutus) "\n"
+            (:desc pieniosaamiskokonaisuus) "\n"
             (:desc hakutapa) "\n"
             (:desc yhteishaku) "\n"
             (:desc pohjakoulutusvaatimus) "\n"
@@ -701,26 +710,27 @@
 
 
              (GET "/search/toteutukset-koulutuksittain" [:as request]
-                  :query-params [{keyword               :- String nil}
-                                 {page                  :- Long 1}
-                                 {size                  :- Long 20}
-                                 {lng                   :- String "fi"}
-                                 {sort                  :- String "score"}
-                                 {order                 :- String "desc"}
-                                 {koulutustyyppi        :- String nil}
-                                 {sijainti              :- String nil}
-                                 {opetuskieli           :- String nil}
-                                 {koulutusala           :- String nil}
-                                 {opetustapa            :- String nil}
-                                 {valintatapa           :- String nil}
-                                 {hakukaynnissa         :- Boolean false}
-                                 {jotpa                 :- Boolean false}
-                                 {tyovoimakoulutus      :- Boolean false}
-                                 {taydennyskoulutus     :- Boolean false}
-                                 {hakutapa              :- String nil}
-                                 {yhteishaku            :- String nil}
-                                 {pohjakoulutusvaatimus :- String nil}
-                                 {luokittelutermi       :- String nil}]
+                  :query-params [{keyword                 :- String nil}
+                                 {page                    :- Long 1}
+                                 {size                    :- Long 20}
+                                 {lng                     :- String "fi"}
+                                 {sort                    :- String "score"}
+                                 {order                   :- String "desc"}
+                                 {koulutustyyppi          :- String nil}
+                                 {sijainti                :- String nil}
+                                 {opetuskieli             :- String nil}
+                                 {koulutusala             :- String nil}
+                                 {opetustapa              :- String nil}
+                                 {valintatapa             :- String nil}
+                                 {hakukaynnissa           :- Boolean false}
+                                 {jotpa                   :- Boolean false}
+                                 {tyovoimakoulutus        :- Boolean false}
+                                 {taydennyskoulutus       :- Boolean false}
+                                 {pieniosaamiskokonaisuus :- Boolean false}
+                                 {hakutapa                :- String nil}
+                                 {yhteishaku              :- String nil}
+                                 {pohjakoulutusvaatimus   :- String nil}
+                                 {luokittelutermi         :- String nil}]
                   :return response/KoulutusToteutusSearchResponse
                   (with-access-logging request (->search-with-validated-params external-search
                                                                                keyword
@@ -739,6 +749,7 @@
                                                                                 :jotpa jotpa
                                                                                 :tyovoimakoulutus tyovoimakoulutus
                                                                                 :taydennyskoulutus taydennyskoulutus
+                                                                                :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                                                                 :hakutapa hakutapa
                                                                                 :yhteishaku yhteishaku
                                                                                 :pohjakoulutusvaatimus pohjakoulutusvaatimus
@@ -764,6 +775,7 @@
                                  {jotpa                 :- Boolean false}
                                  {tyovoimakoulutus      :- Boolean false}
                                  {taydennyskoulutus     :- Boolean false}
+                                 {pieniosaamiskokonaisuus :- Boolean false}
                                  {hakutapa              :- String nil}
                                  {yhteishaku            :- String nil}
                                  {pohjakoulutusvaatimus :- String nil}
@@ -798,6 +810,7 @@
                                                   :jotpa jotpa
                                                   :tyovoimakoulutus tyovoimakoulutus
                                                   :taydennyskoulutus taydennyskoulutus
+                                                  :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
                                                   :hakutapa hakutapa
                                                   :yhteishaku yhteishaku
                                                   :pohjakoulutusvaatimus pohjakoulutusvaatimus
