@@ -25,11 +25,11 @@
                          [metosin/schema-tools "0.13.1"]
                          [clj-commons/clj-yaml "1.0.29"]
                          [clj-http "3.13.0"]
-                         [software.amazon.awssdk/s3 "2.31.11" :exclusions [software.amazon.awssdk/netty-nio-client
+                         [software.amazon.awssdk/s3 "2.37.5" :exclusions [software.amazon.awssdk/netty-nio-client
                                                                            software.amazon.awssdk/apache-client]]
-                         [software.amazon.awssdk/sso "2.31.11"]
-                         [software.amazon.awssdk/ssooidc "2.31.11"]
-                         [software.amazon.awssdk/apache-client "2.31.11" :exclusions [commons-logging]]
+                         [software.amazon.awssdk/sso "2.37.5"]
+                         [software.amazon.awssdk/ssooidc "2.37.5"]
+                         [software.amazon.awssdk/apache-client "2.37.5" :exclusions [commons-logging]]
                          [org.slf4j/slf4j-api "2.0.17"]
                          [org.slf4j/jcl-over-slf4j "2.0.17"]
                          [compojure "1.7.1"]
@@ -40,6 +40,7 @@
                          [ring-cors "0.1.13"]
                          [oph/clj-log "0.3.2-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
                                                                     pl.allegro.tech/embedded-elasticsearch]]
+                         [org.apache.commons/commons-fileupload2-core "2.0.0-M4"]
                          [ring-basic-authentication "1.2.0"]
                          [org.clojure/tools.logging "1.3.0"]
                          [org.apache.logging.log4j/log4j-api "2.24.3"]
