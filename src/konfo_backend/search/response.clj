@@ -66,7 +66,7 @@
 
 (defn parse
   [response]
-  (log-pretty response)
+  ;(log-pretty response)
   {:total   (get-in response [:hits :total :value])
    :hits    (hits response)
    :filters (rajain-numbers response)})

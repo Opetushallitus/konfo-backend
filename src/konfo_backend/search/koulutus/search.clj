@@ -24,6 +24,7 @@
   (let [search-term-query (search-term-query keyword lng ["words"])
         post-filter (post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
+    (log-pretty search-term-query)
     (koulutus-kouta-search
      page
      size
@@ -50,7 +51,7 @@
 (defn external-search
   [keyword lng page size sort order constraints]
   (let [query (external-query keyword constraints lng ["words"])]
-    (log-pretty query)
+    ;(log-pretty query)
     (koulutus-kouta-search
      page
      size
@@ -65,7 +66,7 @@
 (defn external-koulutukset-search
   [keyword lng page size sort order constraints]
   (let [query (external-query keyword constraints lng ["words"])]
-    (log-pretty query)
+    ;(log-pretty query)
     (koulutus-kouta-search
      page
      size

@@ -12,7 +12,7 @@
 
 (defn log-pretty
   [json]
-  (when pretty-logging (log/debug (cheshire/generate-string json {:pretty true}))))
+  (when pretty-logging (log/info (cheshire/generate-string json {:pretty true}))))
 
 (defn reduce-merge-map [f coll] (reduce merge {} (map f coll)))
 
