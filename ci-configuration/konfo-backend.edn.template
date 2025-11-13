@@ -1,6 +1,9 @@
 {
     :elastic-url "{{konfo_backend_elastic7_url}}"
     :elastic-timeout 120000
+    :search-terms-query   {:operator "and"
+                           :minimum-should-match "100%"
+                           :type "cross_fields"}
     :search-terms-boost    {:koulutusnimi 20
                             :toteutusNimi 6
                             :asiasanat 5

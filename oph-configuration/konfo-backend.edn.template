@@ -19,6 +19,10 @@
             :credentials-profile nil
             :bucket-name         "{{konfo_content_s3_bucket}}"}
 
+    :search-terms-query   {:operator "{{ konfo_backend_search_terms_query_operator | default('and') }}"
+                           :minimum-should-match "{{ konfo_backend_search_terms_query_minimum_should_match | default('100%') }}"
+                           :type "{{ konfo_backend_search_terms_query_type | default('cross_fields') }}"}
+
     :search-terms-boost    {:koulutusnimi {{konfo_backend_search_terms_boost_koulutusnimi}}
                             :toteutusNimi {{konfo_backend_search_terms_boost_toteutusnimi}}
                             :asiasanat {{konfo_backend_search_terms_boost_asiasanat}}

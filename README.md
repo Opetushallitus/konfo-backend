@@ -39,6 +39,8 @@ Kirjoitushetken esimerkki konfigista, joka toimii lokaalilla Elasticsearchilla:
  :contentful-preview-token "preview-token"
 
  :dev true
+ :search-terms-query   {:operator "and"
+                        :minimum-should-match "100%"}
  :search-terms-boost    {:koulutusnimi 20
                          :toteutusNimi 6
                          :asiasanat 5

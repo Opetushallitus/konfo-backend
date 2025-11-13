@@ -29,8 +29,9 @@
 
 
 (defn make-search-term-query [keyword user-lng suffixes]
-  {:multi_match {:query       keyword
-                 :fields      (flatten (generate-keyword-query user-lng suffixes))
-                 :tie_breaker 0.9
-                 :operator    "and"
-                 :type        "cross_fields"}})
+  {:multi_match {:query                 keyword
+                 :fields                (flatten (generate-keyword-query user-lng suffixes))
+                 :tie_breaker           0.9
+                 :operator              (get-in config [:search-terms-query :operator])
+                 :minimum_should_match  (get-in config [:search-terms-query :minimum-should-match])
+                 :type                  (get-in config [:search-terms-query :type])}})
