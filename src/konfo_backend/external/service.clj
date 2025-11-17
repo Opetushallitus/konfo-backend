@@ -1,11 +1,12 @@
 (ns konfo-backend.external.service
   (:require
-    [konfo-backend.tools :refer [julkaistu?]]
-    [konfo-backend.index.koulutus :as koulutus]
-    [konfo-backend.index.toteutus :as toteutus]
-    [konfo-backend.index.hakukohde :as hakukohde]
-    [konfo-backend.index.haku :as haku]
-    [konfo-backend.index.valintaperuste :as valintaperuste]))
+   [konfo-backend.tools :refer [julkaistu? ammatillinen? amm-osaamisala?]]
+   [konfo-backend.index.koulutus :as koulutus]
+   [konfo-backend.index.toteutus :as toteutus]
+   [konfo-backend.index.hakukohde :as hakukohde]
+   [konfo-backend.index.haku :as haku]
+   [konfo-backend.eperuste.eperuste :as eperuste]
+   [konfo-backend.index.valintaperuste :as valintaperuste]))
 
 (defn- get-koulutus
   [oid]
@@ -72,11 +73,15 @@
   (when-let [koulutus (get-koulutus oid)]
     (let [toteutukset (when toteutukset? (get-toteutukset-by-oids (vec (map :oid (:toteutukset koulutus)))))
           hakukohteet (when (or haut? hakukohteet?) (get-hakukohteet-by-toteutus-oids (vec (map :oid (:toteutukset koulutus)))))
-          haut        (when haut? (get-haut-by-oids (vec (map :hakuOid hakukohteet))))]
+          haut        (when haut? (get-haut-by-oids (vec (map :hakuOid hakukohteet))))
+          eperuste (eperuste/get-kuvaus-by-eperuste-id (:ePerusteId koulutus) false)
+          eperuste-kuvaus (:tyotehtavatJoissaVoiToimia eperuste)]
       (cond-> (apply dissoc koulutus [:toteutukset :haut])
-              toteutukset? (assoc :toteutukset toteutukset)
-              hakukohteet? (assoc :hakukohteet hakukohteet)
-              haut?        (assoc :haut haut)))))
+        (or (ammatillinen? koulutus)
+            (amm-osaamisala? koulutus)) (assoc-in [:metadata :kuvaus] eperuste-kuvaus)
+        toteutukset?                    (assoc :toteutukset toteutukset)
+        hakukohteet?                    (assoc :hakukohteet hakukohteet)
+        haut?                           (assoc :haut haut)))))
 
 (defn toteutus
   [oid koulutus? hakukohteet? haut?]
@@ -84,10 +89,11 @@
     (let [koulutus (when koulutus? (-> toteutus :koulutusOid (get-koulutus) (dissoc :toteutukset)))
           hakukohteet (when (or haut? hakukohteet?) (get-hakukohteet-by-toteutus-oids [oid]))
           haut (when haut? (get-haut-by-oids (vec (map :hakuOid hakukohteet))))]
-      (cond-> (apply dissoc toteutus [:haut])
-              koulutus?    (assoc :koulutus koulutus)
-              hakukohteet? (assoc :hakukohteet hakukohteet)
-              haut?        (assoc :haut haut)))))
+      (cond->
+       (apply dissoc toteutus [:haut])
+        koulutus?    (assoc :koulutus koulutus)
+        hakukohteet? (assoc :hakukohteet hakukohteet)
+        haut?        (assoc :haut haut)))))
 
 (defn hakukohde
   [oid koulutus? toteutus? valintaperustekuvaus? haku?]
@@ -98,11 +104,12 @@
           toteutus (when (or koulutus? toteutus?) (get-toteutus (:toteutusOid hakukohde)))
           koulutus (when koulutus? (some-> toteutus :koulutusOid (get-koulutus) (dissoc :toteutukset)))
           haku (when haku? (some-> hakukohde :hakuOid (get-haku) (dissoc :hakukohteet)))]
-      (cond-> (dissoc hakukohde :valintaperuste)
-              (and koulutus? koulutus)                         (assoc :koulutus koulutus)
-              (and toteutus? toteutus)                         (assoc :toteutus toteutus)
-              (and haku? haku)                                 (assoc :haku haku)
-              (and valintaperustekuvaus? valintaperustekuvaus) (assoc :valintaperustekuvaus valintaperustekuvaus)))))
+      (cond->
+       (dissoc hakukohde :valintaperuste)
+        (and koulutus? koulutus)                         (assoc :koulutus koulutus)
+        (and toteutus? toteutus)                         (assoc :toteutus toteutus)
+        (and haku? haku)                                 (assoc :haku haku)
+        (and valintaperustekuvaus? valintaperustekuvaus) (assoc :valintaperustekuvaus valintaperustekuvaus)))))
 
 (defn haku
   [oid koulutukset? toteutukset? hakukohteet?]
@@ -110,7 +117,8 @@
     (let [hakukohteet (when (or koulutukset? toteutukset? hakukohteet?) (get-hakukohteet (vec (map :oid (:hakukohteet haku)))))
           toteutukset (when (or koulutukset? toteutukset?) (get-toteutukset-by-oids (vec (map :toteutusOid hakukohteet))))
           koulutukset (when koulutukset? (get-koulutukset-by-oids (vec (map :koulutusOid toteutukset))))]
-      (cond-> (dissoc haku :hakukohteet)
-              hakukohteet? (assoc :hakukohteet hakukohteet)
-              toteutukset? (assoc :toteutukset toteutukset)
-              koulutukset? (assoc :koulutukset koulutukset)))))
+      (cond->
+       (dissoc haku :hakukohteet)
+        hakukohteet? (assoc :hakukohteet hakukohteet)
+        toteutukset? (assoc :toteutukset toteutukset)
+        koulutukset? (assoc :koulutukset koulutukset)))))
