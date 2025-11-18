@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:test/resources/elastic_dump/oppilaitos-kouta-search-12-02-2026-at-07.41.05.737.alias.json
 "{\"oppilaitos-kouta-search-12-02-2026-at-07.41.05.737\":{\"aliases\":{\"oppilaitos-kouta-search\":{\"is_write_index\":false},\"oppilaitos-kouta-search-virkailija\":{\"is_write_index\":true}}}}"
+========
+"{\"oppilaitos-kouta-search-18-11-2025-at-09.07.40.225\":{\"aliases\":{\"oppilaitos-kouta-search\":{\"is_write_index\":false},\"oppilaitos-kouta-search-virkailija\":{\"is_write_index\":true}}}}"
+>>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/oppilaitos-kouta-search-18-11-2025-at-09.07.40.225.alias.json

@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:test/resources/elastic_dump/koulutus-kouta-12-02-2026-at-07.41.04.406.alias.json
 "{\"koulutus-kouta-12-02-2026-at-07.41.04.406\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
+========
+"{\"koulutus-kouta-18-11-2025-at-09.07.37.853\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
+>>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/koulutus-kouta-18-11-2025-at-09.07.37.853.alias.json
