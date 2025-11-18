@@ -48,7 +48,7 @@
           valintaperusteId1 "31972648-ebb7-4185-ac64-31fa6b841e34"]
 
       (testing "Get koulutus"
-        (testing "ok only amm koulutus with kuvaus from eperuste index"
+        (testing "ok only amm koulutus with kuvaus and osaamistavoitteet from eperuste index"
           (let [response (get-ok-or-print-schema-error (koulutus-url koulutusOid1))]
             (is (= koulutusOid1 (:oid response)))
             (is (false? (contains? response :toteutukset)))
@@ -56,7 +56,10 @@
             (is (false? (contains? response :haut)))
             (is (= {:fi "Tyotehtavat joissa voi toimia (eperuste) fi"
                     :sv "Tyotehtavat joissa voi toimia (eperuste) sv"}
-                   (get-in response [:metadata :kuvaus])))))
+                   (get-in response [:metadata :kuvaus])))
+            (is (= {:fi "Suorittaneen osaaminen (eperuste) fi"
+                    :sv "Suorittaneen osaaminen (eperuste) sv"}
+                   (get-in response [:metadata :osaamistavoitteet])))))
         (testing "only lukio koulutus"
           (let [response (get-ok-or-print-schema-error (koulutus-url lukio-Oid))]
             (is (= lukio-Oid (:oid response)))

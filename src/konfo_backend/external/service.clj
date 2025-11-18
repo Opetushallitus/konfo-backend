@@ -1,6 +1,6 @@
 (ns konfo-backend.external.service
   (:require
-   [konfo-backend.tools :refer [julkaistu? ammatillinen? amm-osaamisala?]]
+   [konfo-backend.tools :refer [julkaistu? ammatillinen?]]
    [konfo-backend.index.koulutus :as koulutus]
    [konfo-backend.index.toteutus :as toteutus]
    [konfo-backend.index.hakukohde :as hakukohde]
@@ -74,11 +74,12 @@
     (let [toteutukset (when toteutukset? (get-toteutukset-by-oids (vec (map :oid (:toteutukset koulutus)))))
           hakukohteet (when (or haut? hakukohteet?) (get-hakukohteet-by-toteutus-oids (vec (map :oid (:toteutukset koulutus)))))
           haut        (when haut? (get-haut-by-oids (vec (map :hakuOid hakukohteet))))
-          eperuste (eperuste/get-kuvaus-by-eperuste-id (:ePerusteId koulutus) false)
-          eperuste-kuvaus (:tyotehtavatJoissaVoiToimia eperuste)]
+          eperuste (when (ammatillinen? koulutus) (eperuste/get-kuvaus-by-eperuste-id (:ePerusteId koulutus) false))
+          eperuste-kuvaus (:tyotehtavatJoissaVoiToimia eperuste)
+          eperuste-osaamistavoitteet (:suorittaneenOsaaminen eperuste)]
       (cond-> (apply dissoc koulutus [:toteutukset :haut])
-        (or (ammatillinen? koulutus)
-            (amm-osaamisala? koulutus)) (assoc-in [:metadata :kuvaus] eperuste-kuvaus)
+        (ammatillinen? koulutus) (-> (assoc-in [:metadata :kuvaus] eperuste-kuvaus)
+                                     (assoc-in [:metadata :osaamistavoitteet] eperuste-osaamistavoitteet))
         toteutukset?                    (assoc :toteutukset toteutukset)
         hakukohteet?                    (assoc :hakukohteet hakukohteet)
         haut?                           (assoc :haut haut)))))
