@@ -1,11 +1,11 @@
 (ns konfo-backend.external.schema.koulutus-metadata
   (:require
-    [schema.core :as s]
-    [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
+   [schema.core :as s]
+   [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]))
 
 (def schemas
-   "|    Eperuste:
+  "|    Eperuste:
     |      type: object
     |      properties:
     |        id:
@@ -70,27 +70,35 @@
     |            $ref: '#/components/schemas/Tutkintonimike'
     |")
 
-
 (def Eperuste
   {(s/->OptionalKey :id) s/Int
    (s/->OptionalKey :diaarinumero)      (s/maybe s/Str)
    (s/->OptionalKey :voimassaoloLoppuu) (s/maybe s/Str)})
 
- (def KoulutusMetadata
-   {
-    (s/->OptionalKey :eperuste)                   (s/maybe Eperuste)
-    (s/->OptionalKey :isMuokkaajaOphVirkailija)   (s/maybe Boolean)
-    (s/->OptionalKey :koulutusala)                [(s/conditional
-                                                     #(boolean (re-find Koulutusala1Koodi (:koodiUri %))) (s/maybe (->Koodi Koulutusala1Koodi))
-                                                     #(boolean (re-find Koulutusala2Koodi (:koodiUri %))) (s/maybe (->Koodi Koulutusala2Koodi)))]
-    (s/->OptionalKey :kuvaus)                     (s/maybe Kielistetty)
-    (s/->OptionalKey :lisatiedot)                 [(s/maybe KoulutusLisatieto)]
-    (s/->OptionalKey :opintojenLaajuus)           (s/maybe (->Koodi OpintojenLaajuusKoodi))
-    (s/->OptionalKey :opintojenLaajuusNumero)     (s/maybe s/Num)
-    (s/->OptionalKey :opintojenLaajuusNumeroMin)  (s/maybe s/Num)
-    (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
-    (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
-    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet
-    :tyyppi                                       KoutaKoulutustyyppi
-    s/Any                                         s/Any
-    })
+(def KoulutusMetadata
+  {(s/->OptionalKey :eperuste)                   (s/maybe Eperuste)
+   (s/->OptionalKey :isMuokkaajaOphVirkailija)   (s/maybe Boolean)
+   (s/->OptionalKey :koulutusala)                [(s/conditional
+                                                   #(boolean (re-find Koulutusala1Koodi (:koodiUri %))) (s/maybe (->Koodi Koulutusala1Koodi))
+                                                   #(boolean (re-find Koulutusala2Koodi (:koodiUri %))) (s/maybe (->Koodi Koulutusala2Koodi)))]
+   (s/->OptionalKey :kuvaus)                     (s/maybe Kielistetty)
+   (s/->OptionalKey :lisatiedot)                 [(s/maybe KoulutusLisatieto)]
+   (s/->OptionalKey :opintojenLaajuus)           (s/if (every-pred map? empty?)
+                                                   s/Any
+                                                   (s/maybe (->Koodi OpintojenLaajuusKoodi)))
+   (s/->OptionalKey :opintojenLaajuusNumero)     (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumeroMin)  (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
+   (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet
+   :tyyppi                                       KoutaKoulutustyyppi
+   s/Any                                         s/Any})
+
+(comment
+  (let [schema (s/if (every-pred map? empty?)
+                 {}
+                 {:a s/Int})
+        value #_123 #_{} #_{:a 123} {:pier :pask}]
+    (s/validate
+     schema
+     value)))
