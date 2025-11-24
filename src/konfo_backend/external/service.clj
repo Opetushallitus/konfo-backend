@@ -6,7 +6,8 @@
    [konfo-backend.index.hakukohde :as hakukohde]
    [konfo-backend.index.haku :as haku]
    [konfo-backend.eperuste.eperuste :as eperuste]
-   [konfo-backend.index.valintaperuste :as valintaperuste]))
+   [konfo-backend.index.valintaperuste :as valintaperuste]
+   [konfo-backend.search.koulutus.eperustedata :refer [amm-koulutus-with-eperuste?]]))
 
 (defn- get-koulutus
   [oid]
@@ -78,8 +79,9 @@
           eperuste-kuvaus (:tyotehtavatJoissaVoiToimia eperuste)
           eperuste-osaamistavoitteet (:suorittaneenOsaaminen eperuste)]
       (cond-> (apply dissoc koulutus [:toteutukset :haut])
-        (ammatillinen? koulutus) (-> (assoc-in [:metadata :kuvaus] eperuste-kuvaus)
-                                     (assoc-in [:metadata :osaamistavoitteet] eperuste-osaamistavoitteet))
+        (and (ammatillinen? koulutus)
+             (amm-koulutus-with-eperuste? koulutus)) (-> (assoc-in [:metadata :kuvaus] eperuste-kuvaus)
+                                                         (assoc-in [:metadata :osaamistavoitteet] eperuste-osaamistavoitteet))
         toteutukset?                    (assoc :toteutukset toteutukset)
         hakukohteet?                    (assoc :hakukohteet hakukohteet)
         haut?                           (assoc :haut haut)))))
