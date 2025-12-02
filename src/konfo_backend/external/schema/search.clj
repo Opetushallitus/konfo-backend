@@ -87,7 +87,7 @@
    (s/->OptionalKey :tutkintonimikkeet)         Tutkintonimikkeet
    (s/->OptionalKey :luokittelutermit)          [s/Str]
    (s/->OptionalKey :osaamisala)                (s/maybe (->Koodi OsaamisalaKoodi))
-   (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsa])
+   (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsaExtended])
    :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas

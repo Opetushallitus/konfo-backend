@@ -18,11 +18,14 @@
     |          description: ePerusteen diaarinumero
     |        voimassaoloLoppuu:
     |          type: string
-    |          example: ePerusten voimassaolon loppumishetki
-    |          description: 2021-12-12T00:00:00
+    |          example: 2021-12-12T00:00:00
+    |          description: ePerusten voimassaolon loppumishetki
     |    KoulutusMetadata:
     |      type: object
     |      properties:
+    |        tyyppi:
+    |          type: string
+    |          $ref: '#/components/schemas/KoutaKoulutustyyppi'
     |        eperuste:
     |          type: object
     |          $ref: '#/components/schemas/Eperuste'
@@ -30,6 +33,10 @@
     |          type: boolean
     |          example: true
     |          description: Onko viimeisin muokkaaja OPH:n virkailija
+    |        isAvoinKorkeakoulutus:
+    |          type: boolean
+    |          example: true
+    |          description: Onko koulutus avointa korkeakoulutusta
     |        koulutusala:
     |          type: array
     |          description: Lista koulutuksen koulutusaloista
@@ -42,6 +49,14 @@
     |          type: object
     |          description: Koulutuksen kuvausteksti eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
     |          $ref: '#/components/schemas/Kuvaus'
+    |        osaamistavoitteet:
+    |          type: object
+    |          description: Koulutuksen osaamistavoitteet eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          $ref: '#/components/schemas/Osaamistavoitteet'
+    |        linkkiEPerusteisiin:
+    |          type: object
+    |          description: Linkki eperuste-sivulle eri kielillä. Kielet on määritetty koulutuksen kielivalinnassa.
+    |          $ref: '#/components/schemas/Linkki'
     |        lisatiedot:
     |          type: array
     |          description: Koulutukseen liittyviä lisätietoja, jotka näkyvät oppijalle Opintopolussa
@@ -68,6 +83,16 @@
     |          type: array
     |          items:
     |            $ref: '#/components/schemas/Tutkintonimike'
+    |        tunniste:
+    |          type: string
+    |          description: Avoimen korkeakoulutuksen hakijalle näkyvä tunniste
+    |          example: LY00DV56
+    |        opinnonTyyppi:
+    |          $ref: '#/components/schemas/OpinnonTyyppi'
+    |        tutkinnonOsat:
+    |          type: array
+    |          items:
+    |            $ref: '#/components/schemas/TutkinnonOsaExtended'
     |")
 
 (def Eperuste
@@ -91,6 +116,8 @@
    (s/->OptionalKey :opintojenLaajuusNumeroMax)  (s/maybe s/Num)
    (s/->OptionalKey :opintojenLaajuusyksikko)    (->Koodi OpintojenLaajuusyksikkoKoodi)
    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet
+   (s/->OptionalKey :tunniste)                   (s/maybe s/Str)
+   (s/->OptionalKey :opinnonTyyppi)              (->Koodi OpinnonTyyppiKoodi)
    :tyyppi                                       KoutaKoulutustyyppi
    s/Any                                         s/Any})
 
