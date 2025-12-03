@@ -1,10 +1,12 @@
 (ns konfo-backend.search.response
-  (:require [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
-                                                        generate-rajain-counts-for-jarjestajat]]
-            [konfo-backend.search.rajain-definitions :refer [all-agg-defs max-agg-defs ->max-agg-id]]
-            [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [log-pretty
-                                         reduce-merge-map rename-key]]))
+  (:require
+   [clojure.set :refer [rename-keys]]
+   [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
+                                               generate-rajain-counts-for-jarjestajat]]
+   [konfo-backend.search.rajain-definitions :refer [->max-agg-id all-agg-defs
+                                                    max-agg-defs]]
+   [konfo-backend.search.tools :refer :all]
+   [konfo-backend.tools :refer [log-pretty reduce-merge-map]]))
 
 (defn- buckets-to-map
   [buckets]
@@ -15,7 +17,10 @@
 
 (defn hits
   [response]
-  (map (fn [x] (-> (:_source x) (assoc :_score (:_score x)))) (get-in response [:hits :hits])))
+  (map (fn [x] (-> (:_source x)
+                   (assoc :_score (:_score x))
+                   (rename-keys {:eperuste :ePerusteId})))
+       (get-in response [:hits :hits])))
 
 (defn- autocomplete-hits
   [response]
@@ -94,7 +99,7 @@
   (map
    (fn [hit]
      (-> (:_source hit)
-         (rename-key :eperuste :ePerusteId)
+         (rename-keys {:eperuste :ePerusteId})
          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (filter valid-external-inner-hit (get-in hit [:inner_hits :search_terms :hits :hits])))))))
    (get-in response [:hits :hits])))
 
