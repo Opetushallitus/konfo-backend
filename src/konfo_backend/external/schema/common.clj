@@ -286,7 +286,7 @@
     #(boolean (re-find TutkintonimikkeetKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikkeetKoodi))
     #(boolean (re-find TutkintonimikeKkKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikeKkKoodi)))])
 
-(def TutkinnonOsaExtended {(s/->OptionalKey :eperuste)                (s/maybe s/Int)
+(def TutkinnonOsaEperuste {(s/->OptionalKey :eperuste)                (s/maybe s/Int)
                            (s/->OptionalKey :koulutus)                (s/maybe (->Koodi KoulutusKoodi))
                            (s/->OptionalKey :tutkinnonosaId)          (s/maybe s/Num)
                            (s/->OptionalKey :tutkinnonosaViite)       (s/maybe s/Num)
@@ -295,8 +295,8 @@
                            (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
                            (s/->OptionalKey :tutkinnonOsat)           (s/maybe (->Koodi TutkinnonOsaKoodi))})
 
-(def tutkinnon-osa-extended-schema
-  "|    TutkinnonOsaExtended:
+(def tutkinnon-osa-eperuste-schema
+  "|    TutkinnonOsaEperuste:
    |      type: object
    |      properties:
    |        eperuste:
@@ -305,6 +305,14 @@
    |        koulutus:
    |          type: object
    |          $ref: '#/components/schemas/KoulutusKoodi'
+   |        tutkinnonosaId:
+   |          type: integer
+   |          description: Tutkinnon osan id
+   |          example: 10
+   |        tutkinnonosaViite:
+   |          type: integer
+   |          description: Tutkinnon osan viite
+   |          example: 10
    |        opintojenLaajuus:
    |          $ref: '#/components/schemas/OpintojenLaajuus'
    |        opintojenLaajuusNumero:
@@ -332,4 +340,4 @@
        ajanjakso-schema "\n"
        koulutuksenalkamiskausi-schema "\n"
        osoite-schema "\n"
-       tutkinnon-osa-extended-schema))
+       tutkinnon-osa-eperuste-schema))

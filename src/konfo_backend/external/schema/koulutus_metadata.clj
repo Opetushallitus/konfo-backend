@@ -92,7 +92,7 @@
     |        tutkinnonOsat:
     |          type: array
     |          items:
-    |            $ref: '#/components/schemas/TutkinnonOsaExtended'
+    |            $ref: '#/components/schemas/TutkinnonOsaEperuste'
     |")
 
 (def Eperuste
@@ -120,12 +120,3 @@
    (s/->OptionalKey :opinnonTyyppi)              (->Koodi OpinnonTyyppiKoodi)
    :tyyppi                                       KoutaKoulutustyyppi
    s/Any                                         s/Any})
-
-(comment
-  (let [schema (s/if (every-pred map? empty?)
-                 {}
-                 {:a s/Int})
-        value #_123 #_{} #_{:a 123} {:pier :pask}]
-    (s/validate
-     schema
-     value)))
