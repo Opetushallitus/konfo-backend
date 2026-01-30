@@ -1,19 +1,23 @@
 (ns konfo-backend.util.time-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [konfo-backend.util.time :as time])
-  (:import (org.joda.time DateTime LocalDate)))
+  (:import (java.time LocalDate ZonedDateTime)))
 
 (defn- breakdown
-  "Palauttaa ajan jaoteltuna osiinsa [vuosi kk pv t m s milli vyöhyke]"
-  [^DateTime time]
+  "Palauttaa ajan pilkottuna osiin: [vuosi kk pv t m s milli vyöhyke]"
+  [^ZonedDateTime time]
   [(.getYear time)
-   (.getMonthOfYear time)
+   (.getMonthValue time)
    (.getDayOfMonth time)
-   (.getHourOfDay time)
-   (.getMinuteOfHour time)
-   (.getSecondOfMinute time)
-   (.getMillisOfSecond time)
-   (-> time .getZone .getID)])
+   (.getHour time)
+   (.getMinute time)
+   (.getSecond time)
+   (-> time .getNano (/ 1000000) int)
+   (-> time .getZone .getId)])
+
+(deftest current-date-time
+  (testing "returns time in Helsinki timezone"
+    (is (= "Europe/Helsinki" (-> (time/current-date-time) .getZone .getId)))))
 
 (deftest format-localized-date
   (testing "returns correct timestamps"
@@ -31,33 +35,33 @@
 
 (deftest ->kouta-date-time-string
   (testing "returns correctly formatted string"
-    (is (= "2025-01-01T00:58" (time/->kouta-date-time-string (DateTime/parse "2025-01-01T00:58:24.312"))))
-    (is (= "2024-12-31T23:58" (time/->kouta-date-time-string (DateTime/parse "2024-12-31T23:58:24.312"))))))
+    (is (= "2025-01-01T00:58" (time/->kouta-date-time-string (ZonedDateTime/parse "2025-01-01T00:58:24.312+02:00"))))
+    (is (= "2024-12-31T23:58" (time/->kouta-date-time-string (ZonedDateTime/parse "2024-12-31T23:58:24.312+02:00"))))))
 
 (deftest kouta-date-time-string->date-time
   (testing "returns correct datetime"
-    (is (= [2025  1  1  0 58 0 0 "Europe/Helsinki"] (breakdown (time/kouta-date-time-string->date-time "2025-01-01T00:58"))))
+    (is (= [2025 1 1 0 58 0 0 "Europe/Helsinki"] (breakdown (time/kouta-date-time-string->date-time "2025-01-01T00:58"))))
     (is (= [2024 12 31 23 58 0 0 "Europe/Helsinki"] (breakdown (time/kouta-date-time-string->date-time "2024-12-31T23:58"))))))
 
 (deftest current-time-as-kouta-format
   (testing "returns correct date and time"
-    (with-redefs [time/current-date-time #(DateTime/parse "2025-01-01T00:58:24.312")]
+    (with-redefs [time/current-date-time #(ZonedDateTime/parse "2025-01-01T00:58:24.312+02:00")]
       (is (= "2025-01-01T00:58" (time/current-time-as-kouta-format))))
-    (with-redefs [time/current-date-time #(DateTime/parse "2024-12-31T23:58:24.312")]
+    (with-redefs [time/current-date-time #(ZonedDateTime/parse "2024-12-31T23:58:24.312+02:00")]
       (is (= "2024-12-31T23:58" (time/current-time-as-kouta-format))))))
 
-(deftest add-to-kouta-date-time-string
+(deftest add-days-to-kouta-date-time-string
   (testing "returns correctly formatted string"
     (is (= "2025-01-06T00:58" (time/add-days-to-kouta-date-time-string "2025-01-01T00:58" 5)))
     (is (= "2025-01-04T23:58" (time/add-days-to-kouta-date-time-string "2024-12-31T23:58" 4)))
     (is (= "2025-02-03T23:58" (time/add-days-to-kouta-date-time-string "2024-12-31T23:58" 34)))))
 
 (deftest within
-  (let [before-start (DateTime/parse "2024-12-31T20:00:00")
-        start (DateTime/parse "2024-12-31T23:58:24.312")
-        in-between (DateTime/parse "2025-01-01T00:27:12")
-        end (DateTime/parse "2025-01-01T00:58:24.312")
-        after-end (DateTime/parse "2025-01-01T12:58:24.312")]
+  (let [before-start (ZonedDateTime/parse "2024-12-31T20:00:00+02:00")
+        start (ZonedDateTime/parse "2024-12-31T23:58:24.312+02:00")
+        in-between (ZonedDateTime/parse "2025-01-01T00:27:12+02:00")
+        end (ZonedDateTime/parse "2025-01-01T00:58:24.312+02:00")
+        after-end (ZonedDateTime/parse "2025-01-01T12:58:24.312+02:00")]
     (testing "when end is specified"
       (is (= false (time/within? start before-start end)))
       (is (= true (time/within? start start end)))
@@ -66,17 +70,17 @@
       (is (= false (time/within? start after-end end))))
     (testing "when end is nil"
       (is (= false (time/within? start before-start nil)))
-      (is (= false (time/within? start start nil)))
+      (is (= true (time/within? start start nil)))
       (is (= true (time/within? start in-between nil)))
       (is (= true (time/within? start end nil)))
       (is (= true (time/within? start after-end nil))))))
 
 (deftest currently-in-between?
-  (let [before-start (DateTime/parse "2024-12-31T20:00:00")
-        start (DateTime/parse "2024-12-31T23:58:24.312")
-        in-between (DateTime/parse "2025-01-01T00:27:12")
-        end (DateTime/parse "2025-01-01T00:58:24.312")
-        after-end (DateTime/parse "2025-01-01T12:58:24.312")]
+  (let [before-start (ZonedDateTime/parse "2024-12-31T20:00:00+02:00")
+        start (ZonedDateTime/parse "2024-12-31T23:58:24.312+02:00")
+        in-between (ZonedDateTime/parse "2025-01-01T00:27:12+02:00")
+        end (ZonedDateTime/parse "2025-01-01T00:58:24.312+02:00")
+        after-end (ZonedDateTime/parse "2025-01-01T12:58:24.312+02:00")]
     (testing "before start"
       (with-redefs [time/current-date-time (constantly before-start)]
         (testing "when start and end is specified"
@@ -91,7 +95,7 @@
         (testing "when start and end is specified"
           (is (= true (time/currently-in-between? start end))))
         (testing "when end is nil"
-          (is (= false (time/currently-in-between? start nil))))
+          (is (= true (time/currently-in-between? start nil))))
         (testing "when start is nil"
           (is (= false (time/currently-in-between? nil nil)))
           (is (= false (time/currently-in-between? nil end))))))
@@ -116,9 +120,9 @@
           (is (= false (time/currently-in-between? start end))))))))
 
 (deftest currently-after?
-  (let [before (DateTime/parse "2024-12-31T20:00:00")
-        time (DateTime/parse "2024-12-31T23:58:24.312")
-        after (DateTime/parse "2025-01-01T00:27:12")]
+  (let [before (ZonedDateTime/parse "2024-12-31T20:00:00+02:00")
+        time (ZonedDateTime/parse "2024-12-31T23:58:24.312+02:00")
+        after (ZonedDateTime/parse "2025-01-01T00:27:12+02:00")]
     (testing "before time"
       (with-redefs [time/current-date-time (constantly before)]
         (testing "when time is specified"
@@ -141,15 +145,15 @@
 
 (deftest kevat-date?
   (testing "returns correct results for Helsinki times"
-    (is (= true (time/kevat-date? (DateTime/parse "2025-01-01T00:00:00+02:00"))))
-    (is (= false (time/kevat-date? (DateTime/parse "2025-12-31T23:59:59+02:00"))))
-    (is (= true (time/kevat-date? (DateTime/parse "2025-07-31T23:59:59+03:00"))))
-    (is (= false (time/kevat-date? (DateTime/parse "2025-08-01T00:00:00+03:00")))))
+    (is (= true (time/kevat-date? (ZonedDateTime/parse "2025-01-01T00:00:00+02:00"))))
+    (is (= false (time/kevat-date? (ZonedDateTime/parse "2025-12-31T23:59:59+02:00"))))
+    (is (= true (time/kevat-date? (ZonedDateTime/parse "2025-07-31T23:59:59+03:00"))))
+    (is (= false (time/kevat-date? (ZonedDateTime/parse "2025-08-01T00:00:00+03:00")))))
   (testing "returns correct results for UTC times"
-    (is (= true (time/kevat-date? (DateTime/parse "2025-01-01T00:00:00Z"))))
-    (is (= false (time/kevat-date? (DateTime/parse "2025-12-31T23:59:59Z"))))
-    (is (= true (time/kevat-date? (DateTime/parse "2025-07-31T23:59:59Z"))))
-    (is (= false (time/kevat-date? (DateTime/parse "2025-08-01T00:00:00Z"))))))
+    (is (= true (time/kevat-date? (ZonedDateTime/parse "2025-01-01T00:00:00Z"))))
+    (is (= false (time/kevat-date? (ZonedDateTime/parse "2025-12-31T23:59:59Z"))))
+    (is (= true (time/kevat-date? (ZonedDateTime/parse "2025-07-31T23:59:59Z"))))
+    (is (= false (time/kevat-date? (ZonedDateTime/parse "2025-08-01T00:00:00Z"))))))
 
 (deftest is-kevat?
   (testing "returns correct values at edges"

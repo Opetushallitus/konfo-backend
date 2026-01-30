@@ -1,11 +1,12 @@
 (ns konfo-backend.search.koulutus-search-test
   (:require [clojure.test :refer [deftest is use-fixtures testing]]
+            [konfo-backend.index.eperuste :as eperuste]
+            [konfo-backend.koodisto.koodisto :as koodisto]
+            [konfo-backend.util.time :as time]
             [matcher-combinators.test]
-            [matcher-combinators.matchers :as m]
             [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
-            [konfo-backend.test-mock-data :refer :all]
-            [cheshire.core :refer [generate-string]]))
+            [konfo-backend.test-mock-data :refer :all]))
 
 (intern 'clj-log.access-log 'service "konfo-backend")
 
@@ -38,10 +39,10 @@
 (def haku-oid-2 "1.2.246.562.29.0000002")
 
 (deftest koulutus-search-test
-  (set-fixed-time "2021-01-01T04:00:00")
-  (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto
-                konfo-backend.index.eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset
-                konfo-backend.index.eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset]
+  (with-redefs [koodisto/get-koodisto-with-cache mock-get-koodisto
+                eperuste/get-kuvaukset-by-eperuste-ids mock-get-kuvaukset
+                eperuste/get-tutkinnon-osa-kuvaukset-by-eperuste-ids mock-get-kuvaukset
+                time/current-date-time #(parse-test-time "2021-01-01T04:00:00")]
     (testing "Search koulutukset with bad requests:"
       (testing "Invalid lng"
         (is (starts-with? (->bad-request-body :sijainti "kunta_618" :lng "foo") "Virheellinen kieli")))

@@ -1,16 +1,22 @@
 (ns konfo-backend.util.time
-  (:require [clj-time.core :as time]
-            [clj-time.format :as format]
-            [clojure.tools.logging :as log])
-  (:import (java.util Locale)
-           (org.joda.time DateTime LocalDate)))
+  (:require [clojure.tools.logging :as log])
+  (:import (java.time LocalDate ZoneId ZonedDateTime)
+           (java.time.format DateTimeFormatter)
+           (java.util Locale)))
 
-(defn current-date-time ^DateTime [] (time/now))
-(defn current-local-date ^LocalDate [] (time/today))
+(defn current-date-time
+  "Funktio nykyisen päivän hakemiseen, jotta tämän voi ylikirjoittaa testeissä."
+  ^ZonedDateTime [] (ZonedDateTime/now (ZoneId/of "Europe/Helsinki")))
 
-(defonce timezone-fi (time/time-zone-for-id "Europe/Helsinki"))
+(defn current-local-date
+  "Funktio nykyisen päivän hakemiseen, jotta tämän voi ylikirjoittaa testeissä."
+  ^LocalDate [] (LocalDate/now (ZoneId/of "Europe/Helsinki")))
 
-(defn formatter-for-helsinki [fmt-str] (format/formatter fmt-str timezone-fi))
+(defonce timezone-fi (ZoneId/of "Europe/Helsinki"))
+(defonce timezone-utc (ZoneId/of "UTC"))
+
+(defn formatter-for-helsinki [fmt-str] (-> (DateTimeFormatter/ofPattern fmt-str) (.withZone timezone-fi)))
+(defn formatter-for-utc [fmt-str] (-> (DateTimeFormatter/ofPattern fmt-str) (.withZone timezone-utc)))
 
 (defonce kouta-date-time-formatter (formatter-for-helsinki "yyyy-MM-dd'T'HH:mm"))
 
@@ -20,40 +26,40 @@
 (def english-format (.withLocale (formatter-for-helsinki "MMM. d, yyyy 'at' hh:mm a z") Locale/US))
 
 (defn- parse-date-time
-  [s]
+  ^ZonedDateTime [s]
   (when s
-    (let [fmt (format/formatter "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")]
+    (let [fmt (formatter-for-utc "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")]
       (try
-        (time/to-time-zone (format/parse fmt s) timezone-fi)
+        (-> (ZonedDateTime/parse s fmt) (.withZoneSameInstant timezone-fi))
         (catch Exception e
           (log/error (str "Unable to parse" s) e))))))
 
 (defn format-localized-dates [date]
   (if-let [parsed (parse-date-time date)]
-    {:fi (format/unparse finnish-format parsed)
-     :sv (format/unparse swedish-format parsed)
-     :en (format/unparse english-format parsed)}
+    {:fi (.format finnish-format parsed)
+     :sv (.format swedish-format parsed)
+     :en (.format english-format parsed)}
     {}))
 
 (defn current-date-formatted
   []
-  (format/unparse-local-date (format/formatter "yyyy-MM-dd") (current-local-date)))
+  (.format (current-local-date) (DateTimeFormatter/ofPattern "yyyy-MM-dd")))
 
-(defn ->kouta-date-time-string [date-time] (format/unparse kouta-date-time-formatter date-time))
+(defn ->kouta-date-time-string [date-time] (.format kouta-date-time-formatter date-time))
 
-(defn kouta-date-time-string->date-time [string] (format/parse kouta-date-time-formatter string))
+(defn kouta-date-time-string->date-time ^ZonedDateTime [string] (ZonedDateTime/parse string kouta-date-time-formatter))
 
 (defn current-time-as-kouta-format
   []
   (->kouta-date-time-string (current-date-time)))
 
 (defn add-days-to-kouta-date-time-string [string days]
-  (-> (kouta-date-time-string->date-time string) (time/plus (time/days days)) (->kouta-date-time-string)))
+  (-> (kouta-date-time-string->date-time string) (.plusDays days) (->kouta-date-time-string)))
 
-(defn within? [gte time lt]
-  (if (nil? lt)
-    (time/after? time gte)
-    (time/within? (time/interval gte lt) time)))
+(defn within? [^ZonedDateTime gte ^ZonedDateTime time ^ZonedDateTime lt]
+  (let [after-or-equal-to-start (or (.isAfter time gte) (.isEqual time gte))
+        before-end (if (nil? lt) true (.isBefore time lt))]
+    (and after-or-equal-to-start before-end)))
 
 (defn currently-in-between? [gte lt]
   (if (nil? gte)
@@ -63,9 +69,9 @@
 (defn currently-after? [lt]
   (if (nil? lt)
     false
-    (time/after? (current-date-time) lt)))
+    (-> (current-date-time) (.isAfter lt))))
 
-(defn kevat-date? [date] (< (time/month date) 8))
+(defn kevat-date? [date] (< (.getMonthValue date) 8))
 (defn is-kevat? [] (kevat-date? (current-local-date)))
 
-(defn current-year [] (time/year (current-local-date)))
+(defn current-year [] (.getYear (current-local-date)))

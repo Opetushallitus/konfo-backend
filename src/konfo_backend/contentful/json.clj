@@ -5,7 +5,6 @@
            (java.util List)))
 
 (defn write-reference [object entry]
-
   (doto object
     (.addProperty "id" (str (.getAttribute entry "id")))
     (#(when-let [name (.getField entry "name")]

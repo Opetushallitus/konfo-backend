@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>a154b5e2b3836dee5f08f7f4a2c54a9b3ad1daf4</tag>
+    <tag>53a27d00c6b336107c9f60cd13b1a3c6fa39aa1e</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -83,16 +83,6 @@
         <groupId>org.clojure</groupId>
         <artifactId>core.memoize</artifactId>
         <version>1.1.266</version>
-      </dependency>
-      <dependency>
-        <groupId>clj-time</groupId>
-        <artifactId>clj-time</artifactId>
-        <version>0.15.2</version>
-      </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>2.13.1</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -341,10 +331,6 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>clj-time</groupId>
-      <artifactId>clj-time</artifactId>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>

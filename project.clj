@@ -16,8 +16,6 @@
                                :snapshots true}]]
   :managed-dependencies [[org.clojure/clojure "1.11.4"]
                          [org.clojure/core.memoize "1.1.266"]
-                         [clj-time "0.15.2"]
-                         [joda-time "2.13.1"]
                          [commons-io "2.18.0"]
                          [cheshire "5.13.0"]
                          [metosin/compojure-api "2.0.0-alpha31"]
@@ -68,7 +66,6 @@
                          [com.fasterxml.jackson.core/jackson-core "2.18.3"]
                          [com.fasterxml.jackson.core/jackson-databind "2.18.3"]]
   :dependencies [[org.clojure/clojure]
-                 [clj-time]
                  [org.clojure/core.memoize]
                  [cheshire]
                  ; Rest + server
