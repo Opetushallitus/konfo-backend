@@ -4,9 +4,8 @@
     [konfo-backend.util.rest :refer [get->json-body]]
     [konfo-backend.util.urls :refer [resolve-url]]
     [konfo-backend.sitemap.elastic-client :as e]
-    [clj-time.core :as time]
-    [clojure.core.memoize :as memo]
-    [clj-time.format :as f]))
+    [konfo-backend.util.time :as time]
+    [clojure.core.memoize :as memo]))
 
 (defonce cache-ttl (* 1000 60 60 3))                        ;3 tunnin cache
 
@@ -22,10 +21,6 @@
                        "https://opintopolku.fi/konfo-backend/sitemap/toteutus-sitemap.xml"
                        "https://opintopolku.fi/konfo-backend/sitemap/hakukohde-sitemap.xml"])
 
-(defn- current-date-formatted
-  []
-  (f/unparse (f/formatter "yyyy-MM-dd") (time/now)))
-
 (defn- ->sitemap-index
   [sitemaps]
   (xml/element :sitemapindex {:xmlns sitemap-xml-ins} sitemaps))
@@ -33,7 +28,7 @@
 (defn- ->sitemap
   [loc]
   (xml/element :sitemap {} [(xml/element :loc {} loc)
-                            (xml/element :lastmod {} (current-date-formatted))]))
+                            (xml/element :lastmod {} (time/current-date-formatted))]))
 
 (defn- ->urlset
   [sitemaps]
@@ -42,7 +37,7 @@
 (defn- ->url
   [loc]
   (xml/element :url {} [(xml/element :loc {} loc)
-                        (xml/element :lastmod {} (current-date-formatted))]))
+                        (xml/element :lastmod {} (time/current-date-formatted))]))
 
 (defn ->contentful-sivu-link
   [sivu-nimi sivut-linkki]
@@ -101,4 +96,3 @@
 
 (def get-sitemap-with-cache
   (memo/ttl get-sitemap {} :ttl/threshold cache-ttl))
-

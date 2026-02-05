@@ -5,7 +5,8 @@
                                                                     constraints? generate-hakutulos-aggregations generate-jarjestajat-aggregations
                                                                     generate-tarjoajat-aggregations]]
             [konfo-backend.search.tools :refer :all]
-            [konfo-backend.tools :refer [assoc-if current-time-as-kouta-format]]))
+            [konfo-backend.util.time :refer [current-time-as-kouta-format]]
+            [konfo-backend.tools :refer [assoc-if]]))
 
 (defn match-all-query
   []

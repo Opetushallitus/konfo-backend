@@ -1,10 +1,8 @@
 (ns konfo-backend.search.rajain-tools
-  (:require [clj-time.core :as time]
-            [clojure.string :refer [join replace-first split]]
-            [konfo-backend.tools :refer [->kouta-date-time-string
-                                         ->lower-case
-                                         ->lower-case-vec
-                                         kouta-date-time-string->date-time]]))
+  (:require [clojure.string :refer [join replace-first split]]
+            [konfo-backend.util.time :refer [add-days-to-kouta-date-time-string]]
+            [konfo-backend.tools :refer [->lower-case
+                                         ->lower-case-vec]]))
 
 (defn ->terms-query
   ([key value with-search-terms]
@@ -83,7 +81,7 @@
 (defn hakualkaapaivissa-filter-query
   [current-time days]
   (when days
-    (let [max-time (->kouta-date-time-string (time/plus (kouta-date-time-string->date-time current-time) (time/days days)))]
+    (let [max-time (add-days-to-kouta-date-time-string current-time days)]
       {:nested {:path "search_terms.hakutiedot.hakuajat"
                 :query {:range {:search_terms.hakutiedot.hakuajat.alkaa {:gt current-time :lte max-time}}}}})))
 
