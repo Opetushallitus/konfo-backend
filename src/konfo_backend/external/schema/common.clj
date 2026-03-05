@@ -37,6 +37,13 @@
   ([] (create-kielistetty-schema nil)))
 
 (s/defschema Kielistetty (create-kielistetty-schema))
+(s/defschema OsaamismerkkiKuvaus {(s/->OptionalKey :osaamistavoitteet) (create-kielistetty-schema "osaamistavoitteet")
+                                  (s/->OptionalKey :arviointikriteerit) (create-kielistetty-schema "arviointikriteerit")})
+
+(s/defschema OsaamismerkkiKuvake {(s/->OptionalKey :id) s/Str
+                                  (s/->OptionalKey :nimi) s/Str
+                                  (s/->OptionalKey :mime) s/Str
+                                  (s/->OptionalKey :binarydata) s/Str})
 
 (s/defschema Kuvaus (create-kielistetty-schema "kuvaus"))
 (s/defschema Osaamistavoitteet (create-kielistetty-schema "osaamistavoitteet"))

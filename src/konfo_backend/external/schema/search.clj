@@ -75,7 +75,10 @@
    :kielivalinta                                [Kieli]
    :koulutustyyppi                              KoutaKoulutustyyppi
    :koulutukset                                 [(->Koodi KoulutusKoodi)]
-   :kuvaus                                      (s/maybe Kielistetty)
+   :kuvaus                                      (s/if #(or (contains? % :osaamistavoitteet) (contains? % :arviointikriteerit))
+                                                  (s/maybe OsaamismerkkiKuvaus)
+                                                  (s/maybe Kielistetty))
+   (s/->OptionalKey :kuvake)                    (s/maybe OsaamismerkkiKuvake)
    (s/->OptionalKey :osaamistavoitteet)         (s/maybe Kielistetty)
    (s/->OptionalKey :ePerusteId)                (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)                 (s/maybe Url)
