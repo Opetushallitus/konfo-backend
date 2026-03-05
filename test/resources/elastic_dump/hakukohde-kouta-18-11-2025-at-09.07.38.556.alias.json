@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/hakukohde-kouta-12-02-2026-at-07.41.04.809.alias.json
-"{\"hakukohde-kouta-12-02-2026-at-07.41.04.809\":{\"aliases\":{\"hakukohde-kouta\":{\"is_write_index\":false},\"hakukohde-kouta-virkailija\":{\"is_write_index\":true}}}}"
-========
-"{\"hakukohde-kouta-18-11-2025-at-09.07.38.556\":{\"aliases\":{\"hakukohde-kouta\":{\"is_write_index\":false},\"hakukohde-kouta-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/hakukohde-kouta-18-11-2025-at-09.07.38.556.alias.json
