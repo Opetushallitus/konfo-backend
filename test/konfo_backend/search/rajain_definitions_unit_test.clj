@@ -79,6 +79,27 @@
                                  :maksullinen {:maksunmaara [100]}
                                  :lukuvuosimaksu {:maksunmaara [0 10000] :apuraha nil}} "2023-06-08T07:21"))))
 
+  (testing "Should form filter for only lukuvuosimaksu_amm_lk"
+    (is (match? (m/match-with [map? m/equals]
+                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara []}} "2023-06-08T07:21"))))
+
+  (testing "Should form filter for only lukuvuosimaksu_amm_lk with maksunMaara range"
+    (is (match? (m/match-with [map? m/equals]
+                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                {:range {:search_terms.metadata.maksunMaara {:gte 100 :lte 200}}}
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
+
+  (testing "Should form filter for only lukuvuosimaksu_amm_lk with amm koulutustyyppi constraint"
+    (is (match? (m/match-with [map? m/equals]
+                              [{:term {:search_terms.koulutustyypit.keyword "amm"}}
+                               {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                {:range {:search_terms.metadata.maksunMaara {:gte 100 :lte 200}}}
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                (common-filters {:koulutustyyppi ["amm"] :lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
+
   (testing "Should form aggregation for jotpa with pohjakoulutusvaatimus as selected filter"
     (is (match? (m/match-with [map? m/equals]
                               {:filter
@@ -208,7 +229,6 @@
                                                                                                                                    "1.2.246.562.29.00000000000000000002"]}}]}}}}]}}})
                 ((:make-agg koulutustyyppi) {:yhteishaku ["1.2.246.562.29.00000000000000000001"
                                                           "1.2.246.562.29.00000000000000000002"]} default-ctx))))
-
 
   (testing "Should not filter koulutustyypit inside aggregation when it is also the selected filter"
     (is (match? (m/match-with [map? m/equals]

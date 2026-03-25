@@ -75,9 +75,9 @@
                                                              :vapaa-sivistystyo-opistovuosi {:count (rcount :vapaa-sivistystyo-opistovuosi)})}
                                           total-valmentavat-koulutukset-count (assoc :count total-valmentavat-koulutukset-count))
                :vapaa-sivistystyo (cond-> {:alakoodit (array-map
-                                                        :vapaa-sivistystyo-muu {:count (rcount :vapaa-sivistystyo-muu)}
-                                                        :vapaa-sivistystyo-osaamismerkki {:count (rcount :vapaa-sivistystyo-osaamismerkki)})}
-                                          total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
+                                                       :vapaa-sivistystyo-muu {:count (rcount :vapaa-sivistystyo-muu)}
+                                                       :vapaa-sivistystyo-osaamismerkki {:count (rcount :vapaa-sivistystyo-osaamismerkki)})}
+                                    total-vapaa-sivistystyo-count (assoc :count total-vapaa-sivistystyo-count))
                :amm (cond-> {:alakoodit ammatilliset-wo-erityisoepetus-counts}
                       total-ammatilliset-wo-erityisoepetus-count (assoc :count total-ammatilliset-wo-erityisoepetus-count))
                :lk {:count (rcount :lk)}
@@ -120,11 +120,14 @@
   {:maksullisuustyyppi
    {:maksuton {:count (get rajain-counts :maksuton 0)}
     :maksullinen {:count (get rajain-counts :maksullinen 0)}
-    :lukuvuosimaksu {:count (get rajain-counts :lukuvuosimaksu 0)}}
+    :lukuvuosimaksu {:count (get rajain-counts :lukuvuosimaksu 0)}
+    :lukuvuosimaksu_amm_lk {:count (get rajain-counts :lukuvuosimaksu_amm_lk 0)}}
    :maksunmaara {:count (get rajain-counts :maksullinen 0)
                  :max (get rajain-counts :maksullinen-max 0)}
    :lukuvuosimaksunmaara {:count (get rajain-counts :lukuvuosimaksu 0)
                           :max (get rajain-counts :lukuvuosimaksu-max 0)}
+   :lukuvuosimaksunmaara_amm_lk {:count (get rajain-counts :lukuvuosimaksu_amm_lk 0)
+                                 :max (get rajain-counts :lukuvuosimaksu_amm_lk-max 0)}
    :apuraha {:count (get rajain-counts :lukuvuosimaksu 0)}})
 
 (defn- yhteishaku

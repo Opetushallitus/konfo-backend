@@ -360,7 +360,7 @@
             items:
               type: string
           description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
-          example: [maksuton,maksullinen,lukuvuosimaksu]
+          example: [maksuton,maksullinen,lukuvuosimaksu,lukuvuosimaksu_amm_lk]
         - in: query
           name: maksunmaara_min
           style: form
@@ -435,7 +435,19 @@
    :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
                                                    (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
                                                               (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
-
+(def lukuvuosimaksu_amm_lk
+  {:id :lukuvuosimaksu_amm_lk
+   :rajainGroupId :maksullisuus
+   :make-query (fn [constraints] (lukuvuosimaksu_amm_lk-filter-query constraints))
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
+                                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
+                                (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
+                                         (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                                    {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])))})
 (def yhteishaku
   {:id :yhteishaku
    :rajainGroupId :hakutapa
@@ -620,13 +632,13 @@
    opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi
    koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
    amm_erityisopetus tuva_erityisopetus maksuton maksullinen
-   lukuvuosimaksu hakukaynnissa hakualkaapaivissa lukiopainotukset
+   lukuvuosimaksu lukuvuosimaksu_amm_lk hakukaynnissa hakualkaapaivissa lukiopainotukset
    lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
 
 (def common-agg-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakutapa pohjakoulutusvaatimus
    koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen
-   lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
+   lukuvuosimaksu lukuvuosimaksu_amm_lk hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
                           [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
