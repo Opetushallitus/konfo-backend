@@ -25,33 +25,33 @@
     (with-redefs [time/current-date-time #(parse-test-time "2020-01-01T01:01:00")
                   time/current-local-date #(LocalDate/parse "2020-01-01")]
       (is
-        (match?
-          (m/match-with
-            [map? m/equals vector? m/in-any-order]
-            {:nested
-             {:path "search_terms"
-              :query
-              {:bool
-               {:filter
-                [{:nested
-                  {:path "search_terms.hakutiedot.hakuajat"
-                   :query
+       (match?
+        (m/match-with
+         [map? m/equals vector? m/in-any-order]
+         {:nested
+          {:path "search_terms"
+           :query
+           {:bool
+            {:filter
+             [{:nested
+               {:path "search_terms.hakutiedot.hakuajat"
+                :query
+                {:bool
+                 {:filter
+                  [{:range
+                    {:search_terms.hakutiedot.hakuajat.alkaa
+                     {:lte "2020-01-01T01:01"}}}
                    {:bool
-                    {:filter
-                     [{:range
-                       {:search_terms.hakutiedot.hakuajat.alkaa
-                        {:lte "2020-01-01T01:01"}}}
-                      {:bool
-                       {:should
-                        [{:bool
-                          {:must_not
-                           {:exists
-                            {:field
-                             "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                         {:range
-                          {:search_terms.hakutiedot.hakuajat.paattyy
-                           {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}}})
-          (post-filter-query {:hakukaynnissa true}))))))
+                    {:should
+                     [{:bool
+                       {:must_not
+                        {:exists
+                         {:field
+                          "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                      {:range
+                       {:search_terms.hakutiedot.hakuajat.paattyy
+                        {:gt "2020-01-01T01:01"}}}]}}]}}}}]}}}})
+        (post-filter-query {:hakukaynnissa true}))))))
 
 (defn- make-terms-agg [field-name term-props reverse-nested-path]
   {:terms (merge {:field field-name
@@ -114,117 +114,150 @@
     (with-redefs [time/current-date-time #(parse-test-time "2020-01-01T01:01:00")
                   time/current-local-date #(LocalDate/parse "2020-01-01")]
       (is
-        (match?
-          (m/match-with [map? m/equals]
-                        {:hits_aggregation
-                         {:nested {:path "search_terms"}
-                          :aggs
-                          {:koulutuksenkestokuukausina     {:filter
-                                                            {:bool
-                                                             {:filter
-                                                              [{:range
-                                                                {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                                 {:gte 0}}}]}}
-                                                            :aggs {:real_hits {:reverse_nested {}}}}
-                           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                           :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton")
-                           :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen")
-                           :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" maksullinen-term)
-                           :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                           :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" lukuvuosimaksu-term)
-                           :koulutusala                    (default-agg "search_terms.koulutusalat.keyword")
-                           :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid")
-                           :kunta                          (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
-                           :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                                                               nil
-                                                                               {:missing "pohjakoulutusvaatimuskonfo_missing"}
-                                                                               nil)
-                           :maakunta                       (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"} nil)
-                           :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa")
-                           :opetustapa                     (default-agg "search_terms.opetustavat.keyword")
-                           :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword")
-                           :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword")
-                           :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat")
-                           :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:include alkamiskaudet-include} nil)
-                           :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" nil nil nil)
-                           :hakukaynnissa                  {:nested {:path "search_terms.hakutiedot"}
-                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
-                                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                         {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
-                                                                              :aggs   {:real_hits {:reverse_nested {}}}}}}
-                           :hakualkaapaivissa_30           {:nested {:path "search_terms.hakutiedot"}
-                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                :query {:range
-                                                                                                        {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                                         {:gt  "2020-01-01T01:01"
-                                                                                                          :lte "2020-01-31T01:01"}}}}}
-                                                                              :aggs   {:real_hits {:reverse_nested {}}}}}}
-                           :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
-                           :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
-                           :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true)
-                           :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
-          (hakutulos-aggregations {})))))
+       (match?
+        (m/match-with [map? m/equals]
+                      {:hits_aggregation
+                       {:nested {:path "search_terms"}
+                        :aggs
+                        {:koulutuksenkestokuukausina     {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:range
+                                                              {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                               {:gte 0}}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {}}}}
+                         :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton")
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen")
+                         :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" maksullinen-term)
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" lukuvuosimaksu-term)
+                         :lukuvuosimaksu_amm_lk          {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {}}}}
+                         :lukuvuosimaksu_amm_lk-max      {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                         :koulutusala                    (default-agg "search_terms.koulutusalat.keyword")
+                         :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid")
+                         :kunta                          (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
+                         :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                             nil
+                                                                             {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                             nil)
+                         :maakunta                       (default-agg "search_terms.sijainti.keyword" nil {:include "maakunta.*"} nil)
+                         :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa")
+                         :opetustapa                     (default-agg "search_terms.opetustavat.keyword")
+                         :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword")
+                         :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword")
+                         :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat")
+                         :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" nil {:include alkamiskaudet-include} nil)
+                         :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" nil nil nil)
+                         :hakukaynnissa                  {:nested {:path "search_terms.hakutiedot"}
+                                                          :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                              :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                      {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                                       {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
+                                                                            :aggs   {:real_hits {:reverse_nested {}}}}}}
+                         :hakualkaapaivissa_30           {:nested {:path "search_terms.hakutiedot"}
+                                                          :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                              :query {:range
+                                                                                                      {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                       {:gt  "2020-01-01T01:01"
+                                                                                                        :lte "2020-01-31T01:01"}}}}}
+                                                                            :aggs   {:real_hits {:reverse_nested {}}}}}}
+                         :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
+                         :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
+                         :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true)
+                         :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)}}})
+        (hakutulos-aggregations {})))))
 
   (testing
    "aggregations with selected filters"
     (with-redefs [time/current-date-time #(parse-test-time "2020-01-01T01:01:00")
                   time/current-local-date #(LocalDate/parse "2020-01-01")]
       (is
-        (match?
-          (m/match-with [map? m/equals]
-                        {:hits_aggregation
-                         {:nested {:path "search_terms"}
-                          :aggs
-                          {:koulutusala                    (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
-                           :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" jotpa-bool-filter nil nil)
-                           :kunta                          (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "kunta.*"} nil)
-                           :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                                                               jotpa-bool-filter
-                                                                               {:missing "pohjakoulutusvaatimuskonfo_missing"}
-                                                                               nil)
-                           :maakunta                       (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "maakunta.*"} nil)
-                           :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa" jotpa-bool-filter nil nil)
-                           :opetustapa                     (default-agg "search_terms.opetustavat.keyword" jotpa-bool-filter)
-                           :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" jotpa-bool-filter)
-                           :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
-                           :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" jotpa-bool-filter nil nil)
-                           :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter nil nil)
-                           :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:include alkamiskaudet-include} nil)
-                           :hakukaynnissa                  {:filter {:bool {:filter [jotpa-term]}}
-                                                            :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                              :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                  :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
-                                                                                                                                          {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                                           {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
-                                                                                                :aggs   {:real_hits {:reverse_nested {}}}}}}}}
-                           :hakualkaapaivissa_30           {:filter {:bool {:filter [jotpa-term]}}
-                                                            :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                              :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                  :query {:range
-                                                                                                                          {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                                                           {:gt  "2020-01-01T01:01"
-                                                                                                                            :lte "2020-01-31T01:01"}}}}}
-                                                                                                :aggs   {:real_hits {:reverse_nested {}}}}}}}}
-                           :koulutuksenkestokuukausina     {:filter
-                                                            {:bool
-                                                             {:filter
-                                                              [jotpa-term
-                                                               {:range
-                                                                {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                                 {:gte 0}}}]}}
-                                                            :aggs {:real_hits {:reverse_nested {}}}}
-                           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                           :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [jotpa-term] nil)
-                           :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [jotpa-term] nil)
-                           :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                           :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [jotpa-term] nil)
-                           :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
-                           :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
-                           :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
-                           :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)
-                           :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true [jotpa-term] nil)}}})
-          (hakutulos-aggregations {:jotpa true}))))))
+       (match?
+        (m/match-with [map? m/equals]
+                      {:hits_aggregation
+                       {:nested {:path "search_terms"}
+                        :aggs
+                        {:koulutusala                    (default-agg "search_terms.koulutusalat.keyword" jotpa-bool-filter)
+                         :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" jotpa-bool-filter nil nil)
+                         :kunta                          (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "kunta.*"} nil)
+                         :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                             jotpa-bool-filter
+                                                                             {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                             nil)
+                         :maakunta                       (default-agg "search_terms.sijainti.keyword" jotpa-bool-filter {:include "maakunta.*"} nil)
+                         :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa" jotpa-bool-filter nil nil)
+                         :opetustapa                     (default-agg "search_terms.opetustavat.keyword" jotpa-bool-filter)
+                         :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" jotpa-bool-filter)
+                         :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword" jotpa-bool-filter)
+                         :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" jotpa-bool-filter nil nil)
+                         :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" jotpa-bool-filter nil nil)
+                         :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" jotpa-bool-filter {:include alkamiskaudet-include} nil)
+                         :hakukaynnissa                  {:filter {:bool {:filter [jotpa-term]}}
+                                                          :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                                                         {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
+                                                                                              :aggs   {:real_hits {:reverse_nested {}}}}}}}}
+                         :hakualkaapaivissa_30           {:filter {:bool {:filter [jotpa-term]}}
+                                                          :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                :query {:range
+                                                                                                                        {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                         {:gt  "2020-01-01T01:01"
+                                                                                                                          :lte "2020-01-31T01:01"}}}}}
+                                                                                              :aggs   {:real_hits {:reverse_nested {}}}}}}}}
+                         :koulutuksenkestokuukausina     {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [jotpa-term
+                                                             {:range
+                                                              {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                               {:gte 0}}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {}}}}
+                         :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [jotpa-term] nil)
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [jotpa-term] nil)
+                         :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [jotpa-term] nil)
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu_amm_lk          {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [jotpa-term
+                                                             {:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {}}}}
+                         :lukuvuosimaksu_amm_lk-max      {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                         :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
+                         :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
+                         :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)
+                         :pieniosaamiskokonaisuus        (default-bool-term-agg "search_terms.isPieniOsaamiskokonaisuus" true [jotpa-term] nil)}}})
+        (hakutulos-aggregations {:jotpa true}))))))
 
 (def sijainti-term {:term {:search_terms.sijainti.keyword "kunta_564"}})
 (def onkotuleva-term {:term {:search_terms.onkoTuleva false}})
@@ -235,112 +268,148 @@
     (with-redefs [time/current-date-time #(parse-test-time "2020-01-01T01:01:00")
                   time/current-local-date #(LocalDate/parse "2020-01-01")]
       (is
-        (match?
-          (m/match-with [map? m/equals]
-                        {:hits_aggregation
-                         {:nested {:path "search_terms"}
-                          :aggs
-                          {:yhteishaku                          (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :koulutustyyppi                      (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :kunta                               (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
-                           :maakunta                            (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
-                           :pohjakoulutusvaatimus               (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                                                                    onkotuleva-sijainti-bool-filter
-                                                                                    {:missing "pohjakoulutusvaatimuskonfo_missing"}
-                                                                                    "search_terms")
-                           :oppilaitos                          (default-agg "search_terms.oppilaitosOid.keyword" onkotuleva-sijainti-bool-filter
-                                                                             {:min_doc_count 1
-                                                                              :size          10000}
-                                                                             "search_terms")
-                           :hakutapa                            (default-nested-agg "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetustapa                          (default-agg "search_terms.opetustavat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetuskieli                         (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetusaika                          (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :valintatapa                         (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :alkamiskausi                        (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
-                           :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :maksuton                            (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
-                           :maksullinen                         (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
-                           :maksullinen-max                     (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                           :lukuvuosimaksu                      (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
-                           :lukuvuosimaksu-max                  (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
-                           :koulutuksenkestokuukausina          {:filter {:bool {:filter [sijainti-term
-                                                                                          onkotuleva-term
-                                                                                          {:range {:search_terms.metadata.suunniteltuKestoKuukausina {:gte 0}}}]}}
-                                                                 :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}
-                           :koulutuksenkestokuukausina-max      (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                           :hakukaynnissa                       {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                                 :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                                   :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                       :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
-                                                                                                                                               {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                                                {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
-                                                                                                     :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
-                           :hakualkaapaivissa_30                {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                                 :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                                   :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                       :query {:range
-                                                                                                                               {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                                                                {:gt  "2020-01-01T01:01"
-                                                                                                                                 :lte "2020-01-31T01:01"}}}}}
-                                                                                                     :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
-          (jarjestajat-aggregations {:sijainti ["kunta_564"]} false))))))
+       (match?
+        (m/match-with [map? m/equals]
+                      {:hits_aggregation
+                       {:nested {:path "search_terms"}
+                        :aggs
+                        {:yhteishaku                          (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :koulutustyyppi                      (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :kunta                               (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
+                         :maakunta                            (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
+                         :pohjakoulutusvaatimus               (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                                  onkotuleva-sijainti-bool-filter
+                                                                                  {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                                  "search_terms")
+                         :oppilaitos                          (default-agg "search_terms.oppilaitosOid.keyword" onkotuleva-sijainti-bool-filter
+                                                                           {:min_doc_count 1
+                                                                            :size          10000}
+                                                                           "search_terms")
+                         :hakutapa                            (default-nested-agg "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetustapa                          (default-agg "search_terms.opetustavat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetuskieli                         (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetusaika                          (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :valintatapa                         (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :alkamiskausi                        (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
+                         :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :maksuton                            (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen                         (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen-max                     (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
+                         :lukuvuosimaksu                      (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
+                         :lukuvuosimaksu-max                  (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu_amm_lk          {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                                                             {:term {:search_terms.onkoTuleva false}}
+                                                             {:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
+                         :lukuvuosimaksu_amm_lk-max      {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                         :koulutuksenkestokuukausina          {:filter {:bool {:filter [sijainti-term
+                                                                                        onkotuleva-term
+                                                                                        {:range {:search_terms.metadata.suunniteltuKestoKuukausina {:gte 0}}}]}}
+                                                               :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}
+                         :koulutuksenkestokuukausina-max      (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
+                         :hakukaynnissa                       {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                               :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                                 :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                     :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                                             {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                                                              {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
+                                                                                                   :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
+                         :hakualkaapaivissa_30                {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                               :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                                 :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                     :query {:range
+                                                                                                                             {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                              {:gt  "2020-01-01T01:01"
+                                                                                                                               :lte "2020-01-31T01:01"}}}}}
+                                                                                                   :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
+        (jarjestajat-aggregations {:sijainti ["kunta_564"]} false))))))
 
 (deftest tarjoajat-aggregations-test
   (testing "should form aggregations for tarjoajat query with selected filters"
     (with-redefs [time/current-date-time #(parse-test-time "2020-01-01T01:01:00")
                   time/current-local-date #(LocalDate/parse "2020-01-01")]
       (is
-        (match?
-          (m/match-with [map? m/equals]
-                        {:hits_aggregation
-                         {:nested {:path "search_terms"}
-                          :aggs
-                          {:yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :kunta                          (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
-                           :maakunta                       (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
-                           :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
-                                                                               onkotuleva-sijainti-bool-filter
-                                                                               {:missing "pohjakoulutusvaatimuskonfo_missing"}
-                                                                               "search_terms")
-                           :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetustapa                     (default-agg "search_terms.opetustavat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :koulutusala                    (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                           :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
-                           :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
-                           :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                           :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
-                           :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
-                           :koulutuksenkestokuukausina     {:filter
-                                                            {:bool
-                                                             {:filter
-                                                              [sijainti-term
-                                                               onkotuleva-term
-                                                               {:range
-                                                                {:search_terms.metadata.suunniteltuKestoKuukausina
-                                                                 {:gte 0}}}]}}
-                                                            :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
-                           :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                           :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
-                           :hakukaynnissa                  {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                            :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                              :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                  :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
-                                                                                                                                          {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
-                                                                                                                                                           {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
-                                                                                                :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
-                           :hakualkaapaivissa_30           {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
-                                                            :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
-                                                                              :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
-                                                                                                                  :query {:range
-                                                                                                                          {:search_terms.hakutiedot.hakuajat.alkaa
-                                                                                                                           {:gt  "2020-01-01T01:01"
-                                                                                                                            :lte "2020-01-31T01:01"}}}}}
-                                                                                                :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
-          (tarjoajat-aggregations {:sijainti ["kunta_564"]} false))))))
+       (match?
+        (m/match-with [map? m/equals]
+                      {:hits_aggregation
+                       {:nested {:path "search_terms"}
+                        :aggs
+                        {:yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :kunta                          (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "kunta.*"} "search_terms")
+                         :maakunta                       (default-agg "search_terms.sijainti.keyword" {:bool {:filter [onkotuleva-term]}} {:include "maakunta.*"} "search_terms")
+                         :pohjakoulutusvaatimus          (default-nested-agg "search_terms.hakutiedot.pohjakoulutusvaatimukset"
+                                                                             onkotuleva-sijainti-bool-filter
+                                                                             {:missing "pohjakoulutusvaatimuskonfo_missing"}
+                                                                             "search_terms")
+                         :hakutapa                       (default-nested-agg "search_terms.hakutiedot.hakutapa" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetustapa                     (default-agg "search_terms.opetustavat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetusaika                     (default-agg "search_terms.metadata.opetusajat.koodiUri.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :opetuskieli                    (default-agg "search_terms.opetuskielet.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :koulutusala                    (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu_amm_lk          {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:term {:search_terms.sijainti.keyword "kunta_564"}}
+                                                             {:term {:search_terms.onkoTuleva false}}
+                                                             {:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
+                         :lukuvuosimaksu_amm_lk-max      {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [{:bool
+                                                              {:filter
+                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                         :koulutuksenkestokuukausina     {:filter
+                                                          {:bool
+                                                           {:filter
+                                                            [sijainti-term
+                                                             onkotuleva-term
+                                                             {:range
+                                                              {:search_terms.metadata.suunniteltuKestoKuukausina
+                                                               {:gte 0}}}]}}
+                                                          :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
+                         :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
+                         :alkamiskausi                   (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
+                         :hakukaynnissa                  {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                          :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                :query {:bool {:filter [{:range {:search_terms.hakutiedot.hakuajat.alkaa {:lte "2020-01-01T01:01"}}}
+                                                                                                                                        {:bool {:should [{:bool {:must_not {:exists {:field "search_terms.hakutiedot.hakuajat.paattyy"}}}}
+                                                                                                                                                         {:range {:search_terms.hakutiedot.hakuajat.paattyy {:gt "2020-01-01T01:01"}}}]}}]}}}}
+                                                                                              :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}
+                         :hakualkaapaivissa_30           {:filter {:bool {:filter [sijainti-term onkotuleva-term]}}
+                                                          :aggs   {:rajain {:nested {:path "search_terms.hakutiedot"}
+                                                                            :aggs   {:rajain {:filter {:nested {:path  "search_terms.hakutiedot.hakuajat"
+                                                                                                                :query {:range
+                                                                                                                        {:search_terms.hakutiedot.hakuajat.alkaa
+                                                                                                                         {:gt  "2020-01-01T01:01"
+                                                                                                                          :lte "2020-01-31T01:01"}}}}}
+                                                                                              :aggs   {:real_hits {:reverse_nested {:path "search_terms"}}}}}}}}}}})
+        (tarjoajat-aggregations {:sijainti ["kunta_564"]} false))))))

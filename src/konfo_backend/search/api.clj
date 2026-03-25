@@ -493,42 +493,47 @@
     :else []))
 
 (defn- create-constraints [rajain-params]
-  {:koulutustyyppi        (->> (:koulutustyyppi rajain-params) (comma-separated-string->vec))
-   :luokittelutermi       (comma-separated-string->vec (:luokittelutermi rajain-params))
-   :sijainti              (comma-separated-string->vec (:sijainti rajain-params))
-   :opetuskieli           (comma-separated-string->vec (:opetuskieli rajain-params))
-   :koulutusala           (comma-separated-string->vec (:koulutusala rajain-params))
-   :opetustapa            (comma-separated-string->vec (:opetustapa rajain-params))
-   :opetusaika            (comma-separated-string->vec (:opetusaika rajain-params))
-   :valintatapa           (comma-separated-string->vec (:valintatapa rajain-params))
-   :hakukaynnissa         (:hakukaynnissa rajain-params)
-   :hakutapa              (comma-separated-string->vec (:hakutapa rajain-params))
-   :jotpa                 (:jotpa rajain-params)
-   :tyovoimakoulutus      (:tyovoimakoulutus rajain-params)
-   :taydennyskoulutus     (:taydennyskoulutus rajain-params)
-   :pieniosaamiskokonaisuus (:pieniosaamiskokonaisuus rajain-params)
-   :yhteishaku            (comma-separated-string->vec (:yhteishaku rajain-params))
-   :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus rajain-params))
-   :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset rajain-params))
-   :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
-   :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
-   :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))
-   :alkamiskausi          (comma-separated-string->vec (:alkamiskausi rajain-params))
-   :koulutuksenkestokuukausina (parse-number-range (:koulutuksenkestokuukausina_min rajain-params)
-                                                   (:koulutuksenkestokuukausina_max rajain-params))
-   :maksuton (when (string/includes? (or (:maksullisuustyyppi rajain-params) "") "maksuton")
-               ["maksuton"]) ; Tässä arvolla ei ole väliä kunhan ei ole nil
-   :maksullinen (when (string/includes? (or (:maksullisuustyyppi rajain-params) "") "maksullinen")
-                  {:maksullisuustyyppi "maksullinen"
-                   :maksunmaara (parse-number-range (:maksunmaara_min rajain-params) (:maksunmaara_max rajain-params))})
-   :lukuvuosimaksu (when (string/includes? (or (:maksullisuustyyppi rajain-params) "") "lukuvuosimaksu")
-                     {:maksullisuustyyppi "lukuvuosimaksu"
-                      :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
-                                                       (:lukuvuosimaksunmaara_max rajain-params))
-                      :apuraha (if (:apuraha rajain-params) true nil)})
-   :hakualkaapaivissa (:hakualkaapaivissa rajain-params)
-   :amm_erityisopetus (:amm_erityisopetus rajain-params)
-   :tuva_erityisopetus (:tuva_erityisopetus rajain-params)})
+  (let [maksullisuustyypit (set (string/split (or (:maksullisuustyyppi rajain-params) "") #","))]
+    {:koulutustyyppi        (->> (:koulutustyyppi rajain-params) (comma-separated-string->vec))
+     :luokittelutermi       (comma-separated-string->vec (:luokittelutermi rajain-params))
+     :sijainti              (comma-separated-string->vec (:sijainti rajain-params))
+     :opetuskieli           (comma-separated-string->vec (:opetuskieli rajain-params))
+     :koulutusala           (comma-separated-string->vec (:koulutusala rajain-params))
+     :opetustapa            (comma-separated-string->vec (:opetustapa rajain-params))
+     :opetusaika            (comma-separated-string->vec (:opetusaika rajain-params))
+     :valintatapa           (comma-separated-string->vec (:valintatapa rajain-params))
+     :hakukaynnissa         (:hakukaynnissa rajain-params)
+     :hakutapa              (comma-separated-string->vec (:hakutapa rajain-params))
+     :jotpa                 (:jotpa rajain-params)
+     :tyovoimakoulutus      (:tyovoimakoulutus rajain-params)
+     :taydennyskoulutus     (:taydennyskoulutus rajain-params)
+     :pieniosaamiskokonaisuus (:pieniosaamiskokonaisuus rajain-params)
+     :yhteishaku            (comma-separated-string->vec (:yhteishaku rajain-params))
+     :pohjakoulutusvaatimus (comma-separated-string->vec (:pohjakoulutusvaatimus rajain-params))
+     :lukiopainotukset      (comma-separated-string->vec (:lukiopainotukset rajain-params))
+     :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
+     :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
+     :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))
+     :alkamiskausi          (comma-separated-string->vec (:alkamiskausi rajain-params))
+     :koulutuksenkestokuukausina (parse-number-range (:koulutuksenkestokuukausina_min rajain-params)
+                                                     (:koulutuksenkestokuukausina_max rajain-params))
+     :maksuton (when (contains? maksullisuustyypit "maksuton")
+                 ["maksuton"]) ; Tässä arvolla ei ole väliä kunhan ei ole nil
+     :maksullinen (when (contains? maksullisuustyypit "maksullinen")
+                    {:maksullisuustyyppi "maksullinen"
+                     :maksunmaara (parse-number-range (:maksunmaara_min rajain-params) (:maksunmaara_max rajain-params))})
+     :lukuvuosimaksu (when (contains? maksullisuustyypit "lukuvuosimaksu")
+                       {:maksullisuustyyppi "lukuvuosimaksu"
+                        :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
+                                                         (:lukuvuosimaksunmaara_max rajain-params))
+                        :apuraha (if (:apuraha rajain-params) true nil)})
+     :lukuvuosimaksu_amm_lk (when (contains? maksullisuustyypit "lukuvuosimaksu_amm_lk")
+                              {:maksullisuustyyppi "lukuvuosimaksu_amm_lk"
+                               :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_amm_lk_min rajain-params)
+                                                                (:lukuvuosimaksunmaara_amm_lk_max rajain-params))})
+     :hakualkaapaivissa (:hakualkaapaivissa rajain-params)
+     :amm_erityisopetus (:amm_erityisopetus rajain-params)
+     :tuva_erityisopetus (:tuva_erityisopetus rajain-params)}))
 
 (defn ->search-with-validated-params
   [do-search keyword lng page size sort order rajain-params]
@@ -623,6 +628,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params
@@ -656,6 +663,8 @@
                                      :maksunmaara_max maksunmaara_max
                                      :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                      :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                     :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                     :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
                                      :apuraha apuraha
                                      :hakualkaapaivissa hakualkaapaivissa})))
 
