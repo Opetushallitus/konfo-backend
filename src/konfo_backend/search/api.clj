@@ -777,6 +777,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params oppilaitos-search/search
@@ -809,6 +811,8 @@
                                                                     :maksunmaara_max maksunmaara_max
                                                                     :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                                                     :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                                                    :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                                                    :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
                                                                     :apuraha apuraha
                                                                     :hakualkaapaivissa hakualkaapaivissa})))
 
@@ -872,6 +876,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-validated-params
@@ -908,6 +914,8 @@
                                                     :maksunmaara_max maksunmaara_max
                                                     :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                                     :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                                    :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                                    :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
                                                     :apuraha apuraha
                                                     :hakualkaapaivissa hakualkaapaivissa})]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
