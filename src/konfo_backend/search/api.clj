@@ -697,6 +697,8 @@
                      {maksunmaara_max       :- Number nil}
                      {lukuvuosimaksunmaara_min :- Number nil}
                      {lukuvuosimaksunmaara_max :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
@@ -733,6 +735,8 @@
                                      :maksunmaara_max maksunmaara_max
                                      :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
                                      :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                     :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                     :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
                                      :apuraha apuraha
                                      :lukiopainotukset lukiopainotukset
                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
