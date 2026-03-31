@@ -5,7 +5,7 @@
                                                     constraints?]]
    [konfo-backend.search.rajain-tools :refer [->terms-query]]
    [konfo-backend.search.tools :refer [make-search-term-query]]
-   [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+   [konfo-backend.util.time :refer [current-time-as-kouta-format]]))
 
 (defn external-query
   [keyword constraints user-lng suffixes]

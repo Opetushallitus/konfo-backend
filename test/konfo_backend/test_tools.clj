@@ -6,14 +6,12 @@
    [clj-elasticsearch.elastic-utils :as e-utils]
    [ring.mock.request :as mock]
    [ring.util.codec :as codec]
-   [konfo-backend.core :refer :all]
+   [konfo-backend.core :refer [app]]
    [cheshire.core :refer [parse-string, generate-string]]
    [clojure.walk :refer [keywordize-keys]]
-   [clj-time.coerce :as coerce]
-   [clj-time.core :as time]
-   [clj-time.format :as format]
    [clojure.string :as string])
-  (:import (org.joda.time DateTimeUtils)))
+  (:import (java.time Instant ZoneId ZonedDateTime)
+           (java.time.format DateTimeFormatter)))
 
 (defn ->keywordized-response-body
   [response]
@@ -74,7 +72,7 @@
 
 (defn now-in-millis
   []
-  (coerce/to-long (time/now)))
+  (.toEpochMilli (Instant/now)))
 
 (defn elastic-empty? []
   (let [url (e-utils/elastic-url "_all" "_count")
@@ -93,12 +91,6 @@
   (prepare-elastic-test-data)
   (test))
 
-(defonce formatter (format/with-zone (format/formatter "yyyy-MM-dd'T'HH:mm:ss") (time/time-zone-for-id "Europe/Helsinki")))
+(defonce formatter (-> (DateTimeFormatter/ofPattern "yyyy-MM-dd'T'HH:mm:ss") (.withZone (ZoneId/of "Europe/Helsinki"))))
 
-; Muunnetaan lokaali timestamp UTC-millisekunneiksi, jotta voidaan väärentää järjestelmän kello olemaan
-; UTC-ajassa antamalla lokaali timestamp
-(defn local-timestamp-to-utc-millis [timestamp]
-  (coerce/to-long (time/to-time-zone (format/parse formatter timestamp) time/utc)))
-
-(defn set-fixed-time [timestamp]
-  (DateTimeUtils/setCurrentMillisFixed (local-timestamp-to-utc-millis timestamp)))
+(defn parse-test-time [datetime-string] (ZonedDateTime/parse datetime-string formatter))

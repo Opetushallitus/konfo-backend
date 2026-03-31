@@ -2,13 +2,9 @@
   (:require [cheshire.core :as cheshire]
             [clojure.tools.logging :as log]
             [clojure.string :as str]
-            [clj-time.format :as format]
-            [clj-time.coerce :as coerce]
-            [clj-time.core :as time]))
+            [konfo-backend.util.time :as time]))
 
 (defonce pretty-logging true)
-
-(defonce timezone-fi (time/time-zone-for-id "Europe/Helsinki"))
 
 (defn log-pretty
   [json]
@@ -26,39 +22,19 @@
 
 (defn allowed-to-view [entity draft?] (or (draft-view-allowed entity draft?) (julkaistu? entity)))
 
-(defonce kouta-date-time-formatter (format/with-zone (format/formatter "yyyy-MM-dd'T'HH:mm") timezone-fi))
-
-(defn ->kouta-date-time-string [date-time] (format/unparse kouta-date-time-formatter date-time))
-
-(defn kouta-date-time-string->date-time [string] (format/parse kouta-date-time-formatter string))
-
-(defn long->date-time [long] (coerce/from-long long))
-
-(defn current-time-as-kouta-format
-  []
-  (->kouta-date-time-string (time/now)))
-
-(defn within?
-  [gte time lt]
-  (if (nil? lt) (time/after? time gte) (time/within? (time/interval gte lt) time)))
-
 (defn hakuaika-kaynnissa?
   [hakuaika]
   (let [gte (when (not (nil? (:alkaa hakuaika)))
-              (kouta-date-time-string->date-time (:alkaa hakuaika)))
+              (time/kouta-date-time-string->date-time (:alkaa hakuaika)))
         lt (when (not (nil? (:paattyy hakuaika)))
-             (kouta-date-time-string->date-time (:paattyy hakuaika)))]
-    (if (nil? gte)
-      false
-      (within? gte (time/now) lt))))
+             (time/kouta-date-time-string->date-time (:paattyy hakuaika)))]
+    (time/currently-in-between? gte lt)))
 
 (defn hakuaika-menneisyydessa?
   [hakuaika]
   (let [lt (when (not (nil? (:paattyy hakuaika)))
-             (kouta-date-time-string->date-time (:paattyy hakuaika)))]
-    (if (nil? lt)
-      false
-      (time/after? (time/now) lt))))
+             (time/kouta-date-time-string->date-time (:paattyy hakuaika)))]
+    (time/currently-after? lt)))
 
 (defn get-hakukohde-from-hakutiedot [hakutiedot hakukohdeOid]
   (->> hakutiedot
@@ -88,8 +64,6 @@
             ; search-indeksissä hakutiedoilla ei ole hakukohteita, vaan hakuajat on hakutiedon juuressa
                      (some (fn [hakuaika] (hakuaika-kaynnissa? hakuaika)) (:hakuajat hakutieto)))
                    hakutiedot))))
-
-(defn now-in-millis [] (coerce/to-long (time/now)))
 
 (defn koodi-uri-no-version [koodi-uri] (str/replace koodi-uri #"#\d*$" ""))
 
@@ -133,4 +107,3 @@
 
 (defn remove-nils [record]
   (apply merge (for [[k v] record :when (not (nil? v))] {k v})))
-

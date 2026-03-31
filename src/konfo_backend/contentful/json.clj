@@ -1,15 +1,10 @@
 (ns konfo-backend.contentful.json
-  (:require
-   [konfo-backend.config :refer [config]]
-   [clj-time.core :as t]
-   [clojure.tools.logging :as log]
-   [clj-time.format :as f])
+  (:require [konfo-backend.util.time :as time])
   (:import (com.contentful.java.cda CDAEntry CDAAsset)
            (com.google.gson Gson GsonBuilder JsonObject JsonArray JsonSerializer)
            (java.util List)))
 
 (defn write-reference [object entry]
-
   (doto object
     (.addProperty "id" (str (.getAttribute entry "id")))
     (#(when-let [name (.getField entry "name")]
@@ -21,39 +16,24 @@
                 (.get "sys")
                 (.get "id"))))))
 
+(defn- localized-map-to-json [{:keys [^String fi ^String sv ^String en]}]
+  (doto (JsonObject.)
+    (.addProperty "fi" fi)
+    (.addProperty "sv" sv)
+    (.addProperty "en" en)))
 
-(defn new-formatter [fmt-str]
-  (f/formatter fmt-str (t/time-zone-for-id "Europe/Helsinki")))
+(defn- reformat-date-as-localized-json [date-str]
+  (some-> (time/format-localized-dates date-str)
+          (localized-map-to-json)))
 
-(def finnish-format (new-formatter "d.M.yyyy 'klo' HH:mm"))
-(def swedish-format (new-formatter "d.M.yyyy 'kl.' HH:mm"))
-(def english-format (new-formatter "MMM. d, yyyy 'at' hh:mm a z"))
-
-(defn- parse-date-time
-  [s]
-  (when s
-    (let [tz (t/time-zone-for-id "Europe/Helsinki")
-          fmt (f/formatter "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")]
-      (try
-        (t/to-time-zone (f/parse fmt s) tz)
-        (catch Exception e
-          (log/error (str "Unable to parse" s) e))))))
-
-(defn write-timestamps [object entry]
+(defn- write-timestamps [object entry]
   (let [created-at (str (.getAttribute entry "createdAt"))
-        updated-at (str (.getAttribute entry "updatedAt"))
-        formatoi   (fn [parsed]
-                     (doto (JsonObject.)
-                       (.addProperty "fi" (str (f/unparse finnish-format parsed)))
-                       (.addProperty "sv" (str (f/unparse swedish-format parsed)))
-                       (.addProperty "en" (str (f/unparse english-format parsed)))))]
+        updated-at (str (.getAttribute entry "updatedAt"))]
   (doto object
     (.addProperty "created" created-at)
     (.addProperty "updated" updated-at)
-    (.add "formatoituCreated" (some-> (parse-date-time created-at)
-                                      (formatoi)))
-    (.add "formatoituUpdated" (some-> (parse-date-time updated-at)
-                                      (formatoi))))))
+    (.add "formatoituCreated" (reformat-date-as-localized-json created-at))
+    (.add "formatoituUpdated" (reformat-date-as-localized-json updated-at)))))
 
 (defn write-array [object field entry]
   (let [array (doto (JsonArray.)

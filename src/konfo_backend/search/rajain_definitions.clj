@@ -1,8 +1,9 @@
 (ns konfo-backend.search.rajain-definitions
-  (:require [clj-time.core :as time]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [konfo-backend.search.rajain-tools :refer :all]
-            [konfo-backend.tools :refer [current-time-as-kouta-format]]))
+            [konfo-backend.util.time :refer [current-time-as-kouta-format
+                                             current-year
+                                             is-kevat?]]))
 
 ;; Esitellään myöhemmin alustettu muuttuja ristikkäisten riippuvuuksien vuoksi. Tätä käytetään heti
 ;; alla olevissa funktioissa, vaikka varsinaiset sisällöt (rajain-määritykset) asetetaan vasta 
@@ -588,14 +589,9 @@
           required: false
           description: Palautetaan koulutukset, joiden hakuaika alkaa x vuorokauden sisällä."})
 
-(defn kevat-date? [date]
-  (< (time/month date) 8))
-
 (defn get-alkamiskausi-terms-include []
-  (let [current-date (time/today)
-        current-year (time/year current-date)
-        kaudet (take 5 (cycle (if (kevat-date? current-date) ["kevat" "syksy"] ["syksy" "kevat"])))
-        vuodet (map (partial + current-year) (if (kevat-date? current-date) [0 0 1 1 2] [0 1 1 2 2]))]
+  (let [kaudet (take 5 (cycle (if (is-kevat?) ["kevat" "syksy"] ["syksy" "kevat"])))
+        vuodet (map (partial + (current-year)) (if (is-kevat?) [0 0 1 1 2] [0 1 1 2 2]))]
     (->> (map vector vuodet kaudet)
          (map (fn [[vuosi kausi]] (str vuosi "-" kausi)))
          (concat ["henkilokohtainen"]))))
