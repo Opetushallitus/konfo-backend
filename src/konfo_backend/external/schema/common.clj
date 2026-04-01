@@ -37,14 +37,23 @@
   ([] (create-kielistetty-schema nil)))
 
 (s/defschema Kielistetty (create-kielistetty-schema))
+(s/defschema OsaamismerkkiKuvaus {(s/->OptionalKey :osaamistavoitteet) (create-kielistetty-schema "osaamistavoitteet")
+                                  (s/->OptionalKey :arviointikriteerit) (create-kielistetty-schema "arviointikriteerit")})
+
+(s/defschema OsaamismerkkiKuvake {(s/->OptionalKey :id) s/Str
+                                  (s/->OptionalKey :nimi) s/Str
+                                  (s/->OptionalKey :mime) s/Str
+                                  (s/->OptionalKey :binarydata) s/Str})
 
 (s/defschema Kuvaus (create-kielistetty-schema "kuvaus"))
+(s/defschema Osaamistavoitteet (create-kielistetty-schema "osaamistavoitteet"))
 (s/defschema Nimi (create-kielistetty-schema "nimi"))
 
 (s/defschema Teksti (create-kielistetty-schema "teksti"))
 (s/defschema Linkki (create-kielistetty-schema "linkki"))
 
 (def kuvaus-schema (schema-to-swagger-yaml Kuvaus))
+(def osaamistavoitteet-schema (schema-to-swagger-yaml Osaamistavoitteet))
 
 (def nimi-schema (schema-to-swagger-yaml Nimi))
 
@@ -83,7 +92,6 @@
                            "vapaa-sivistystyo-osaamismerkki"
                            "muu"])
 
-
 (s/defschema KonfoKoulutustyyppi (st/schema (apply s/enum konfo-koulutustyypit) {:description "Koulutuksen tyyppi"}))
 
 (def konfo-koulutustyyppi-schema (schema-to-swagger-yaml KonfoKoulutustyyppi))
@@ -120,7 +128,6 @@
    |          type: String
    |          example: 1.2.246.562.10.00000000007
    |          description: Organisaation yksilöivä oid")
-
 
 (def koulutuslisatieto-schema
   "|    KoulutusLisatieto:
@@ -260,8 +267,7 @@
 
 (def KielistettyPostinumero
   {:koodiUri (s/maybe PostinumeroKoodi)
-   :nimi     (s/maybe s/Str)}
-  )
+   :nimi     (s/maybe s/Str)})
 
 (def Postinumero
   {(s/->OptionalKey :fi) (s/maybe KielistettyPostinumero)
@@ -284,22 +290,54 @@
 
 (def Tutkintonimikkeet
   [(s/conditional
-     #(boolean (re-find TutkintonimikkeetKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikkeetKoodi))
-     #(boolean (re-find TutkintonimikeKkKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikeKkKoodi)))])
+    #(boolean (re-find TutkintonimikkeetKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikkeetKoodi))
+    #(boolean (re-find TutkintonimikeKkKoodi (:koodiUri %))) (s/maybe (->Koodi TutkintonimikeKkKoodi)))])
 
-(def TutkinnonOsa {
-   (s/->OptionalKey :eperuste)                (s/maybe s/Int)
-   (s/->OptionalKey :koulutus)                (s/maybe (->Koodi KoulutusKoodi))
-   (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
-   (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Num)
-   (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
-   (s/->OptionalKey :tutkinnonOsat)           (s/maybe (->Koodi TutkinnonOsaKoodi))})
+(def TutkinnonOsaEperuste {(s/->OptionalKey :eperuste)                (s/maybe s/Int)
+                           (s/->OptionalKey :koulutus)                (s/maybe (->Koodi KoulutusKoodi))
+                           (s/->OptionalKey :tutkinnonosaId)          (s/maybe s/Num)
+                           (s/->OptionalKey :tutkinnonosaViite)       (s/maybe s/Num)
+                           (s/->OptionalKey :opintojenLaajuus)        (s/maybe (->Koodi OpintojenLaajuusKoodi))
+                           (s/->OptionalKey :opintojenLaajuusNumero)  (s/maybe s/Num)
+                           (s/->OptionalKey :opintojenLaajuusyksikko) (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+                           (s/->OptionalKey :tutkinnonOsat)           (s/maybe (->Koodi TutkinnonOsaKoodi))})
+
+(def tutkinnon-osa-eperuste-schema
+  "|    TutkinnonOsaEperuste:
+   |      type: object
+   |      properties:
+   |        eperuste:
+   |          type: number
+   |          $ref: '#/components/schemas/Eperuste'
+   |        koulutus:
+   |          type: object
+   |          $ref: '#/components/schemas/KoulutusKoodi'
+   |        tutkinnonosaId:
+   |          type: integer
+   |          description: Tutkinnon osan id
+   |          example: 10
+   |        tutkinnonosaViite:
+   |          type: integer
+   |          description: Tutkinnon osan viite
+   |          example: 10
+   |        opintojenLaajuus:
+   |          $ref: '#/components/schemas/OpintojenLaajuus'
+   |        opintojenLaajuusNumero:
+   |          type: integer
+   |          description: Opintojen laajuus numeroarvona
+   |          example: 10
+   |        opintojenLaajuusyksikko:
+   |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+   |        tutkinnonOsat:
+   |          type: object
+   |          $ref: '#/components/schemas/TutkinnonOsa'")
 
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
        konfo-koulutustyyppi-schema "\n"
        kieli-schema "\n"
        kuvaus-schema "\n"
+       osaamistavoitteet-schema "\n"
        nimi-schema "\n"
        teksti-schema "\n"
        linkki-schema "\n"
@@ -308,4 +346,5 @@
        yhteyshenkilo-schema "\n"
        ajanjakso-schema "\n"
        koulutuksenalkamiskausi-schema "\n"
-       osoite-schema))
+       osoite-schema "\n"
+       tutkinnon-osa-eperuste-schema))

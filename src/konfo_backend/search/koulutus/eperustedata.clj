@@ -7,10 +7,6 @@
             [konfo-backend.index.osaamisalakuvaus :as osaamisala]
             [konfo-backend.constants :refer [language-keys]]))
 
-(defn- select-amm-kuvaus
-  [eperuste]
-  (or (:suorittaneenOsaaminen eperuste) (:tyotehtavatJoissaVoiToimia eperuste) (:kuvaus eperuste)))
-
 (defn- trans [obj lang] (get-in obj [lang] ""))
 
 (defn- translate-vaatimukset
@@ -54,9 +50,10 @@
         (let [kohde (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohde])
               vaatimukset (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :vaatimukset] [])
               kohdealueet (get-in tutkinnon-osa [:ammattitaitovaatimukset2019 :kohdealueet] [])]
-          {:fi (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :fi)
-           :sv (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :sv)
-           :en (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :en)})
+          (into {} (filter val ;; poistetaan käännökset joiden arvona on nil 
+                           {:fi (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :fi)
+                            :sv (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :sv)
+                            :en (create-ammattitaitovaatimukset-translation kohde vaatimukset kohdealueet :en)})))
         ;Eperusteissa kaikilla tutkinnon osilla ei ole rakenteista ammattitaitovaatimukset2019-kenttää, 
         ;joten yritetään siivota html:ää sisältävä ammattitaitovaatimukset-kenttä tekstiksi.
         (:ammattitaitovaatimukset tutkinnon-osa)
@@ -74,8 +71,8 @@
   (->> hits
        :hits
        (filter ammatillinen?)
-       (filter #(some? (:eperuste %)))
-       (map :eperuste)
+       (filter #(some? (:ePerusteId %)))
+       (map :ePerusteId)
        (set)
        (eperuste/get-kuvaukset-by-eperuste-ids)))
 
@@ -84,8 +81,8 @@
   (->> hits
        :hits
        (filter amm-osaamisala?)
-       (filter #(some? (:eperuste %)))
-       (map :eperuste)
+       (filter #(some? (:ePerusteId %)))
+       (map :ePerusteId)
        (set)
        (osaamisala/get-kuvaukset-by-eperuste-ids)))
 
@@ -110,14 +107,14 @@
        (osaamismerkki/get-kuvaukset-by-osaamismerkki-koodiuris)))
 
 (defn- find-amm-kuvaus
-  [kuvaukset hit]
-  (when-let [kuvaus (first (filter #(= (:id %) (:eperuste hit)) kuvaukset))]
-    (select-amm-kuvaus kuvaus)))
+  [kuvaukset hit kuvaus-key]
+  (when-let [kuvaus (first (filter #(= (:id %) (:ePerusteId hit)) kuvaukset))]
+    (kuvaus-key kuvaus)))
 
 (defn- find-amm-osaamisala-kuvaus
   [kuvaukset hit]
   (some->> kuvaukset
-           (filter #(= (str (:eperuste-id %)) (str (:eperuste hit))))
+           (filter #(= (str (:eperuste-id %)) (str (:ePerusteId hit))))
            (filter #(= (:osaamisalakoodiUri %) (get-in hit [:osaamisala :koodiUri])))
            (first)
            :kuvaus))
@@ -134,13 +131,12 @@
                    (select-amm-tutkinnon-osa-kuvaus)))
         tutkinnon-osat))
 
-
 ;Toimii koulutukselle, jolla on rikastettu tai rikastamaton koulutus-koodiurit
 (defn get-first-koodi-uri
   [koulutus]
   (let [koulutukset (map :koodiUri (:koulutukset koulutus))
         koulutus-koodi-urit (if (seq koulutukset) koulutukset (:koulutuksetKoodiUri koulutus))]
-      (first koulutus-koodi-urit))) ;Ainoastaan korkeakoulutuksilla voi olla useampi kuin yksi koulutusKoodi
+    (first koulutus-koodi-urit))) ;Ainoastaan korkeakoulutuksilla voi olla useampi kuin yksi koulutusKoodi
 
 ;esim. pelastusalan koulutuksille syötetään tiedot käsin, koska ei ole ePerustetta
 (defonce koulutus-koodit-without-eperuste ["koulutus_381501" "koulutus_381502" "koulutus_381503" "koulutus_381521"])
@@ -158,14 +154,18 @@
         amm-tutkinnon-osa-kuvaukset (get-amm-tutkinnon-osa-kuvaukset result)
         osaamismerkit (get-osaamismerkit-data result)]
     (->> (for [hit (:hits result)]
-           (cond (amm-koulutus-with-eperuste? hit) (assoc hit :kuvaus (find-amm-kuvaus amm-kuvaukset hit))
+           (cond (amm-koulutus-with-eperuste? hit) (-> hit
+                                                       (assoc :kuvaus
+                                                              (find-amm-kuvaus amm-kuvaukset hit :tyotehtavatJoissaVoiToimia))
+                                                       (assoc :osaamistavoitteet
+                                                              (find-amm-kuvaus amm-kuvaukset hit :suorittaneenOsaaminen)))
                  (amm-osaamisala? hit) (assoc hit
                                               :kuvaus (find-amm-osaamisala-kuvaus amm-osaamisala-kuvaukset hit))
                  (amm-tutkinnon-osa? hit) (assoc hit
                                                  :kuvaus
                                                  (find-amm-tutkinnon-osa-kuvaus
-                                                   amm-tutkinnon-osa-kuvaukset
-                                                   (:tutkinnonOsat hit)))
+                                                  amm-tutkinnon-osa-kuvaukset
+                                                  (:tutkinnonOsat hit)))
                  (osaamismerkki? hit) (let [osaamismerkki-id (:osaamismerkki hit)
                                             osaamismerkki (if (nil? osaamismerkki-id)
                                                             {}

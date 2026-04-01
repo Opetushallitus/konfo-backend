@@ -56,9 +56,9 @@
      size
      #(-> % parse-external with-eperustedata)
      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta",
-               "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
+               "kuvaus", "osaamistavoitteet", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
                "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
-               "koulutustyyppi", "luokittelutermit"]
+               "koulutustyyppi", "luokittelutermit", "osaamisala"]
      :sort (sorts sort order lng)
      :query query)))
 
@@ -71,7 +71,7 @@
      size
      #(-> % parse-external-koulutukset with-eperustedata)
      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta",
-               "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
+               "kuvaus", "osaamistavoitteet", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
                "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
                "koulutustyyppi", "luokittelutermit", "tutkinnonOsat", "osaamisala"]
      :sort (sorts sort order lng)

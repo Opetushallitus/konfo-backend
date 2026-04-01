@@ -62,7 +62,7 @@
                                       :aikuisten-perusopetus {:count 5}
                                       :vaativan-tuen-koulutukset {:alakoodit {:koulutustyyppi_4 {:count 1}
                                                                               :tuva-erityisopetus {:count 1}}
-                                                                  :count 2} }
+                                                                  :count 2}}
                      :opetuskieli {:oppilaitoksenopetuskieli_01 {:count 1}
                                    :oppilaitoksenopetuskieli_02 {:count 7}}
                      :maakunta {:maakunta_01 {:count 40}
@@ -131,7 +131,7 @@
         (is (= 1 (count (:hits r))))
         (is (match? {:koulutustyyppi
                      {:amm {:count 25
-                            :alakoodit {:muu-amm-tutkinto {:count 22 }
+                            :alakoodit {:muu-amm-tutkinto {:count 22}
                                         :amm-osaamisala {:count 1}
                                         :amm-tutkinnon-osa {:count 1}
                                         :amm-muu {:count 1}}}}}
@@ -159,7 +159,7 @@
 
     (testing "koulutustyyppi vaativan erityisen tuen koulutukset"
       (let [r (search :koulutustyyppi "koulutustyyppi_4,tuva-erityisopetus,vaativan-tuen-koulutukset" :sort "name" :order "asc")
-            hits (:hits r) ]
+            hits (:hits r)]
         (is (= 2 (count hits)))
         (is (= "1.2.246.562.13.000049" (:oid (first hits))))
         (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
@@ -222,7 +222,7 @@
         (is (match? {:opintojenLaajuusyksikko {:koodiUri   "opintojenlaajuusyksikko_6",
                                                :nimi  {:fi "opintojenlaajuusyksikko_6 nimi fi",
                                                        :sv "opintojenlaajuusyksikko_6 nimi sv"}},
-                     :kuvaus {:fi "osaaminen fi" :sv "osaaminen sv"},
+                     :kuvaus {:fi "työtehtävät fi" :sv "työtehtävät sv"},
                      :teemakuva "https://testi.fi/koulutus-teemakuva/oid/kuva.jpg",
                      :nimi {:fi "Hevosalan koulutus fi",
                             :sv "Hevosalan koulutus sv"},
@@ -246,7 +246,7 @@
                      :opintojenLaajuus {:koodiUri  "opintojenlaajuus_150",
                                         :nimi {:fi "opintojenlaajuus_150 nimi fi",
                                                :sv "opintojenlaajuus_150 nimi sv"}},
-                     :eperuste 1234,
+                     :ePerusteId 1234,
                      :koulutustyyppi "amm"} (dissoc (first (:hits r)) :_score)))))))
 
 (def aakkostus-koulutus-oid1 "1.2.246.562.13.000020")

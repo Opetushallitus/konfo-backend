@@ -475,6 +475,25 @@
    "$KOODISTO-BASE-URL"
    koodisto-base-url))
 
+(def opinnonTyyppi-schema
+  (str/replace
+   "|    OpinnonTyyppi:
+    |      type: object
+    |      properties:
+    |        koodiUri:
+    |          type: string
+    |          example: opinnontyyppi_2
+    |          description: Opinnon tyyppi. Viittaa [koodistoon]($KOODISTO-BASE-URL/koodisto-service/ui/koodisto/view/opinnontyyppi/1)
+    |        nimi:
+    |          type: object
+    |          description: Opinnon tyyppi eri kielillä.
+    |          example: {\"fi\": \"Perusopinnot\"}
+    |          $ref: '#/components/schemas/Teksti'"
+   "$KOODISTO-BASE-URL"
+   koodisto-base-url))
+
+(def OpinnonTyyppiKoodi #"^opintojenlaajuusyksikko_")
+
 (def TutkinnonOsaKoodi #"^tutkinnonosat_")
 
 (def LukioDiplomiKoodi s/Str)
@@ -507,5 +526,6 @@
    valintatapa-schema "\n"
    osaamistausta-schema "\n"
    osaamisala-schema "\n"
+   opinnonTyyppi-schema "\n"
    tutkinnonosa-schema))
 

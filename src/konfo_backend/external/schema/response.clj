@@ -1,17 +1,17 @@
 (ns konfo-backend.external.schema.response
   (:require
-    [schema.core :as s]
-    [schema-tools.core :as st]
-    [konfo-backend.external.schema.koulutus :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.toteutus :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.hakukohde :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.haku :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.liite :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.valintaperustekuvaus :refer :all :exclude [schemas]]
-    [konfo-backend.external.schema.search :refer :all :exclude [schemas]]))
+   [schema.core :as s]
+   [schema-tools.core :as st]
+   [konfo-backend.external.schema.koulutus :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.toteutus :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.common :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.koodi :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.valintakoe :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.hakukohde :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.haku :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.liite :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.valintaperustekuvaus :refer :all :exclude [schemas]]
+   [konfo-backend.external.schema.search :refer :all :exclude [schemas]]))
 
 (def koulutus-response-schema
   "|    KoulutusResponse:
@@ -36,10 +36,10 @@
 
 (def KoulutusResponse
   (st/merge
-    Koulutus
-    {(s/->OptionalKey :toteutukset) [Toteutus]
-     (s/->OptionalKey :hakukohteet) [Hakukohde]
-     (s/->OptionalKey :haut)        [Haku]}))
+   Koulutus
+   {(s/->OptionalKey :toteutukset) [Toteutus]
+    (s/->OptionalKey :hakukohteet) [Hakukohde]
+    (s/->OptionalKey :haut)        [Haku]}))
 
 (def toteutus-response-schema
   "|    ToteutusResponse:
@@ -63,10 +63,10 @@
 
 (def ToteutusResponse
   (st/merge
-    Toteutus
-    {(s/->OptionalKey :koulutus)    Koulutus
-     (s/->OptionalKey :hakukohteet) [Hakukohde]
-     (s/->OptionalKey :haut)        [Haku]}))
+   Toteutus
+   {(s/->OptionalKey :koulutus)    Koulutus
+    (s/->OptionalKey :hakukohteet) [Hakukohde]
+    (s/->OptionalKey :haut)        [Haku]}))
 
 (def hakukohde-response-schema
   "|    HakukohdeResponse:
@@ -93,11 +93,11 @@
 
 (def HakukohdeResponse
   (st/merge
-    Hakukohde
-    {(s/->OptionalKey :valintaperustekuvaus) (s/maybe Valintaperustekuvaus)
-     (s/->OptionalKey :koulutus)             Koulutus
-     (s/->OptionalKey :toteutus)             Toteutus
-     (s/->OptionalKey :haku)                 Haku}))
+   Hakukohde
+   {(s/->OptionalKey :valintaperustekuvaus) (s/maybe Valintaperustekuvaus)
+    (s/->OptionalKey :koulutus)             Koulutus
+    (s/->OptionalKey :toteutus)             Toteutus
+    (s/->OptionalKey :haku)                 Haku}))
 
 (def haku-response-schema
   "|    HakuResponse:
@@ -122,10 +122,10 @@
 
 (def HakuResponse
   (st/merge
-    Haku
-    {(s/->OptionalKey :koulutukset) [Koulutus]
-     (s/->OptionalKey :hakukohteet) [Hakukohde]
-     (s/->OptionalKey :toteutukset) [Toteutus]}))
+   Haku
+   {(s/->OptionalKey :koulutukset) [Koulutus]
+    (s/->OptionalKey :hakukohteet) [Hakukohde]
+    (s/->OptionalKey :toteutukset) [Toteutus]}))
 
 (def koulutus-toteutus-search-response-schema
   "|    KoulutusToteutusSearchResponse:
@@ -139,10 +139,6 @@
    |          description: Hakutulokset
    |          items:
    |            $ref: '#/components/schemas/KoulutusToteutusHit'")
-
-(def KoulutusToteutusSearchResponse
-  {:total s/Int
-   :hits  [KoulutusHit]})
 
 (def KoulutusToteutusSearchResponse
   {:total s/Int
