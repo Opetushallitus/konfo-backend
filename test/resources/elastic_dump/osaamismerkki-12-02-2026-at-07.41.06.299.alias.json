@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/osaamismerkki-12-02-2026-at-07.41.06.299.alias.json
-"{\"osaamismerkki-12-02-2026-at-07.41.06.299\":{\"aliases\":{\"osaamismerkki\":{\"is_write_index\":false},\"osaamismerkki-virkailija\":{\"is_write_index\":true}}}}"
-========
-"{\"osaamismerkki-18-11-2025-at-09.07.41.141\":{\"aliases\":{\"osaamismerkki\":{\"is_write_index\":false},\"osaamismerkki-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/osaamismerkki-18-11-2025-at-09.07.41.141.alias.json

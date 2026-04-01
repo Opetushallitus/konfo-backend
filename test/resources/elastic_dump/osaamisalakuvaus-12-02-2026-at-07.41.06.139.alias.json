@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/osaamisalakuvaus-12-02-2026-at-07.41.06.139.alias.json
-"{\"osaamisalakuvaus-12-02-2026-at-07.41.06.139\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
-========
-"{\"osaamisalakuvaus-18-11-2025-at-09.07.40.858\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/osaamisalakuvaus-18-11-2025-at-09.07.40.858.alias.json

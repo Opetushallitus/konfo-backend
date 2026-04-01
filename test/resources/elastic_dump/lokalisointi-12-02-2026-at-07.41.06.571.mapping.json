@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/lokalisointi-12-02-2026-at-07.41.06.571.mapping.json
-{"lokalisointi-12-02-2026-at-07.41.06.571":{"mappings":{"dynamic_templates":[{"all":{"match":"*","match_mapping_type":"string","mapping":{"norms":false,"type":"keyword"}}}]}}}
-========
-{"lokalisointi-18-11-2025-at-09.07.41.584":{"mappings":{"dynamic_templates":[{"all":{"match":"*","match_mapping_type":"string","mapping":{"norms":false,"type":"keyword"}}}]}}}
->>>>>>>> add45d0 (OPHJOD-2123: Lisätään testi amm-koulutuksen kuvauksen hakemiselle eperusteista):test/resources/elastic_dump/lokalisointi-18-11-2025-at-09.07.41.584.mapping.json
