@@ -75,7 +75,11 @@
    :kielivalinta                                [Kieli]
    :koulutustyyppi                              KoutaKoulutustyyppi
    :koulutukset                                 [(->Koodi KoulutusKoodi)]
-   :kuvaus                                      (s/maybe Kielistetty)
+   :kuvaus                                      (s/if #(or (contains? % :osaamistavoitteet) (contains? % :arviointikriteerit))
+                                                  (s/maybe OsaamismerkkiKuvaus)
+                                                  (s/maybe Kielistetty))
+   (s/->OptionalKey :kuvake)                    (s/maybe OsaamismerkkiKuvake)
+   (s/->OptionalKey :osaamistavoitteet)         (s/maybe Kielistetty)
    (s/->OptionalKey :ePerusteId)                (s/maybe s/Int)
    (s/->OptionalKey :teemakuva)                 (s/maybe Url)
    (s/->OptionalKey :osaamismerkki)             (s/maybe Url)
@@ -87,7 +91,7 @@
    (s/->OptionalKey :tutkintonimikkeet)         Tutkintonimikkeet
    (s/->OptionalKey :luokittelutermit)          [s/Str]
    (s/->OptionalKey :osaamisala)                (s/maybe (->Koodi OsaamisalaKoodi))
-   (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsa])
+   (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsaEperuste])
    :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas
