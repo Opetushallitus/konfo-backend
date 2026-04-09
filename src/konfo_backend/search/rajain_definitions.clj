@@ -448,6 +448,20 @@
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
                                          (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
                                                     {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])))})
+(def lukuvuosimaksu_kk
+  {:id :lukuvuosimaksu_kk
+   :rajainGroupId :maksullisuus
+   :make-query (fn [constraints] (lukuvuosimaksu_kk-filter-query constraints))
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu_kk :maksunmaara]))
+                                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])
+                                (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
+                                         (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+                                                    {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])))})
+
 (def yhteishaku
   {:id :yhteishaku
    :rajainGroupId :hakutapa
@@ -632,13 +646,13 @@
    opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi
    koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
    amm_erityisopetus tuva_erityisopetus maksuton maksullinen
-   lukuvuosimaksu lukuvuosimaksu_amm_lk hakukaynnissa hakualkaapaivissa lukiopainotukset
+   lukuvuosimaksu lukuvuosimaksu_amm_lk lukuvuosimaksu_kk hakukaynnissa hakualkaapaivissa lukiopainotukset
    lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
 
 (def common-agg-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakutapa pohjakoulutusvaatimus
    koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen
-   lukuvuosimaksu lukuvuosimaksu_amm_lk hakukaynnissa hakualkaapaivissa])
+   lukuvuosimaksu lukuvuosimaksu_amm_lk lukuvuosimaksu_kk hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
                           [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus

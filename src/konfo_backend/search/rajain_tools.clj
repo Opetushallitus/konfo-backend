@@ -108,6 +108,12 @@
              (number-range-query "metadata.maksunMaara" (:maksunmaara constraints))
              {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]))
 
+(defn lukuvuosimaksu_kk-filter-query
+  [constraints]
+  (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+             (number-range-query "metadata.maksunMaara" (:maksunmaara constraints))
+             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}]))
+
 (defn ->field-key [field-name]
   (str "search_terms." (name field-name)))
 

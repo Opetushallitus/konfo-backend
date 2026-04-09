@@ -121,14 +121,17 @@
    {:maksuton {:count (get rajain-counts :maksuton 0)}
     :maksullinen {:count (get rajain-counts :maksullinen 0)}
     :lukuvuosimaksu {:count (get rajain-counts :lukuvuosimaksu 0)}
+    :lukuvuosimaksu_kk {:count (get rajain-counts :lukuvuosimaksu_kk 0)}
     :lukuvuosimaksu_amm_lk {:count (get rajain-counts :lukuvuosimaksu_amm_lk 0)}}
    :maksunmaara {:count (get rajain-counts :maksullinen 0)
                  :max (get rajain-counts :maksullinen-max 0)}
    :lukuvuosimaksunmaara {:count (get rajain-counts :lukuvuosimaksu 0)
                           :max (get rajain-counts :lukuvuosimaksu-max 0)}
+   :lukuvuosimaksunmaara_kk {:count (get rajain-counts :lukuvuosimaksu_kk 0)
+                             :max (get rajain-counts :lukuvuosimaksu_kk-max 0)}
    :lukuvuosimaksunmaara_amm_lk {:count (get rajain-counts :lukuvuosimaksu_amm_lk 0)
                                  :max (get rajain-counts :lukuvuosimaksu_amm_lk-max 0)}
-   :apuraha {:count (get rajain-counts :lukuvuosimaksu 0)}})
+   :apuraha {:count (get rajain-counts :lukuvuosimaksu_kk 0)}})
 
 (defn- yhteishaku
   [aggs]
