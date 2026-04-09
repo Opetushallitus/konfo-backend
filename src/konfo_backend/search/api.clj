@@ -527,6 +527,11 @@
                         :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_min rajain-params)
                                                          (:lukuvuosimaksunmaara_max rajain-params))
                         :apuraha (if (:apuraha rajain-params) true nil)})
+     :lukuvuosimaksu_kk (when (contains? maksullisuustyypit "lukuvuosimaksu_kk")
+                          {:maksullisuustyyppi "lukuvuosimaksu_kk"
+                           :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_kk_min rajain-params)
+                                                            (:lukuvuosimaksunmaara_kk_max rajain-params))
+                           :apuraha (if (:apuraha rajain-params) true nil)})
      :lukuvuosimaksu_amm_lk (when (contains? maksullisuustyypit "lukuvuosimaksu_amm_lk")
                               {:maksullisuustyyppi "lukuvuosimaksu_amm_lk"
                                :maksunmaara (parse-number-range (:lukuvuosimaksunmaara_amm_lk_min rajain-params)
@@ -626,10 +631,10 @@
                      {maksullisuustyyppi    :- String nil}
                      {maksunmaara_min       :- Number nil}
                      {maksunmaara_max       :- Number nil}
-                     {lukuvuosimaksunmaara_min :- Number nil}
-                     {lukuvuosimaksunmaara_max :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params
@@ -661,10 +666,10 @@
                                      :maksullisuustyyppi maksullisuustyyppi
                                      :maksunmaara_min maksunmaara_min
                                      :maksunmaara_max maksunmaara_max
-                                     :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                     :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
                                      :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
                                      :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                     :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                     :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
                                      :apuraha apuraha
                                      :hakualkaapaivissa hakualkaapaivissa})))
 
@@ -695,10 +700,10 @@
                      {maksullisuustyyppi    :- String nil}
                      {maksunmaara_min       :- Number nil}
                      {maksunmaara_max       :- Number nil}
-                     {lukuvuosimaksunmaara_min :- Number nil}
-                     {lukuvuosimaksunmaara_max :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
@@ -733,10 +738,10 @@
                                      :maksullisuustyyppi maksullisuustyyppi
                                      :maksunmaara_min maksunmaara_min
                                      :maksunmaara_max maksunmaara_max
-                                     :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                     :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
                                      :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
                                      :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                     :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                     :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
                                      :apuraha apuraha
                                      :lukiopainotukset lukiopainotukset
                                      :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
@@ -779,10 +784,10 @@
                      {maksullisuustyyppi    :- String nil}
                      {maksunmaara_min       :- Number nil}
                      {maksunmaara_max       :- Number nil}
-                     {lukuvuosimaksunmaara_min :- Number nil}
-                     {lukuvuosimaksunmaara_max :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-with-validated-params oppilaitos-search/search
@@ -813,10 +818,10 @@
                                                                     :maksullisuustyyppi maksullisuustyyppi
                                                                     :maksunmaara_min maksunmaara_min
                                                                     :maksunmaara_max maksunmaara_max
-                                                                    :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                                                    :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
                                                                     :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
                                                                     :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                                                    :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                                                    :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
                                                                     :apuraha apuraha
                                                                     :hakualkaapaivissa hakualkaapaivissa})))
 
@@ -878,10 +883,10 @@
                      {maksullisuustyyppi    :- String nil}
                      {maksunmaara_min       :- Number nil}
                      {maksunmaara_max       :- Number nil}
-                     {lukuvuosimaksunmaara_min :- Number nil}
-                     {lukuvuosimaksunmaara_max :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
                      {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
                      {apuraha               :- Boolean false}
                      {hakualkaapaivissa     :- Long nil}]
       (with-validated-params
@@ -916,10 +921,10 @@
                                                     :maksullisuustyyppi maksullisuustyyppi
                                                     :maksunmaara_min maksunmaara_min
                                                     :maksunmaara_max maksunmaara_max
-                                                    :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                                    :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
                                                     :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
                                                     :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                                    :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                                    :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
                                                     :apuraha apuraha
                                                     :hakualkaapaivissa hakualkaapaivissa})]]
             {:koulutukset (apply koulutus-search/autocomplete-search search-params)
