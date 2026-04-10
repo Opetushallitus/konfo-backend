@@ -83,13 +83,19 @@
                      :koulutuksenkestokuukausina {:count 23, :max 46.0}
                      :maksullisuus {:maksullisuustyyppi
                                     {:maksuton {:count 2}
-                                     :maksullinen {:count 5}
-                                     :lukuvuosimaksu {:count 2}}
-                                    :maksunmaara {:count 5
+                                     :maksullinen {:count 3}
+                                     :lukuvuosimaksu {:count 4}
+                                     :lukuvuosimaksu_kk {:count 1}
+                                     :lukuvuosimaksu_amm_lk {:count 2}}
+                                    :maksunmaara {:count 3
                                                   :max 200.5}
-                                    :lukuvuosimaksunmaara {:count 2
-                                                           :max 500.0}
-                                    :apuraha {:count 2}}}
+                                    :lukuvuosimaksunmaara {:count 4
+                                                           :max 3000.0}
+                                    :lukuvuosimaksunmaara_kk {:count 1
+                                                              :max 3000.0}
+                                    :lukuvuosimaksunmaara_amm_lk {:count 2
+                                                                  :max 500.0}
+                                    :apuraha {:count 4}}}
                     (:filters r)))))
 
     (testing "Search koulutukset, filter with..."
