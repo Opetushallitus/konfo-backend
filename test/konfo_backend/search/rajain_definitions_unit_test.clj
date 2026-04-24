@@ -57,46 +57,46 @@
                                 "2022-08-26T07:21"))))
 
   (testing "Should form filter for maksullisuus -rajaingroup with single all-must -item"
-    (is (= [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "maksullinen"}}]
+    (is (= [{:term {:search_terms.metadata.maksullisuustyypit.keyword "maksullinen"}}]
            (common-filters {:maksullinen {:maksunmaara []}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for maksullisuus -rajaingroup with one all-must -rajain"
     (is (match? (m/match-with [map? m/equals]
                               [{:bool {:filter
-                                       [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
-                                        {:range {:search_terms.metadata.maksunMaara {:gte 0 :lte 10000}}}
+                                       [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
+                                        {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 0 :lte 10000}}}
                                         {:term {:search_terms.metadata.onkoApuraha true}}]}}])
                 (common-filters {:lukuvuosimaksu {:maksunmaara [0 10000] :apuraha true}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for maksullisuus -rajaingroup"
     (is (match? (m/match-with [map? m/equals]
-                              [{:bool {:should [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "maksuton"}}
-                                                {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "maksullinen"}}
+                              [{:bool {:should [{:term {:search_terms.metadata.maksullisuustyypit.keyword "maksuton"}}
+                                                {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "maksullinen"}}
                                                                  {:range {:search_terms.metadata.maksunMaara {:gte 100}}}]}}
-                                                {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
-                                                                 {:range {:search_terms.metadata.maksunMaara {:gte 0 :lte 10000}}}]}}]}}])
+                                                {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
+                                                                 {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 0 :lte 10000}}}]}}]}}])
                 (common-filters {:maksuton ["maksuton"]
                                  :maksullinen {:maksunmaara [100]}
                                  :lukuvuosimaksu {:maksunmaara [0 10000] :apuraha nil}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for only lukuvuosimaksu_amm_lk"
     (is (match? (m/match-with [map? m/equals]
-                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
                 (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara []}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for only lukuvuosimaksu_amm_lk with maksunMaara range"
     (is (match? (m/match-with [map? m/equals]
-                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
-                                                {:range {:search_terms.metadata.maksunMaara {:gte 100 :lte 200}}}
+                              [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
+                                                {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 100 :lte 200}}}
                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
                 (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for only lukuvuosimaksu_amm_lk with amm koulutustyyppi constraint"
     (is (match? (m/match-with [map? m/equals]
                               [{:term {:search_terms.koulutustyypit.keyword "amm"}}
-                               {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
-                                                {:range {:search_terms.metadata.maksunMaara {:gte 100 :lte 200}}}
+                               {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
+                                                {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 100 :lte 200}}}
                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
                 (common-filters {:koulutustyyppi ["amm"] :lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
 
