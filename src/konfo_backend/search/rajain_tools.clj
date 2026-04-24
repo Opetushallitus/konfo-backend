@@ -95,15 +95,15 @@
        {:should [{:bool {:filter (->terms-query "hakutiedot.pohjakoulutusvaatimukset" pohjakoulutusvaatimukset)}}
                  {:bool {:must_not {:exists {:field "search_terms.hakutiedot.pohjakoulutusvaatimukset"}}}}]}}}}))
 
+(defn ->field-key [field-name]
+  (str "search_terms." (name field-name)))
+
 (defn all-must
   [conditions]
   (when-let [active-conditions (not-empty (filter some? conditions))]
     (if (> (count active-conditions) 1)
       {:bool {:filter (vec active-conditions)}}
       (first active-conditions))))
-
-(defn ->field-key [field-name]
-  (str "search_terms." (name field-name)))
 
 (defn- with-real-hits
   ([agg rajain-context]
