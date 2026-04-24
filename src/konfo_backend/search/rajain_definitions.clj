@@ -400,72 +400,76 @@
 (def maksuton
   {:id :maksuton
    :rajainGroupId :maksullisuus
-   :make-query #(->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+   :make-query #(->terms-query "metadata.maksullisuustyypit.keyword" "maksuton")
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+               (bool-agg-filter (->terms-query "metadata.maksullisuustyypit.keyword" "maksuton")
                                 (aggregation-filters-for-rajain :maksuton constraints rajain-context)
                                 rajain-context))})
 
 (def maksullinen
   {:id :maksullinen
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")
                            (number-range-query "metadata.maksunMaara" (:maksunmaara %))])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")
                                            (number-range-query "metadata.maksunMaara"
                                                                (get-in constraints [:maksullinen :maksunmaara]))])
                                 (aggregation-filters-for-rajain :maksullinen constraints rajain-context)
                                 rajain-context))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                         (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
+                                         (->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")))})
 
 (def lukuvuosimaksu
   {:id :lukuvuosimaksu
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (:apuraha %))])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
-                                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query
+                                            "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
+                                           (->conditional-boolean-term-query
+                                            "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
                                 (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
+   :make-max-agg (fn [constraints]
+                   (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                   (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                              (->conditional-boolean-term-query
+                                               "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
 (def lukuvuosimaksu_amm_lk
   {:id :lukuvuosimaksu_amm_lk
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
                            {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
                                            {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
                                 (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                         (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                         (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
                                                     {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])))})
 (def lukuvuosimaksu_kk
   {:id :lukuvuosimaksu_kk
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (:apuraha %))
                            {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu_kk :maksunmaara]))
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_kk :maksunmaara]))
                                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu_kk :apuraha]))
                                            {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])
                                 (aggregation-filters-for-rajain :lukuvuosimaksu_kk constraints rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
+   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                                   (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
                                                               (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu_kk :apuraha]))
                                                               {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])))})
 

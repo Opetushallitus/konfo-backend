@@ -39,6 +39,10 @@
 
 (def Maksullisuustyyppi (s/enum "maksullinen" "maksuton" "lukuvuosimaksu"))
 
+(def Maksu
+  {(s/->OptionalKey :maksullisuustyyppi)  Maksullisuustyyppi
+   (s/->OptionalKey :maksunMaara)         (s/maybe s/Num)})
+
 (def opetus-schema
   "|    Opetus:
    |      type: object
@@ -126,6 +130,7 @@
    :opetustapa                                    [(->Koodi OpetustapaKoodi)]
    (s/->OptionalKey :opetustapaKuvaus)            Kielistetty
    (s/->OptionalKey :maksullisuustyyppi)          Maksullisuustyyppi
+   (s/->OptionalKey :maksut)                      [Maksu]
    (s/->OptionalKey :maksullisuusKuvaus)          Kielistetty
    (s/->OptionalKey :maksunMaara)                 s/Num
    (s/->OptionalKey :koulutuksenAlkamiskausi)     (s/maybe KoulutuksenAlkamiskausi)

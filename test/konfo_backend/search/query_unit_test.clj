@@ -103,8 +103,8 @@
 
 (def jotpa-term {:term {:search_terms.hasJotpaRahoitus true}})
 (def jotpa-bool-filter {:bool {:filter [jotpa-term]}})
-(def maksullinen-term {:term {:search_terms.metadata.maksullisuustyyppi.keyword "maksullinen"}})
-(def lukuvuosimaksu-term {:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}})
+(def maksullinen-term {:term {:search_terms.metadata.maksullisuustyypit.keyword "maksullinen"}})
+(def lukuvuosimaksu-term {:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}})
 
 (def alkamiskaudet-include ["henkilokohtainen" "2020-kevat" "2020-syksy" "2021-kevat" "2021-syksy" "2022-kevat"])
 
@@ -127,17 +127,17 @@
                                                                {:gte 0}}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton")
-                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen")
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksuton")
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksullinen")
                          :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" maksullinen-term)
-                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" lukuvuosimaksu-term)
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.lukuvuosimaksunMaara" lukuvuosimaksu-term)
                          :lukuvuosimaksu_amm_lk          {:filter
                                                           {:bool
                                                            {:filter
                                                             [{:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
@@ -145,15 +145,15 @@
                                                            {:filter
                                                             [{:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
-                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
                                                        {:filter
                                                         [{:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
                                                       :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_kk-max      {:filter
@@ -161,9 +161,9 @@
                                                        {:filter
                                                         [{:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
-                                                      :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                      :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :koulutusala                    (default-agg "search_terms.koulutusalat.keyword")
                          :yhteishaku                     (default-nested-agg "search_terms.hakutiedot.yhteishakuOid")
                          :kunta                          (default-agg "search_terms.sijainti.keyword" nil {:include "kunta.*"} nil)
@@ -247,18 +247,18 @@
                                                                {:gte 0}}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :koulutuksenkestokuukausina-max (max-agg "search_terms.metadata.suunniteltuKestoKuukausina" nil)
-                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [jotpa-term] nil)
-                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [jotpa-term] nil)
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksuton" [jotpa-term] nil)
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksullinen" [jotpa-term] nil)
                          :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [jotpa-term] nil)
-                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "lukuvuosimaksu" [jotpa-term] nil)
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.lukuvuosimaksunMaara" [lukuvuosimaksu-term])
                          :lukuvuosimaksu_amm_lk          {:filter
                                                           {:bool
                                                            {:filter
                                                             [jotpa-term
                                                              {:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
@@ -266,16 +266,16 @@
                                                            {:filter
                                                             [{:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
-                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
                                                        {:filter
                                                         [jotpa-term
                                                          {:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
                                                       :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_kk-max      {:filter
@@ -283,9 +283,9 @@
                                                        {:filter
                                                         [{:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
-                                                      :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                      :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :jotpa                          (default-bool-term-agg "search_terms.hasJotpaRahoitus" true)
                          :tyovoimakoulutus               (default-bool-term-agg "search_terms.isTyovoimakoulutus" true)
                          :taydennyskoulutus              (default-bool-term-agg "search_terms.isTaydennyskoulutus" true)
@@ -327,11 +327,11 @@
                          :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                          :alkamiskausi                        (default-agg "search_terms.paatellytAlkamiskaudet.keyword" onkotuleva-sijainti-bool-filter {:include alkamiskaudet-include} "search_terms")
                          :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                         :maksuton                            (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
-                         :maksullinen                         (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksuton                            (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen                         (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
                          :maksullinen-max                     (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                         :lukuvuosimaksu                      (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
-                         :lukuvuosimaksu-max                  (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu                      (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
+                         :lukuvuosimaksu-max                  (max-agg "search_terms.metadata.lukuvuosimaksunMaara" [lukuvuosimaksu-term])
                          :lukuvuosimaksu_amm_lk          {:filter
                                                           {:bool
                                                            {:filter
@@ -339,7 +339,7 @@
                                                              {:term {:search_terms.onkoTuleva false}}
                                                              {:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
@@ -347,9 +347,9 @@
                                                            {:filter
                                                             [{:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
-                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
                                                        {:filter
@@ -357,7 +357,7 @@
                                                          {:term {:search_terms.onkoTuleva false}}
                                                          {:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
                                                       :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_kk-max      {:filter
@@ -365,9 +365,9 @@
                                                        {:filter
                                                         [{:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
-                                                      :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                      :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :koulutuksenkestokuukausina          {:filter {:bool {:filter [sijainti-term
                                                                                         onkotuleva-term
                                                                                         {:range {:search_terms.metadata.suunniteltuKestoKuukausina {:gte 0}}}]}}
@@ -414,11 +414,11 @@
                          :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
                          :koulutusala                    (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                          :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
-                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
-                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
+                         :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
                          :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
-                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
-                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.maksunMaara" [lukuvuosimaksu-term])
+                         :lukuvuosimaksu                 (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "lukuvuosimaksu" [sijainti-term onkotuleva-term] "search_terms")
+                         :lukuvuosimaksu-max             (max-agg "search_terms.metadata.lukuvuosimaksunMaara" [lukuvuosimaksu-term])
                          :lukuvuosimaksu_amm_lk          {:filter
                                                           {:bool
                                                            {:filter
@@ -426,7 +426,7 @@
                                                              {:term {:search_terms.onkoTuleva false}}
                                                              {:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
@@ -434,9 +434,9 @@
                                                            {:filter
                                                             [{:bool
                                                               {:filter
-                                                               [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                               [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                                 {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
-                                                          :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                          :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
                                                        {:filter
@@ -444,7 +444,7 @@
                                                          {:term {:search_terms.onkoTuleva false}}
                                                          {:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
                                                       :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_kk-max      {:filter
@@ -452,9 +452,9 @@
                                                        {:filter
                                                         [{:bool
                                                           {:filter
-                                                           [{:term {:search_terms.metadata.maksullisuustyyppi.keyword "lukuvuosimaksu"}}
+                                                           [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk", "yo"]}}]}}]}}]}}
-                                                      :aggs {:max-val {:max {:field "search_terms.metadata.maksunMaara"}}}}
+                                                      :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :koulutuksenkestokuukausina     {:filter
                                                           {:bool
                                                            {:filter
