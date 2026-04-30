@@ -33,7 +33,7 @@
                                                     jotpa
                                                     koulutuksenkestokuukausina
                                                     koulutusala koulutustyyppi
-                                                    maksullisuus opetusaika
+                                                    opetusaika
                                                     opetuskieli opetustapa
                                                     pohjakoulutusvaatimus
                                                     pieniosaamiskokonaisuus
@@ -486,26 +486,70 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
             "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc maksullisuus) "\n"
-            (:desc valintatapa) "\n"
-            (:desc hakukaynnissa) "\n"
-            (:desc jotpa) "\n"
-            (:desc tyovoimakoulutus) "\n"
-            (:desc taydennyskoulutus) "\n"
-            (:desc pieniosaamiskokonaisuus) "\n"
-            (:desc hakutapa) "\n"
-            (:desc yhteishaku) "\n"
-            (:desc pohjakoulutusvaatimus) "\n"
-            (:desc alkamiskausi) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc alkamiskausi) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
+        - in: query
+          name: maksullisuustyyppi
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
+          example: [maksuton,maksullinen,lukuvuosimaksu]
+        - in: query
+          name: maksunmaara_min
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen maksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+          example: 100
+        - in: query
+          name: maksunmaara_max
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen maksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"maksullinen\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_min
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_max
+          style: form
+          schema:
+            type: number
+          description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+          example: 100
+        - in: query
+          name: apuraha
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Haetaanko koulutuksia, joilla on käytössä apuraha? Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
         - in: query
           name: luokittelutermi
           style: form
@@ -608,15 +652,15 @@
           required: false
           description: Järjestys. 'asc' tai 'desc'
 "
-            (:desc koulutustyyppi) "\n"
-            (:desc sijainti) "\n"
-            (:desc opetuskieli) "\n"
-            (:desc koulutusala) "\n"
-            (:desc opetustapa) "\n"
-            (:desc opetusaika) "\n"
-            (:desc koulutuksenkestokuukausina) "\n"
-            (:desc hakualkaapaivissa) "\n"
-        "
+                (:desc koulutustyyppi) "\n"
+                (:desc sijainti) "\n"
+                (:desc opetuskieli) "\n"
+                (:desc koulutusala) "\n"
+                (:desc opetustapa) "\n"
+                (:desc opetusaika) "\n"
+                (:desc koulutuksenkestokuukausina) "\n"
+                (:desc hakualkaapaivissa) "\n"
+                "
       responses:
         '200':
           description: Ok
@@ -660,208 +704,207 @@
 
 (def routes
   (api
-    {:exceptions
-     {:handlers
-      {::ex/response-validation (with-uri-logging ex/response-validation-handler)
-       ::ex/default             (with-uri-logging no-log-handler)}}}
-    (context "/external" []
-             :tags ["external"]
+   {:exceptions
+    {:handlers
+     {::ex/response-validation (with-uri-logging ex/response-validation-handler)
+      ::ex/default             (with-uri-logging no-log-handler)}}}
+   (context "/external" []
+     :tags ["external"]
 
-             (GET "/koulutus/:oid" [:as request]
-                  :path-params [oid :- String]
-                  :query-params [{toteutukset :- Boolean false}
-                                 {hakukohteet :- Boolean false}
-                                 {haut :- Boolean false}]
-                  :return response/KoulutusResponse
-                  (with-access-logging request (if-let [result (service/koulutus oid toteutukset hakukohteet haut)]
-                                                 (ok result)
-                                                 (not-found "Not found"))))
+     (GET "/koulutus/:oid" [:as request]
+       :path-params [oid :- String]
+       :query-params [{toteutukset :- Boolean false}
+                      {hakukohteet :- Boolean false}
+                      {haut :- Boolean false}]
+       :return response/KoulutusResponse
+       (with-access-logging request (if-let [result (service/koulutus oid toteutukset hakukohteet haut)]
+                                      (ok result)
+                                      (not-found "Not found"))))
 
-             (GET "/toteutus/:oid" [:as request]
-                  :path-params [oid :- String]
-                  :query-params [{koulutus :- Boolean false}
-                                 {hakukohteet :- Boolean false}
-                                 {haut :- Boolean false}]
-                  :return response/ToteutusResponse
-                  (with-access-logging request (if-let [result (service/toteutus oid koulutus hakukohteet haut)]
-                                                 (ok result)
-                                                 (not-found "Not found"))))
+     (GET "/toteutus/:oid" [:as request]
+       :path-params [oid :- String]
+       :query-params [{koulutus :- Boolean false}
+                      {hakukohteet :- Boolean false}
+                      {haut :- Boolean false}]
+       :return response/ToteutusResponse
+       (with-access-logging request (if-let [result (service/toteutus oid koulutus hakukohteet haut)]
+                                      (ok result)
+                                      (not-found "Not found"))))
 
-             (GET "/hakukohde/:oid" [:as request]
-                  :path-params [oid :- String]
-                  :query-params [{koulutus :- Boolean false}
-                                 {toteutus :- Boolean false}
-                                 {valintaperustekuvaus :- Boolean false}
-                                 {haku :- Boolean false}]
-                  :return response/HakukohdeResponse
-                  (with-access-logging request (if-let [result (service/hakukohde oid koulutus toteutus valintaperustekuvaus haku)]
-                                                 (ok result)
-                                                 (not-found "Not found"))))
+     (GET "/hakukohde/:oid" [:as request]
+       :path-params [oid :- String]
+       :query-params [{koulutus :- Boolean false}
+                      {toteutus :- Boolean false}
+                      {valintaperustekuvaus :- Boolean false}
+                      {haku :- Boolean false}]
+       :return response/HakukohdeResponse
+       (with-access-logging request (if-let [result (service/hakukohde oid koulutus toteutus valintaperustekuvaus haku)]
+                                      (ok result)
+                                      (not-found "Not found"))))
 
-             (GET "/haku/:oid" [:as request]
-                  :path-params [oid :- String]
-                  :query-params [{koulutukset :- Boolean false}
-                                 {toteutukset :- Boolean false}
-                                 {hakukohteet :- Boolean false}]
-                  :return response/HakuResponse
-                  (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
-                                                 (ok result)
-                                                 (not-found "Not found"))))
+     (GET "/haku/:oid" [:as request]
+       :path-params [oid :- String]
+       :query-params [{koulutukset :- Boolean false}
+                      {toteutukset :- Boolean false}
+                      {hakukohteet :- Boolean false}]
+       :return response/HakuResponse
+       (with-access-logging request (if-let [result (service/haku oid koulutukset toteutukset hakukohteet)]
+                                      (ok result)
+                                      (not-found "Not found"))))
 
+     (GET "/search/toteutukset-koulutuksittain" [:as request]
+       :query-params [{keyword                 :- String nil}
+                      {page                    :- Long 1}
+                      {size                    :- Long 20}
+                      {lng                     :- String "fi"}
+                      {sort                    :- String "score"}
+                      {order                   :- String "desc"}
+                      {koulutustyyppi          :- String nil}
+                      {sijainti                :- String nil}
+                      {opetuskieli             :- String nil}
+                      {koulutusala             :- String nil}
+                      {opetustapa              :- String nil}
+                      {valintatapa             :- String nil}
+                      {hakukaynnissa           :- Boolean false}
+                      {jotpa                   :- Boolean false}
+                      {tyovoimakoulutus        :- Boolean false}
+                      {taydennyskoulutus       :- Boolean false}
+                      {pieniosaamiskokonaisuus :- Boolean false}
+                      {hakutapa                :- String nil}
+                      {yhteishaku              :- String nil}
+                      {pohjakoulutusvaatimus   :- String nil}
+                      {luokittelutermi         :- String nil}]
+       :return response/KoulutusToteutusSearchResponse
+       (with-access-logging request (->search-with-validated-params external-search
+                                                                    keyword
+                                                                    lng
+                                                                    page
+                                                                    size
+                                                                    sort
+                                                                    order
+                                                                    {:koulutustyyppi koulutustyyppi
+                                                                     :sijainti sijainti
+                                                                     :opetuskieli opetuskieli
+                                                                     :koulutusala koulutusala
+                                                                     :opetustapa opetustapa
+                                                                     :valintatapa valintatapa
+                                                                     :hakukaynnissa hakukaynnissa
+                                                                     :jotpa jotpa
+                                                                     :tyovoimakoulutus tyovoimakoulutus
+                                                                     :taydennyskoulutus taydennyskoulutus
+                                                                     :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
+                                                                     :hakutapa hakutapa
+                                                                     :yhteishaku yhteishaku
+                                                                     :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                                                     :luokittelutermi luokittelutermi
+                                                                     :lukiopainotukset nil
+                                                                     :lukiolinjaterityinenkoulutustehtava nil
+                                                                     :osaamisala nil})))
+     (GET "/search/koulutukset" request
+       :query-params [{keyword               :- String nil}
+                      {page                  :- Long 1}
+                      {size                  :- Long 20}
+                      {lng                   :- String "fi"}
+                      {sort                  :- String "score"}
+                      {order                 :- String "desc"}
+                      {koulutustyyppi        :- String nil}
+                      {sijainti              :- String nil}
+                      {opetuskieli           :- String nil}
+                      {koulutusala           :- String nil}
+                      {opetustapa            :- String nil}
+                      {opetusaika            :- String nil}
+                      {valintatapa           :- String nil}
+                      {hakukaynnissa         :- Boolean false}
+                      {jotpa                 :- Boolean false}
+                      {tyovoimakoulutus      :- Boolean false}
+                      {taydennyskoulutus     :- Boolean false}
+                      {pieniosaamiskokonaisuus :- Boolean false}
+                      {hakutapa              :- String nil}
+                      {yhteishaku            :- String nil}
+                      {pohjakoulutusvaatimus :- String nil}
+                      {alkamiskausi          :- String nil}
+                      {koulutuksenkestokuukausina_min :- Number nil}
+                      {koulutuksenkestokuukausina_max :- Number nil}
+                      {maksullisuustyyppi    :- String nil}
+                      {maksunmaara_min       :- Number nil}
+                      {maksunmaara_max       :- Number nil}
+                      {lukuvuosimaksunmaara_min :- Number nil}
+                      {lukuvuosimaksunmaara_max :- Number nil}
+                      {apuraha               :- Boolean false}
+                      {hakualkaapaivissa     :- Long nil}
+                      {luokittelutermi       :- String nil}]
+       :return response/KoulutusToteutusSearchResponse
+       (with-access-logging request (->search-with-validated-params
+                                     external-koulutukset-search
+                                     keyword
+                                     lng
+                                     page
+                                     size
+                                     sort
+                                     order
+                                     {:koulutustyyppi koulutustyyppi
+                                      :sijainti sijainti
+                                      :opetuskieli opetuskieli
+                                      :koulutusala koulutusala
+                                      :opetustapa opetustapa
+                                      :opetusaika opetusaika
+                                      :valintatapa valintatapa
+                                      :hakukaynnissa hakukaynnissa
+                                      :jotpa jotpa
+                                      :tyovoimakoulutus tyovoimakoulutus
+                                      :taydennyskoulutus taydennyskoulutus
+                                      :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
+                                      :hakutapa hakutapa
+                                      :yhteishaku yhteishaku
+                                      :pohjakoulutusvaatimus pohjakoulutusvaatimus
+                                      :alkamiskausi alkamiskausi
+                                      :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
+                                      :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                      :maksullisuustyyppi maksullisuustyyppi
+                                      :maksunmaara_min maksunmaara_min
+                                      :maksunmaara_max maksunmaara_max
+                                      :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
+                                      :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
+                                      :apuraha apuraha
+                                      :hakualkaapaivissa hakualkaapaivissa
+                                      :luokittelutermi luokittelutermi})))
+     (GET "/search/oppilaitos/:oid/tarjonta" [:as request]
+       :path-params [oid :- String]
+       :query-params [{tuleva         :- Boolean false}
+                      {page           :- Long 1}
+                      {size           :- Long 20}
+                      {lng            :- String "fi"}
+                      {order          :- String "asc"}
+                      {koulutustyyppi :- String nil}
+                      {sijainti       :- String nil}
+                      {opetuskieli    :- String nil}
+                      {koulutusala    :- String nil}
+                      {opetustapa     :- String nil}
+                      {koulutuksenkestokuukausina_min :- Number nil}
+                      {koulutuksenkestokuukausina_max :- Number nil}
+                      {hakualkaapaivissa     :- Long nil}]
+       (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
+                                                                                oid
+                                                                                lng
+                                                                                page
+                                                                                size
+                                                                                order
+                                                                                tuleva
+                                                                                {:koulutustyyppi koulutustyyppi
+                                                                                 :sijainti sijainti
+                                                                                 :opetuskieli opetuskieli
+                                                                                 :koulutusala koulutusala
+                                                                                 :opetustapa opetustapa
+                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
+                                                                                 :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                                                                 :hakualkaapaivissa hakualkaapaivissa})))
 
-             (GET "/search/toteutukset-koulutuksittain" [:as request]
-                  :query-params [{keyword                 :- String nil}
-                                 {page                    :- Long 1}
-                                 {size                    :- Long 20}
-                                 {lng                     :- String "fi"}
-                                 {sort                    :- String "score"}
-                                 {order                   :- String "desc"}
-                                 {koulutustyyppi          :- String nil}
-                                 {sijainti                :- String nil}
-                                 {opetuskieli             :- String nil}
-                                 {koulutusala             :- String nil}
-                                 {opetustapa              :- String nil}
-                                 {valintatapa             :- String nil}
-                                 {hakukaynnissa           :- Boolean false}
-                                 {jotpa                   :- Boolean false}
-                                 {tyovoimakoulutus        :- Boolean false}
-                                 {taydennyskoulutus       :- Boolean false}
-                                 {pieniosaamiskokonaisuus :- Boolean false}
-                                 {hakutapa                :- String nil}
-                                 {yhteishaku              :- String nil}
-                                 {pohjakoulutusvaatimus   :- String nil}
-                                 {luokittelutermi         :- String nil}]
-                  :return response/KoulutusToteutusSearchResponse
-                  (with-access-logging request (->search-with-validated-params external-search
-                                                                               keyword
-                                                                               lng
-                                                                               page
-                                                                               size
-                                                                               sort
-                                                                               order
-                                                                               {:koulutustyyppi koulutustyyppi
-                                                                                :sijainti sijainti
-                                                                                :opetuskieli opetuskieli
-                                                                                :koulutusala koulutusala
-                                                                                :opetustapa opetustapa
-                                                                                :valintatapa valintatapa
-                                                                                :hakukaynnissa hakukaynnissa
-                                                                                :jotpa jotpa
-                                                                                :tyovoimakoulutus tyovoimakoulutus
-                                                                                :taydennyskoulutus taydennyskoulutus
-                                                                                :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
-                                                                                :hakutapa hakutapa
-                                                                                :yhteishaku yhteishaku
-                                                                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                                                                :luokittelutermi luokittelutermi
-                                                                                :lukiopainotukset nil
-                                                                                :lukiolinjaterityinenkoulutustehtava nil
-                                                                                :osaamisala nil })))
-             (GET "/search/koulutukset" request
-                  :query-params [{keyword               :- String nil}
-                                 {page                  :- Long 1}
-                                 {size                  :- Long 20}
-                                 {lng                   :- String "fi"}
-                                 {sort                  :- String "score"}
-                                 {order                 :- String "desc"}
-                                 {koulutustyyppi        :- String nil}
-                                 {sijainti              :- String nil}
-                                 {opetuskieli           :- String nil}
-                                 {koulutusala           :- String nil}
-                                 {opetustapa            :- String nil}
-                                 {opetusaika            :- String nil}
-                                 {valintatapa           :- String nil}
-                                 {hakukaynnissa         :- Boolean false}
-                                 {jotpa                 :- Boolean false}
-                                 {tyovoimakoulutus      :- Boolean false}
-                                 {taydennyskoulutus     :- Boolean false}
-                                 {pieniosaamiskokonaisuus :- Boolean false}
-                                 {hakutapa              :- String nil}
-                                 {yhteishaku            :- String nil}
-                                 {pohjakoulutusvaatimus :- String nil}
-                                 {alkamiskausi          :- String nil}
-                                 {koulutuksenkestokuukausina_min :- Number nil}
-                                 {koulutuksenkestokuukausina_max :- Number nil}
-                                 {maksullisuustyyppi    :- String nil}
-                                 {maksunmaara_min       :- Number nil}
-                                 {maksunmaara_max       :- Number nil}
-                                 {lukuvuosimaksunmaara_min :- Number nil}
-                                 {lukuvuosimaksunmaara_max :- Number nil}
-                                 {apuraha               :- Boolean false}
-                                 {hakualkaapaivissa     :- Long nil}
-                                 {luokittelutermi       :- String nil}]
-                  :return response/KoulutusToteutusSearchResponse
-                  (with-access-logging request (->search-with-validated-params
-                                                 external-koulutukset-search
-                                                 keyword
-                                                 lng
-                                                 page
-                                                 size
-                                                 sort
-                                                 order
-                                                 {:koulutustyyppi koulutustyyppi
-                                                  :sijainti sijainti
-                                                  :opetuskieli opetuskieli
-                                                  :koulutusala koulutusala
-                                                  :opetustapa opetustapa
-                                                  :opetusaika opetusaika
-                                                  :valintatapa valintatapa
-                                                  :hakukaynnissa hakukaynnissa
-                                                  :jotpa jotpa
-                                                  :tyovoimakoulutus tyovoimakoulutus
-                                                  :taydennyskoulutus taydennyskoulutus
-                                                  :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
-                                                  :hakutapa hakutapa
-                                                  :yhteishaku yhteishaku
-                                                  :pohjakoulutusvaatimus pohjakoulutusvaatimus
-                                                  :alkamiskausi alkamiskausi
-                                                  :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
-                                                  :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
-                                                  :maksullisuustyyppi maksullisuustyyppi
-                                                  :maksunmaara_min maksunmaara_min
-                                                  :maksunmaara_max maksunmaara_max
-                                                  :lukuvuosimaksunmaara_min lukuvuosimaksunmaara_min
-                                                  :lukuvuosimaksunmaara_max lukuvuosimaksunmaara_max
-                                                  :apuraha apuraha
-                                                  :hakualkaapaivissa hakualkaapaivissa
-                                                  :luokittelutermi luokittelutermi})))
-             (GET "/search/oppilaitos/:oid/tarjonta" [:as request]
-                  :path-params [oid :- String]
-                  :query-params [{tuleva         :- Boolean false}
-                                 {page           :- Long 1}
-                                 {size           :- Long 20}
-                                 {lng            :- String "fi"}
-                                 {order          :- String "asc"}
-                                 {koulutustyyppi :- String nil}
-                                 {sijainti       :- String nil}
-                                 {opetuskieli    :- String nil}
-                                 {koulutusala    :- String nil}
-                                 {opetustapa     :- String nil}
-                                 {koulutuksenkestokuukausina_min :- Number nil}
-                                 {koulutuksenkestokuukausina_max :- Number nil}
-                                 {hakualkaapaivissa     :- Long nil}]
-                  (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
-                                                                                           oid
-                                                                                           lng
-                                                                                           page
-                                                                                           size
-                                                                                           order
-                                                                                           tuleva
-                                                                                           {:koulutustyyppi koulutustyyppi
-                                                                                            :sijainti sijainti
-                                                                                            :opetuskieli opetuskieli
-                                                                                            :koulutusala koulutusala
-                                                                                            :opetustapa opetustapa
-                                                                                            :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
-                                                                                            :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
-                                                                                            :hakualkaapaivissa hakualkaapaivissa})))
+     (GET "/search/filters" [:as request]
+       (with-access-logging request (if-let [result (rajain-counts/generate-default-rajain-counts)]
+                                      (ok result)
+                                      (not-found "Not found"))))
 
-             (GET "/search/filters" [:as request]
-                  (with-access-logging request (if-let [result (rajain-counts/generate-default-rajain-counts)]
-                                                 (ok result)
-                                                 (not-found "Not found"))))
-
-             (GET "/search/filters_as_array" [:as request]
-                  (with-access-logging request (if-let [result (rajain-counts/flattened-rajain-counts)]
-                                                 (ok result)
-                                                 (not-found "Not found")))))))
+     (GET "/search/filters_as_array" [:as request]
+       (with-access-logging request (if-let [result (rajain-counts/flattened-rajain-counts)]
+                                      (ok result)
+                                      (not-found "Not found")))))))
