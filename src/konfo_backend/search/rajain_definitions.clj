@@ -360,7 +360,7 @@
             items:
               type: string
           description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
-          example: [maksuton,maksullinen,lukuvuosimaksu,lukuvuosimaksu_amm_lk]
+          example: [maksuton,maksullinen,lukuvuosimaksu,lukuvuosimaksu_amm_lk,lukuvuosimaksu_kk]
         - in: query
           name: maksunmaara_min
           style: form
@@ -388,6 +388,34 @@
           schema:
             type: number
           description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_amm_lk_min
+          style: form
+          schema:
+            type: number
+          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_amm_lk_max
+          style: form
+          schema:
+            type: number
+          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_kk_min
+          style: form
+          schema:
+            type: number
+          description: Yliopisto- ja AMK-koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_kk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_kk_max
+          style: form
+          schema:
+            type: number
+          description: Yliopisto- ja AMK-koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_kk\"
           example: 100
         - in: query
           name: apuraha
