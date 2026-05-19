@@ -492,7 +492,7 @@
    "$KOODISTO-BASE-URL"
    koodisto-base-url))
 
-(def OpinnonTyyppiKoodi #"^opintojenlaajuusyksikko_")
+(def OpinnonTyyppiKoodi #"^opinnontyyppi_")
 
 (def TutkinnonOsaKoodi #"^tutkinnonosat_")
 
