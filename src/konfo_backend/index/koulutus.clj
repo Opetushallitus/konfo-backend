@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [get])
   (:require
     [konfo-backend.tools :refer [allowed-to-view julkaistut]]
-    [konfo-backend.elastic-tools :refer [get-source get-sources]]))
+    [konfo-backend.elastic-tools :refer [get-source get-sources]]
+    [konfo-backend.eperuste.eperuste :as eperuste]))
 
 (defonce index "koulutus-kouta")
 
@@ -10,7 +11,9 @@
   [oid draft?]
   (let [koulutus (get-source index oid)]
     (when (allowed-to-view koulutus draft?)
-      (assoc koulutus :toteutukset (-> koulutus (:toteutukset) (julkaistut))))))
+      (-> koulutus
+          (assoc :toteutukset (-> koulutus (:toteutukset) (julkaistut)))
+          (update-in [:metadata :paikallisetTutkinnonOsat] eperuste/enrich-paikalliset-tutkinnon-osat)))))
 
 (defn get-many
   ([oids excludes]
