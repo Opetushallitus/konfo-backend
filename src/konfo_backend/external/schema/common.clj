@@ -332,6 +332,84 @@
    |          type: object
    |          $ref: '#/components/schemas/TutkinnonOsa'")
 
+(def AmosaaVaatimus
+  {(s/->OptionalKey :koodi)    (s/maybe s/Str)
+   (s/->OptionalKey :vaatimus) (s/maybe Kielistetty)})
+
+(def AmosaaKohdealue
+  {(s/->OptionalKey :kuvaus)     (s/maybe Kielistetty)
+   (s/->OptionalKey :vaatimukset) [(s/maybe AmosaaVaatimus)]})
+
+(def Ammattitaitovaatimukset
+  {(s/->OptionalKey :kohde)      (s/maybe Kielistetty)
+   (s/->OptionalKey :kohdealueet) [(s/maybe AmosaaKohdealue)]
+   (s/->OptionalKey :vaatimukset) [(s/maybe AmosaaVaatimus)]})
+
+(def paikallinen-tutkinnon-osa-schema
+  "|    PaikallinenTutkinnonOsa:
+   |      type: object
+   |      properties:
+   |        opetussuunnitelmaId:
+   |          type: string
+   |          description: Paikallisen tutkinnon osan opetussuunnitelman id
+   |          example: '123'
+   |        tutkinnonosaId:
+   |          type: string
+   |          description: Paikallisen tutkinnon osan id
+   |          example: '456'
+   |        nimi:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan nimi eri kielillä
+   |          $ref: '#/components/schemas/Nimi'
+   |        laajuus:
+   |          type: number
+   |          description: Paikallisen tutkinnon osan laajuus osaamispisteinä
+   |        ammattitaidonosoittamistavat:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan ammattitaidon osoittamistavat eri kielillä
+   |          $ref: '#/components/schemas/Teksti'
+   |        ammattitaitovaatimukset:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan ammattitaitovaatimukset
+   |          properties:
+   |            kohde:
+   |              type: object
+   |              description: Ammattitaitovaatimusten kohde eri kielillä
+   |              $ref: '#/components/schemas/Teksti'
+   |            kohdealueet:
+   |              type: array
+   |              items:
+   |                type: object
+   |                properties:
+   |                  kuvaus:
+   |                    $ref: '#/components/schemas/Teksti'
+   |                  vaatimukset:
+   |                    type: array
+   |                    items:
+   |                      type: object
+   |                      properties:
+   |                        koodi:
+   |                          type: string
+   |                        vaatimus:
+   |                          $ref: '#/components/schemas/Teksti'
+   |            vaatimukset:
+   |              type: array
+   |              items:
+   |                type: object
+   |                properties:
+   |                  koodi:
+   |                    type: string
+   |                  vaatimus:
+   |                    $ref: '#/components/schemas/Teksti'")
+
+(def PaikallinenTutkinnonOsa
+  {(s/->OptionalKey :opetussuunnitelmaId)         (s/maybe s/Str)
+   (s/->OptionalKey :tutkinnonosaId)              (s/maybe s/Str)
+   (s/->OptionalKey :nimi)                        (s/maybe Kielistetty)
+   (s/->OptionalKey :laajuus)                     (s/maybe s/Num)
+   (s/->OptionalKey :ammattitaidonosoittamistavat) (s/maybe Kielistetty)
+   (s/->OptionalKey :ammattitaitovaatimukset)      (s/maybe Ammattitaitovaatimukset)})
+
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
        konfo-koulutustyyppi-schema "\n"
@@ -347,4 +425,5 @@
        ajanjakso-schema "\n"
        koulutuksenalkamiskausi-schema "\n"
        osoite-schema "\n"
-       tutkinnon-osa-eperuste-schema))
+       tutkinnon-osa-eperuste-schema "\n"
+       paikallinen-tutkinnon-osa-schema))

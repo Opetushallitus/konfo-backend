@@ -93,6 +93,11 @@
     |          type: array
     |          items:
     |            $ref: '#/components/schemas/TutkinnonOsaEperuste'
+    |        paikallisetTutkinnonOsat:
+    |          type: array
+    |          description: Koulutuksen paikalliset tutkinnon osat
+    |          items:
+    |            $ref: '#/components/schemas/PaikallinenTutkinnonOsa'
     |")
 
 (def Eperuste
@@ -118,5 +123,6 @@
    (s/->OptionalKey :tutkintonimike)             Tutkintonimikkeet
    (s/->OptionalKey :tunniste)                   (s/maybe s/Str)
    (s/->OptionalKey :opinnonTyyppi)              (->Koodi OpinnonTyyppiKoodi)
+   (s/->OptionalKey :paikallisetTutkinnonOsat)   [(s/maybe PaikallinenTutkinnonOsa)]
    :tyyppi                                       KoutaKoulutustyyppi
    s/Any                                         s/Any})

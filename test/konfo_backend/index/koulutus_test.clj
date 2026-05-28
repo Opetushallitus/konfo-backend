@@ -36,4 +36,23 @@
       (testing "not found"
         (get-not-found (koulutus-url koulutusOid99)))
       (testing "filter not julkaistu draft when esikatselu false"
-        (get-not-found (koulutus-draft-url koulutusOid6))))))
+        (get-not-found (koulutus-draft-url koulutusOid6)))
+      (testing "returns paikallisetTutkinnonOsat for amm-tutkinnon-osa koulutus"
+        (let [koulutusOid13 "1.2.246.562.13.000013"
+              response (get-ok (koulutus-url koulutusOid13))
+              paikalliset (get-in response [:metadata :paikallisetTutkinnonOsat])]
+          (is (= 2 (count paikalliset)))
+          (is (= "123" (:opetussuunnitelmaId (first paikalliset))))
+          (is (= "456" (:tutkinnonosaId (first paikalliset))))
+          (is (= "Paikallinen tutkinnon osa fi" (get-in (first paikalliset) [:nimi :fi])))
+          (is (= "Toinen paikallinen osa fi" (get-in (second paikalliset) [:nimi :fi])))
+          (is (= "Ammattitaidon osoittamistavat fi" (get-in (first paikalliset) [:ammattitaidonosoittamistavat :fi])))
+          (is (= "Vaatimukset kohde fi" (get-in (first paikalliset) [:ammattitaitovaatimukset :kohde :fi])))
+          (is (= "vaatimus_1" (get-in (first paikalliset) [:ammattitaitovaatimukset :vaatimukset 0 :koodi])))
+          (is (= "Vaatimus 1 fi" (get-in (first paikalliset) [:ammattitaitovaatimukset :vaatimukset 0 :vaatimus :fi])))
+          (is (= "Toinen osoittamistapa fi" (get-in (second paikalliset) [:ammattitaidonosoittamistavat :fi])))
+          (is (= "Lista kohde fi" (get-in (second paikalliset) [:ammattitaitovaatimukset :kohde :fi])))
+          (is (= "Kohdealue fi" (get-in (second paikalliset) [:ammattitaitovaatimukset :kohdealueet 0 :kuvaus :fi])))
+          (is (= "vaatimus_2" (get-in (second paikalliset) [:ammattitaitovaatimukset :kohdealueet 0 :vaatimukset 0 :koodi])))
+          (is (= 15 (:laajuus (first paikalliset))))
+          (is (nil? (:laajuus (second paikalliset)))))))))
