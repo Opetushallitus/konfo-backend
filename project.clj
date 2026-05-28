@@ -4,10 +4,7 @@
 
 (defproject konfo-backend "0.2.1-SNAPSHOT"
   :description "Konfo-backend"
-  :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
-                            :username "private-token"
-                            :password :env/GITHUB_TOKEN}]
-                 ["releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
+  :repositories [["releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
                               :username :env/artifactory_username
                               :password :env/artifactory_password
                               :sign-releases false
@@ -123,7 +120,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.4.0"]
-                                   [opiskelijavalinnat-utils/clj-test-utils "0.5.7-SNAPSHOT" :exclusions [com.amazonaws/aws-java-sdk-s3]]
+                                   [oph/clj-test-utils "0.5.6-SNAPSHOT" :exclusions [com.amazonaws/aws-java-sdk-s3]]
                                    [org.mockito/mockito-core "5.16.1"]
                                    [clj-http-fake "1.0.4"]
                                    [net.java.dev.jna/jna "5.17.0"]
