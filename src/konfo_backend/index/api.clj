@@ -467,7 +467,8 @@
      :query-params [{draft :- Boolean false}]
      :path-params [oid :- String]
      (with-access-logging request (if-let [result (koulutus/get oid draft)]
-                                    (ok result)
+                                    (ok (update-in result [:metadata :paikallisetTutkinnonOsat]
+                                                   eperuste/enrich-paikalliset-tutkinnon-osat))
                                     (not-found "Not found"))))
    (GET "/toteutus/:oid" [:as request]
      :query-params [{draft :- Boolean false}]
