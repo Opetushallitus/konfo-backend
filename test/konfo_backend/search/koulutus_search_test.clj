@@ -83,13 +83,19 @@
                      :koulutuksenkestokuukausina {:count 23, :max 46.0}
                      :maksullisuus {:maksullisuustyyppi
                                     {:maksuton {:count 2}
-                                     :maksullinen {:count 5}
-                                     :lukuvuosimaksu {:count 2}}
-                                    :maksunmaara {:count 5
+                                     :maksullinen {:count 3}
+                                     :lukuvuosimaksu {:count 3}
+                                     :lukuvuosimaksu_kk {:count 1}
+                                     :lukuvuosimaksu_amm_lk {:count 2}}
+                                    :maksunmaara {:count 3
                                                   :max 200.5}
-                                    :lukuvuosimaksunmaara {:count 2
-                                                           :max 500.0}
-                                    :apuraha {:count 2}}}
+                                    :lukuvuosimaksunmaara {:count 3
+                                                           :max 3000.0}
+                                    :lukuvuosimaksunmaara_kk {:count 1
+                                                              :max 3000.0}
+                                    :lukuvuosimaksunmaara_amm_lk {:count 2
+                                                                  :max 500.0}
+                                    :apuraha {:count 3}}}
                     (:filters r)))))
 
     (testing "Search koulutukset, filter with..."
@@ -216,6 +222,20 @@
       (let [r (search :pohjakoulutusvaatimus "pohjakoulutusvaatimuskonfo_am" :sort "name" :order "asc")]
         (is (= 4 (count (:hits r))))
         (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))))
+
+    (testing "lukuvuosimaksu_amm_lk"
+      (let [r (search :maksullisuustyyppi "lukuvuosimaksu_amm_lk" :sort "name" :order "asc")
+            hits (:hits r)]
+        (is (= 2 (count hits)))
+        (is (= "1.2.246.562.13.000049" (:oid (first hits))))
+        (is (= "1.2.246.562.13.000010" (:oid (last hits))))
+        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+
+    (testing "lukuvuosimaksu_kk"
+      (let [r (search :maksullisuustyyppi "lukuvuosimaksu_kk" :sort "name" :order "asc")
+            hits (:hits r)]
+        (is (= 1 (count hits)))
+        (is (= "1.2.246.562.13.000009" (:oid (first hits))))))
 
     (testing "Search koulutukset, get correct result"
       (let [r (search :sijainti "kunta_220" :koulutustyyppi "amm" :sort "name" :order "asc")]

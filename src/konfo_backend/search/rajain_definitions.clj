@@ -360,7 +360,7 @@
             items:
               type: string
           description: Pilkulla eroteltu lista koulutuksen maksullisuustyyppejä
-          example: [maksuton,maksullinen,lukuvuosimaksu]
+          example: [maksuton,maksullinen,lukuvuosimaksu,lukuvuosimaksu_amm_lk,lukuvuosimaksu_kk]
         - in: query
           name: maksunmaara_min
           style: form
@@ -390,6 +390,34 @@
           description: Koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu\"
           example: 100
         - in: query
+          name: lukuvuosimaksunmaara_amm_lk_min
+          style: form
+          schema:
+            type: number
+          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_amm_lk_max
+          style: form
+          schema:
+            type: number
+          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_kk_min
+          style: form
+          schema:
+            type: number
+          description: Yliopisto- ja AMK-koulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_kk\"
+          example: 100
+        - in: query
+          name: lukuvuosimaksunmaara_kk_max
+          style: form
+          schema:
+            type: number
+          description: Yliopisto- ja AMK-koulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_kk\"
+          example: 100
+        - in: query
           name: apuraha
           schema:
             type: boolean
@@ -400,41 +428,78 @@
 (def maksuton
   {:id :maksuton
    :rajainGroupId :maksullisuus
-   :make-query #(->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+   :make-query #(->terms-query "metadata.maksullisuustyypit.keyword" "maksuton")
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (->terms-query "metadata.maksullisuustyyppi.keyword" "maksuton")
+               (bool-agg-filter (->terms-query "metadata.maksullisuustyypit.keyword" "maksuton")
                                 (aggregation-filters-for-rajain :maksuton constraints rajain-context)
                                 rajain-context))})
 
 (def maksullinen
   {:id :maksullinen
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")
                            (number-range-query "metadata.maksunMaara" (:maksunmaara %))])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")
                                            (number-range-query "metadata.maksunMaara"
                                                                (get-in constraints [:maksullinen :maksunmaara]))])
                                 (aggregation-filters-for-rajain :maksullinen constraints rajain-context)
                                 rajain-context))
    :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                         (->terms-query "metadata.maksullisuustyyppi.keyword" "maksullinen")))})
+                                         (->terms-query "metadata.maksullisuustyypit.keyword" "maksullinen")))})
 
 (def lukuvuosimaksu
   {:id :lukuvuosimaksu
    :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                           (number-range-query "metadata.maksunMaara" (:maksunmaara %))
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
                            (->conditional-boolean-term-query "metadata.onkoApuraha" true (:apuraha %))])
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                           (number-range-query "metadata.maksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
-                                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query
+                                            "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu :maksunmaara]))
+                                           (->conditional-boolean-term-query
+                                            "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])
                                 (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
                                 rajain-context))
-   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.maksunMaara"
-                                                   (all-must [(->terms-query "metadata.maksullisuustyyppi.keyword" "lukuvuosimaksu")
-                                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
+   :make-max-agg (fn [constraints]
+                   (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                   (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                              (->conditional-boolean-term-query
+                                               "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
+(def lukuvuosimaksu_amm_lk
+  {:id :lukuvuosimaksu_amm_lk
+   :rajainGroupId :maksullisuus
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
+                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
+                                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
+                                (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                         (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                                    {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])))})
+(def lukuvuosimaksu_kk
+  {:id :lukuvuosimaksu_kk
+   :rajainGroupId :maksullisuus
+   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
+                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (:apuraha %))
+                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])
+   :make-agg (fn [constraints rajain-context]
+               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                           (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_kk :maksunmaara]))
+                                           (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu_kk :apuraha]))
+                                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])
+                                (aggregation-filters-for-rajain :lukuvuosimaksu_kk constraints rajain-context)
+                                rajain-context))
+   :make-max-agg (fn [constraints] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                                   (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                                              (->conditional-boolean-term-query "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu_kk :apuraha]))
+                                                              {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amk" "yo"]}}]}}])))})
 
 (def yhteishaku
   {:id :yhteishaku
@@ -620,13 +685,13 @@
    opetusaika valintatapa hakutapa yhteishaku pohjakoulutusvaatimus alkamiskausi
    koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
    amm_erityisopetus tuva_erityisopetus maksuton maksullinen
-   lukuvuosimaksu hakukaynnissa hakualkaapaivissa lukiopainotukset
+   lukuvuosimaksu lukuvuosimaksu_amm_lk lukuvuosimaksu_kk hakukaynnissa hakualkaapaivissa lukiopainotukset
    lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
 
 (def common-agg-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakutapa pohjakoulutusvaatimus
    koulutuksenkestokuukausina valintatapa yhteishaku alkamiskausi maksuton maksullinen
-   lukuvuosimaksu hakukaynnissa hakualkaapaivissa])
+   lukuvuosimaksu lukuvuosimaksu_amm_lk lukuvuosimaksu_kk hakukaynnissa hakualkaapaivissa])
 
 (def all-agg-defs (concat common-agg-defs
                           [koulutusala koulutustyyppi jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
