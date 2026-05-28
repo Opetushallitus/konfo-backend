@@ -332,6 +332,46 @@
    |          type: object
    |          $ref: '#/components/schemas/TutkinnonOsa'")
 
+(def paikallinen-tutkinnon-osa-schema
+  "|    PaikallinenTutkinnonOsa:
+   |      type: object
+   |      properties:
+   |        opetussuunnitelmaId:
+   |          type: string
+   |          description: Paikallisen tutkinnon osan opetussuunnitelman id
+   |          example: '123'
+   |        tutkinnonosaId:
+   |          type: string
+   |          description: Paikallisen tutkinnon osan id
+   |          example: '456'
+   |        nimi:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan nimi eri kielillä
+   |          $ref: '#/components/schemas/Nimi'
+   |        laajuus:
+   |          type: number
+   |          description: Paikallisen tutkinnon osan laajuus osaamispisteinä
+   |        laajuusyksikko:
+   |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+   |          description: Paikallisen tutkinnon osan laajuusyksikkö
+   |        ammattitaidonosoittamistavat:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan ammattitaidon osoittamistavat HTML-muodossa eri kielillä
+   |          $ref: '#/components/schemas/Teksti'
+   |        ammattitaitovaatimukset:
+   |          type: object
+   |          description: Paikallisen tutkinnon osan ammattitaitovaatimukset HTML-muodossa eri kielillä
+   |          $ref: '#/components/schemas/Teksti'")
+
+(def PaikallinenTutkinnonOsa
+  {(s/->OptionalKey :opetussuunnitelmaId)         (s/maybe s/Str)
+   (s/->OptionalKey :tutkinnonosaId)              (s/maybe s/Str)
+   (s/->OptionalKey :nimi)                        (s/maybe Kielistetty)
+   (s/->OptionalKey :laajuus)                     (s/maybe s/Num)
+   (s/->OptionalKey :laajuusyksikko)              (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+   (s/->OptionalKey :ammattitaidonosoittamistavat) (s/maybe Kielistetty)
+   (s/->OptionalKey :ammattitaitovaatimukset)      (s/maybe Kielistetty)})
+
 (def schemas
   (str kouta-koulutustyyppi-schema "\n"
        konfo-koulutustyyppi-schema "\n"
@@ -347,4 +387,5 @@
        ajanjakso-schema "\n"
        koulutuksenalkamiskausi-schema "\n"
        osoite-schema "\n"
-       tutkinnon-osa-eperuste-schema))
+       tutkinnon-osa-eperuste-schema "\n"
+       paikallinen-tutkinnon-osa-schema))

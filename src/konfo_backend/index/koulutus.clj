@@ -10,7 +10,8 @@
   [oid draft?]
   (let [koulutus (get-source index oid)]
     (when (allowed-to-view koulutus draft?)
-      (assoc koulutus :toteutukset (-> koulutus (:toteutukset) (julkaistut))))))
+      (-> koulutus
+          (assoc :toteutukset (-> koulutus (:toteutukset) (julkaistut)))))))
 
 (defn get-many
   ([oids excludes]
