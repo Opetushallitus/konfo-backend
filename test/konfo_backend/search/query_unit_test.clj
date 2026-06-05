@@ -138,7 +138,8 @@
                                                             [{:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
                                                           {:bool
@@ -146,7 +147,8 @@
                                                             [{:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
@@ -259,7 +261,8 @@
                                                              {:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
                                                           {:bool
@@ -267,7 +270,8 @@
                                                             [{:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
@@ -340,7 +344,8 @@
                                                              {:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
                                                           {:bool
@@ -348,7 +353,8 @@
                                                             [{:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool
@@ -427,7 +433,8 @@
                                                              {:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:real_hits {:reverse_nested {:path "search_terms"}}}}
                          :lukuvuosimaksu_amm_lk-max      {:filter
                                                           {:bool
@@ -435,7 +442,8 @@
                                                             [{:bool
                                                               {:filter
                                                                [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm", "lk"]}}]}}]}}]}}
+                                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}]}}
                                                           :aggs {:max-val {:max {:field "search_terms.metadata.lukuvuosimaksunMaara"}}}}
                          :lukuvuosimaksu_kk          {:filter
                                                       {:bool

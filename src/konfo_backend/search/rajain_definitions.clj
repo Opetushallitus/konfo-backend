@@ -394,14 +394,14 @@
           style: form
           schema:
             type: number
-          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          description: Ammatillisten (amm, amm-tutkinnon-osa, amm-osaamisala, amm-muu, telma) ja lukiokoulutuksen lukuvuosimaksun minimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
           example: 100
         - in: query
           name: lukuvuosimaksunmaara_amm_lk_max
           style: form
           schema:
             type: number
-          description: Ammatillisen ja lukiokoulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
+          description: Ammatillisten (amm, amm-tutkinnon-osa, amm-osaamisala, amm-muu, telma) ja lukiokoulutuksen lukuvuosimaksun maksimimäärä. Käytetään vain jos maksullisuustyypiksi valittu \"lukuvuosimaksu_amm_lk\"
           example: 100
         - in: query
           name: lukuvuosimaksunmaara_kk_min
@@ -468,20 +468,22 @@
                                               (->conditional-boolean-term-query
                                                "metadata.onkoApuraha" true (get-in constraints [:lukuvuosimaksu :apuraha]))])))})
 (def lukuvuosimaksu_amm_lk
-  {:id :lukuvuosimaksu_amm_lk
-   :rajainGroupId :maksullisuus
-   :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
-                           (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
-                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
-   :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
-                                           (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
-                                           {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])
-                                (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
-                                rajain-context))
-   :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
-                                         (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
-                                                    {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}])))})
+  (let [ammatilliset-and-lk ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]]
+    {:id :lukuvuosimaksu_amm_lk
+     :rajainGroupId :maksullisuus
+     :make-query #(all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                             (number-range-query "metadata.lukuvuosimaksunMaara" (:maksunmaara %))
+                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ammatilliset-and-lk}}]}}])
+     :make-agg (fn [constraints rajain-context]
+                 (bool-agg-filter (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                             (number-range-query "metadata.lukuvuosimaksunMaara" (get-in constraints [:lukuvuosimaksu_amm_lk :maksunmaara]))
+                                             {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ammatilliset-and-lk}}]}}])
+                                  (aggregation-filters-for-rajain :lukuvuosimaksu constraints rajain-context)
+                                  rajain-context))
+     :make-max-agg (fn [_] (max-agg-filter "search_terms.metadata.lukuvuosimaksunMaara"
+                                           (all-must [(->terms-query "metadata.maksullisuustyypit.keyword" "lukuvuosimaksu")
+                                                      {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ammatilliset-and-lk}}]}}])))}))
+
 (def lukuvuosimaksu_kk
   {:id :lukuvuosimaksu_kk
    :rajainGroupId :maksullisuus

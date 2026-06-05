@@ -86,14 +86,14 @@
                                      :maksullinen {:count 3}
                                      :lukuvuosimaksu {:count 4}
                                      :lukuvuosimaksu_kk {:count 1}
-                                     :lukuvuosimaksu_amm_lk {:count 2}}
+                                     :lukuvuosimaksu_amm_lk {:count 3}}
                                     :maksunmaara {:count 3
                                                   :max 200.5}
                                     :lukuvuosimaksunmaara {:count 4
                                                            :max 3000.0}
                                     :lukuvuosimaksunmaara_kk {:count 1
                                                               :max 3000.0}
-                                    :lukuvuosimaksunmaara_amm_lk {:count 2
+                                    :lukuvuosimaksunmaara_amm_lk {:count 3
                                                                   :max 500.0}
                                     :apuraha {:count 4} ;; tämän lukumääräksi otetaan lukuvuosimaksullisten määrä riippumatta siitä onko apurahaa vai ei.
                                                         ;; lukumäärätietoa ei kuitenkaan näytetä konfo-uissa.
@@ -228,10 +228,12 @@
     (testing "lukuvuosimaksu_amm_lk"
       (let [r (search :maksullisuustyyppi "lukuvuosimaksu_amm_lk" :sort "name" :order "asc")
             hits (:hits r)]
-        (is (= 2 (count hits)))
-        (is (= "1.2.246.562.13.000049" (:oid (first hits))))
+        (is (= 3 (count hits)))
+        (is (= "1.2.246.562.13.000014" (:oid (first hits))))
+        (is (= "1.2.246.562.13.000049" (:oid (get hits 1))))
         (is (= "1.2.246.562.13.000010" (:oid (last hits))))
-        (is (= 2 (get-in r [:filters :koulutustyyppi :amm :count])))))
+        (is (= 3 (get-in r [:filters :koulutustyyppi :amm :count])))
+        (is (= 1 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-osaamisala :count])))))
 
     (testing "lukuvuosimaksu_kk"
       (let [r (search :maksullisuustyyppi "lukuvuosimaksu_kk" :sort "name" :order "asc")
