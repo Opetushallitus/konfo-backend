@@ -82,14 +82,16 @@
   (testing "Should form filter for only lukuvuosimaksu_amm_lk"
     (is (match? (m/match-with [map? m/equals]
                               [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
-                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}])
                 (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara []}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for only lukuvuosimaksu_amm_lk with maksunMaara range"
     (is (match? (m/match-with [map? m/equals]
                               [{:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                 {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 100 :lte 200}}}
-                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}])
                 (common-filters {:lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
 
   (testing "Should form filter for only lukuvuosimaksu_amm_lk with amm koulutustyyppi constraint"
@@ -97,7 +99,8 @@
                               [{:term {:search_terms.koulutustyypit.keyword "amm"}}
                                {:bool {:filter [{:term {:search_terms.metadata.maksullisuustyypit.keyword "lukuvuosimaksu"}}
                                                 {:range {:search_terms.metadata.lukuvuosimaksunMaara {:gte 100 :lte 200}}}
-                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword" ["amm" "lk"]}}]}}]}}])
+                                                {:bool {:filter [{:terms {"search_terms.koulutustyypit.keyword"
+                                                                          ["amm" "amm-osaamisala" "amm-tutkinnon-osa" "amm-muu" "telma" "lk"]}}]}}]}}])
                 (common-filters {:koulutustyyppi ["amm"] :lukuvuosimaksu_amm_lk {:maksunmaara [100 200]}} "2023-06-08T07:21"))))
 
   (testing "Should form aggregation for jotpa with pohjakoulutusvaatimus as selected filter"
