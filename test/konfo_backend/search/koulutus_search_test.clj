@@ -94,7 +94,7 @@
                                     :lukuvuosimaksunmaara_kk {:count 1
                                                               :max 3000.0}
                                     :lukuvuosimaksunmaara_amm_lk {:count 3
-                                                                  :max 500.0}
+                                                                  :max 1000.0}
                                     :apuraha {:count 4} ;; tämän lukumääräksi otetaan lukuvuosimaksullisten määrä riippumatta siitä onko apurahaa vai ei.
                                                         ;; lukumäärätietoa ei kuitenkaan näytetä konfo-uissa.
                                     }}
