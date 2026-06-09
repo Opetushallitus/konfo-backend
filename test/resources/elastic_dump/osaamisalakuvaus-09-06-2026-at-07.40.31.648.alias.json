@@ -1,6 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/osaamisalakuvaus-24-04-2026-at-12.31.40.341.alias.json
-"{\"osaamisalakuvaus-24-04-2026-at-12.31.40.341\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
-
-========
-"{\"osaamisalakuvaus-09-06-2026-at-07.40.31.648\":{\"aliases\":{\"osaamisalakuvaus\":{\"is_write_index\":false},\"osaamisalakuvaus-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> OY-5501-lukuvuosimaksu:test/resources/elastic_dump/osaamisalakuvaus-09-06-2026-at-07.40.31.648.alias.json

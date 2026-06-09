@@ -1,6 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/koulutus-kouta-24-04-2026-at-12.31.36.285.alias.json
-"{\"koulutus-kouta-24-04-2026-at-12.31.36.285\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
-
-========
-"{\"koulutus-kouta-09-06-2026-at-07.40.27.105\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> OY-5501-lukuvuosimaksu:test/resources/elastic_dump/koulutus-kouta-09-06-2026-at-07.40.27.105.alias.json
