@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>0bfb2240d7662b7d683db48a18804938e973acdf</tag>
+    <tag>49108cc73bed9fb58398133c9d381a00e2a06236</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -496,6 +496,18 @@
           <groupId>com.amazonaws</groupId>
         </exclusion>
       </exclusions>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.21.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>1.21.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -121,6 +121,8 @@
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.4.0"]
                                    [oph/clj-test-utils "0.5.6-SNAPSHOT" :exclusions [com.amazonaws/aws-java-sdk-s3]]
+                                   [org.testcontainers/testcontainers "1.21.4"]
+                                   [org.testcontainers/elasticsearch "1.21.4"]
                                    [org.mockito/mockito-core "5.16.1"]
                                    [clj-http-fake "1.0.4"]
                                    [net.java.dev.jna/jna "5.17.0"]
