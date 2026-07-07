@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>49108cc73bed9fb58398133c9d381a00e2a06236</tag>
+    <tag>e424be468520c5f7232a313c499e3c45689d5a88</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -190,17 +190,22 @@
       <dependency>
         <groupId>ring</groupId>
         <artifactId>ring-core</artifactId>
-        <version>1.13.0</version>
+        <version>1.15.5</version>
       </dependency>
       <dependency>
         <groupId>ring</groupId>
         <artifactId>ring-jetty-adapter</artifactId>
-        <version>1.13.0</version>
+        <version>1.15.5</version>
       </dependency>
       <dependency>
         <groupId>ring</groupId>
         <artifactId>ring-devel</artifactId>
-        <version>1.13.0</version>
+        <version>1.15.5</version>
+      </dependency>
+      <dependency>
+        <groupId>ring</groupId>
+        <artifactId>ring-codec</artifactId>
+        <version>1.3.0</version>
       </dependency>
       <dependency>
         <groupId>ring-cors</groupId>

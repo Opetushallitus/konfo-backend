@@ -32,9 +32,12 @@
                          [org.slf4j/jcl-over-slf4j "2.0.17"]
                          [compojure "1.7.1"]
                          [lambdaisland/uri "1.19.155"]
-                         [ring/ring-core "1.13.0"]
-                         [ring/ring-jetty-adapter "1.13.0"]
-                         [ring/ring-devel "1.13.0"]
+                         [ring/ring-core "1.15.5"]
+                         [ring/ring-jetty-adapter "1.15.5"]
+                         [ring/ring-devel "1.15.5"]
+                         ; ring-core 1.15.5 requires ring-codec 1.3.0 (form-decode-map);
+                         ; pin it so compojure's transitive 1.2.0 doesn't win resolution
+                         [ring/ring-codec "1.3.0"]
                          [ring-cors "0.1.13"]
                          [oph/clj-log "0.3.2-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
                                                                     pl.allegro.tech/embedded-elasticsearch]]
