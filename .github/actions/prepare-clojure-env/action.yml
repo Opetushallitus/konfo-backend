@@ -16,7 +16,7 @@ runs:
         echo "Europe/Helsinki" | sudo tee /etc/timezone
 
     - name: Install clojure tools
-      uses: DeLaGuardo/setup-clojure@12.5
+      uses: DeLaGuardo/setup-clojure@c72ba59d25875f7523e06a671431b5f9f084992d # 12.6
       with:
         lein: 2.11.2
 
