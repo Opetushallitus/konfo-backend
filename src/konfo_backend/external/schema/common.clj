@@ -348,10 +348,10 @@
    |          type: object
    |          description: Paikallisen tutkinnon osan nimi eri kielillä
    |          $ref: '#/components/schemas/Nimi'
-   |        laajuus:
+   |        opintojenLaajuusNumero:
    |          type: number
-   |          description: Paikallisen tutkinnon osan laajuus osaamispisteinä
-   |        laajuusyksikko:
+   |          description: Paikallisen tutkinnon osan laajuus numeroarvona
+   |        opintojenLaajuusyksikko:
    |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
    |          description: Paikallisen tutkinnon osan laajuusyksikkö
    |        ammattitaidonosoittamistavat:
@@ -364,11 +364,11 @@
    |          $ref: '#/components/schemas/Teksti'")
 
 (def PaikallinenTutkinnonOsa
-  {(s/->OptionalKey :opetussuunnitelmaId)         (s/maybe s/Str)
-   (s/->OptionalKey :tutkinnonosaId)              (s/maybe s/Str)
-   (s/->OptionalKey :nimi)                        (s/maybe Kielistetty)
-   (s/->OptionalKey :laajuus)                     (s/maybe s/Num)
-   (s/->OptionalKey :laajuusyksikko)              (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
+  {(s/->OptionalKey :opetussuunnitelmaId)          (s/maybe s/Str)
+   (s/->OptionalKey :tutkinnonosaId)               (s/maybe s/Str)
+   (s/->OptionalKey :nimi)                         (s/maybe Kielistetty)
+   (s/->OptionalKey :opintojenLaajuusNumero)       (s/maybe s/Num)
+   (s/->OptionalKey :opintojenLaajuusyksikko)      (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
    (s/->OptionalKey :ammattitaidonosoittamistavat) (s/maybe Kielistetty)
    (s/->OptionalKey :ammattitaitovaatimukset)      (s/maybe Kielistetty)})
 
