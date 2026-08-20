@@ -28,7 +28,7 @@
      page
      size
      #(-> % parse with-eperustedata)
-     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
+     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "paikallisetTutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
      :sort (sorts sort order lng)
      :query search-term-query
      :post_filter post-filter
@@ -73,7 +73,7 @@
      :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta",
                "kuvaus", "osaamistavoitteet", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus",
                "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax"
-               "koulutustyyppi", "luokittelutermit", "tutkinnonOsat", "osaamisala"]
+               "koulutustyyppi", "luokittelutermit", "tutkinnonOsat", "paikallisetTutkinnonOsat", "osaamisala"]
      :sort (sorts sort order lng)
      :query query)))
 
