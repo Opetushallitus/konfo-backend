@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:test/resources/elastic_dump/koulutus-kouta-09-06-2026-at-07.40.27.105.alias.json
-"{\"koulutus-kouta-09-06-2026-at-07.40.27.105\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
-========
-"{\"koulutus-kouta-26-05-2026-at-08.04.38.713\":{\"aliases\":{\"koulutus-kouta\":{\"is_write_index\":false},\"koulutus-kouta-virkailija\":{\"is_write_index\":true}}}}"
->>>>>>>> f95e917 (OY-3891: Lisätty paikalliset tutkinnon osat):test/resources/elastic_dump/koulutus-kouta-26-05-2026-at-08.04.38.713.alias.json
