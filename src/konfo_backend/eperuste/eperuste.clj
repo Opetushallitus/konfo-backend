@@ -73,8 +73,7 @@
   (let [omat (get-in osa-data [:tosa :omatutkinnonosa])]
     {:ammattitaidonosoittamistavat (:ammattitaidonosoittamistavat omat)
      :ammattitaitovaatimukset      (or (->kielistetty-html (:ammattitaitovaatimukset omat))
-                                       (->kielistetty-html (:ammattitaitovaatimuksetlista omat)))
-     :laajuus                      (:laajuus omat)}))
+                                       (->kielistetty-html (:ammattitaitovaatimuksetlista omat)))}))
 
 (defn enrich-paikalliset-tutkinnon-osat
   [paikalliset]
@@ -85,6 +84,6 @@
       (mapv (fn [osa]
               (let [suunnitelma (suunnitelmat-map (:opetussuunnitelmaId osa))
                     osa-data    (first (filter #(= (str (:id %)) (str (:tutkinnonosaId osa)))
-                                              (:paikallisetTutkinnonOsat suunnitelma)))]
+                                               (:paikallisetTutkinnonOsat suunnitelma)))]
                 (merge osa (extract-ammattitaito-fields osa-data))))
             paikalliset))))
