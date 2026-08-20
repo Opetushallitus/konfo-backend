@@ -351,6 +351,9 @@
    |        laajuus:
    |          type: number
    |          description: Paikallisen tutkinnon osan laajuus osaamispisteinä
+   |        laajuusyksikko:
+   |          $ref: '#/components/schemas/OpintojenLaajuusyksikko'
+   |          description: Paikallisen tutkinnon osan laajuusyksikkö
    |        ammattitaidonosoittamistavat:
    |          type: object
    |          description: Paikallisen tutkinnon osan ammattitaidon osoittamistavat HTML-muodossa eri kielillä
@@ -365,6 +368,7 @@
    (s/->OptionalKey :tutkinnonosaId)              (s/maybe s/Str)
    (s/->OptionalKey :nimi)                        (s/maybe Kielistetty)
    (s/->OptionalKey :laajuus)                     (s/maybe s/Num)
+   (s/->OptionalKey :laajuusyksikko)              (s/maybe (->Koodi OpintojenLaajuusyksikkoKoodi))
    (s/->OptionalKey :ammattitaidonosoittamistavat) (s/maybe Kielistetty)
    (s/->OptionalKey :ammattitaitovaatimukset)      (s/maybe Kielistetty)})
 
