@@ -50,5 +50,5 @@
           (is (= "<p>Vaatimukset kohde fi</p><ul><li>Vaatimus 1 fi</li></ul>" (get-in (first paikalliset) [:ammattitaitovaatimukset :fi])))
           (is (= "Toinen osoittamistapa fi" (get-in (second paikalliset) [:ammattitaidonosoittamistavat :fi])))
           (is (= "<p>Kohdealue fi</p><p>Lista kohde fi</p><ul><li>Vaatimus 2 fi</li></ul>" (get-in (second paikalliset) [:ammattitaitovaatimukset :fi])))
-          (is (= 15 (:laajuus (first paikalliset))))
-          (is (nil? (:laajuus (second paikalliset)))))))))
+          (is (= 15 (:opintojenLaajuusNumero (first paikalliset))))
+          (is (nil? (:opintojenLaajuusNumero (second paikalliset)))))))))
