@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>konfo-backend</groupId>
   <artifactId>konfo-backend</artifactId>
@@ -11,7 +11,7 @@
     <url>https://github.com/Opetushallitus/konfo-backend</url>
     <connection>scm:git:git://github.com/Opetushallitus/konfo-backend.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/konfo-backend.git</developerConnection>
-    <tag>e424be468520c5f7232a313c499e3c45689d5a88</tag>
+    <tag>40fa6a7f8a9c27dab2e76b68416e1b25adce457c</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -52,18 +52,8 @@
       </releases>
     </repository>
     <repository>
-      <id>releases</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/Opetushallitus/packages</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -213,7 +203,7 @@
         <version>0.1.13</version>
       </dependency>
       <dependency>
-        <groupId>oph</groupId>
+        <groupId>opiskelijavalinnat-utils</groupId>
         <artifactId>clj-log</artifactId>
         <version>0.3.2-SNAPSHOT</version>
         <exclusions>
@@ -288,7 +278,7 @@
         <version>1.18.0</version>
       </dependency>
       <dependency>
-        <groupId>oph</groupId>
+        <groupId>opiskelijavalinnat-utils</groupId>
         <artifactId>clj-elasticsearch</artifactId>
         <version>0.5.4-SNAPSHOT</version>
         <exclusions>
@@ -426,7 +416,7 @@
       <artifactId>ring-cors</artifactId>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-log</artifactId>
     </dependency>
     <dependency>
@@ -474,7 +464,7 @@
       <artifactId>commons-codec</artifactId>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-elasticsearch</artifactId>
     </dependency>
     <dependency>
@@ -492,9 +482,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>oph</groupId>
+      <groupId>opiskelijavalinnat-utils</groupId>
       <artifactId>clj-test-utils</artifactId>
-      <version>0.5.6-SNAPSHOT</version>
+      <version>0.5.7-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>aws-java-sdk-s3</artifactId>
