@@ -4,6 +4,7 @@
             [konfo-backend.koodisto.koodisto :as koodisto]
             [konfo-backend.util.time :as time]
             [matcher-combinators.test]
+            [matcher-combinators.matchers :as m]
             [clojure.string :refer [starts-with?]]
             [konfo-backend.test-tools :refer :all]
             [konfo-backend.test-mock-data :refer :all]))
@@ -133,6 +134,72 @@
                                         :amm-tutkinnon-osa {:count 1}
                                         :amm-muu {:count 1}}}}}
                     (:filters r)))))
+
+    (testing "koulutustyyppi amm-tutkinnon-osa palauttaa tutkinnonOsat ja paikallisetTutkinnonOsat"
+      (let [r (search :koulutustyyppi "amm-tutkinnon-osa" :sort "name" :order "asc")
+            hit (first (:hits r))]
+        (is (= 1 (count (:hits r))))
+        (is (= "1.2.246.562.13.000013" (:oid hit)))
+        (is (match? (m/embeds
+                     {:tutkinnonOsat
+                      [{:eperuste nil
+                        :koulutus {:koodiUri "koulutus_123123#1"
+                                   :nimi {:fi "koulutus_123123#1 nimi fi"
+                                          :sv "koulutus_123123#1 nimi sv"}}
+                        :opintojenLaajuusNumero 50
+                        :opintojenLaajuus {:koodiUri "opintojenlaajuus_50"
+                                           :nimi {:fi "opintojenlaajuus_50 nimi fi"
+                                                  :sv "opintojenlaajuus_50 nimi sv"}}
+                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6"
+                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi"
+                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}}
+                        :tutkinnonOsat {:koodiUri "tutkinnonosat_12345"
+                                        :nimi {:fi "tutkinnonosat_12345 nimi fi"
+                                               :sv "tutkinnonosat_12345 nimi sv"}}}
+                       {:eperuste nil
+                        :koulutus {:koodiUri "koulutus_123125#1"
+                                   :nimi {:fi "koulutus_123125#1 nimi fi"
+                                          :sv "koulutus_123125#1 nimi sv"}}
+                        :opintojenLaajuusNumero nil
+                        :opintojenLaajuus nil
+                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6"
+                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi"
+                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}}
+                        :tutkinnonOsat nil}
+                       {:eperuste nil
+                        :koulutus {:koodiUri "koulutus_123444#1"
+                                   :nimi {:fi "koulutus_123444#1 nimi fi"
+                                          :sv "koulutus_123444#1 nimi sv"}}
+                        :opintojenLaajuusNumero nil
+                        :opintojenLaajuus nil
+                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6"
+                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi"
+                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}}
+                        :tutkinnonOsat nil}
+                       {:eperuste 123
+                        :koulutus {:koodiUri "koulutus_371101#1"
+                                   :nimi {:fi "koulutus_371101#1 nimi fi"
+                                          :sv "koulutus_371101#1 nimi sv"}}
+                        :opintojenLaajuusNumero nil
+                        :opintojenLaajuus nil
+                        :opintojenLaajuusyksikko {:koodiUri "opintojenlaajuusyksikko_6"
+                                                  :nimi {:fi "opintojenlaajuusyksikko_6 nimi fi"
+                                                         :sv "opintojenlaajuusyksikko_6 nimi sv"}}
+                        :tutkinnonOsat nil}]
+                      :paikallisetTutkinnonOsat
+                      [{:opetussuunnitelmaId "123"
+                        :tutkinnonosaId "456"
+                        :nimi {:fi "Paikallinen tutkinnon osa fi"
+                               :sv "Paikallinen tutkinnon osa sv"}
+                        :opintojenLaajuusNumero 15
+                        :opintojenLaajuusyksikko nil}
+                       {:opetussuunnitelmaId "123"
+                        :tutkinnonosaId "789"
+                        :nimi {:fi "Toinen paikallinen osa fi"
+                               :sv "Toinen paikallinen osa sv"}
+                        :opintojenLaajuusNumero nil
+                        :opintojenLaajuusyksikko nil}]})
+                    hit))))
 
     (testing "koulutustyyppi amm-muu"
       (let [r (search :koulutustyyppi "amm-muu" :sort "name" :order "asc")]

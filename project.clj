@@ -4,16 +4,9 @@
 
 (defproject konfo-backend "0.2.1-SNAPSHOT"
   :description "Konfo-backend"
-  :repositories [["releases" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
-                              :username :env/artifactory_username
-                              :password :env/artifactory_password
-                              :sign-releases false
-                              :snapshots false}]
-                 ["snapshots" {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
-                               :username :env/artifactory_username
-                               :password :env/artifactory_password
-                               :sign-releases false
-                               :snapshots true}]]
+  :repositories [["github" {:url "https://maven.pkg.github.com/Opetushallitus/packages"
+                          :username "private-token"
+                          :password :env/GITHUB_TOKEN}]]
   :managed-dependencies [[org.clojure/clojure "1.11.4"]
                          [org.clojure/core.memoize "1.1.266"]
                          [commons-io "2.18.0"]
@@ -24,7 +17,7 @@
                          [clj-commons/clj-yaml "1.0.29"]
                          [clj-http "3.13.0"]
                          [software.amazon.awssdk/s3 "2.37.5" :exclusions [software.amazon.awssdk/netty-nio-client
-                                                                           software.amazon.awssdk/apache-client]]
+                                                                          software.amazon.awssdk/apache-client]]
                          [software.amazon.awssdk/sso "2.37.5" :exclusions [software.amazon.awssdk/netty-nio-client]]
                          [software.amazon.awssdk/ssooidc "2.37.5" :exclusions [software.amazon.awssdk/netty-nio-client]]
                          [software.amazon.awssdk/apache-client "2.37.5" :exclusions [commons-logging]]
@@ -39,8 +32,8 @@
                          ; pin it so compojure's transitive 1.2.0 doesn't win resolution
                          [ring/ring-codec "1.3.0"]
                          [ring-cors "0.1.13"]
-                         [oph/clj-log "0.3.2-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
-                                                                    pl.allegro.tech/embedded-elasticsearch]]
+                         [opiskelijavalinnat-utils/clj-log "0.3.2-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
+                                                                                         pl.allegro.tech/embedded-elasticsearch]]
                          [org.apache.commons/commons-fileupload2-core "2.0.0-M4"]
                          [ring-basic-authentication "1.2.0"]
                          [org.clojure/tools.logging "1.3.0"]
@@ -53,8 +46,8 @@
                          [cprop "0.1.20"]
                          [com.contentful.java/java-sdk "10.5.21"]
                          [commons-codec/commons-codec "1.18.0"]
-                         [oph/clj-elasticsearch "0.5.4-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
-                                                                              pl.allegro.tech/embedded-elasticsearch]]
+                         [opiskelijavalinnat-utils/clj-elasticsearch "0.5.4-SNAPSHOT" :exclusions [io.findify/s3mock_2.12
+                                                                                        pl.allegro.tech/embedded-elasticsearch]]
                          [mount "0.1.21"]
                          [org.clojure/data.xml "0.0.8"]
 
@@ -90,7 +83,7 @@
                  [ring/ring-devel]
                  [ring-cors]
                  ; Logging
-                 [oph/clj-log]
+                 [opiskelijavalinnat-utils/clj-log]
                  [ring-basic-authentication]
                  [org.clojure/tools.logging]
                  [org.apache.logging.log4j/log4j-api]
@@ -105,7 +98,7 @@
                  [com.contentful.java/java-sdk]
                  [commons-codec/commons-codec]
                  ; Elasticsearch
-                 [oph/clj-elasticsearch]
+                 [opiskelijavalinnat-utils/clj-elasticsearch]
                  [mount]
                  [org.clojure/data.xml]]
   :env {:name "konfo-backend"}
@@ -123,7 +116,7 @@
                    :jvm-opts ["-Dport=3006"]}
              :updater {:jvm-opts ["-Dmode=updater" "-Dport=3006"]}
              :test {:dependencies [[ring/ring-mock "0.4.0"]
-                                   [oph/clj-test-utils "0.5.6-SNAPSHOT" :exclusions [com.amazonaws/aws-java-sdk-s3]]
+                                   [opiskelijavalinnat-utils/clj-test-utils "0.5.7-SNAPSHOT" :exclusions [com.amazonaws/aws-java-sdk-s3]]
                                    [org.testcontainers/testcontainers "1.21.4"]
                                    [org.testcontainers/elasticsearch "1.21.4"]
                                    [org.mockito/mockito-core "5.16.1"]
