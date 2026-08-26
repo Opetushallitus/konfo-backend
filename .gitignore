@@ -16,3 +16,6 @@ config.json
 .calva
 .clj-kondo
 .DS_Store
+
+# Claude Code
+.claude/

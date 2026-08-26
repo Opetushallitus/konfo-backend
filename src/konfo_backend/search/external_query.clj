@@ -16,7 +16,9 @@
                          (constraints? constraints) (assoc
                                                      :filter (common-filters
                                                               constraints (current-time-as-kouta-format))))
+        ; score_mode "max", ks. konfo-backend.search.query
         search_terms_query {:must {:nested {:path       "search_terms",
+                                            :score_mode "max",
                                             :inner_hits {:size 500},
                                             :query      {:bool query-contents}}}}]
     {:bool (if (not-empty luokittelutermit)
