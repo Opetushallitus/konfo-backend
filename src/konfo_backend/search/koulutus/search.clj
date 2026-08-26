@@ -4,9 +4,10 @@
    [konfo-backend.index.toteutus :refer [parse-inner-hits-for-jarjestajat]]
    [konfo-backend.search.external-query :refer [external-query]]
    [konfo-backend.search.koulutus.eperustedata :refer [with-eperustedata]]
-   [konfo-backend.search.query :refer [hakutulos-aggregations
+   [konfo-backend.search.query :refer [autocomplete-query hakutulos-aggregations
                                        jarjestajat-aggregations
-                                       post-filter-query search-term-query
+                                       post-filter-query
+                                       search-with-approximate-fallback
                                        sorts toteutukset-inner-hits
                                        toteutukset-query]]
    [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
@@ -21,18 +22,20 @@
 
 (defn search
   [keyword lng page size sort order constraints]
-  (let [search-term-query (search-term-query keyword lng ["words"])
-        post-filter (post-filter-query constraints)
+  (let [post-filter (post-filter-query constraints)
         aggs (hakutulos-aggregations constraints)]
-    (koulutus-kouta-search
-     page
-     size
-     #(-> % parse with-eperustedata)
-     :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "paikallisetTutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
-     :sort (sorts sort order lng)
-     :query search-term-query
-     :post_filter post-filter
-     :aggs aggs)))
+    (search-with-approximate-fallback
+     keyword lng ["words"]
+     (fn [query]
+       (koulutus-kouta-search
+        page
+        size
+        #(-> % parse with-eperustedata)
+        :_source ["oid", "nimi", "koulutukset", "tutkintonimikkeet", "kielivalinta", "kuvaus", "teemakuva", "eperuste", "osaamismerkki", "opintojenLaajuus", "opintojenLaajuusyksikko", "opintojenLaajuusNumero", "opintojenLaajuusNumeroMin", "opintojenLaajuusNumeroMax", "koulutustyyppi", "tutkinnonOsat", "paikallisetTutkinnonOsat", "osaamisala", "toteutustenTarjoajat" "isAvoinKorkeakoulutus"]
+        :sort (sorts sort order lng)
+        :query query
+        :post_filter post-filter
+        :aggs aggs)))))
 
 (defn search-koulutuksen-jarjestajat
   [oid lng page size order tuleva? constraints]
@@ -79,7 +82,7 @@
 
 (defn autocomplete-search
   [search-phrase lng size sort order constraints]
-  (let [query (search-term-query search-phrase lng ["words"])
+  (let [query (autocomplete-query search-phrase lng ["words"])
         post-filter (post-filter-query constraints)]
     (e/search index
               #(parse-for-autocomplete %)
