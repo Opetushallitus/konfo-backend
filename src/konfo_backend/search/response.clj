@@ -6,7 +6,8 @@
    [konfo-backend.search.rajain-definitions :refer [->max-agg-id all-agg-defs
                                                     max-agg-defs]]
    [konfo-backend.search.tools :refer :all]
-   [konfo-backend.tools :refer [log-pretty reduce-merge-map]]))
+   [konfo-backend.tools :refer [log-pretty reduce-merge-map]]
+   [konfo-backend.elastic-tools :refer [clean-unwanted-fields]]))
 
 (defn- buckets-to-map
   [buckets]
@@ -100,6 +101,7 @@
    (fn [hit]
      (-> (:_source hit)
          (rename-keys {:eperuste :ePerusteId})
+         (clean-unwanted-fields)
          (assoc :toteutukset (vec (map inner-hit->toteutus-hit (filter valid-external-inner-hit (get-in hit [:inner_hits :search_terms :hits :hits])))))))
    (get-in response [:hits :hits])))
 

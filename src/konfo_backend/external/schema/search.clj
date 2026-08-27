@@ -92,6 +92,7 @@
    (s/->OptionalKey :luokittelutermit)          [s/Str]
    (s/->OptionalKey :osaamisala)                (s/maybe (->Koodi OsaamisalaKoodi))
    (s/->OptionalKey :tutkinnonOsat)             (s/maybe [TutkinnonOsaEperuste])
+   (s/->OptionalKey :paikallisetTutkinnonOsat)  [(s/maybe PaikallinenTutkinnonOsa)]
    :toteutukset                                 [KoulutusToteutusHit]})
 
 (def schemas
