@@ -140,6 +140,16 @@
           (is (= massikkakoulu-oid (:toteutusOid (first (:hits r))))))
         (let [r (search helsingin-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "maksuton")]
           (is (= 0 (:total r)))))
+      (testing "Can filter by maksullisuustyyppi lukuvuosimaksu_amm_lk with maksunmaara range"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "lukuvuosimaksu_amm_lk")]
+          (is (= 1 (:total r)))
+          (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r))))))
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc"
+                        :maksullisuustyyppi "lukuvuosimaksu_amm_lk" :lukuvuosimaksunmaara_amm_lk_min 600)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by apuraha, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "lukuvuosimaksu" :apuraha true)]
+          (is (= 0 (:total r)))))
       (testing "Can filter by jotpa, no match"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :jotpa true)]
           (is (= 0 (:total r)))))

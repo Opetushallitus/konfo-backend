@@ -863,6 +863,14 @@
                      {pohjakoulutusvaatimus :- String nil}
                      {koulutuksenkestokuukausina_min :- Number nil}
                      {koulutuksenkestokuukausina_max :- Number nil}
+                     {maksullisuustyyppi    :- String nil}
+                     {maksunmaara_min       :- Number nil}
+                     {maksunmaara_max       :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
+                     {apuraha               :- Boolean false}
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
                      {osaamisala            :- String nil}
@@ -893,6 +901,13 @@
                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
                                                                                 :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
                                                                                 :maksullisuustyyppi maksullisuustyyppi
+                                                                                :maksunmaara_min maksunmaara_min
+                                                                                :maksunmaara_max maksunmaara_max
+                                                                                :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                                                                :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                                                                :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                                                                :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
+                                                                                :apuraha apuraha
                                                                                 :lukiopainotukset lukiopainotukset
                                                                                 :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
                                                                                 :osaamisala osaamisala
