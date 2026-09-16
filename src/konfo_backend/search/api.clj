@@ -358,6 +358,20 @@
                 (:desc opetustapa) "\n"
                 (:desc opetusaika) "\n"
                 (:desc koulutuksenkestokuukausina) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc lukiopainotukset) "\n"
+                (:desc lukiolinjaterityinenkoulutustehtava) "\n"
+                (:desc osaamisala) "\n"
+                (:desc alkamiskausi) "\n"
                 (:desc hakualkaapaivissa) "\n"
                 "
       responses:
@@ -837,8 +851,22 @@
                      {opetuskieli    :- String nil}
                      {koulutusala    :- String nil}
                      {opetustapa     :- String nil}
+                     {opetusaika            :- String nil}
+                     {valintatapa           :- String nil}
+                     {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean false}
+                     {tyovoimakoulutus      :- Boolean false}
+                     {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
+                     {hakutapa              :- String nil}
+                     {yhteishaku            :- String nil}
+                     {pohjakoulutusvaatimus :- String nil}
                      {koulutuksenkestokuukausina_min :- Number nil}
                      {koulutuksenkestokuukausina_max :- Number nil}
+                     {lukiopainotukset      :- String nil}
+                     {lukiolinjaterityinenkoulutustehtava :- String nil}
+                     {osaamisala            :- String nil}
+                     {alkamiskausi          :- String nil}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
                                                                                oid
@@ -852,9 +880,30 @@
                                                                                 :opetuskieli opetuskieli
                                                                                 :koulutusala koulutusala
                                                                                 :opetustapa opetustapa
+                                                                                :opetusaika opetusaika
+                                                                                :valintatapa valintatapa
+                                                                                :hakukaynnissa hakukaynnissa
+                                                                                :jotpa jotpa
+                                                                                :tyovoimakoulutus tyovoimakoulutus
+                                                                                :taydennyskoulutus taydennyskoulutus
+                                                                                :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
+                                                                                :hakutapa hakutapa
+                                                                                :yhteishaku yhteishaku
+                                                                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
                                                                                 :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
-                                                                                :hakualkaapaivissa hakualkaapaivissa})))
+                                                                                :maksullisuustyyppi maksullisuustyyppi
+                                                                                :lukiopainotukset lukiopainotukset
+                                                                                :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
+                                                                                :osaamisala osaamisala
+                                                                                :alkamiskausi alkamiskausi
+                                                                                :hakualkaapaivissa hakualkaapaivissa
+                                                                                :amm_erityisopetus (when (some? koulutustyyppi)
+                                                                                                     (contains? (set (string/split koulutustyyppi #","))
+                                                                                                                "koulutustyyppi_4"))
+                                                                                :tuva_erityisopetus (when (some? koulutustyyppi)
+                                                                                                      (contains? (set (string/split koulutustyyppi #","))
+                                                                                                                 "tuva-erityisopetus"))})))
 
     (GET "/autocomplete" [:as request]
       :query-params [{searchPhrase          :- String nil}
