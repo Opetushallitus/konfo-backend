@@ -705,7 +705,7 @@
 (def jarjestaja-agg-defs (concat common-agg-defs [koulutustyyppi lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def tarjoaja-agg-defs
-  (concat common-agg-defs [koulutustyyppi koulutusala]))
+  (concat common-agg-defs [koulutustyyppi koulutusala lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]))
 
 (def max-agg-defs (filter #(not (nil? (:make-max-agg %))) all-agg-defs))
 
