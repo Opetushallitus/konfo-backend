@@ -81,6 +81,15 @@ Kun Elasticsearch-kontti on pyörimässä, sovelluksen saa käyntiin ajamalla pr
 
 Swagger löytyy selaimella osoitteesta http://localhost:3006/konfo-backend/swagger
 
+Lisäksi github packages -riippuvuuksia varten pitää konfiguroida kehitysympäristö.
+Ks. https://github.com/Opetushallitus/cloud-base/blob/98f333c237e9a727300d1ca1423d395b19abb278/docs/new-developer.md#github-token-pakettien-lataamista-varten
+
+Lisää ~/.lein/profiles.clj tiedostoon seuraava:
+```clojure
+{:auth {:repository-auth {#"github" {:username "<oma tunnus>"
+                                      :password "<github token>"}}}}
+```
+
 ### 3.4. Kehitystyökalut
 
 Suositeltava kehitysympäristö on [IntelliJ IDEA](https://www.jetbrains.com/idea/) + [Cursive plugin](https://cursive-ide.com/)
