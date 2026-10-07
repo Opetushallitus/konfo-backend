@@ -71,16 +71,27 @@
               |openapi: 3.0.0
               |info:
               |  title: konfo-backend
-              |  description: \"Opintopolun oppijan puolen koulutustarjonta\"
+              |  description: 
+               \"
+               <p>Tämä sivu sisältää Opintopolun konfo-backend-rajapintojen Swagger-dokumentaation. </p>
+
+               <p>Rajapintojen avulla voi hakea Opintopolussa julkaistua koulutus-, toteutus-, haku-, hakukohde- ja oppilaitostietoja. 
+               Dokumentaatiosta löydät käytettävissä olevat rajapinnat, 
+               niiden parametrikuvaukset sekä esimerkit kutsujen tekemiseen.</p>
+
+               <p>Ohjeita rajapintojen kutsujalle: <a target='_blank' href='https://opintopolku.fi/konfo/fi/sivu/opintopolku-fi-rajapinnat'>https://opintopolku.fi/konfo/fi/sivu/opintopolku-fi-rajapinnat</a></p>
+
+               <p>Jos sinulla on kysyttävää rajapinnan käytöstä, lähetä sähköpostia osoitteeseen <a href='mailto:palaute@opintopolku.fi'>palaute@opintopolku.fi</a></p>
+
+               <p>Copyright (c) 2026 Finnish National Agency for Education</p>
+
+               <p>Licensed under the EUPL, Version 1.2 or - as soon as they will be approved by the 
+               European Commission - subsequent versions of the EUPL.</p>
+
+               <p>You may obtain a copy of the EUPL at: <a target='_blank' href='https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12'>https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12</a> (edited) </p>
+
+               \"
               |  version: 0.1-SNAPSHOT
-              |  termsOfService: https://opintopolku.fi/wp/fi/opintopolku/tietoa-palvelusta/
-              |  contact:
-              |    name: \"Opetushallitus\"
-              |    email: \"verkkotoimitus_opintopolku@oph.fi\"
-              |    url: \"https://www.oph.fi/\"
-              |  license:
-              |    name: \"EUPL 1.1 or latest approved by the European Commission\"
-              |    url: \"http://www.osor.eu/eupl/\"
               |servers:
               |  - url: /konfo-backend/
               |paths:
