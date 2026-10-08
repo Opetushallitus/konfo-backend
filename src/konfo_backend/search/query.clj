@@ -12,10 +12,51 @@
   []
   {:match_all {}})
 
+;; score_mode "max" on olennainen: search_terms sisältää yhden alkion jokaista
+;; järjestäjä-toteutus-paria kohti, ja elasticsearchin oletus "avg" laskee
+;; koulutuksen pisteiksi sen osumien KESKIARVON. Monen järjestäjän koulutus jää
+;; siten systemaattisesti alemmas kuin yhden järjestäjän koulutus, vaikka
+;; kyseessä olisi sama nimi.
+(defn- ->nested-search-terms-query
+  [query]
+  {:nested {:path "search_terms" :score_mode "max" :query {:bool {:must query}}}})
+
 (defn search-term-query [search-term user-lng suffixes]
   (if (not (str/blank? search-term))
-    {:nested {:path "search_terms" :query {:bool {:must (make-search-term-query search-term user-lng suffixes)}}}}
+    (->nested-search-terms-query (make-search-term-query search-term user-lng suffixes))
     (match-all-query)))
+
+(defn approximate-search-term-query [search-term user-lng suffixes]
+  (if (not (str/blank? search-term))
+    (->nested-search-terms-query (make-approximate-search-term-query search-term user-lng suffixes))
+    (match-all-query)))
+
+(defn autocomplete-query [search-phrase user-lng suffixes]
+  (if (not (str/blank? search-phrase))
+    (->nested-search-terms-query (make-autocomplete-query search-phrase user-lng suffixes))
+    (match-all-query)))
+
+(defn search-with-approximate-fallback
+  "Ajaa tarkan haun. Jos se ei tuota yhtään osumaa, toistaa haun likimääräisellä
+   kyselyllä ja merkitsee tuloksen kentällä :approximate, jotta käyttöliittymä
+   voi kertoa käyttäjälle että näytetään läheisiä osumia.
+
+   Kaksivaiheisuuden tarkoitus on, että nykyisten toimivien hakujen tarkkuus ei
+   muutu lainkaan — löysempi kysely ajetaan vain silloin kun vaihtoehtona on
+   tyhjä tuloslista. Jos löysempikään kysely ei löydä mitään, palautetaan
+   alkuperäinen tulos, jotta rajainlaskurit pysyvät johdonmukaisina.
+
+   run-search saa parametrinaan valmiin kyselyn ja palauttaa jäsennellyn
+   hakutuloksen."
+  [search-term lng suffixes run-search]
+  (let [result (run-search (search-term-query search-term lng suffixes))]
+    (if (and (not (str/blank? search-term))
+             (zero? (or (:total result) 0)))
+      (let [approximate (run-search (approximate-search-term-query search-term lng suffixes))]
+        (if (pos? (or (:total approximate) 0))
+          (assoc approximate :approximate true)
+          result))
+      result)))
 
 (defn post-filter-query
   ([constraints inner-hits extra-filter]
