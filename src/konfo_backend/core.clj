@@ -88,7 +88,7 @@
                <p>Licensed under the EUPL, Version 1.2 or - as soon as they will be approved by the 
                European Commission - subsequent versions of the EUPL.</p>
 
-               <p>You may obtain a copy of the EUPL at: <a target='_blank' href='https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12'>https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12</a> (edited) </p>
+               <p>You may obtain a copy of the EUPL at: <a target='_blank' href='https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12'>https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12</a></p>
 
                \"
               |  version: 0.1-SNAPSHOT
