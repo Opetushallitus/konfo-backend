@@ -440,7 +440,7 @@
       tags:
         - External
       summary: Hae koulutuksia
-      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla.
       parameters:
         - in: query
           name: keyword
@@ -576,7 +576,7 @@
       tags:
         - External
       summary: Hae hakurajaimet
-      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet.
       responses:
         '200':
           description: Ok
@@ -591,7 +591,7 @@
       tags:
         - External
       summary: Hae hakurajaimet taulukkomuodossa
-      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Palauttaa kaikkien käytössä olevien hakurajainten koodit ja nimet taulukkomuodossa.
       responses:
         '200':
           description: Ok
@@ -606,7 +606,7 @@
       tags:
         - External
       summary: Hae oppilaitoksen koulutustarjonnan
-      description: Hakee annetun oppilaitoksen koulutustarjonnan. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Hakee annetun oppilaitoksen koulutustarjonnan.
       parameters:
         - in: path
           name: oid
