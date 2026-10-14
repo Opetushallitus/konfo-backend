@@ -81,14 +81,14 @@
                                 :hakutapa_03 {:count 3}}
                      :pohjakoulutusvaatimus {:pohjakoulutusvaatimuskonfo_01 {:count 0}
                                              :pohjakoulutusvaatimuskonfo_am {:count 4}}
-                     :koulutuksenkestokuukausina {:count 23, :max 46.0}
+                     :koulutuksenkestokuukausina {:count 24, :max 46.0}
                      :maksullisuus {:maksullisuustyyppi
                                     {:maksuton {:count 2}
-                                     :maksullinen {:count 3}
+                                     :maksullinen {:count 4}
                                      :lukuvuosimaksu {:count 4}
                                      :lukuvuosimaksu_kk {:count 1}
                                      :lukuvuosimaksu_amm_lk {:count 3}}
-                                    :maksunmaara {:count 3
+                                    :maksunmaara {:count 4
                                                   :max 200.5}
                                     :lukuvuosimaksunmaara {:count 4
                                                            :max 3000.0}
@@ -104,7 +104,7 @@
     (testing "Search koulutukset, filter with..."
       (testing "sijainti"
         (let [r (search :sijainti "kunta_618" :sort "name" :order "asc")]
-          (is (= 18 (count (:hits r))))
+          (is (= 17 (count (:hits r))))
           (is (= "1.2.246.562.13.000020" (:oid (first (:hits r)))))
           (is (= "Kiva maakunta" (get-in r [:filters :maakunta :maakunta_01 :nimi :fi]))))))
 
