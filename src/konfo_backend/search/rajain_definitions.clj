@@ -335,7 +335,7 @@
    :rajainGroupId :erityisopetus
    :make-query #(->boolean-term-query "metadata.ammatillinenPerustutkintoErityisopetuksena")
    :make-agg (fn [constraints rajain-context]
-               (bool-agg-filter (->boolean-term-query "metadata.ammPerustutkintoErityisopetuksena")
+               (bool-agg-filter (->boolean-term-query "metadata.ammatillinenPerustutkintoErityisopetuksena")
                                 (aggregation-filters-for-rajain :amm_erityisopetus constraints rajain-context)
                                 rajain-context))})
 

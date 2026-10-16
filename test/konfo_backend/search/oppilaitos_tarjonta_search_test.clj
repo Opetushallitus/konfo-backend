@@ -24,6 +24,7 @@
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
 (def helsingin-yliopisto "1.2.246.562.10.39218317368")
+(def erityisopetus-oppilaitos "1.2.246.562.10.00101010102")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 
@@ -189,7 +190,12 @@
           (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r)))))))
       (testing "Can filter by osaamisala, no match"
         (let [r (search helsingin-yliopisto :tuleva false :order "asc" :osaamisala "osaamisala_1756")]
-          (is (= 0 (:total r))))))
+          (is (= 0 (:total r)))))
+      (testing "Can filter by vaativan tuen koulutukset"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc"
+                        :koulutustyyppi "koulutustyyppi_4,tuva-erityisopetus")]
+          (is (= 2 (:total r)))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count]))))))
 
     (testing "Filter counts"
       (testing "Without any filters"
