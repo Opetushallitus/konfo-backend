@@ -59,7 +59,8 @@
       tags:
         - internal-search
       summary: Hae koulutuksia
-      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Hakee koulutuksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön. Jos hakusanalla ei löydy tarkkoja osumia, haku toistetaan
+        löysemmällä kyselyllä ja vastaukseen lisätään kenttä approximate=true.
       parameters:
         - in: query
           name: keyword
@@ -223,7 +224,8 @@
       tags:
         - internal-search
       summary: Hae oppilaitoksia
-      description: Hakee oppilaitoksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön
+      description: Hakee oppilaitoksia annetulla hakusanalla ja rajaimilla. Huom.! Vain Opintopolun sisäiseen käyttöön. Jos hakusanalla ei löydy tarkkoja osumia, haku toistetaan
+        löysemmällä kyselyllä ja vastaukseen lisätään kenttä approximate=true.
       parameters:
         - in: query
           name: keyword
