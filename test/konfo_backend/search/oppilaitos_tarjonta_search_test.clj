@@ -195,7 +195,19 @@
         (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc"
                         :koulutustyyppi "koulutustyyppi_4,tuva-erityisopetus")]
           (is (= 2 (:total r)))
-          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count]))))))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))))
+      (testing "Selecting one vaativan tuen koulutus does not change the counts of the others"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc" :koulutustyyppi "koulutustyyppi_4")]
+          (is (= 1 (:total r)))
+          (is (= "1.2.246.562.17.000030" (:toteutusOid (first (:hits r)))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :koulutustyyppi_4 :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))))
+      (testing "Can filter by tuva erityisopetuksena only"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus")]
+          (is (= 1 (:total r)))
+          (is (= "1.2.246.562.17.000031" (:toteutusOid (first (:hits r)))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :koulutustyyppi_4 :count]))))))
 
     (testing "Filter counts"
       (testing "Without any filters"

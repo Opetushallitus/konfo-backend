@@ -912,13 +912,7 @@
                                                                                 :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
                                                                                 :osaamisala osaamisala
                                                                                 :alkamiskausi alkamiskausi
-                                                                                :hakualkaapaivissa hakualkaapaivissa
-                                                                                :amm_erityisopetus (when (some? koulutustyyppi)
-                                                                                                     (contains? (set (string/split koulutustyyppi #","))
-                                                                                                                "koulutustyyppi_4"))
-                                                                                :tuva_erityisopetus (when (some? koulutustyyppi)
-                                                                                                      (contains? (set (string/split koulutustyyppi #","))
-                                                                                                                 "tuva-erityisopetus"))})))
+                                                                                :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/autocomplete" [:as request]
       :query-params [{searchPhrase          :- String nil}
