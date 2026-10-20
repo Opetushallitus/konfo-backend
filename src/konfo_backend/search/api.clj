@@ -4,7 +4,7 @@
                                                  spec-paths-to-swagger-yaml]]
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
-                                                    hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
+                                                    hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos toimipiste
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
                                                     hakualkaapaivissa pieniosaamiskokonaisuus]]
@@ -371,6 +371,7 @@
                 (:desc lukiopainotukset) "\n"
                 (:desc lukiolinjaterityinenkoulutustehtava) "\n"
                 (:desc osaamisala) "\n"
+                (:desc toimipiste) "\n"
                 (:desc alkamiskausi) "\n"
                 (:desc hakualkaapaivissa) "\n"
                 "
@@ -528,6 +529,7 @@
      :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
      :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
      :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))
+     :toimipiste            (comma-separated-string->vec (:toimipiste rajain-params))
      :alkamiskausi          (comma-separated-string->vec (:alkamiskausi rajain-params))
      :koulutuksenkestokuukausina (parse-number-range (:koulutuksenkestokuukausina_min rajain-params)
                                                      (:koulutuksenkestokuukausina_max rajain-params))
@@ -874,6 +876,7 @@
                      {lukiopainotukset      :- String nil}
                      {lukiolinjaterityinenkoulutustehtava :- String nil}
                      {osaamisala            :- String nil}
+                     {toimipiste            :- String nil}
                      {alkamiskausi          :- String nil}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
@@ -911,6 +914,7 @@
                                                                                 :lukiopainotukset lukiopainotukset
                                                                                 :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
                                                                                 :osaamisala osaamisala
+                                                                                :toimipiste toimipiste
                                                                                 :alkamiskausi alkamiskausi
                                                                                 :hakualkaapaivissa hakualkaapaivissa})))
 

@@ -24,6 +24,8 @@
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
 (def helsingin-yliopisto "1.2.246.562.10.39218317368")
+(def punkaharjun-karjaan-toimipiste "1.2.246.562.10.000004")
+(def helsingin-farmasian-toimipiste "1.2.246.562.10.80593660139")
 (def erityisopetus-oppilaitos "1.2.246.562.10.00101010102")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
@@ -208,6 +210,25 @@
           (is (= 1 (:total r)))
           (is (= "1.2.246.562.17.000031" (:toteutusOid (first (:hits r)))))
           (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :koulutustyyppi_4 :count]))))))
+
+    (testing "Toimipiste"
+      (testing "Toimipisterajaimessa on vain toimipisteet, joilla on toteutuksia, nimineen ja lukumäärineen"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
+          (is (= {(keyword punkaharjun-karjaan-toimipiste) {:nimi {:fi "Punkaharjun yliopiston Karjaan toimipiste"
+                                                                   :sv "Punkaharjun yliopiston Karjaan toimipiste sv"}
+                                                            :count 4}}
+                 (update-vals (get-in r [:filters :toimipiste]) #(update % :nimi select-keys [:fi :sv]))))))
+      (testing "Can filter by toimipiste"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :toimipiste punkaharjun-karjaan-toimipiste)]
+          (is (= 4 (:total r)))))
+      (testing "Can filter by toimipiste, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :toimipiste helsingin-farmasian-toimipiste)]
+          (is (= 0 (:total r)))
+          (testing "and toimipisteen lukumäärä does not depend on its own selection"
+            (is (= 4 (get-in r [:filters :toimipiste (keyword punkaharjun-karjaan-toimipiste) :count]))))))
+      (testing "Other filters reduce toimipisteen lukumäärä"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_02")]
+          (is (= (:total r) (get-in r [:filters :toimipiste (keyword punkaharjun-karjaan-toimipiste) :count]))))))
 
     (testing "Filter counts"
       (testing "Without any filters"

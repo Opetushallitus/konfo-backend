@@ -562,6 +562,28 @@
           description: Pilkulla eroteltuna toteutusten oppilaitosten oideja
           example: [1.2.246.562.10.93483820481, 1.2.246.562.10.29176843356]"})
 
+;; Toteutuksen toimipisteisiin on indeksoitu myös tarjoajana olevien toimipisteiden ylemmät toimipisteet,
+;; joten ylemmän toimipisteen valinta kattaa myös sen alla olevat toimipisteet
+(def toimipiste
+  {:id :toimipiste
+   :make-query #(->terms-query "toimipisteOids.keyword" %)
+   :make-agg (fn [constraints rajain-context]
+               (rajain-terms-aggregation (->field-key "toimipisteOids.keyword")
+                                         (aggregation-filters-for-rajain :toimipiste constraints rajain-context)
+                                         (merge rajain-context {:term-params {:size 10000
+                                                                              :min_doc_count 1}})))
+   :desc "
+        - in: query
+          name: toimipiste
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Pilkulla eroteltuna oppilaitoksen toimipisteiden oideja. Ylemmän toimipisteen valinta kattaa myös sen alla olevat toimipisteet.
+          example: [1.2.246.562.10.93483820482, 1.2.246.562.10.29176843357]"})
+
 (def lukiopainotukset
   {:id :lukiopainotukset
    :make-query #(->terms-query "lukiopainotukset.keyword" %)
@@ -688,7 +710,7 @@
    koulutuksenkestokuukausina jotpa tyovoimakoulutus taydennyskoulutus pieniosaamiskokonaisuus
    amm_erityisopetus tuva_erityisopetus maksuton maksullinen
    lukuvuosimaksu lukuvuosimaksu_amm_lk lukuvuosimaksu_kk hakukaynnissa hakualkaapaivissa lukiopainotukset
-   lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos])
+   lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos toimipiste])
 
 (def common-agg-defs
   [maakunta kunta opetuskieli opetustapa opetusaika hakutapa pohjakoulutusvaatimus
@@ -705,7 +727,7 @@
 (def jarjestaja-agg-defs (concat common-agg-defs [koulutustyyppi lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala oppilaitos]))
 
 (def tarjoaja-agg-defs
-  (concat common-agg-defs [koulutustyyppi koulutusala lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala]))
+  (concat common-agg-defs [koulutustyyppi koulutusala lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala toimipiste]))
 
 (def max-agg-defs (filter #(not (nil? (:make-max-agg %))) all-agg-defs))
 
