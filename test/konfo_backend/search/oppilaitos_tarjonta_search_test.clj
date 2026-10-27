@@ -217,7 +217,7 @@
           (is (= {(keyword punkaharjun-karjaan-toimipiste) {:nimi {:fi "Punkaharjun yliopiston Karjaan toimipiste"
                                                                    :sv "Punkaharjun yliopiston Karjaan toimipiste sv"}
                                                             :count 4}}
-                 (update-vals (get-in r [:filters :toimipiste]) #(update % :nimi select-keys [:fi :sv]))))))
+                 (get-in r [:filters :toimipiste])))))
       (testing "Can filter by toimipiste"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :toimipiste punkaharjun-karjaan-toimipiste)]
           (is (= 4 (:total r)))))
