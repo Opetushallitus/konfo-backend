@@ -24,6 +24,9 @@
 
 (def punkaharjun-yliopisto "1.2.246.562.10.000002")
 (def helsingin-yliopisto "1.2.246.562.10.39218317368")
+(def punkaharjun-karjaan-toimipiste "1.2.246.562.10.000004")
+(def helsingin-farmasian-toimipiste "1.2.246.562.10.80593660139")
+(def erityisopetus-oppilaitos "1.2.246.562.10.00101010102")
 
 (def traktoriala-oid "1.2.246.562.13.000010")
 
@@ -31,6 +34,7 @@
 (def valtrakoulu-oid "1.2.246.562.17.000011")
 (def massikkakoulu-oid "1.2.246.562.17.000012")
 (def poniosatoteutus-oid "1.2.246.562.17.000014")
+(def lukio-toteutus-oid2 "1.2.246.562.17.000034")
 
 (deftest oppilaitos-tarjonta-test
   (with-redefs [konfo-backend.koodisto.koodisto/get-koodisto-with-cache mock-get-koodisto]
@@ -43,28 +47,31 @@
     (testing "Sorting and paging tarjonta"
       (testing "asc order"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
-          (is (= 3 (:total r)))
-          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
-          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
+          (is (= 4 (:total r)))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (first (:hits r)))))
+          (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (nth (:hits r) 2))))
           (is (= valtrakoulu-oid (:toteutusOid (last (:hits r)))))))
       (testing "desc order"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "desc")]
-          (is (= 3 (:total r)))
+          (is (= 4 (:total r)))
           (is (= valtrakoulu-oid (:toteutusOid (first (:hits r)))))
           (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
-          (is (= ponikoulu-oid (:toteutusOid (last (:hits r)))))))
+          (is (= ponikoulu-oid (:toteutusOid (nth (:hits r) 2))))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (last (:hits r)))))))
       (testing "paging"
         (let [r (search punkaharjun-yliopisto :tuleva false :page 2 :size 1)]
-          (is (= 3 (:total r)))
+          (is (= 4 (:total r)))
           (is (= 1 (count (:hits r))))
-          (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r))))))))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r))))))))
 
     (testing "Filtering tarjonta"
       (testing "Can filter by sijainti"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_220")]
-          (is (= 3 (:total r)))
-          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
-          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))
+          (is (= 4 (:total r)))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (first (:hits r)))))
+          (is (= ponikoulu-oid (:toteutusOid (second (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (nth (:hits r) 2))))
           (is (= valtrakoulu-oid (:toteutusOid (last (:hits r)))))))
       (testing "Can filter by sijainti, no match"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :sijainti "kunta_618")]
@@ -80,12 +87,153 @@
           (is (= 0 (:total r)))))
       (testing "Can filter by opetustapa"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_01")]
-          (is (= 0 (:total r))))))
+          (is (= 0 (:total r)))))
+      (testing "Can filter by opetusaika"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetusaika "opetusaikakk_1")]
+          (is (= 2 (:total r)))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))))
+      (testing "Can filter by opetusaika, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetusaika "opetusaikakk_9")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by valintatapa"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :valintatapa "valintatapajono_av")]
+          (is (= 2 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))))
+      (testing "Can filter by valintatapa, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :valintatapa "valintatapajono_ev")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by hakutapa"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :hakutapa "hakutapa_01")]
+          (is (= 1 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r))))))
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :hakutapa "hakutapa_03")]
+          (is (= 2 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))))
+      (testing "Can filter by yhteishaku"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :yhteishaku "1.2.246.562.29.0000002")]
+          (is (= 1 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))))
+      (testing "Can filter by yhteishaku, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :yhteishaku "1.2.246.562.29.9999999")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by pohjakoulutusvaatimus"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :pohjakoulutusvaatimus "pohjakoulutusvaatimuskonfo_am")]
+          (is (= 2 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))))
+      (testing "Can filter by alkamiskausi"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :alkamiskausi "2042-kevat")]
+          (is (= 2 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))
+          (is (= poniosatoteutus-oid (:toteutusOid (second (:hits r)))))))
+      (testing "Can filter by alkamiskausi, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :alkamiskausi "2099-syksy")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by hakukaynnissa"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :hakukaynnissa true)]
+          (is (= 1 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))))
+      (testing "hakukaynnissa and hakutapa must match the same hakuaika"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :hakukaynnissa true :hakutapa "hakutapa_01")]
+          (is (= 0 (:total r))))
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :hakukaynnissa true :hakutapa "hakutapa_03")]
+          (is (= 1 (:total r)))
+          (is (= ponikoulu-oid (:toteutusOid (first (:hits r)))))))
+      (testing "Can filter by maksullisuustyyppi"
+        (let [r (search helsingin-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "lukuvuosimaksu")]
+          (is (= 1 (:total r)))
+          (is (= massikkakoulu-oid (:toteutusOid (first (:hits r))))))
+        (let [r (search helsingin-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "maksuton")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by maksullisuustyyppi lukuvuosimaksu_amm_lk with maksunmaara range"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "lukuvuosimaksu_amm_lk")]
+          (is (= 1 (:total r)))
+          (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r))))))
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc"
+                        :maksullisuustyyppi "lukuvuosimaksu_amm_lk" :lukuvuosimaksunmaara_amm_lk_min 600)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by apuraha, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :maksullisuustyyppi "lukuvuosimaksu" :apuraha true)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by jotpa, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :jotpa true)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by tyovoimakoulutus, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :tyovoimakoulutus true)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by taydennyskoulutus, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :taydennyskoulutus true)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by pieniosaamiskokonaisuus, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :pieniosaamiskokonaisuus true)]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by lukiopainotukset"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :lukiopainotukset "lukiopainotukset_1")]
+          (is (= 1 (:total r)))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (first (:hits r)))))))
+      (testing "Can filter by lukiopainotukset, no match"
+        (let [r (search helsingin-yliopisto :tuleva false :order "asc" :lukiopainotukset "lukiopainotukset_1")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by lukiolinjaterityinenkoulutustehtava"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc"
+                        :lukiolinjaterityinenkoulutustehtava "lukiolinjaterityinenkoulutustehtava_1")]
+          (is (= 1 (:total r)))
+          (is (= lukio-toteutus-oid2 (:toteutusOid (first (:hits r)))))))
+      (testing "Can filter by lukiolinjaterityinenkoulutustehtava, no match"
+        (let [r (search helsingin-yliopisto :tuleva false :order "asc"
+                        :lukiolinjaterityinenkoulutustehtava "lukiolinjaterityinenkoulutustehtava_1")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by osaamisala"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :osaamisala "osaamisala_1756")]
+          (is (= 1 (:total r)))
+          (is (= poniosatoteutus-oid (:toteutusOid (first (:hits r)))))))
+      (testing "Can filter by osaamisala, no match"
+        (let [r (search helsingin-yliopisto :tuleva false :order "asc" :osaamisala "osaamisala_1756")]
+          (is (= 0 (:total r)))))
+      (testing "Can filter by vaativan tuen koulutukset"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc"
+                        :koulutustyyppi "koulutustyyppi_4,tuva-erityisopetus")]
+          (is (= 2 (:total r)))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))))
+      (testing "Selecting one vaativan tuen koulutus does not change the counts of the others"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc" :koulutustyyppi "koulutustyyppi_4")]
+          (is (= 1 (:total r)))
+          (is (= "1.2.246.562.17.000030" (:toteutusOid (first (:hits r)))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :koulutustyyppi_4 :count])))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :tuva-erityisopetus :count])))
+          (is (= 2 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :count])))))
+      (testing "Can filter by tuva erityisopetuksena only"
+        (let [r (search erityisopetus-oppilaitos :tuleva false :order "asc" :koulutustyyppi "tuva-erityisopetus")]
+          (is (= 1 (:total r)))
+          (is (= "1.2.246.562.17.000031" (:toteutusOid (first (:hits r)))))
+          (is (= 1 (get-in r [:filters :koulutustyyppi :vaativan-tuen-koulutukset :alakoodit :koulutustyyppi_4 :count]))))))
+
+    (testing "Toimipiste"
+      (testing "Toimipisterajaimessa on vain toimipisteet, joilla on toteutuksia, nimineen ja lukumäärineen"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
+          (is (= {(keyword punkaharjun-karjaan-toimipiste) {:nimi {:fi "Punkaharjun yliopiston Karjaan toimipiste"
+                                                                   :sv "Punkaharjun yliopiston Karjaan toimipiste sv"}
+                                                            :count 4}}
+                 (get-in r [:filters :toimipiste])))))
+      (testing "Can filter by toimipiste"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :toimipiste punkaharjun-karjaan-toimipiste)]
+          (is (= 4 (:total r)))))
+      (testing "Can filter by toimipiste, no match"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :toimipiste helsingin-farmasian-toimipiste)]
+          (is (= 0 (:total r)))
+          (testing "and toimipisteen lukumäärä does not depend on its own selection"
+            (is (= 4 (get-in r [:filters :toimipiste (keyword punkaharjun-karjaan-toimipiste) :count]))))))
+      (testing "Other filters reduce toimipisteen lukumäärä"
+        (let [r (search punkaharjun-yliopisto :tuleva false :order "asc" :opetustapa "opetuspaikkakk_02")]
+          (is (= (:total r) (get-in r [:filters :toimipiste (keyword punkaharjun-karjaan-toimipiste) :count]))))))
 
     (testing "Filter counts"
       (testing "Without any filters"
         (let [r (search punkaharjun-yliopisto :tuleva false :order "asc")]
-          (is (= 3 (:total r)))
+          (is (= 4 (:total r)))
           (is (= 0 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_01 :count])))
           (is (= 2 (get-in r [:filters :opetuskieli :oppilaitoksenopetuskieli_02 :count])))
           (is (= 0 (get-in r [:filters :opetustapa :opetuspaikkakk_01 :count])))

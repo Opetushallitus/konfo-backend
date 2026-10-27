@@ -5,7 +5,7 @@
                                                 toteutukset-query]]
             [konfo-backend.search.rajain-tools :refer [onkoTuleva-query]]
             [konfo-backend.search.response :refer [parse parse-for-autocomplete]]
-            [konfo-backend.index.toteutus :refer [parse-inner-hits-for-jarjestajat]]
+            [konfo-backend.index.toteutus :refer [parse-inner-hits-for-tarjoajat]]
             [konfo-backend.search.tools :refer :all]))
 
 (defonce index "oppilaitos-kouta-search")
@@ -34,9 +34,12 @@
   (let [query (toteutukset-query oid)
         inner-hits (toteutukset-inner-hits lng page size order)
         post-filter (post-filter-query constraints inner-hits (onkoTuleva-query tuleva?))
-        aggs (tarjoajat-aggregations constraints tuleva?)]
+        ;; Toimipisteiden hierarkia luetaan aggregaatiolla, koska post_filter pudottaa oppilaitoksen hakutuloksista,
+        ;; jos rajaimilla ei löydy yhtään toteutusta, mutta toimipisterajain tarvitaan silloinkin
+        aggs (assoc (tarjoajat-aggregations constraints tuleva?)
+                    :oppilaitoksen_toimipisteet {:top_hits {:size 1 :_source ["toimipisteet"]}})]
     (e/search index
-              parse-inner-hits-for-jarjestajat
+              parse-inner-hits-for-tarjoajat
               :_source ["oid"]
               :query query
               :post_filter post-filter

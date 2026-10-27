@@ -420,6 +420,13 @@
                          :valintatapa                    (default-nested-agg "search_terms.hakutiedot.valintatavat" onkotuleva-sijainti-bool-filter nil "search_terms")
                          :koulutusala                    (default-agg "search_terms.koulutusalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
                          :koulutustyyppi                 (default-agg "search_terms.koulutustyypit.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :lukiopainotukset                    (default-agg "search_terms.lukiopainotukset.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :lukiolinjaterityinenkoulutustehtava (default-agg "search_terms.lukiolinjaterityinenkoulutustehtava.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :osaamisala                          (default-agg "search_terms.osaamisalat.keyword" onkotuleva-sijainti-bool-filter nil "search_terms")
+                         :toimipiste                          (default-agg "search_terms.toimipisteOids.keyword" onkotuleva-sijainti-bool-filter
+                                                                           {:min_doc_count 1
+                                                                            :size          10000}
+                                                                           "search_terms")
                          :maksuton                       (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksuton" [sijainti-term onkotuleva-term] "search_terms")
                          :maksullinen                    (default-bool-term-agg "search_terms.metadata.maksullisuustyypit.keyword" "maksullinen" [sijainti-term onkotuleva-term] "search_terms")
                          :maksullinen-max                (max-agg "search_terms.metadata.maksunMaara" [maksullinen-term])
