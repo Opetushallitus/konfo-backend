@@ -227,6 +227,10 @@
 
 (defn process-client-data [old-manifest update-id client s3-client langs]
       (log/info "Processing contentful data for langs" langs)
+      ;; CDAClient cacheaa sisältötyypit koko elinikänsä ajan ja käyttää niitä linkkien resolvoimiseen.
+      ;; Jos sisältötyyppiä on muutettu Contentfulissa updaterin käynnistyksen jälkeen, vanhentunut
+      ;; cache jättää linkit resolvoimatta ja ne serialisoituvat JSON-merkkijonoiksi.
+      (.clearCache client)
       (let [content-types    (get-content-type-with-field-types client)
             url-cache        (atom {})
             gson             (create-gson-serializer s3-client url-cache content-types)
