@@ -4,7 +4,8 @@
             [matcher-combinators.test]
             [konfo-backend.search.rajain-definitions :refer [constraints? common-filters jotpa
                                                              pohjakoulutusvaatimus hakutapa
-                                                             koulutustyyppi opetuskieli]]
+                                                             koulutustyyppi opetuskieli
+                                                             amm_erityisopetus tuva_erityisopetus]]
             [konfo-backend.search.rajain-tools :refer [->terms-query]]))
 
 (defonce default-ctx {:current-time "2022-08-26T07:21"})
@@ -275,3 +276,10 @@
                                  :valintatapa                         []
                                  :koulutustyyppi                      ["koulutustyyppi_26"]}
                                 "2022-08-26T07:21")))))
+
+(deftest erityisopetus-aggregation-test
+  (testing "Erityisopetusrajainten lukumäärät lasketaan samasta kentästä, jolla suodatetaan"
+    (is (clojure.string/includes? (pr-str ((:make-agg amm_erityisopetus) {} default-ctx))
+                                  "metadata.ammatillinenPerustutkintoErityisopetuksena"))
+    (is (clojure.string/includes? (pr-str ((:make-agg tuva_erityisopetus) {} default-ctx))
+                                  "metadata.jarjestetaanErityisopetuksena"))))

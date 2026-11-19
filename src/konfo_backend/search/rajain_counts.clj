@@ -241,6 +241,38 @@
    (generate-default-rajain-counts rajain-counts)
    :oppilaitos (create-oppilaitos-counts oppilaitos-buckets)))
 
+(defn- ylin-toimipiste
+  "Hierarkian ylin toimipiste. Konfon hierarkkiset rajaimet ovat kaksitasoisia, joten syvemmällä olevat
+   toimipisteet näytetään ylimmän toimipisteensä alakoodeina."
+  [toimipisteet-by-oid toimipiste]
+  (if-let [ylempi (get toimipisteet-by-oid (:parentToimipisteOid toimipiste))]
+    (recur toimipisteet-by-oid ylempi)
+    toimipiste))
+
+(defn- create-toimipiste-counts
+  "Muodostaa toimipisterajaimen kaksitasoisena hierarkiana. Toteutuksen toimipisteisiin on indeksoitu myös
+   ylemmät toimipisteet, joten ylemmän toimipisteen lukumäärä kattaa sen alla olevien toimipisteiden toteutukset
+   eikä lukumääriä tarvitse laskea yhteen."
+  [toimipiste-buckets toimipisteet]
+  (let [toimipisteet-by-oid (into {} (map (juxt :oid identity) toimipisteet))
+        count-for (fn [toimipiste] (get-in toimipiste-buckets [(keyword (:oid toimipiste)) :doc_count] 0))
+        with-tarjontaa (filter #(pos? (count-for %)) toimipisteet)
+        ->rajain-item (fn [toimipiste] {:nimi (:nimi toimipiste) :count (count-for toimipiste)})
+        alemmat-by-ylin-oid (group-by #(:oid (ylin-toimipiste toimipisteet-by-oid %)) with-tarjontaa)]
+    (into {}
+          (for [ylin with-tarjontaa
+                :when (= (:oid ylin) (:oid (ylin-toimipiste toimipisteet-by-oid ylin)))
+                :let [alemmat (remove #(= (:oid %) (:oid ylin)) (get alemmat-by-ylin-oid (:oid ylin)))]]
+            [(keyword (:oid ylin))
+             (cond-> (->rajain-item ylin)
+               (seq alemmat) (assoc :alakoodit (into {} (map (fn [t] [(keyword (:oid t)) (->rajain-item t)]) alemmat))))]))))
+
+(defn generate-rajain-counts-for-tarjoajat
+  [rajain-counts toimipiste-buckets toimipisteet]
+  (assoc
+   (generate-default-rajain-counts rajain-counts)
+   :toimipiste (create-toimipiste-counts toimipiste-buckets toimipisteet)))
+
 (defn- rajain->obj [rajain koodi nimi] {:suodatin rajain :koodi koodi :nimi nimi})
 
 (defn flattened-rajain-counts

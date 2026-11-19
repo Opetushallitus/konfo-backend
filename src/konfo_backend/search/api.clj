@@ -4,7 +4,7 @@
                                                  spec-paths-to-swagger-yaml]]
    [konfo-backend.search.rajain-definitions :refer [koulutustyyppi sijainti opetuskieli koulutusala opetustapa
                                                     valintatapa hakukaynnissa jotpa tyovoimakoulutus taydennyskoulutus
-                                                    hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos
+                                                    hakutapa yhteishaku pohjakoulutusvaatimus oppilaitos toimipiste
                                                     lukiopainotukset lukiolinjaterityinenkoulutustehtava osaamisala
                                                     opetusaika alkamiskausi koulutuksenkestokuukausina maksullisuus
                                                     hakualkaapaivissa pieniosaamiskokonaisuus]]
@@ -358,6 +358,21 @@
                 (:desc opetustapa) "\n"
                 (:desc opetusaika) "\n"
                 (:desc koulutuksenkestokuukausina) "\n"
+                (:desc maksullisuus) "\n"
+                (:desc valintatapa) "\n"
+                (:desc hakukaynnissa) "\n"
+                (:desc jotpa) "\n"
+                (:desc tyovoimakoulutus) "\n"
+                (:desc taydennyskoulutus) "\n"
+                (:desc pieniosaamiskokonaisuus) "\n"
+                (:desc hakutapa) "\n"
+                (:desc yhteishaku) "\n"
+                (:desc pohjakoulutusvaatimus) "\n"
+                (:desc lukiopainotukset) "\n"
+                (:desc lukiolinjaterityinenkoulutustehtava) "\n"
+                (:desc osaamisala) "\n"
+                (:desc toimipiste) "\n"
+                (:desc alkamiskausi) "\n"
                 (:desc hakualkaapaivissa) "\n"
                 "
       responses:
@@ -514,6 +529,7 @@
      :lukiolinjaterityinenkoulutustehtava (comma-separated-string->vec (:lukiolinjaterityinenkoulutustehtava rajain-params))
      :osaamisala            (comma-separated-string->vec (:osaamisala rajain-params))
      :oppilaitos            (comma-separated-string->vec (:oppilaitos rajain-params))
+     :toimipiste            (comma-separated-string->vec (:toimipiste rajain-params))
      :alkamiskausi          (comma-separated-string->vec (:alkamiskausi rajain-params))
      :koulutuksenkestokuukausina (parse-number-range (:koulutuksenkestokuukausina_min rajain-params)
                                                      (:koulutuksenkestokuukausina_max rajain-params))
@@ -837,8 +853,31 @@
                      {opetuskieli    :- String nil}
                      {koulutusala    :- String nil}
                      {opetustapa     :- String nil}
+                     {opetusaika            :- String nil}
+                     {valintatapa           :- String nil}
+                     {hakukaynnissa         :- Boolean false}
+                     {jotpa                 :- Boolean false}
+                     {tyovoimakoulutus      :- Boolean false}
+                     {taydennyskoulutus     :- Boolean false}
+                     {pieniosaamiskokonaisuus :- Boolean false}
+                     {hakutapa              :- String nil}
+                     {yhteishaku            :- String nil}
+                     {pohjakoulutusvaatimus :- String nil}
                      {koulutuksenkestokuukausina_min :- Number nil}
                      {koulutuksenkestokuukausina_max :- Number nil}
+                     {maksullisuustyyppi    :- String nil}
+                     {maksunmaara_min       :- Number nil}
+                     {maksunmaara_max       :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_min :- Number nil}
+                     {lukuvuosimaksunmaara_amm_lk_max :- Number nil}
+                     {lukuvuosimaksunmaara_kk_min :- Number nil}
+                     {lukuvuosimaksunmaara_kk_max :- Number nil}
+                     {apuraha               :- Boolean false}
+                     {lukiopainotukset      :- String nil}
+                     {lukiolinjaterityinenkoulutustehtava :- String nil}
+                     {osaamisala            :- String nil}
+                     {toimipiste            :- String nil}
+                     {alkamiskausi          :- String nil}
                      {hakualkaapaivissa     :- Long nil}]
       (with-access-logging request (->search-subentities-with-validated-params oppilaitos-search/search-oppilaitoksen-tarjonta
                                                                                oid
@@ -852,8 +891,31 @@
                                                                                 :opetuskieli opetuskieli
                                                                                 :koulutusala koulutusala
                                                                                 :opetustapa opetustapa
+                                                                                :opetusaika opetusaika
+                                                                                :valintatapa valintatapa
+                                                                                :hakukaynnissa hakukaynnissa
+                                                                                :jotpa jotpa
+                                                                                :tyovoimakoulutus tyovoimakoulutus
+                                                                                :taydennyskoulutus taydennyskoulutus
+                                                                                :pieniosaamiskokonaisuus pieniosaamiskokonaisuus
+                                                                                :hakutapa hakutapa
+                                                                                :yhteishaku yhteishaku
+                                                                                :pohjakoulutusvaatimus pohjakoulutusvaatimus
                                                                                 :koulutuksenkestokuukausina_min koulutuksenkestokuukausina_min
                                                                                 :koulutuksenkestokuukausina_max koulutuksenkestokuukausina_max
+                                                                                :maksullisuustyyppi maksullisuustyyppi
+                                                                                :maksunmaara_min maksunmaara_min
+                                                                                :maksunmaara_max maksunmaara_max
+                                                                                :lukuvuosimaksunmaara_amm_lk_min lukuvuosimaksunmaara_amm_lk_min
+                                                                                :lukuvuosimaksunmaara_amm_lk_max lukuvuosimaksunmaara_amm_lk_max
+                                                                                :lukuvuosimaksunmaara_kk_min lukuvuosimaksunmaara_kk_min
+                                                                                :lukuvuosimaksunmaara_kk_max lukuvuosimaksunmaara_kk_max
+                                                                                :apuraha apuraha
+                                                                                :lukiopainotukset lukiopainotukset
+                                                                                :lukiolinjaterityinenkoulutustehtava lukiolinjaterityinenkoulutustehtava
+                                                                                :osaamisala osaamisala
+                                                                                :toimipiste toimipiste
+                                                                                :alkamiskausi alkamiskausi
                                                                                 :hakualkaapaivissa hakualkaapaivissa})))
 
     (GET "/autocomplete" [:as request]

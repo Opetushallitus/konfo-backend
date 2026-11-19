@@ -71,6 +71,20 @@ Testejä voi ajaa myös watch-modessa komennolla `lein test --watch` eli test ru
 Testit käynnistävät Elasticsearchin docker-kontissa satunnaiseen vapaaseen porttiin.
 Watch-moodissa elasticsearch käynnistetään vain kerran, kun testiajo käynnistetään, ja se pysyy taustalla käynnissä kunnes testiajo lopetetaan.
 
+#### Testidatan päivittäminen
+
+Testien käyttämä Elasticsearch-testidata on hakemistossa `test/resources/elastic_dump`. Dumppitiedostoja ei muokata käsin,
+vaan ne generoidaan kouta-indeksoijassa (ks. kouta-indeksoijan readme, kohta 3.6 Mock-datan generointi):
+
+1. Tee tarvittavat muutokset testidataan kouta-indeksoijan tiedostoon `test/mocks/konfo_backend_mocks.clj`.
+2. Aja kouta-indeksoijassa `lein elasticdump:konfo-backend`, joka luo dumpin hakemistoon `elasticdump/konfo-backend`.
+3. Korvaa konfo-backendin `test/resources/elastic_dump` -hakemiston sisältö luoduilla tiedostoilla.
+
+Skripti `scripts/update-elastic-dump.sh` tekee vaiheet 2 ja 3. Se olettaa, että kouta-indeksoija on haettu konfo-backendin
+rinnalle (`../kouta-indeksoija`); muun sijainnin voi antaa ympäristömuuttujalla `KOUTA_INDEKSOIJA_DIR`.
+
+Testidatan muuttuminen voi muuttaa myös muiden testien odotettuja hakutuloksia ja lukumääriä, joten aja lopuksi kaikki testit.
+
 ### 3.3. Ajaminen lokaalisti
 
 Ennen konfo-backendin ajamista lokaalisti täytyy pyörimässä olla Elasticsearch.
@@ -80,6 +94,15 @@ löydät kouta-indeksoijan repon readme:stä.
 Kun Elasticsearch-kontti on pyörimässä, sovelluksen saa käyntiin ajamalla projektin juuressa `lein run`
 
 Swagger löytyy selaimella osoitteesta http://localhost:3006/konfo-backend/swagger
+
+Lisäksi github packages -riippuvuuksia varten pitää konfiguroida kehitysympäristö.
+Ks. https://github.com/Opetushallitus/cloud-base/blob/98f333c237e9a727300d1ca1423d395b19abb278/docs/new-developer.md#github-token-pakettien-lataamista-varten
+
+Lisää ~/.lein/profiles.clj tiedostoon seuraava:
+```clojure
+{:auth {:repository-auth {#"github" {:username "<oma tunnus>"
+                                      :password "<github token>"}}}}
+```
 
 ### 3.4. Kehitystyökalut
 

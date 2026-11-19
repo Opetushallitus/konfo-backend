@@ -1,7 +1,7 @@
 (ns konfo-backend.index.toteutus
   (:refer-clojure :exclude [get])
   (:require [konfo-backend.tools :refer :all]
-            [konfo-backend.search.response :refer [parse-inner-hits filters-for-jarjestajat]]
+            [konfo-backend.search.response :refer [parse-inner-hits filters-for-jarjestajat filters-for-tarjoajat]]
             [konfo-backend.elastic-tools :refer [get-source get-sources-with-selected-fields search get-sources]]
             [konfo-backend.util.haku-auki :refer [with-is-haku-auki]]))
 
@@ -90,6 +90,10 @@
 (defn parse-inner-hits-for-jarjestajat
   [response]
   (parse-inner-hits response filters-for-jarjestajat toteutus-inner-hits-with-kuvaukset))
+
+(defn parse-inner-hits-for-tarjoajat
+  [response]
+  (parse-inner-hits response filters-for-tarjoajat toteutus-inner-hits-with-kuvaukset))
 
 
   

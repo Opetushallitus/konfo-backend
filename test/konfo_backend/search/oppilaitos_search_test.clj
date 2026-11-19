@@ -56,7 +56,7 @@
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-tutkinnon-osa :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amm :alakoodit :amm-muu :count])))
         (is (= 7 (get-in r [:filters :koulutustyyppi :amm :count])))
-        (is (= 1 (get-in r [:filters :koulutustyyppi :lk :count])))
+        (is (= 2 (get-in r [:filters :koulutustyyppi :lk :count])))
 
         (is (= 0 (get-in r [:filters :koulutustyyppi :amk :alakoodit :amk-alempi :count])))
         (is (= 0 (get-in r [:filters :koulutustyyppi :amk :alakoodit :amk-ylempi :count])))

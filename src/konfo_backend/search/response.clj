@@ -2,7 +2,8 @@
   (:require
    [clojure.set :refer [rename-keys]]
    [konfo-backend.search.rajain-counts :refer [generate-default-rajain-counts
-                                               generate-rajain-counts-for-jarjestajat]]
+                                               generate-rajain-counts-for-jarjestajat
+                                               generate-rajain-counts-for-tarjoajat]]
    [konfo-backend.search.rajain-definitions :refer [->max-agg-id all-agg-defs
                                                     max-agg-defs]]
    [konfo-backend.search.tools :refer :all]
@@ -69,6 +70,12 @@
   [response]
   (generate-rajain-counts-for-jarjestajat (numbers-by-filter response)
                                           (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :oppilaitos]) :oppilaitos)))
+
+(defn filters-for-tarjoajat
+  [response]
+  (generate-rajain-counts-for-tarjoajat (numbers-by-filter response)
+                                        (get-uniform-buckets (get-in response [:aggregations :hits_aggregation :toimipiste]) :toimipiste)
+                                        (some-> response :aggregations :oppilaitoksen_toimipisteet :hits :hits (first) :_source :toimipisteet)))
 
 (defn parse
   [response]
