@@ -1,8 +1,9 @@
 (ns konfo-backend.contentful.json
-  (:require [konfo-backend.util.time :as time])
+  (:require [konfo-backend.util.time :as time]
+            [clojure.tools.logging :as log])
   (:import (com.contentful.java.cda CDAEntry CDAAsset)
            (com.google.gson Gson GsonBuilder JsonObject JsonArray JsonSerializer)
-           (java.util List)))
+           (java.util List Map)))
 
 (defn write-reference [object entry]
   (doto object
@@ -35,14 +36,33 @@
     (.add "formatoituCreated" (reformat-date-as-localized-json created-at))
     (.add "formatoituUpdated" (reformat-date-as-localized-json updated-at)))))
 
-(defn write-array [object field entry]
+(defn write-array [object field items]
   (let [array (doto (JsonArray.)
-                (#(doseq [item (.getField entry field)]
+                (#(doseq [item items]
                     (let [o (JsonObject.)]
                       (write-reference o item)
                       (.add % o)))))]
     (doto object
       (.add field array))))
+
+(defn unresolved-link?
+  "Contentful SDK jättää linkin muotoon {\"sys\" {\"type\" \"Link\" ...}}, jos se ei pysty resolvoimaan sitä
+  (esim. linkattu entry puuttuu tai sisältötyypin määrittely on vanhentunut)."
+  [value]
+  (and (instance? Map value)
+       (let [sys (.get ^Map value "sys")]
+         (and (instance? Map sys)
+              (= "Link" (.get ^Map sys "type"))))))
+
+(defn- link-id [link]
+  (.get ^Map (.get ^Map link "sys") "id"))
+
+(defn- warn-unresolved-links [entry field links]
+  (log/warn (str "Dropping unresolved Contentful link(s) " (mapv link-id links)
+                 " from field " field " of entry " (.getAttribute entry "id")
+                 " (content type "
+                 (some-> entry (.getAttribute "contentType") (.get "sys") (.get "id"))
+                 ")")))
 
 (defn write-asset [object asset url-converter]
   (let [[new-url original-url _ _] (url-converter asset)]
@@ -56,17 +76,36 @@
 
 (defn write-field [object field entry markdown-converter url-converter]
   (let [value (.getField entry field)]
-    (condp instance? value
-           CDAEntry (.add object field
-                      (-> (JsonObject.)
-                          (write-reference value)))
-           List (if (instance? CDAEntry (first value))
-                  (write-array object field entry)
-                  (.addProperty object field (str (.toJson (Gson.) value))))
-           CDAAsset (.add object field
-                      (-> (JsonObject.)
-                          (write-asset value url-converter)))
-           (.addProperty object field (markdown-converter entry field (str value))))))
+    (cond
+      ;; Resolvoimaton yksittäinen linkki jätetään kokonaan pois, ei kirjoiteta sys-viittausta dataan
+      (unresolved-link? value)
+      (do (warn-unresolved-links entry field [value])
+          object)
+
+      (instance? CDAEntry value)
+      (.add object field
+            (-> (JsonObject.)
+                (write-reference value)))
+
+      (instance? List value)
+      (let [links (filter unresolved-link? value)
+            items (remove unresolved-link? value)]
+        (when (seq links)
+          (warn-unresolved-links entry field links))
+        ;; Jos listassa on linkkejä (resolvoituja tai ei), kyseessä on viittauslista: kirjoitetaan
+        ;; resolvoidut viittaukset taulukkona ja pudotetaan resolvoimattomat pois. Tyhjä lista
+        ;; kirjoitetaan aina taulukkona, koska siitä ei voi päätellä onko kyseessä viittauslista.
+        (if (or (empty? value) (seq links) (instance? CDAEntry (first items)))
+          (write-array object field items)
+          (.addProperty object field (str (.toJson (Gson.) value)))))
+
+      (instance? CDAAsset value)
+      (.add object field
+            (-> (JsonObject.)
+                (write-asset value url-converter)))
+
+      :else
+      (.addProperty object field (markdown-converter entry field (str value))))))
 
 (defn write-fields [object entry markdown-converter url-converter]
   (doseq [field (.keySet (.rawFields entry))]
