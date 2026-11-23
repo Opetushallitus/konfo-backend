@@ -203,9 +203,14 @@
               [_ _ transformed md5] (get @url-cache original)
               old-md5  (s3/get-object-md5 s3-client s3-url)]
           (when (or (nil? md5) (not= old-md5 md5))
-            (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
-            (let [[image content-type] (fetch->image (or transformed original) false)]
-              (store->s3 s3-client ttl-asset content-type s3-url image)))))
+            ;; Muille kuin rasterikuville (esim. SVG) md5 ei ole tiedossa etukäteen, joten se lasketaan ladatusta tiedostosta. Tiedosto kirjoitetaan S3:een vain, jos se on muuttunut.
+            (let [[image content-type] (fetch->image (or transformed original) false)
+                  new-md5 (s3/calculate-md5 image)]
+              (if (= old-md5 new-md5)
+                (log/info (str "Asset " s3-url " unchanged (md5 " new-md5 "), skipping upload"))
+                (do
+                  (log/info (str "Asset " s3-url " changed (S3 md5 " (or old-md5 "missing") ", new md5 " new-md5 "), uploading"))
+                  (store->s3 s3-client ttl-asset content-type s3-url image)))))))
       (comment (= existing latest)
         (if (nil? latest)
           (log/error (str "No asset found for locale " locale " in space " (:contentful-space-id config) " with token " (:contentful-access-token config)))
