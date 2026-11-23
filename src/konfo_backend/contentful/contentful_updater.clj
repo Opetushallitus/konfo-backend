@@ -23,7 +23,7 @@
            (java.awt.image BufferedImage)
            (java.io ByteArrayOutputStream)))
 
-(defonce max-width 1280)
+(defonce max-width 1440)
 (defonce max-height 1080)
 (defonce ttl-manifest 0)
 (defonce ttl-asset 1)
