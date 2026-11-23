@@ -30,10 +30,15 @@
   (and (str/starts-with? link "//")
        (not (str/ends-with? link ".svg"))))
 
+(def fetch-connection-timeout-ms 10000)
+(def fetch-socket-timeout-ms 60000)
+
 (defn fetch->image [image-url]
   (let [url (str "https:" image-url)]
     (try
-      (let [image (client/get url {:as :byte-array})
+      (let [image (client/get url {:as                 :byte-array
+                                   :connection-timeout fetch-connection-timeout-ms
+                                   :socket-timeout     fetch-socket-timeout-ms})
             headers (:headers image)]
         [(:body image) (get headers "Content-Type")])
       (catch Exception e
