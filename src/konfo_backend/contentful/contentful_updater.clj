@@ -45,6 +45,23 @@
         (log/error (str "Error while fetching image " url ": " (.getMessage e)))
         (throw e)))))
 
+(defn contentful-image-dimensions
+  "Palauttaa kuvan alkuperäiset mitat [leveys korkeus] Contentfulin assetin metatiedoista
+  (file.details.image), tai nil jos niitä ei ole."
+  [^CDAAsset cda-asset]
+  (let [image  (some-> (.fileField cda-asset "details") (get "image"))
+        width  (get image "width")
+        height (get image "height")]
+    (when (and width height)
+      [(long width) (long height)])))
+
+(defn- downloaded-image-dimensions [image-url]
+  (let [[image _]   (fetch->image image-url)
+        image-input (ImageIO/read (io/input-stream image))]
+    [(.getWidth image-input) (.getHeight image-input)]))
+
+;; Mitat luetaan Contentfulin metatiedoista, jotta skaalauksen tarve selviää ilman täysikokoisen
+;; kuvan latausta. Kuva ladataan vain kerran md5:n laskemiseksi.
 (defn transform-url-if-needed [^CDAAsset cda-asset]
   (let [mime-type (.mimeType cda-asset)]
     (when-let [transformed-image (when (and (.startsWith mime-type "image")
@@ -53,11 +70,10 @@
                                          cda-asset
                                          (into-array ImageOption
                                            [(ImageOption/formatOf ImageOption$Format/jpg)])))]
-      (let [[image _] (fetch->image transformed-image)
-
-            image-input      (ImageIO/read (io/input-stream image))
-            width            (.getWidth image-input)
-            height           (.getHeight image-input)
+      (let [[width height]   (or (contentful-image-dimensions cda-asset)
+                                 (do
+                                   (log/warn (str "No image dimensions in Contentful metadata for " transformed-image ", downloading image to read them"))
+                                   (downloaded-image-dimensions transformed-image)))
             scale?           (or (> width max-width)
                                  (> height max-height))
             w-scale          [max-width (Math/floor (* height (/ max-width width)))]
@@ -74,9 +90,7 @@
                                        (ImageOption/heightOf max-height))]
                                     [])
                                   [(ImageOption/formatOf ImageOption$Format/jpg)])))
-            md5              (s3/calculate-md5 (or (and (= transformed-image final-transform)
-                                                        image)
-                                                   (first (fetch->image final-transform))))]
+            md5              (s3/calculate-md5 (first (fetch->image final-transform)))]
         (log/info (str "processing image " final-transform " scaling = " scale? ", md5 = " md5))
         [final-transform md5]))))
 

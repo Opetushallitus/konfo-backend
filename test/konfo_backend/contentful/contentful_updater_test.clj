@@ -3,8 +3,27 @@
             [konfo-backend.contentful.contentful :as contentful]
             [konfo-backend.contentful.contentful-updater :as updater]
             [konfo-backend.contentful.s3 :as s3])
-  (:import (com.google.gson Gson)
-           (java.util ArrayList HashMap)))
+  (:import (com.contentful.java.cda CDAAsset)
+           (com.google.gson Gson)
+           (java.util ArrayList HashMap)
+           (org.mockito Mockito)))
+
+(defn- asset-with-details [details]
+  (let [asset (Mockito/mock CDAAsset)]
+    (-> (Mockito/when (.fileField asset "details"))
+        (.thenReturn details))
+    asset))
+
+(deftest contentful-image-dimensions-test
+  (testing "reads width and height from file.details.image (Gson parses numbers as doubles)"
+    (is (= [2000 1500]
+           (updater/contentful-image-dimensions
+             (asset-with-details (HashMap. {"size" 12345.0
+                                            "image" (HashMap. {"width" 2000.0 "height" 1500.0})}))))))
+  (testing "returns nil when details have no image dimensions"
+    (is (nil? (updater/contentful-image-dimensions (asset-with-details (HashMap. {"size" 12345.0}))))))
+  (testing "returns nil when the asset has no details"
+    (is (nil? (updater/contentful-image-dimensions (asset-with-details nil))))))
 
 (def pdf-key "space/abc/doc.pdf")
 (def pdf-bytes (.getBytes "pdf content"))
