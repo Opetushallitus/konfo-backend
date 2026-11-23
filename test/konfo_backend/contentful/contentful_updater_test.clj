@@ -22,7 +22,7 @@
     (with-redefs [s3/get-object             (fn [_ _] nil)
                   s3/get-object-md5         (fn [_ _] s3-md5)
                   contentful/get-assets-raw (fn [_ _] (ArrayList. [(pdf-asset)]))
-                  updater/fetch->image      (fn [_ _] [pdf-bytes "application/pdf"])
+                  updater/fetch->image      (fn [_] [pdf-bytes "application/pdf"])
                   updater/store->s3         (fn [_ _ _ key _] (swap! writes conj key))]
       (updater/asset-store-handler nil nil (Gson.) (atom {}) "asset" "fi"
                                    "2000/fi/" "1000/fi/asset.json")
@@ -35,3 +35,19 @@
     (is (= [pdf-key] (uploaded-keys "0123456789abcdef0123456789abcdef"))))
   (testing "uploads when the file is not in S3 yet"
     (is (= [pdf-key] (uploaded-keys nil)))))
+
+(def image-url "//images.ctfassets.net/space/abc/token/kuva.png")
+
+(deftest replace-image-links-test
+  (testing "replaces a cached image link with its S3 url"
+    (is (= "![kuva](space/abc/token/kuva.png.jpg)"
+           (updater/replace-image-links {image-url ["space/abc/token/kuva.png.jpg"]}
+                                        "entry1" (str "![kuva](" image-url ")")))))
+  (testing "marks an uncached image link as broken without pointing to Contentful"
+    (is (= "![kuva](space/abc/token/kuva.png#broken)"
+           (updater/replace-image-links {} "entry1" (str "![kuva](" image-url ")")))))
+  (testing "leaves svg and non-protocol-relative links unchanged"
+    (let [md "![a](//images.ctfassets.net/x/y.svg) [b](https://example.com)"]
+      (is (= md (updater/replace-image-links {} "entry1" md)))))
+  (testing "returns markdown without links unchanged"
+    (is (= "plain text" (updater/replace-image-links {} "entry1" "plain text")))))
