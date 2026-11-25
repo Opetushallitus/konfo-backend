@@ -15,9 +15,24 @@
 
 (defonce updater-agent (agent nil))
 
+;; Contentful lähettää webhookin jokaisesta julkaisusta, joten päivityspyyntöjä voi tulla useita peräkkäin. Jonossa tarvitaan korkeintaan yksi odottava ajo, koska se hakee joka tapauksessa Contentfulin viimeisimmän tilan.
+(defonce update-pending? (atom false))
+
+(defn- run-content-update [_ clients]
+  ;; Nollataan lippu ennen ajon alkua, jotta ajon aikana tullut pyyntö jonottaa uuden ajon eikä sen muutoksia menetetä.
+  (reset! update-pending? false)
+  (contentful->s3 clients (System/currentTimeMillis)))
+
 (defn add-content-update-job [clients]
-  (log/info "Adding content update job!")
-  (send-off updater-agent (partial contentful->s3 clients (System/currentTimeMillis))))
+  (if (compare-and-set! update-pending? false true)
+    (do
+      (log/info "Adding content update job!")
+      (try
+        (send-off updater-agent run-content-update clients)
+        (catch Exception e
+          (reset! update-pending? false)
+          (throw e))))
+    (log/info "Content update job already queued, skipping.")))
 
 (defn authenticated? [name pass]
   (and (= name (-> config :contentful-update-username))

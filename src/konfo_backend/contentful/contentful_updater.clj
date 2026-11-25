@@ -19,11 +19,9 @@
    [clojure.tools.logging :as log])
   (:import (com.contentful.java.cda.image ImageOption$Format ImageOption)
            (com.contentful.java.cda CDAAsset)
-           (javax.imageio ImageIO)
-           (java.awt.image BufferedImage)
-           (java.io ByteArrayOutputStream)))
+           (javax.imageio ImageIO)))
 
-(defonce max-width 1280)
+(defonce max-width 1440)
 (defonce max-height 1080)
 (defonce ttl-manifest 0)
 (defonce ttl-asset 1)
@@ -32,58 +30,38 @@
   (and (str/starts-with? link "//")
        (not (str/ends-with? link ".svg"))))
 
-(defn create-fake-image []
-  (let [img    (BufferedImage. 256 256 BufferedImage/TYPE_INT_RGB)
-        buffer (ByteArrayOutputStream.)]
-    (ImageIO/write img "JPEG" buffer)
-    (.toByteArray buffer)))
+(def fetch-connection-timeout-ms 10000)
+(def fetch-socket-timeout-ms 60000)
 
-(defn fetch->image [image-url allow-fail?]
+(defn fetch->image [image-url]
   (let [url (str "https:" image-url)]
     (try
-      (let [image (client/get url {:as :byte-array})
+      (let [image (client/get url {:as                 :byte-array
+                                   :connection-timeout fetch-connection-timeout-ms
+                                   :socket-timeout     fetch-socket-timeout-ms})
             headers (:headers image)]
         [(:body image) (get headers "Content-Type")])
       (catch Exception e
         (log/error (str "Error while fetching image " url ": " (.getMessage e)))
-        (if allow-fail?
-          [(create-fake-image) "image/jpeg"]
-          (throw e))))))
+        (throw e)))))
 
-(defn add-query-params-to-uri [uri params]
-  (reduce-kv (fn [u k v]
-                 (if (str/includes? u "?")
-                   (str u "&" (name k) "=" v)
-                   (str u "?" (name k) "=" v)))
-    uri
-    params))
+(defn contentful-image-dimensions
+  "Palauttaa kuvan alkuperäiset mitat [leveys korkeus] Contentfulin assetin metatiedoista
+  (file.details.image), tai nil jos niitä ei ole."
+  [^CDAAsset cda-asset]
+  (let [image  (some-> (.fileField cda-asset "details") (get "image"))
+        width  (get image "width")
+        height (get image "height")]
+    (when (and width height)
+      [(long width) (long height)])))
 
-(defn resize-image? [image]
-  (let [image-input (ImageIO/read (io/input-stream image))
-        width       (.getWidth image-input)
-        height      (.getHeight image-input)
-        scale?      (or (> width max-width)
-                        (> height max-height))]
-    (when scale?
-          (let [w-scale          [max-width (Math/floor (* height (/ max-width width)))]
-                h-scale          [(Math/floor (* width (/ max-height height))) max-height]
-                w-scale-smaller? (< (* (first w-scale) (second w-scale))
-                                   (* (first h-scale) (second h-scale)))]
-            (if w-scale-smaller?
-              {:w max-width}
-              {:h max-height})))))
+(defn- downloaded-image-dimensions [image-url]
+  (let [[image _]   (fetch->image image-url)
+        image-input (ImageIO/read (io/input-stream image))]
+    [(.getWidth image-input) (.getHeight image-input)]))
 
-(defn fetch-and-transform [url allow-fail?]
-  (if (or (str/ends-with? url ".svg") (str/ends-with? url "watch"))
-    [false url (fetch->image url allow-fail?)]
-    (let [transformed-url (add-query-params-to-uri url {:fm "jpg"})
-          [image mime] (fetch->image transformed-url allow-fail?)
-          params    (resize-image? image)]
-      (if params
-        (let [new-transformed-url (add-query-params-to-uri transformed-url params)]
-          [true new-transformed-url (fetch->image new-transformed-url allow-fail?)])
-        [true transformed-url [image mime]]))))
-
+;; Mitat luetaan Contentfulin metatiedoista, jotta skaalauksen tarve selviää ilman täysikokoisen
+;; kuvan latausta. Kuva ladataan vain kerran md5:n laskemiseksi.
 (defn transform-url-if-needed [^CDAAsset cda-asset]
   (let [mime-type (.mimeType cda-asset)]
     (when-let [transformed-image (when (and (.startsWith mime-type "image")
@@ -92,11 +70,10 @@
                                          cda-asset
                                          (into-array ImageOption
                                            [(ImageOption/formatOf ImageOption$Format/jpg)])))]
-      (let [[image _] (fetch->image transformed-image false)
-
-            image-input      (ImageIO/read (io/input-stream image))
-            width            (.getWidth image-input)
-            height           (.getHeight image-input)
+      (let [[width height]   (or (contentful-image-dimensions cda-asset)
+                                 (do
+                                   (log/warn (str "No image dimensions in Contentful metadata for " transformed-image ", downloading image to read them"))
+                                   (downloaded-image-dimensions transformed-image)))
             scale?           (or (> width max-width)
                                  (> height max-height))
             w-scale          [max-width (Math/floor (* height (/ max-width width)))]
@@ -113,9 +90,7 @@
                                        (ImageOption/heightOf max-height))]
                                     [])
                                   [(ImageOption/formatOf ImageOption$Format/jpg)])))
-            md5              (s3/calculate-md5 (or (and (= transformed-image final-transform)
-                                                        image)
-                                                   (first (fetch->image final-transform false))))]
+            md5              (s3/calculate-md5 (first (fetch->image final-transform)))]
         (log/info (str "processing image " final-transform " scaling = " scale? ", md5 = " md5))
         [final-transform md5]))))
 
@@ -146,31 +121,21 @@
         (s3/put-object ttl s3-client key obj content-type)
         (log/info (str "Wrote " key " to bucket " (-> config :s3 :bucket-name)))))
 
-(defn create-gson-serializer [s3-client url-cache content-types]
-  (let [markdown-conv (fn [id markdown]
-                          (if-let [links (seq (filter image-link? (markdown->links markdown)))]
-                            (reduce (fn [t [_ _ original]]
-                                        (if-let [l (get @url-cache original)]
-                                          (do
-                                            (.replaceAll t original (first l)))
-                                          (do
-                                            (log/warn (str "Creating fake asset for entry " id))
-                                            (let [[transformed? transformed-url [image content-type]] (fetch-and-transform original true)
-                                                  md5    (s3/calculate-md5 image)
-                                                  s3-url (strip-scheme-and-host (if transformed?
-                                                                                  (str original ".jpg")
-                                                                                  original))]
-                                              (when (not= (s3/get-object-md5 s3-client s3-url) md5)
-                                                    (log/info (str "Stored S3 " s3-url))
-                                                    (store->s3 s3-client ttl-asset content-type s3-url image))
-                                              (swap! url-cache assoc original [s3-url original transformed-url md5])
-                                              (.replaceAll t original s3-url))
-                                            )
-                                          )
-                                        )
-                                    markdown
-                                    links)
-                            markdown))]
+(defn replace-image-links [url-cache id markdown]
+  (if-let [links (seq (filter image-link? (markdown->links markdown)))]
+    (reduce (fn [t [_ _ original]]
+              (if-let [[s3-url] (get url-cache original)]
+                (str/replace t original s3-url)
+                (do
+                  (log/warn (str "Entry " id " links to image " original
+                                 " that is not a published asset, marking link as broken"))
+                  (str/replace t original (str (strip-scheme-and-host original) "#broken")))))
+            markdown
+            links)
+    markdown))
+
+(defn create-gson-serializer [url-cache content-types]
+  (let [markdown-conv (fn [id markdown] (replace-image-links @url-cache id markdown))]
     (create-gson
       (fn [entry field value]
           (let [field-type (get-in content-types [(-> entry
@@ -203,9 +168,14 @@
               [_ _ transformed md5] (get @url-cache original)
               old-md5  (s3/get-object-md5 s3-client s3-url)]
           (when (or (nil? md5) (not= old-md5 md5))
-            (log/info (str "MD5 " old-md5 (if (= old-md5 md5) " == " " != ") md5))
-            (let [[image content-type] (fetch->image (or transformed original) false)]
-              (store->s3 s3-client ttl-asset content-type s3-url image)))))
+            ;; Muille kuin rasterikuville (esim. SVG) md5 ei ole tiedossa etukäteen, joten se lasketaan ladatusta tiedostosta. Tiedosto kirjoitetaan S3:een vain, jos se on muuttunut.
+            (let [[image content-type] (fetch->image (or transformed original))
+                  new-md5 (s3/calculate-md5 image)]
+              (if (= old-md5 new-md5)
+                (log/info (str "Asset " s3-url " unchanged (md5 " new-md5 "), skipping upload"))
+                (do
+                  (log/info (str "Asset " s3-url " changed (S3 md5 " (or old-md5 "missing") ", new md5 " new-md5 "), uploading"))
+                  (store->s3 s3-client ttl-asset content-type s3-url image)))))))
       (comment (= existing latest)
         (if (nil? latest)
           (log/error (str "No asset found for locale " locale " in space " (:contentful-space-id config) " with token " (:contentful-access-token config)))
@@ -227,9 +197,13 @@
 
 (defn process-client-data [old-manifest update-id client s3-client langs]
       (log/info "Processing contentful data for langs" langs)
+      ;; CDAClient cacheaa sisältötyypit koko elinikänsä ajan ja käyttää niitä linkkien resolvoimiseen.
+      ;; Jos sisältötyyppiä on muutettu Contentfulissa updaterin käynnistyksen jälkeen, vanhentunut
+      ;; cache jättää linkit resolvoimatta ja ne serialisoituvat JSON-merkkijonoiksi.
+      (.clearCache client)
       (let [content-types    (get-content-type-with-field-types client)
             url-cache        (atom {})
-            gson             (create-gson-serializer s3-client url-cache content-types)
+            gson             (create-gson-serializer url-cache content-types)
             resources        (concat (map (fn [lang] ["asset" lang asset-store-handler]) langs)
                                      (for [[t _] content-types
                                            l langs]

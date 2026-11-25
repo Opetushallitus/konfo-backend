@@ -1,6 +1,7 @@
 (ns konfo-backend.contentful.s3
   (:require
     [konfo-backend.config :refer [config]]
+    [clojure.string :as str]
     [clojure.tools.logging :as log])
   (:import (software.amazon.awssdk.core.sync RequestBody)
            (software.amazon.awssdk.core.sync ResponseTransformer)
@@ -75,6 +76,12 @@
           (catch NoSuchKeyException e
             (log/error (str "Key not found " file-key "!" e))))))
 
+(defn etag->md5
+  "S3 palauttaa ETagin lainausmerkeissä (\"abc...\"), kun taas calculate-md5 palauttaa
+  pelkän heksamerkkijonon. Poistetaan lainausmerkit, jotta arvoja voi verrata suoraan."
+  [etag]
+  (some-> etag (str/replace "\"" "")))
+
 (defn get-object-md5 [s3-client file-key]
   (try
     (-> s3-client
@@ -83,6 +90,7 @@
                            (-> config :s3 :bucket-name))
                          (.key file-key)
                          (.build)))
-        (.eTag))
+        (.eTag)
+        (etag->md5))
     (catch NoSuchKeyException e
       (log/info (str "File doesn't exist " file-key "!")))))
